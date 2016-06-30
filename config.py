@@ -6,6 +6,7 @@
 
 download_url = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
+#. same, for now
 online_folder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
 offline_folder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
 
@@ -32,7 +33,7 @@ volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + 
 # nvolumes_to_download = 0
 nvolumes_to_download = 1
 nvolumes_to_unzip = 1
-
+nvolumes_to_png = 1
 
 
 

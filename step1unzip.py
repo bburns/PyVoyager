@@ -16,18 +16,20 @@ def unzip_volume(volnumber):
         return False
     else:
         print "Unzipping " + zipfilepath
-        print "         to " + unzippedpath
+        print "       to " + unzippedpath
         return lib.unzip_file(zipfilepath, unzippedpath)
-        return True
 
-
-if __name__ == '__main__':
+    
+def main():
     # unzip a certain number of volumes
+    n = config.nvolumes_to_unzip
     for volume in config.volumes:
-        if config.nvolumes_to_unzip>0:
+        if n>0:
             if unzip_volume(volume):
-                config.nvolumes_to_unzip -= 1
+                n -= 1
                 
+if __name__ == '__main__':
+    main()
         
 
 

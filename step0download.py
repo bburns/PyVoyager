@@ -2,9 +2,9 @@
 # download voyager image archives
 
 
-import os # for system
+# import os # for system
 import os.path # for isfile
-import urllib # for urlretrieve
+# import urllib # for urlretrieve
 # import requests # for get, for progressbar
 # import sys # for stdout
 
@@ -36,6 +36,5 @@ if __name__ == '__main__':
             if download_volume(volume):
                 config.nvolumes_to_download -= 1
                 
-        
     
     

@@ -30,6 +30,10 @@ def get_download_url(volnumber):
     return url
 
 
+def get_volume_title(volnumber):
+    return "VGISS_" + str(volnumber)
+
+
 def get_zipfilepath(volnumber):
     "get filepath for zipfile corresponding to a volume number"
     # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
@@ -45,35 +49,53 @@ def get_unzippedpath(volnumber):
     # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
     unzipfolder = config.unzip_folder
     url = get_download_url(volnumber)
-    filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-    filetitle = filetitle.split('.')[0]
+    filetitle = get_volume_title(volnumber)
     unzippedpath = unzipfolder + '/' + filetitle
     return unzippedpath
 
 
+def get_pngpath(volnumber):
+    "get folder path for png images"
+    # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
+    pngfolder = config.png_folder
+    filetitle = get_volume_title(volnumber)
+    pngpath = pngfolder + '/' + filetitle
+    return pngpath
+
+
 def unzip_file(zipfile, destfolder):
-    """unzip a file to a destination folder
-    assumes zip file is a .tar or .tar.gz file
-    doesn't unzip file if destination folder already exists
-    unzips to a folder with same name as the file,
-    eg foo.tar.gz contents would unzip to <destfolder>/foo/"""
+    """unzip a file to a destination folder.
+    assumes zip file is a .tar or .tar.gz file.
+    doesn't unzip file if destination folder already exists.
+    eg unzip_file('test/unzip_test.tar', 'test/unzip_test')"""
+    #. but note - tar file can have a top-level folder, or not -
+    # this is assuming that it does, which is why we extract the tarfile
+    # to the parent folder of destfolder.
     if os.path.isdir(destfolder):
         print "Folder " + destfolder + " already exists - not unzipping"
         return False
     else:
-        os.mkdir(destfolder)
-        archive_util.unpack_archive(zipfile, destfolder)
+        #. tried just building a commandline cmd but had issues with windows paths etc
+        # os.mkdir(destfolder)
+        # archive_util.unpack_archive(zipfile, destfolder)
+        parentfolder = destfolder + "/.."
+        archive_util.unpack_archive(zipfile, parentfolder)
         return True
 
     
-# testing
-if __name__ == '__main__':
+def test():
     print get_download_url(5101)
     print get_zipfilepath(5101)
     print get_unzippedpath(5101)
-    unzip_file('test/unzip_test.tar', 'test')
-
+    print get_pngpath(5101)
+    
+    #. test this with a tar.gz
+    print 'unzipping test file...'
+    unzip_file('test/unzip_test.tar', 'test/unzip_test')
     print 'All done.'
+    
+if __name__ == '__main__':
+    test()
 
 
 

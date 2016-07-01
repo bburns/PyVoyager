@@ -7,16 +7,20 @@ import scipy.misc as misc # for imsave
 import numpy as np # for zeros, array, copy
 
 
-def center_image_file(infile, outfile):
+def center_image_file(infile, outfile, rotate_image=False):
     "center the given image file on a planet"
     im = mpim.imread(infile)
+    if rotate_image:
+        im = np.rot90(im, 2) # rotate by 180
+    #. if use_blobs:
     # bounding_box = find_center_by_blob(im)
     bounding_box = find_center_by_box(im)
     im = draw_bounding_box(im, bounding_box)
     im_centered = center_image(im, bounding_box)
     # draw crosshairs
-    im_centered[399, 0:799] = 0.5
-    im_centered[0:799, 399] = 0.5
+    if config.draw_crosshairs:
+        im_centered[399, 0:799] = 0.25
+        im_centered[0:799, 399] = 0.25
     misc.imsave(outfile, im_centered)
     return True
     
@@ -69,7 +73,6 @@ def draw_bounding_box(im, bounding_box):
 
 
 
-
 def find_center_by_blob(im):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
     
@@ -78,7 +81,8 @@ def find_center_by_blob(im):
 
     def find_blobs(im):
         "Find set of blobs in the given image"
-        b = 1*(im>0.1) # threshold to binary image
+        epsilon = 0.1
+        b = 1*(im>epsilon) # threshold to binary image
         lbl, nobjs = ndimage.measurements.label(b) # label objects
         # find position of objects - index is 0-based
         blobs = ndimage.find_objects(lbl)
@@ -101,68 +105,73 @@ def find_center_by_blob(im):
     if len(blobs)>0:
         # find largest object
         blob = find_largest_blob(blobs)
-        # get center of blob
-        # cx = (blob[0].start + blob[0].stop) / 2
-        # cy = (blob[1].start + blob[1].stop) / 2
         # get bounding box
         x1 = blob[0].start
         x2 = blob[0].stop
         y1 = blob[1].start
         y2 = blob[1].stop
     else:
-        # if no blobs just return the image center
-        # cx = im.shape[0]/2
-        # cy = im.shape[1]/2
+        # if no blobs just return the whole image
         x1 = 0
         x2 = im.shape[0] - 1
         y1 = 0
         y2 = im.shape[1] - 1
-    # return cx,cy
     return [x1,y1,x2,y2]
 
 
 
+#. cheat for now
+import config
 
-def find_center_by_box(im, epsilon=0, N=5):
+
+# def find_center_by_box(im, epsilon=0, N=5):
+def find_center_by_box(im):
     "find edges of largest object in image based on the most prominent edges, and return bounding box"
 
-    def find_edges_1d(a, epsilon = 0):
-        "find edges > epsilon in 1d array from left and right directions, return min,max"
-        icount = len(a)
-        i1 = 0
-        # for i in xrange(icount):
-        istart = 4
+    # def find_edges_1d(a, epsilon = 0):
+    def find_edges_1d(array):
+        "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
+        icount = len(array)
+        istart = 4 #. why skip 4?
         iend = icount
+        # epsilon is the threshold value over which the smoothed value must cross
+        epsilon = config.epsilon
+        # find first value over threshold
+        ifirst = 0
         for i in xrange(istart, iend, 1):
-            if a[i] > epsilon:
-                i1 = i
+            if array[i] > epsilon:
+                ifirst = i
                 break
-        i2 = 0
-        # for i in xrange(icount-1, -1, -1):
+        # find last value over threshold
+        ilast = iend-1
         for i in xrange(iend-1, istart-1, -1):
-            if a[i] > epsilon:
-                i2 = i
+            if array[i] > epsilon:
+                ilast = i
                 break
-        # icenter = (i1+i2)/2
-        # print i1,i2, icenter
-        # return icenter
-        return i1,i2
+        return ifirst,ilast
 
-    def find_edges_2d(im, axis, epsilon=0, N=5):
+    # def find_edges(im, axis, epsilon=0, N=5):
+    def find_edges(im, axis):
         "find the edges for the given axis (0 or 1), return min,max"
         sums = np.sum(im, axis=axis)
         diff = np.diff(sums)
         diffsq = np.square(diff)
         diffsqln = np.log(diffsq)
+        # config.N is the number of rows/columns to average over, for running average
+        N = config.N
         if N>0:
             smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
-            i1, i2 = find_edges_1d(smoothed, epsilon)
+            i1, i2 = find_edges_1d(smoothed)
         else:
-            i1, i2 = find_edges_1d(diffsqln, epsilon)
+            i1, i2 = find_edges_1d(diffsqln)
         return i1, i2
 
-    x1, x2 = find_edges_2d(im, 1, epsilon, N)
-    y1, y2 = find_edges_2d(im, 0, epsilon, N)
+    x1, x2 = find_edges(im, 1)
+    y1, y2 = find_edges(im, 0)
+    
+    #. now try to make it a square - could assume that the smaller one is correct...
+    # because seem to get a lot of those cases
+    
     bounding_box = [x1,y1,x2,y2]
     return bounding_box
 
@@ -188,11 +197,9 @@ def test():
 
     # center image, save image
     im_centered = center_image(im, bounding_box)
-    # draw crosshairs
-    im_centered[399, 0:799] = 0.5
-    im_centered[0:799, 399] = 0.5
     misc.imsave('test/test_centered.png', im_centered)
 
+    # test the center_image_file fn
     center_image_file('test/test.png', 'test/test_cif.png')
     
     print 'done.'

@@ -13,9 +13,9 @@ offline_folder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
 download_folder = offline_folder + "step0_downloads"
 unzip_folder = offline_folder + "step1_unzips"
 png_folder = online_folder + "step2_pngs"
-center_folder = online_folder + "step3_centers"
-centered_png_folder = online_folder + "step4_centered_pngs"
-#etc
+centered_folder = online_folder + "step3_centered"
+movie_folder = online_folder + "step4_movies"
+
 
 # voyager ISS volumes
 voyager1jupiter = range(5101,5120)
@@ -34,6 +34,6 @@ volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + 
 nvolumes_to_download = 1
 nvolumes_to_unzip = 1
 nvolumes_to_png = 1
-
+nvolumes_to_center = 1
 
 

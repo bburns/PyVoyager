@@ -62,6 +62,14 @@ def get_pngpath(volnumber):
     pngpath = pngfolder + '/' + filetitle
     return pngpath
 
+def get_centeredpath(volnumber):
+    "get folder path for centered images"
+    # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
+    centeredfolder = config.centered_folder
+    filetitle = get_volume_title(volnumber)
+    centeredpath = centeredfolder + '/' + filetitle
+    return centeredpath
+
 
 def unzip_file(zipfile, destfolder):
     """unzip a file to a destination folder.

@@ -7,6 +7,20 @@ import scipy.misc as misc # for imsave
 import numpy as np # for zeros, array, copy
 
 
+def center_image_file(infile, outfile):
+    "center the given image file on a planet"
+    im = mpim.imread(infile)
+    # bounding_box = find_center_by_blob(im)
+    bounding_box = find_center_by_box(im)
+    im = draw_bounding_box(im, bounding_box)
+    im_centered = center_image(im, bounding_box)
+    # draw crosshairs
+    im_centered[399, 0:799] = 0.5
+    im_centered[0:799, 399] = 0.5
+    misc.imsave(outfile, im_centered)
+    return True
+    
+
 def center_image(im, bounding_box):
     "center image on bounding box, crop to it, return new image"
     
@@ -179,6 +193,8 @@ def test():
     im_centered[0:799, 399] = 0.5
     misc.imsave('test/test_centered.png', im_centered)
 
+    center_image_file('test/test.png', 'test/test_cif.png')
+    
     print 'done.'
     
     

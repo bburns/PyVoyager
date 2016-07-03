@@ -10,6 +10,17 @@ from setuptools import archive_util # for unpack_archive
 import config # constants
 
 
+
+def pngs_to_mp4(folder, image_filespec, frame_rate, output_filename):
+    "convert a sequentially numbered set of pngs to an mp4 movie"
+    os.chdir(folder)
+    # eg "ffmpeg -y -i img%04d.png -r 15 a.mp4"
+    cmd = 'ffmpeg -y -i %s -r %d %s' % (image_filespec, frame_rate, output_filename)
+    print cmd
+    os.system(cmd)
+
+
+
 def download_file(url, filepath):
     "download a file from a url to a given filepath"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
@@ -31,7 +42,10 @@ def get_download_url(volnumber):
 
 
 def get_volume_title(volnumber):
-    return "VGISS_" + str(volnumber)
+    if volnumber==0:
+        return "test"
+    else:
+        return "VGISS_" + str(volnumber)
 
 
 def get_zipfilepath(volnumber):
@@ -96,6 +110,7 @@ def test():
     print get_zipfilepath(5101)
     print get_unzippedpath(5101)
     print get_pngpath(5101)
+    print get_pngpath(0)
     
     #. test this with a tar.gz
     print 'unzipping test file...'

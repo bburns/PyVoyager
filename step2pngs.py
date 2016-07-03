@@ -42,11 +42,12 @@ def img2png_volume(volnumber):
         datadir = unzippedpath + '/DATA'
         print "converting imgs to pngs for " + datadir
         # for each dir in thisdir, cd dir, run img2png on all img files
+        i = 0
         for root, dirs, files in os.walk(datadir):
             for subdir in dirs:
                 dirpath = os.path.join(root, subdir)
                 dirpath = os.path.abspath(dirpath)
-                print dirpath
+                print 'dir ' + str(i) + ': ' + dirpath
                 img2png(dirpath)
                 # now move the png files to pngpath
                 # make sure folder exists first
@@ -57,6 +58,7 @@ def img2png_volume(volnumber):
                 cmd = "move " + dirpath +"\\*.png " + pngpath + "/"
                 print cmd
                 os.system(cmd)
+                i += 1
         return True
     
 

@@ -20,8 +20,8 @@ import numpy as np
 import scipy.ndimage as ndimage
 import scipy.misc as misc
 
-import sys
-sys.path.append('pyvoyager')
+# import sys
+# sys.path.append('pyvoyager')
 import config
 import lib
 import libimg

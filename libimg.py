@@ -7,15 +7,21 @@ import scipy.misc as misc # for imsave
 import numpy as np # for zeros, array, copy
 
 
+#. cheating for now
+import config
+
+
 def center_image_file(infile, outfile, rotate_image=False):
     "center the given image file on a planet"
     im = mpim.imread(infile)
     if rotate_image:
         im = np.rot90(im, 2) # rotate by 180
-    #. if use_blobs:
-    # bounding_box = find_center_by_blob(im)
-    bounding_box = find_center_by_box(im)
-    im = draw_bounding_box(im, bounding_box)
+    if config.center_method=='blob':
+        bounding_box = find_center_by_blob(im)
+    else:
+        bounding_box = find_center_by_box(im)
+    if config.draw_bounding_box:
+        im = draw_bounding_box(im, bounding_box)
     im_centered = center_image(im, bounding_box)
     # draw crosshairs
     if config.draw_crosshairs:
@@ -62,7 +68,7 @@ def draw_bounding_box(im, bounding_box):
     
     c = 0.5
     im_bb[x1:x2,y1] = c
-    im_bb[x1:x2,y2] = c
+    im_bb[x1:x2,y2] = c 
     im_bb[x1,y1:y2] = c
     im_bb[x2,y1:y2] = c
     
@@ -81,8 +87,8 @@ def find_center_by_blob(im):
 
     def find_blobs(im):
         "Find set of blobs in the given image"
-        epsilon = 0.1
-        b = 1*(im>epsilon) # threshold to binary image
+        # b = 1*(im>epsilon) # threshold to binary image
+        b = 1*(im>config.blob_epsilon) # threshold to binary image
         lbl, nobjs = ndimage.measurements.label(b) # label objects
         # find position of objects - index is 0-based
         blobs = ndimage.find_objects(lbl)
@@ -116,12 +122,17 @@ def find_center_by_blob(im):
         x2 = im.shape[0] - 1
         y1 = 0
         y2 = im.shape[1] - 1
-    return [x1,y1,x2,y2]
+
+    #. sometimes get > 799
+    if x2>=im.shape[0]:
+        x2 = im.shape[0] - 1
+    if y2>=im.shape[1]:
+        y2 = im.shape[1] - 1
+    bounding_box = [x1,y1,x2,y2]
+    # print bounding_box
+    return bounding_box
 
 
-
-#. cheat for now
-import config
 
 
 # def find_center_by_box(im, epsilon=0, N=5):
@@ -132,10 +143,10 @@ def find_center_by_box(im):
     def find_edges_1d(array):
         "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
         icount = len(array)
-        istart = 4 #. why skip 4?
-        iend = icount
+        istart = 4 #. why skip 4? oh, the running average of N=5 columns
+        iend = icount # skip 4 here also?
         # epsilon is the threshold value over which the smoothed value must cross
-        epsilon = config.epsilon
+        epsilon = config.box_epsilon
         # find first value over threshold
         ifirst = 0
         for i in xrange(istart, iend, 1):
@@ -158,7 +169,7 @@ def find_center_by_box(im):
         diffsq = np.square(diff)
         diffsqln = np.log(diffsq)
         # config.N is the number of rows/columns to average over, for running average
-        N = config.N
+        N = config.box_N
         if N>0:
             smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
             i1, i2 = find_edges_1d(smoothed)

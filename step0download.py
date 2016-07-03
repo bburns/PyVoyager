@@ -31,10 +31,11 @@ def download_volume(volnumber, folder=config.download_folder):
 
 if __name__ == '__main__':
     # download a certain number of volumes
+    n = config.nvolumes_to_download
     for volume in config.volumes:
-        if config.nvolumes_to_download>0:
+        if n>0:
             if download_volume(volume):
-                config.nvolumes_to_download -= 1
+                n -= 1
                 
     
     

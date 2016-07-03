@@ -20,46 +20,60 @@ import libimg
 
 # testfile = 'a.png'
 # testfile = 'b.png'
-# testfile = 'c.png'
-testfile = 'd.png'
+testfile = 'c.png'
+# testfile = 'd.png'
 infile = config.test_folder + testfile
 
-
 #     im = np.rot90(im, 2) # rotate by 180
-
     
-im = cv2.imread(infile)
-
-# rotate 180deg
-# im = cv2.imread(infile, 0) # ,0=bw?
-# rows, cols = im.shape
-# M = cv2.getRotationMatrix2D((cols/2,rows/2),180,1)
-# im = cv2.warpAffine(im, M, (cols, rows))
-
-output = im.copy()
-gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
-
-dp = 1.2
-minDist = 1000
-param1=0.1
-param2=200
-minRadius=10
-maxRadius=100
-circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
-if circles is not None:
-    circles = np.round(circles[0,:]).astype('int')
-    # for (x,y,r) in circles:
-        # cv2.circle(output, (x,y), r, (0,255,0), 4)
-    circle = circles[0]
+circle = libimg.findCircle(infile)
+if circle!=None: #. gives warning
     (x,y,r) = circle
+    output = cv2.imread(infile)
     cv2.circle(output, (x,y), r, (0,255,0), 4)
-    cv2.imshow("output", np.hstack([im, output]))
+    cv2.imshow("output",output)
     cv2.waitKey(0)
-    # return circle # (x,y,r)
-else:
-    print 'no circles'
-    # return None
+
+
+# im = cv2.imread(infile)
+
+# # rotate 180deg
+# # im = cv2.imread(infile, 0) # ,0=bw?
+# # rows, cols = im.shape
+# # M = cv2.getRotationMatrix2D((cols/2,rows/2),180,1)
+# # im = cv2.warpAffine(im, M, (cols, rows))
+
+# output = im.copy()
+# gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
+
+# dp = 1.2
+# minDist = 1000
+# param1=0.1
+# param2=200
+# minRadius=10
+# maxRadius=100
+# circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
+# if circles is not None:
+#     circles = np.round(circles[0,:]).astype('int')
+#     # for (x,y,r) in circles:
+#         # cv2.circle(output, (x,y), r, (0,255,0), 4)
+#     circle = circles[0]
+#     (x,y,r) = circle
+#     cv2.circle(output, (x,y), r, (0,255,0), 4)
+#     cv2.imshow("output", np.hstack([im, output]))
+#     cv2.waitKey(0)
+#     # return circle # (x,y,r)
+# else:
+#     print 'no circles'
+#     # return None
     
+
+
+
+
+
+
+
 # plt.imshow(im)
 # plt.show()
 # mpim.imsave(b, 'b.png')

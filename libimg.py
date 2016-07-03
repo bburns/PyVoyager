@@ -6,6 +6,7 @@ import matplotlib.image as mpim # for imread
 import scipy.misc as misc # for imsave
 import numpy as np # for zeros, array, copy
 
+import cv2
 
 #. cheating for now
 import config
@@ -14,6 +15,7 @@ import config
 
 # def findCircle(im):
 def findCircle(infile):
+    "find best circle in the given image/file"
     
     im = cv2.imread(infile)
 
@@ -25,6 +27,7 @@ def findCircle(infile):
 
     # output = im.copy()
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    # gray = im
 
     dp = 1.2
     minDist = 1000
@@ -36,13 +39,8 @@ def findCircle(infile):
     if circles is not None:
         circles = np.round(circles[0,:]).astype('int')
         circle = circles[0]
-        # (x,y,r) = circle
-        # cv2.circle(output, (x,y), r, (0,255,0), 4)
-        # cv2.imshow("output", np.hstack([im, output]))
-        # cv2.waitKey(0)
         return circle # (x,y,r)
     else:
-        # print 'no circles'
         return None
     
 

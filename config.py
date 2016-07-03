@@ -12,7 +12,8 @@ rotate_image = True
 draw_bounding_box = False
 # draw_crosshairs = True
 draw_crosshairs = False
-frame_rate = 15 # fps
+# frame_rate = 15 # fps
+frame_rate = 20 # fps
 
 
 # number of volumes to process for each step

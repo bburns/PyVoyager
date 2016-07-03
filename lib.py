@@ -29,6 +29,7 @@ def download_file(url, filepath):
         return False
     else:
         cmd = "curl -o " + filepath + " " + url
+        print cmd
         os.system(cmd)
         return True
 

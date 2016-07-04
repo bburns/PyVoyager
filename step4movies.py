@@ -11,10 +11,11 @@ import lib
 
 
 
-def make_movie_volume(volnum):
-    voltitle = lib.get_volume_title(volnum)
-    src = config.centered_folder + '/' + voltitle
-    dst = config.movie_folder + '/' + voltitle
+def makeMovieVolume(volnum):
+    ""
+    voltitle = lib.getVolumeTitle(volnum)
+    src = config.centeredFolder + '/' + voltitle
+    dst = config.movieFolder + '/' + voltitle
     if volnum!=0 and os.path.isdir(dst):
         print "Folder exists: " + dst
         return False
@@ -37,19 +38,19 @@ def make_movie_volume(volnum):
                 print cmd
                 os.system(cmd)
         # now make movie with ffmpeg
-        movie_name = voltitle + '.mp4'
-        lib.pngs_to_mp4(dst, 'img%04d.png', config.frame_rate, movie_name)
+        movieName = voltitle + '.mp4'
+        lib.pngsToMp4(dst, 'img%04d.png', config.frame_rate, movieName)
         return True
 
         
 def main():
-    # make_movie_volume(0)
+    # makeMovieVolume(0)
     
     # center a certain number of volumes
-    n = config.nvolumes_to_movieize
+    n = config.nvolumesToMovieize
     for volume in config.volumes:
         if n>0:
-            if make_movie_volume(volume):
+            if makeMovieVolume(volume):
                 n -= 1
                 
 if __name__ == '__main__':

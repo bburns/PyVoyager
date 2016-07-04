@@ -12,11 +12,11 @@ import config
 import lib
 
         
-def download_volume(volnumber, folder=config.download_folder):
+def downloadVolume(volnumber, folder=config.downloadFolder):
     "download a voyager image volume to the given folder"
-    # eg download_volume(5101)
-    url = lib.get_download_url(volnumber)
-    zipfilepath = lib.get_zipfilepath(volnumber)
+    # eg downloadVolume(5101)
+    url = lib.getDownloadUrl(volnumber)
+    zipfilepath = lib.getZipfilepath(volnumber)
     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
     filepath = folder + "/" + filetitle
     if os.path.isfile(filepath):
@@ -25,16 +25,16 @@ def download_volume(volnumber, folder=config.download_folder):
     else:
         print "Downloading " + url
         print "         to " + filepath
-        return lib.download_file(url, filepath)
+        return lib.downloadFile(url, filepath)
         # return True
     
 
 if __name__ == '__main__':
     # download a certain number of volumes
-    n = config.nvolumes_to_download
+    n = config.nvolumesToDownload
     for volume in config.volumes:
         if n>0:
-            if download_volume(volume):
+            if downloadVolume(volume):
                 n -= 1
                 
     

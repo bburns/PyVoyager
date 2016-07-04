@@ -14,7 +14,7 @@ import lib
 
 imagetype = "RAW" # CALIB, CLEANED, GEOMED, or RAW
 filespec = "*" + imagetype + ".img"
-img2png_options = "-fnamefilter" # append filter name, eg _ORANGE
+img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 
 
 def img2png(dirpath):
@@ -23,18 +23,18 @@ def img2png(dirpath):
     # savedir = os.getcwd()
     os.chdir(dirpath)
     # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + img2png_options
+    cmd = "img2png " + filespec + " " + img2pngOptions
     print cmd
     os.system(cmd)
     # os.chdir(savedir)
 
 
-def img2png_volume(volnumber):
+def img2pngVolume(volnumber):
     "convert img files in a voyager volume to pngs"
     import os
     import os.path
-    unzippedpath = lib.get_unzippedpath(volnumber)
-    pngpath = lib.get_pngpath(volnumber)
+    unzippedpath = lib.getUnzippedpath(volnumber)
+    pngpath = lib.getPngpath(volnumber)
     if os.path.isdir(pngpath):
         print "Folder exists: " + pngpath
         return False
@@ -64,13 +64,13 @@ def img2png_volume(volnumber):
 
 def main():
     
-    # img2png_volume(5102)
+    # img2pngVolume(5102)
     
     # convert a certain number of volumes
-    n = config.nvolumes_to_png
+    n = config.nvolumesToPng
     for volume in config.volumes:
         if n>0:
-            if img2png_volume(volume):
+            if img2pngVolume(volume):
                 n -= 1
                 
 

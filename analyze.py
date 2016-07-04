@@ -31,14 +31,14 @@ import libimg
 # testfile = 'a.png'
 # testfile = 'a8x8.png'
 testfile = 'b.png'
-infile = config.test_folder + testfile
+infile = config.testFolder + testfile
 
 
 # read image
 
 im = mpim.imread(infile) # load image
 
-if config.rotate_image:
+if config.rotateImage:
     im = np.rot90(im, 2) # rotate by 180
 
 # process

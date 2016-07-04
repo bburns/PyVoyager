@@ -12,10 +12,19 @@ import cv2
 import config
 
 
-
-# def findCircle(im):
 def findCircle(infile):
-    "find best circle in the given image/file"
+    "find best? circle in given image/file"
+    circles = findCircles(infile)
+    if circles!=None:
+        circle = circles[0]
+        return circle # (x,y,r)
+    else:
+        return None
+
+    
+# def findCircles(infile):
+def findCircles(im):
+    "find circles in the given image/file"
     
     im = cv2.imread(infile)
 
@@ -27,54 +36,58 @@ def findCircle(infile):
 
     # output = im.copy()
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    # gray = im
 
-    dp = 1.2
-    minDist = 1000
+    dp = 1.2 # size of parameter space relative to input image
+    minDist = 1000 # distance between circles
+    # minDist = 1 # distance between circles
     param1=0.1
     param2=200
     minRadius=10
     maxRadius=100
-    circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, param1, param2, minRadius, maxRadius)
+    # maxRadius=18 # too big
+    # maxRadius=17 # too small
+    circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT,
+                               dp, minDist, param1, param2, minRadius, maxRadius)
     if circles is not None:
         circles = np.round(circles[0,:]).astype('int')
-        circle = circles[0]
-        return circle # (x,y,r)
+        # circle = circles[0]
+        # return circle # (x,y,r)
+        return circles # array of (x,y,r)
     else:
         return None
     
 
 
 
-
-
-def center_image_file(infile, outfile, rotate_image=False):
+def centerImageFile(infile, outfile, rotateImage=False):
     "center the given image file on a planet"
     im = mpim.imread(infile)
-    if rotate_image:
+    if rotateImage:
         im = np.rot90(im, 2) # rotate by 180
-    if config.center_method=='blob':
-        bounding_box = find_center_by_blob(im)
-    else:
-        bounding_box = find_center_by_box(im)
-    if config.draw_bounding_box:
-        im = draw_bounding_box(im, bounding_box)
-    im_centered = center_image(im, bounding_box)
+    if config.centerMethod=='blob':
+        boundingBox = findCenterByBlob(im)
+    elif config.centerMethod=='box':
+        boundingBox = findCenterByBox(im)
+    elif config.centerMethod=='all':
+        boundingBox = findBoundingBox(im)
+    if config.drawBoundingBox:
+        im = drawBoundingBox(im, boundingBox)
+    imCentered = centerImage(im, boundingBox)
     # draw crosshairs
-    if config.draw_crosshairs:
-        im_centered[399, 0:799] = 0.25
-        im_centered[0:799, 399] = 0.25
-    misc.imsave(outfile, im_centered)
+    if config.drawCrosshairs:
+        imCentered[399, 0:799] = 0.25
+        imCentered[0:799, 399] = 0.25
+    misc.imsave(outfile, imCentered)
     return True
     
 
-def center_image(im, bounding_box):
+def centerImage(im, boundingBox):
     "center image on bounding box, crop to it, return new image"
     
-    # cx, cy = find_center_by_blob(im)
-    # cx, cy = find_center_by_edges(im)
+    # cx, cy = findCenterByBlob(im)
+    # cx, cy = findCenterBy_edges(im)
     # x1,x2,y1,y2 = find_object_edges(im)
-    [x1,y1,x2,y2] = bounding_box
+    [x1,y1,x2,y2] = boundingBox
     cx = (x1+x2)/2.0
     cy = (y1+y2)/2.0
     
@@ -96,42 +109,59 @@ def center_image(im, bounding_box):
     return imcrop
 
 
-def draw_bounding_box(im, bounding_box):
+def drawBoundingBox(im, boundingBox):
     "draw a box on image, return new image"
     
-    [x1,y1,x2,y2] = bounding_box
+    [x1,y1,x2,y2] = boundingBox
     
-    im_bb = np.copy(im)
+    imBox = np.copy(im)
     
     c = 0.5
-    im_bb[x1:x2,y1] = c
-    im_bb[x1:x2,y2] = c 
-    im_bb[x1,y1:y2] = c
-    im_bb[x2,y1:y2] = c
+    imBox[x1:x2,y1] = c
+    imBox[x1:x2,y2] = c 
+    imBox[x1,y1:y2] = c
+    imBox[x2,y1:y2] = c
     
     #. or this, but what is plt?
     # plt.gca().add_patch(patches.Rectangle((y1,x1), y2-y1, x2-x1, fill=False, edgecolor="green", linewidth=0.5))
     
-    return im_bb
+    return imBox
 
 
 
-def find_center_by_blob(im):
+def findBoundingBox(im):
+    """find the center of a planet using blobs, hough circle detection, and/or other means,
+    and return the bounding box"""
+    boundingBox = findBoundingBoxByBlob(im)
+    [x1,y1,x2,y2] = boundingBox
+    width = x2 - x1
+    height = y2 - y1
+    if abs(width-height) > 10:
+        x,y,r = findCircle(im)
+        x1 = x-r
+        x2 = x+r
+        y1 = y-r
+        y2 = y+r
+        boundingBox = [x1,y1,x2,y2]
+    return boundingBox
+    
+
+def findBoundingBoxByBlob(im):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
     
     # for blob detection
     import scipy.ndimage as ndimage # for measurements, find_objects
 
-    def find_blobs(im):
+    def findBlobs(im):
         "Find set of blobs in the given image"
         # b = 1*(im>epsilon) # threshold to binary image
-        b = 1*(im>config.blob_epsilon) # threshold to binary image
+        b = 1*(im>config.blobEpsilon) # threshold to binary image
         lbl, nobjs = ndimage.measurements.label(b) # label objects
         # find position of objects - index is 0-based
         blobs = ndimage.find_objects(lbl)
         return blobs
 
-    def find_largest_blob(blobs):
+    def findLargestBlob(blobs):
         "Find largest blob in the given array of blobs"
         widthmax = 0
         heightmax = 0
@@ -144,10 +174,10 @@ def find_center_by_blob(im):
                 largest = blob
         return largest
 
-    blobs = find_blobs(im)
+    blobs = findBlobs(im)
     if len(blobs)>0:
         # find largest object
-        blob = find_largest_blob(blobs)
+        blob = findLargestBlob(blobs)
         # get bounding box
         x1 = blob[0].start
         x2 = blob[0].stop
@@ -165,25 +195,25 @@ def find_center_by_blob(im):
         x2 = im.shape[0] - 1
     if y2>=im.shape[1]:
         y2 = im.shape[1] - 1
-    bounding_box = [x1,y1,x2,y2]
-    # print bounding_box
-    return bounding_box
+    boundingBox = [x1,y1,x2,y2]
+    # print boundingBox
+    return boundingBox
 
 
 
 
-# def find_center_by_box(im, epsilon=0, N=5):
-def find_center_by_box(im):
+# def findCenterByBox(im, epsilon=0, N=5):
+def findCenterByBox(im):
     "find edges of largest object in image based on the most prominent edges, and return bounding box"
 
-    # def find_edges_1d(a, epsilon = 0):
-    def find_edges_1d(array):
+    # def findEdges1d(a, epsilon = 0):
+    def findEdges1d(array):
         "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
         icount = len(array)
         istart = 4 #. why skip 4? oh, the running average of N=5 columns
         iend = icount # skip 4 here also?
         # epsilon is the threshold value over which the smoothed value must cross
-        epsilon = config.box_epsilon
+        epsilon = config.boxEpsilon
         # find first value over threshold
         ifirst = 0
         for i in xrange(istart, iend, 1):
@@ -198,8 +228,8 @@ def find_center_by_box(im):
                 break
         return ifirst,ilast
 
-    # def find_edges(im, axis, epsilon=0, N=5):
-    def find_edges(im, axis):
+    # def findEdges(im, axis, epsilon=0, N=5):
+    def findEdges(im, axis):
         "find the edges for the given axis (0 or 1), return min,max"
         sums = np.sum(im, axis=axis)
         diff = np.diff(sums)
@@ -209,19 +239,18 @@ def find_center_by_box(im):
         N = config.box_N
         if N>0:
             smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
-            i1, i2 = find_edges_1d(smoothed)
+            i1, i2 = findEdges1d(smoothed)
         else:
-            i1, i2 = find_edges_1d(diffsqln)
+            i1, i2 = findEdges1d(diffsqln)
         return i1, i2
 
-    x1, x2 = find_edges(im, 1)
-    y1, y2 = find_edges(im, 0)
+    x1, x2 = findEdges(im, 1)
+    y1, y2 = findEdges(im, 0)
     
-    #. now try to make it a square - could assume that the smaller one is correct...
-    # because seem to get a lot of those cases
+    #. now try to make it a square
     
-    bounding_box = [x1,y1,x2,y2]
-    return bounding_box
+    boundingBox = [x1,y1,x2,y2]
+    return boundingBox
 
 
 
@@ -229,26 +258,28 @@ def find_center_by_box(im):
 
 def test():
     
-    infile = 'test/test.png'
+    # infile = 'test/test.png'
+    infile = 'test/test2.png'
     
     # load image
     im = mpim.imread(infile)
     
     # find bounding box around planet
-    # bounding_box = find_center_by_blob(im)
-    bounding_box = find_center_by_box(im)
-    print bounding_box
+    # boundingBox = findBoundingBoxByBlob(im)
+    # boundingBox = findCenterByBox(im)
+    boundingBox = findBoundingBox(im)
+    print boundingBox
 
     # draw bounding box, save image
-    im_bb = draw_bounding_box(im, bounding_box)
-    misc.imsave('test/test_bounding_box.png', im_bb)
+    imBox = drawBoundingBox(im, bounding_box)
+    misc.imsave('test/test_bounding_box.png', imBox)
 
     # center image, save image
-    im_centered = center_image(im, bounding_box)
-    misc.imsave('test/test_centered.png', im_centered)
+    imCentered = centerImage(im, boundingBox)
+    misc.imsave('test/test_centered.png', imCentered)
 
     # test the center_image_file fn
-    center_image_file('test/test.png', 'test/test_cif.png')
+    centerImageFile('test/test.png', 'test/test_cif.png')
     
     print 'done.'
     

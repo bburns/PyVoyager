@@ -11,10 +11,10 @@ import libimg
 prefix = 'centered_'
 
 
-def center_volume(volnumber):
+def centerVolume(volnumber):
     ""
-    pngpath = lib.get_pngpath(volnumber)
-    centeredpath = lib.get_centeredpath(volnumber)
+    pngpath = lib.getPngpath(volnumber)
+    centeredpath = lib.getCenteredpath(volnumber)
     if volnumber!=0 and os.path.isdir(centeredpath):
         print "Folder exists: " + pngpath
         return False
@@ -32,19 +32,19 @@ def center_volume(volnumber):
                     print 'file ' + str(i) + ': ' + infile
                     outfile = centeredpath + '/' + prefix + filename
                     # print '  ' + outfile
-                    libimg.center_image_file(infile, outfile, config.rotate_image)
+                    libimg.centerImageFile(infile, outfile, config.rotateImage)
                     i += 1
         return True
 
 
 def main():
-    # center_volume(0)
+    # centerVolume(0)
     
     # center a certain number of volumes
-    n = config.nvolumes_to_center
+    n = config.nvolumesToCenter
     for volume in config.volumes:
         if n>0:
-            if center_volume(volume):
+            if centerVolume(volume):
                 n -= 1
                 
 if __name__ == '__main__':

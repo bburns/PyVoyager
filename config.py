@@ -7,56 +7,57 @@
 
 
 # output options
-rotate_image = True
-# draw_bounding_box = True
-draw_bounding_box = False
-# draw_crosshairs = True
-draw_crosshairs = False
-# frame_rate = 15 # fps
-frame_rate = 20 # fps
+rotateImage = True
+# drawBoundingBox = True
+drawBoundingBox = False
+# drawCrosshairs = True
+drawCrosshairs = False
+# frameRate = 15 # fps
+frameRate = 20 # fps
 
 
 # number of volumes to process for each step
-nvolumes_to_download = 2
-nvolumes_to_unzip = 1
-nvolumes_to_png = 1
-nvolumes_to_center = 1
-nvolumes_to_movieize = 1
+nvolumesToDownload = 2
+nvolumesToUnzip = 1
+nvolumesToPng = 1
+nvolumesToCenter = 1
+nvolumesToMovieize = 1
 
 # method of center detection
-center_method = 'blob'
-# center_method = 'box'
+# centerMethod = 'blob'
+# centerMethod = 'box'
+centerMethod = 'all'
 
 # blob detection
 # binary threshold
-# blob_epsilon = 0.05 # way too broad
-# blob_epsilon = 0.1 # misses some dim edges of planet
-blob_epsilon = 0.09
+# blobEpsilon = 0.05 # way too broad
+# blobEpsilon = 0.1 # misses some dim edges of planet
+blobEpsilon = 0.09
 
 # bounding box detection
 # N is the number of rows/columns to average over, for running average
 # epsilon is the threshold value over which the smoothed value must cross
-box_N = 5
-box_epsilon = 0.2 # this is enough to ignore the dead pixel
+boxN = 5
+boxEpsilon = 0.2 # this is enough to ignore the dead pixel
 
 
 
 # voyager archive url
-download_url = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 # folders for data and images
 # use offline folder for large datasets (multi gigabyte)
-online_folder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
-offline_folder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/" #. will be f:/...
+onlineFolder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
+offlineFolder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/" #. will be f:/...
 
-download_folder = offline_folder + "step0_downloads"
-unzip_folder = offline_folder + "step1_unzips"
-png_folder = online_folder + "step2_pngs"
-centered_folder = online_folder + "step3_centered"
-movie_folder = online_folder + "step4_movies"
-combined_folder = online_folder + "step5_combined"
+downloadFolder = offlineFolder + "step0_downloads"
+unzipFolder = offlineFolder + "step1_unzips"
+pngFolder = onlineFolder + "step2_pngs"
+centeredFolder = onlineFolder + "step3_centered"
+movieFolder = onlineFolder + "step4_movies"
+combinedFolder = onlineFolder + "step5_combined"
 
-test_folder = 'c:/users/bburns/dropbox/docs/projects/voyager/test_cases/'
+testFolder = 'c:/users/bburns/dropbox/docs/projects/voyager/test_cases/'
 
 
 # voyager ISS volumes

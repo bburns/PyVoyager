@@ -11,17 +11,17 @@ import config # constants
 
 
 
-def pngs_to_mp4(folder, image_filespec, frame_rate, output_filename):
+def pngsToMp4(folder, imageFilespec, frameRate, outputFilename):
     "convert a sequentially numbered set of pngs to an mp4 movie"
     os.chdir(folder)
     # eg "ffmpeg -y -i img%04d.png -r 15 a.mp4"
-    cmd = 'ffmpeg -y -i %s -r %d %s' % (image_filespec, frame_rate, output_filename)
+    cmd = 'ffmpeg -y -i %s -r %d %s' % (imageFilespec, frameRate, outputFilename)
     print cmd
     os.system(cmd)
 
 
 
-def download_file(url, filepath):
+def downloadFile(url, filepath):
     "download a file from a url to a given filepath"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     if os.path.isfile(filepath):
@@ -34,63 +34,63 @@ def download_file(url, filepath):
         return True
 
 
-def get_download_url(volnumber):
+def getDownloadUrl(volnumber):
     "get url to download a volume"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     volprefix = str(volnumber)[0:1] # first digit (=planet number)
-    url = config.download_url.format(volprefix, volnumber)
+    url = config.downloadUrl.format(volprefix, volnumber)
     return url
 
 
-def get_volume_title(volnumber):
+def getVolumeTitle(volnumber):
     if volnumber==0:
         return "test"
     else:
         return "VGISS_" + str(volnumber)
 
 
-def get_zipfilepath(volnumber):
+def getZipfilepath(volnumber):
     "get filepath for zipfile corresponding to a volume number"
     # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
-    sourcefolder = config.download_folder
-    url = get_download_url(volnumber)
+    sourcefolder = config.downloadFolder
+    url = getDownloadUrl(volnumber)
     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
     zipfilepath = sourcefolder + "/" + filetitle
     return zipfilepath
     
 
-def get_unzippedpath(volnumber):
+def getUnzippedpath(volnumber):
     "get folder path for unzipped volume"
     # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
-    unzipfolder = config.unzip_folder
-    url = get_download_url(volnumber)
-    filetitle = get_volume_title(volnumber)
+    unzipfolder = config.unzipFolder
+    url = getDownloadUrl(volnumber)
+    filetitle = getVolumeTitle(volnumber)
     unzippedpath = unzipfolder + '/' + filetitle
     return unzippedpath
 
 
-def get_pngpath(volnumber):
+def getPngpath(volnumber):
     "get folder path for png images"
     # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
-    pngfolder = config.png_folder
-    filetitle = get_volume_title(volnumber)
+    pngfolder = config.pngFolder
+    filetitle = getVolumeTitle(volnumber)
     pngpath = pngfolder + '/' + filetitle
     return pngpath
 
-def get_centeredpath(volnumber):
+def getCenteredpath(volnumber):
     "get folder path for centered images"
     # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
-    centeredfolder = config.centered_folder
-    filetitle = get_volume_title(volnumber)
+    centeredfolder = config.centeredFolder
+    filetitle = getVolumeTitle(volnumber)
     centeredpath = centeredfolder + '/' + filetitle
     return centeredpath
 
 
-def unzip_file(zipfile, destfolder):
+def unzipFile(zipfile, destfolder):
     """unzip a file to a destination folder.
     assumes zip file is a .tar or .tar.gz file.
     doesn't unzip file if destination folder already exists.
-    eg unzip_file('test/unzip_test.tar', 'test/unzip_test')"""
+    eg unzipFile('test/unzip_test.tar', 'test/unzip_test')"""
     #. but note - tar file can have a top-level folder, or not -
     # this is assuming that it does, which is why we extract the tarfile
     # to the parent folder of destfolder.
@@ -107,15 +107,15 @@ def unzip_file(zipfile, destfolder):
 
     
 def test():
-    print get_download_url(5101)
-    print get_zipfilepath(5101)
-    print get_unzippedpath(5101)
-    print get_pngpath(5101)
-    print get_pngpath(0)
+    print getDownload_url(5101)
+    print getZipfilepath(5101)
+    print getUnzippedpath(5101)
+    print getPngpath(5101)
+    print getPngpath(0)
     
     #. test this with a tar.gz
     print 'unzipping test file...'
-    unzip_file('test/unzip_test.tar', 'test/unzip_test')
+    unzipFile('test/unzip_test.tar', 'test/unzip_test')
     print 'All done.'
     
 if __name__ == '__main__':

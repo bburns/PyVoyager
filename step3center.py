@@ -40,14 +40,14 @@ def centerVolume(volnumber):
 def main():
     
     # test volume
-    centerVolume(0)
+    # centerVolume(0)
     
-    # # center a certain number of volumes
-    # n = config.nvolumesToCenter
-    # for volume in config.volumes:
-    #     if n>0:
-    #         if centerVolume(volume):
-    #             n -= 1
+    # center a certain number of volumes
+    n = config.nvolumesToCenter
+    for volume in config.volumes:
+        if n>0:
+            if centerVolume(volume):
+                n -= 1
                 
 if __name__ == '__main__':
     main()

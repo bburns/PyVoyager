@@ -212,10 +212,16 @@ def findBoundingBox(im):
     and return the bounding box"""
     boundingBox = findBoundingBoxByBlob(im)
     [x1,y1,x2,y2] = boundingBox
+    # make sure box is ~square
     width = x2 - x1
     height = y2 - y1
     if abs(width-height) > 10:
-        boundingBox = findBoundingBoxByCircle(im)
+        # # make sure center of box would be on screen (hough doesn't work otherwise)
+        # x = (x1+x2)/2
+        # y = (y1+y2)/2
+        # if x>=0 and x<800 and y>=0 and y<800:
+        #     boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
+        boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
     return boundingBox
     
 
@@ -327,7 +333,8 @@ def test():
     print 'start'
     
     # infile = 'test/test.png'  # simple view
-    infile = 'test/test2.png'  # gap in planet
+    # infile = 'test/test2.png'  # gap in planet
+    infile = 'test/test3.png'  # limb at edge of image; center offscreen
     
     # load image
     im = mpim.imread(infile)
@@ -335,11 +342,11 @@ def test():
     # rotate image
     im = np.rot90(im, 2) # rotate by 180
     
-    # find circle
-    circle = findCircle(im)
-    print circle
-    im = drawCircle(im, circle)
-    misc.imsave('test/test_circle.png', im)
+    # # find circle
+    # circle = findCircle(im)
+    # print circle
+    # im = drawCircle(im, circle)
+    # misc.imsave('test/test_circle.png', im)
     
     # find bounding box around planet
     # boundingBox = findBoundingBoxByBlob(im)

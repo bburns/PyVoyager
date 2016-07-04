@@ -10,22 +10,26 @@
 # output options
 rotateImage = True
 
-drawBoundingBox = True
-# drawBoundingBox = False
+# drawBoundingBox = True
+drawBoundingBox = False
 
-drawCrosshairs = True
-# drawCrosshairs = False
+# drawCrosshairs = True
+drawCrosshairs = False
 
+# use slow frame rate for first dataset
+# switch to higher rate at frame 242 of set 5103
+frameRate = 10 # fps
 # frameRate = 15 # fps
-frameRate = 20 # fps
+# frameRate = 20 # fps
+# frameRate = 30 # fps
 
 
 # number of volumes to process for each step
 nvolumesToDownload = 1
 nvolumesToUnzip = 1
 nvolumesToPng = 1
-nvolumesToCenter = 1
-nvolumesToMovieize = 1
+nvolumesToCenter = 5
+nvolumesToMovieize = 6
 
 # method of center detection
 # centerMethod = 'blob'

@@ -9,6 +9,27 @@ import os
 import config
 import lib
 
+def copyFiles(src, dst):
+    try:
+        os.mkdir(dst)
+    except:
+        pass
+    # copy files, numbering them sequentially
+    i = 0
+    for root, dirs, files in os.walk(src):
+        for infile in files:
+            inpath = src + '/' + infile
+            # print inpath
+            outfile = 'img%04d.png' % i
+            outpath = dst + '/' + outfile
+            # print outpath
+            i += 1
+            # print 'copy ' + str(i) + ': ' + inpath
+            cmd = "cp " + inpath + " " + outpath
+            # print cmd
+            os.system(cmd)
+            print 'copied ' + str(i) + ': ' + outpath
+    
 
 
 def makeMovieVolume(volnum):
@@ -20,26 +41,10 @@ def makeMovieVolume(volnum):
         print "Folder exists: " + dst
         return False
     else:
-        try:
-            os.mkdir(dst)
-        except:
-            pass
-        # copy files, numbering them sequentially
-        i = 0
-        for root, dirs, files in os.walk(src):
-            for infile in files:
-                inpath = src + '/' + infile
-                # print inpath
-                outfile = 'img%04d.png' % i
-                outpath = dst + '/' + outfile
-                # print outpath
-                i += 1
-                cmd = "cp " + inpath + " " + outpath
-                print cmd
-                os.system(cmd)
+        copyFiles(src, dst)
         # now make movie with ffmpeg
         movieName = voltitle + '.mp4'
-        lib.pngsToMp4(dst, 'img%04d.png', config.frame_rate, movieName)
+        lib.pngsToMp4(dst, 'img%04d.png', config.frameRate, movieName)
         return True
 
         

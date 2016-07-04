@@ -2,18 +2,14 @@
 # download voyager image archives
 
 
-# import os # for system
 import os.path # for isfile
-# import urllib # for urlretrieve
-# import requests # for get, for progressbar
-# import sys # for stdout
 
 import config
 import lib
 
         
 def downloadVolume(volnumber, folder=config.downloadFolder):
-    "download a voyager image volume to the given folder"
+    "Download a Voyager image volume to the given folder"
     # eg downloadVolume(5101)
     url = lib.getDownloadUrl(volnumber)
     zipfilepath = lib.getZipfilepath(volnumber)
@@ -30,12 +26,14 @@ def downloadVolume(volnumber, folder=config.downloadFolder):
     
 
 if __name__ == '__main__':
-    # download a certain number of volumes
-    n = config.nvolumesToDownload
-    for volume in config.volumes:
-        if n>0:
-            if downloadVolume(volume):
-                n -= 1
+    downloadVolume(5107)
+    
+    # # download a certain number of volumes
+    # n = config.nvolumesToDownload
+    # for volume in config.volumes:
+    #     if n>0:
+    #         if downloadVolume(volume):
+    #             n -= 1
                 
     
     

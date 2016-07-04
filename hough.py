@@ -17,19 +17,21 @@ import libimg
 
 # testfile = 'a.png'
 # testfile = 'b.png'
-# testfile = 'c.png'
-testfile = 'd.png'
+testfile = 'c.png'
+# testfile = 'd.png'
 infile = config.testFolder + testfile
 
     
 # works
-# circle = libimg.findCircle(infile)
-# if circle!=None: #. gives warning
-#     (x,y,r) = circle
-#     output = cv2.imread(infile)
-#     cv2.circle(output, (x,y), r, (0,255,0), 4)
-#     cv2.imshow("output",output)
-#     cv2.waitKey(0)
+# im = mpim.imread(infile)
+im = cv2.imread(infile)
+circle = libimg.findCircle(im)
+if circle!=None: #. gives warning
+    (x,y,r) = circle
+    output = cv2.imread(infile)
+    cv2.circle(output, (x,y), r, (0,255,0), 4)
+    cv2.imshow("output",output)
+    cv2.waitKey(0)
 
 # works
 # circles = libimg.findCircles(infile)

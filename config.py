@@ -1,5 +1,6 @@
 
 # voyager config options
+#--------------------------------------------------------------------------------
 
 # use like the following:
 # import config
@@ -8,16 +9,19 @@
 
 # output options
 rotateImage = True
-# drawBoundingBox = True
-drawBoundingBox = False
-# drawCrosshairs = True
-drawCrosshairs = False
+
+drawBoundingBox = True
+# drawBoundingBox = False
+
+drawCrosshairs = True
+# drawCrosshairs = False
+
 # frameRate = 15 # fps
 frameRate = 20 # fps
 
 
 # number of volumes to process for each step
-nvolumesToDownload = 2
+nvolumesToDownload = 1
 nvolumesToUnzip = 1
 nvolumesToPng = 1
 nvolumesToCenter = 1
@@ -26,6 +30,7 @@ nvolumesToMovieize = 1
 # method of center detection
 # centerMethod = 'blob'
 # centerMethod = 'box'
+# centerMethod = 'circle'
 centerMethod = 'all'
 
 # blob detection

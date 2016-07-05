@@ -78,7 +78,8 @@ voyager2uranus = range(7201,7207)
 voyager2neptune = range(8201,8210)
 
 flights = {
-    51: voyager1jupiter,
+    # 51: voyager1jupiter,
+    51: [5104,5105],
     61: voyager1saturn,
     52: voyager2jupiter,
     62: voyager2saturn,

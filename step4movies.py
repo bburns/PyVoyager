@@ -2,7 +2,7 @@
 
 # copy centered pngs to movie folder, renaming/numbering them
 # use ffmpeg to make the mp4 file
-#... wasteful but will do for now
+# wasteful but will do for now
 
 import os
 
@@ -15,6 +15,7 @@ def copyFiles(src, dst):
     except:
         pass
     # copy files, numbering them sequentially
+    # (wasteful, but necessary as ffmpeg doesn't handle globbing on windows)
     i = 0
     for root, dirs, files in os.walk(src):
         for infile in files:
@@ -43,7 +44,7 @@ def makeMovieVolume(volnum):
     else:
         copyFiles(src, dst)
         # now make movie with ffmpeg
-        movieName = voltitle + '.mp4'
+        movieName = '_' + voltitle + '.mp4' # prepend _ so sorts at start of file list
         lib.pngsToMp4(dst, 'img%04d.png', config.frameRate, movieName)
         return True
 

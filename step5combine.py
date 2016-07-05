@@ -12,10 +12,7 @@ def makeFlightVolumeList(flightnum):
     "build a file containing a list of all the movie files for the given flyby"
     # this is used by ffmpeg to combine the movies into one movie
     flights = config.flights
-    # for k,v in flights.iteritems():
-    #     print k,v
     vols = flights[flightnum]
-    # print vols
     combinedName = 'VGISS_' + str(flightnum)
     moviePathFile = config.combinedFolder + '/' + combinedName + '.txt'
     print moviePathFile
@@ -23,9 +20,9 @@ def makeFlightVolumeList(flightnum):
     for vol in vols:
         voltitle = lib.getVolumeTitle(vol)
         s = config.movieFolder
-        movieName = voltitle + '.mp4'
+        movieName = '_' + voltitle + '.mp4' # prepend _ so will sort at beginning of file list
         moviePath = s + '/' + voltitle + '/' + movieName
-        # eg file 'C:\Users\bburns\Desktop\DeskDrawer\@voyager\@voyager\data\step4_movies\VGISS_5101\VGISS_5101.mp4'
+        # eg file 'C:\Users\bburns\Desktop\DeskDrawer\@voyager\@voyager\data\step4_movies\VGISS_5101\_VGISS_5101.mp4'
         line = "file '" + moviePath + "'"
         print line
         print >> f, line

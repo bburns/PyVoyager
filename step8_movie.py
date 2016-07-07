@@ -1,5 +1,5 @@
 
-# combine individual movies using ffmpeg
+# combine individual movies into one using ffmpeg
 
 # http://trac.ffmpeg.org/wiki/Concatenate#demuxer
 
@@ -17,7 +17,7 @@ def makeFlightVolumeList(flightnum):
     flights = config.flights
     vols = flights[flightnum]
     combinedName = 'VGISS_' + str(flightnum)
-    moviePathFile = config.combinedFolder + '/' + combinedName + '.txt'
+    moviePathFile = config.movieFolder + '/' + combinedName + '.txt'
     print moviePathFile
     f = open(moviePathFile, 'w')
     for vol in vols:
@@ -35,7 +35,7 @@ def makeFlightVolumeList(flightnum):
 def combineFlight(flightnum):
     "combine individual movies into single movie for each flyby"
     makeFlightVolumeList(flightnum)
-    os.chdir(config.combinedFolder)
+    os.chdir(config.movieFolder)
     flightname = "VGISS_" + str(flightnum)
     flightVolumeList = flightname + '.txt'
     outfile = flightname + ".mp4"

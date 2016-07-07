@@ -66,8 +66,8 @@ pngFolder      = onlineFolder  + "step3_pngs"
 centeredFolder = onlineFolder  + "step4_centered"
 coloredFolder  = onlineFolder  + "step5_colored"
 framesFolder   = onlineFolder  + "step6_frames"
-movieFolder    = onlineFolder  + "step7_movies"
-combinedFolder = onlineFolder  + "step8_movie"
+moviesFolder    = onlineFolder  + "step7_movies"
+movieFolder = onlineFolder  + "step8_movie"
 
 
 # voyager ISS volumes

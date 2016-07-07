@@ -37,7 +37,7 @@ def makeMovieVolume(volnum):
     ""
     voltitle = lib.getVolumeTitle(volnum)
     src = config.centeredFolder + '/' + voltitle
-    dst = config.movieFolder + '/' + voltitle
+    dst = config.moviesFolder + '/' + voltitle
     if volnum!=0 and os.path.isdir(dst):
         print "Folder exists: " + dst
         return False

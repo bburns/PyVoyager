@@ -12,21 +12,22 @@ import config
 import lib
 
 
-imagetype = "RAW" # CALIB, CLEANED, GEOMED, or RAW
-filespec = "*" + imagetype + ".img"
+#. do all imagetypes
+# imagetypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imagetype = "RAW"
+# filespec = "*" + imagetype + ".img"
+filespec = "*" # do all image types
 img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 
 
 def img2png(dirpath):
     "convert all img files matching filespec to png files"
     import os
-    # savedir = os.getcwd()
     os.chdir(dirpath)
     # eg "img2png *.img -fnamefilter"
     cmd = "img2png " + filespec + " " + img2pngOptions
     print cmd
     os.system(cmd)
-    # os.chdir(savedir)
 
 
 def img2pngVolume(volnumber):
@@ -51,10 +52,7 @@ def img2pngVolume(volnumber):
                 img2png(dirpath)
                 # now move the png files to pngpath
                 # make sure folder exists first
-                try:
-                    os.mkdir(pngpath) 
-                except:
-                    pass
+                lib.mkdir(pngpath)
                 cmd = "move " + dirpath +"\\*.png " + pngpath + "/"
                 print cmd
                 os.system(cmd)

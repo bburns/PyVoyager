@@ -12,7 +12,7 @@ prefix = 'centered_'
 
 
 def centerVolume(volnumber):
-    ""
+    "center all the images in the given volume"
     pngpath = lib.getPngpath(volnumber)
     centeredpath = lib.getCenteredpath(volnumber)
     if volnumber!=0 and os.path.isdir(centeredpath):
@@ -29,9 +29,8 @@ def centerVolume(volnumber):
                 ext = filename[-4:]
                 if ext=='.png':
                     infile = pngpath + '/' + filename
-                    print 'file ' + str(i) + ': ' + infile
                     outfile = centeredpath + '/' + prefix + filename
-                    # print '  ' + outfile
+                    print 'file ' + str(i) + ': ' + infile
                     libimg.centerImageFile(infile, outfile, config.rotateImage)
                     i += 1
         return True

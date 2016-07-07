@@ -56,26 +56,53 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 # folders for data and images
 # use offline folder for large datasets (multi gigabyte)
-onlineFolder  = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
-offlineFolder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/" #. will be f:/...
-testFolder    = 'c:/users/bburns/dropbox/docs/projects/voyager/test_cases/'
+onlineFolder  = "../data/"
+offlineFolder = "../data/" #. will be f:/...
+testFolder    = '../test_cases/'
 
 downloadFolder = offlineFolder + "step1_downloads"
 unzipFolder    = offlineFolder + "step2_unzips"
 pngFolder      = onlineFolder  + "step3_pngs"
 centeredFolder = onlineFolder  + "step4_centered"
-coloredFolder  = onlineFolder  + "step5_colored"
-framesFolder   = onlineFolder  + "step6_frames"
-moviesFolder    = onlineFolder  + "step7_movies"
-movieFolder = onlineFolder  + "step8_movie"
+subfolderFolder = onlineFolder  + "step5_subfolders"
+coloredFolder  = onlineFolder  + "step6_colored"
+framesFolder   = onlineFolder  + "step7_frames"
+moviesFolder   = onlineFolder  + "step8_movies"
+movieFolder    = onlineFolder  + "step9_movie"
+
+
+# index file and useful columns
+indexfile     = '../data/catalog/cumindex.tab'
+col_filename = 2
+col_craft = 4 # eg VOYAGER 1
+col_phase = 5 # eg JUPITER ENCOUNTER
+col_target = 6 # eg IO
+col_instrument = 11 # eg WIDE ANGLE CAMERA
+col_filter = 16 # eg ORANGE
+col_note = 19 # eg 3 COLOR ROTATION MOVIE
+
+# index file field value translations
+translations = {
+    'VOYAGER 1': 'Voyager1',
+    'VOYAGER 2': 'Voyager2',
+    'JUPITER ENCOUNTER': 'Jupiter',
+    'WIDE ANGLE CAMERA': 'Wide',
+    'NARROW ANGLE CAMERA': 'Narrow',
+    }
+
+
+
+
+
+
 
 
 # voyager ISS volumes
 voyager1jupiter = range(5101,5120)
-voyager1saturn = range(6101,6121)
+voyager1saturn  = range(6101,6121)
 voyager2jupiter = range(5201,5214)
-voyager2saturn = range(6201,6215)
-voyager2uranus = range(7201,7207)
+voyager2saturn  = range(6201,6215)
+voyager2uranus  = range(7201,7207)
 voyager2neptune = range(8201,8210)
 
 flights = {

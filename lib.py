@@ -2,15 +2,32 @@
 # library routines for pyvoyager
 # used by different files
 
-import os # for system
+import os # for system, mkdir, mkdirs
 import os.path # for isfile
 from setuptools import archive_util # for unpack_archive
-
+import errno
 
 import config # constants
 
 
 
+def mkdir(path):
+    "Make a directory, ignoring any errors (eg if it already exists)"
+    try:
+        os.mkdir(path) 
+    except:
+        pass
+
+def mkdir_p(path):
+    "Make a directory tree, ignoring any errors (eg if it already exists)"
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+        
 def pngsToMp4(folder, imageFilespec, frameRate, outputFilename):
     "convert a sequentially numbered set of pngs to an mp4 movie"
     os.chdir(folder)

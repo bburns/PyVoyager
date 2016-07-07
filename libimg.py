@@ -103,16 +103,24 @@ def findCircles(im):
     # param1  -  First method-specific parameter. In case of CV_HOUGH_GRADIENT
     # , it is the higher threshold of the two passed to the Canny() edge
     # detector (the lower one is twice smaller).
+    # Param 1 will set the sensitivity; how strong the edges of the circles need
+    # to be. Too high and it won't detect anything, too low and it will find too
+    # much clutter.
     
     # param2  -  Second method-specific parameter. In case of CV_HOUGH_GRADIENT
     # , it is the accumulator threshold for the circle centers at the detection
     # stage. The smaller it is, the more false circles may be detected. Circles,
     # corresponding to the larger accumulator values, will be returned first.
-    
+    # Param 2 will set how many edge points it needs to find to
+    # declare that it's found a circle. Again, too high will detect nothing, too
+    # low will declare anything to be a circle. The ideal value of param 2 will
+    # be related to the circumference of the circles.
+
     # So, as you can see, internally the HoughCircles function calls the Canny
     # edge detector, this means that you can use a gray image in the function,
     # instead of their contours.
 
+    
     dp = 1.2 # size of parameter space relative to input image
     minDist = 1000 # distance between circles
     # minDist = 1 # distance between circles

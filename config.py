@@ -56,17 +56,18 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 # folders for data and images
 # use offline folder for large datasets (multi gigabyte)
-onlineFolder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
+onlineFolder  = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/"
 offlineFolder = "C:/Users/bburns/Desktop/DeskDrawer/@voyager/@voyager/data/" #. will be f:/...
+testFolder    = 'c:/users/bburns/dropbox/docs/projects/voyager/test_cases/'
 
-downloadFolder = offlineFolder + "step0_downloads"
-unzipFolder = offlineFolder + "step1_unzips"
-pngFolder = onlineFolder + "step2_pngs"
-centeredFolder = onlineFolder + "step3_centered"
-movieFolder = onlineFolder + "step4_movies"
-combinedFolder = onlineFolder + "step5_combined"
-
-testFolder = 'c:/users/bburns/dropbox/docs/projects/voyager/test_cases/'
+downloadFolder = offlineFolder + "step1_downloads"
+unzipFolder    = offlineFolder + "step2_unzips"
+pngFolder      = onlineFolder  + "step3_pngs"
+centeredFolder = onlineFolder  + "step4_centered"
+coloredFolder  = onlineFolder  + "step5_colored"
+framesFolder   = onlineFolder  + "step6_frames"
+movieFolder    = onlineFolder  + "step7_movies"
+combinedFolder = onlineFolder  + "step8_movie"
 
 
 # voyager ISS volumes

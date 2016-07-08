@@ -72,14 +72,17 @@ movieFolder    = onlineFolder  + "step9_movie"
 
 
 # index file and useful columns
-indexfile     = '../data/catalog/cumindex.tab'
-col_filename = 2
+# indexfile     = '../data/catalog/cumindex.tab'
+indexfile     = '../data/catalog/rawimages.tab'
+col_filename = 2 # eg C1389407_GEOMED.IMG
+col_filetype = 3 # eg CALIBRATED_IMAGE
 col_craft = 4 # eg VOYAGER 1
 col_phase = 5 # eg JUPITER ENCOUNTER
 col_target = 6 # eg IO
 col_instrument = 11 # eg WIDE ANGLE CAMERA
 col_filter = 16 # eg ORANGE
 col_note = 19 # eg 3 COLOR ROTATION MOVIE
+
 
 # index file field value translations
 translations = {
@@ -88,10 +91,21 @@ translations = {
     'JUPITER ENCOUNTER': 'Jupiter',
     'WIDE ANGLE CAMERA': 'Wide',
     'NARROW ANGLE CAMERA': 'Narrow',
+    'CALIBRATED_IMAGE': 'Calibrated',
+    'CLEANED_IMAGE': 'Cleaned',
+    'DECOMPRESSED_RAW_IMAGE': 'Raw',
+    'GEOMETRICALLY_CORRECTED_IMAGE': 'Geomed',
     }
 
 
 
+# file databases
+dbfolder = '../data/db/'
+filesdb = dbfolder + 'files.txt'
+centersdb = dbfolder + 'centers.txt'
+compositesdb = dbfolder + 'composites.txt'
+mosaicsdb = dbfolder + 'mosaics.txt'
+moviesdb = dbfolder + 'movies.txt'
 
 
 

@@ -18,7 +18,7 @@ def moveVolumeToSubfolders(volnumber):
     # and attempt to move the row's file to a new subfolder
     
     voltitle = lib.getVolumeTitle(volnumber)
-    centeredfolder = config.centeredFolder + '/' + voltitle
+    centersfolder = config.centersFolder + '/' + voltitle
     
     f = open(config.indexfile, 'rt')
     try:
@@ -52,7 +52,7 @@ def moveVolumeToSubfolders(volnumber):
                 
                 # attempt to copy file
                 # eg 'cp ../data/step3_pngs/foo_ORANGE.png ../data/step4_folders/
-                src = centeredfolder + '/' + filename
+                src = centersfolder + '/' + filename
                 cmd = 'cp ' + src + ' ' + subfolder
                 print cmd
                 os.system(cmd)

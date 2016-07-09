@@ -1,3 +1,4 @@
+
 :: launch vr command handler
 
 :: note: %~dp0 gives you the drive and path of the current batch file,

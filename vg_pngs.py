@@ -16,18 +16,10 @@ import lib
 # imagetypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
 # imagetype = "RAW"
 # filespec = "*" + imagetype + ".img"
-filespec = "*" # do all image types
+# filespec = "*" # do all image types
+
 img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 
-
-def img2png(dirpath):
-    "convert all img files matching filespec to png files"
-    import os
-    os.chdir(dirpath)
-    # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + img2pngOptions
-    print cmd
-    os.system(cmd)
 
 
 def img2pngVolume(volnumber):
@@ -40,6 +32,7 @@ def img2pngVolume(volnumber):
         print "Folder exists: " + pngpath
         return False
     else:
+        lib.mkdir(pngpath) # create folder
         datadir = unzippedpath + '/DATA'
         print "converting imgs to pngs for " + datadir
         # for each dir in thisdir, cd dir, run img2png on all img files
@@ -49,13 +42,8 @@ def img2pngVolume(volnumber):
                 dirpath = os.path.join(root, subdir)
                 dirpath = os.path.abspath(dirpath)
                 print 'dir ' + str(i) + ': ' + dirpath
-                img2png(dirpath)
-                # now move the png files to pngpath
-                # make sure folder exists first
-                lib.mkdir(pngpath)
-                cmd = "move " + dirpath +"\\*.png " + pngpath + "/"
-                print cmd
-                os.system(cmd)
+                filespec = "*" # do all image types
+                lib.img2png(dirpath, filespec, pngpath)
                 i += 1
         return True
     

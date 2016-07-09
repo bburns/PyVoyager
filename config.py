@@ -7,6 +7,10 @@
 # print config.volumes
 
 
+
+filetype = 'RAW'
+
+
 # output options
 rotateImage = True
 
@@ -62,18 +66,19 @@ testFolder    = '../test_cases/'
 
 downloadFolder = offlineFolder + "step1_downloads"
 unzipFolder    = offlineFolder + "step2_unzips"
-pngFolder      = onlineFolder  + "step3_pngs"
-centeredFolder = onlineFolder  + "step4_centered"
-subfolderFolder = onlineFolder  + "step5_subfolders"
-coloredFolder  = onlineFolder  + "step6_colored"
+imagesFolder   = onlineFolder  + "step3_images"
+centersFolder  = onlineFolder  + "step4_centers"
+compositesFolder = onlineFolder  + "step6_composites"
 framesFolder   = onlineFolder  + "step7_frames"
 moviesFolder   = onlineFolder  + "step8_movies"
 movieFolder    = onlineFolder  + "step9_movie"
+targetFolder   = onlineFolder  + "targets"
 
 
 # index file and useful columns
 # indexfile     = '../data/catalog/cumindex.tab'
 indexfile     = '../data/catalog/rawimages.tab'
+col_volume = 0 # eg VGISS_5101
 col_filename = 2 # eg C1389407_GEOMED.IMG
 col_filetype = 3 # eg CALIBRATED_IMAGE
 col_craft = 4 # eg VOYAGER 1
@@ -106,8 +111,6 @@ centersdb = dbfolder + 'centers.txt'
 compositesdb = dbfolder + 'composites.txt'
 mosaicsdb = dbfolder + 'mosaics.txt'
 moviesdb = dbfolder + 'movies.txt'
-
-
 
 
 

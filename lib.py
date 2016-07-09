@@ -6,9 +6,60 @@ import os # for system, mkdir, mkdirs
 import os.path # for isfile
 from setuptools import archive_util # for unpack_archive
 import errno
+import re # for findall
 
 import config # constants
 
+
+img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
+
+def img2png(src, filespec, dst):
+    "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
+    # first convert img's to png's, then move them to the dest dir
+    import os
+    savedir = os.getcwd()
+    os.chdir(src)
+    # eg "img2png *.img -fnamefilter"
+    cmd = "img2png " + filespec + " " + img2pngOptions
+    print cmd
+    os.system(cmd)
+    # now move the png files to pngpath
+    os.chdir(savedir)
+    cmd = "move " + src +"\\*.png " + dst + "/"
+    print cmd
+    os.system(cmd)
+
+
+def splitId(itemId):
+    "Split an id like 'movie15' into ['movie','15']"
+    itemType, itemNum = re.findall(r"[^\W\d_]+|\d+", itemId)
+    return [itemType, itemNum]
+
+
+
+def copyFilesSequenced(src, dst, filenamePattern):
+    "Copy all files from src to dst folders, numbering sequentially using given pattern"
+    # used for staging files for use by ffmpeg
+    # eg pattern = 'img%04d.png'
+    lib.mkdir(dst)
+    # copy files, numbering them sequentially
+    # (wasteful, but necessary as ffmpeg doesn't handle globbing on windows)
+    i = 0
+    for root, dirs, files in os.walk(src):
+        for infile in files:
+            inpath = src + '/' + infile
+            # print inpath
+            # outfile = 'img%04d.png' % i
+            outfile = filenamePattern % i
+            outpath = dst + '/' + outfile
+            # print outpath
+            i += 1
+            # print 'copy ' + str(i) + ': ' + inpath
+            cmd = "cp " + inpath + " " + outpath
+            # print cmd
+            os.system(cmd)
+            print 'copied ' + str(i) + ': ' + outpath
+    
 
 
 def mkdir(path):
@@ -28,18 +79,18 @@ def mkdir_p(path):
         else:
             raise
         
-def pngsToMp4(folder, imageFilespec, frameRate, outputFilename):
-    "convert a sequentially numbered set of pngs to an mp4 movie"
+def pngsToMp4(folder, filenamePattern, outputFilename, frameRate):
+    "Convert a sequentially numbered set of pngs to an mp4 movie"
     os.chdir(folder)
     # eg "ffmpeg -y -i img%04d.png -r 15 a.mp4"
-    cmd = 'ffmpeg -y -i %s -r %d %s' % (imageFilespec, frameRate, outputFilename)
+    cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
     print cmd
     os.system(cmd)
 
 
 
 def downloadFile(url, filepath):
-    "download a file from a url to a given filepath"
+    "download a file from a url to a given filepath using curl"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     if os.path.isfile(filepath):
         print "file " + filepath + " already exists"
@@ -86,21 +137,22 @@ def getUnzippedpath(volnumber):
     return unzippedpath
 
 
-def getPngpath(volnumber):
+def getImagespath(volnumber):
     "get folder path for png images"
     # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
-    pngfolder = config.pngFolder
+    imagesfolder = config.imagesFolder
     filetitle = getVolumeTitle(volnumber)
-    pngpath = pngfolder + '/' + filetitle
-    return pngpath
+    imagespath = imagesfolder + '/' + filetitle
+    return imagespath
 
-def getCenteredpath(volnumber):
+
+def getCenterspath(volnumber):
     "get folder path for centered images"
     # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
-    centeredfolder = config.centeredFolder
+    centersfolder = config.centersFolder
     filetitle = getVolumeTitle(volnumber)
-    centeredpath = centeredfolder + '/' + filetitle
-    return centeredpath
+    centerspath = centersfolder + '/' + filetitle
+    return centerspath
 
 
 def unzipFile(zipfile, destfolder):
@@ -124,16 +176,16 @@ def unzipFile(zipfile, destfolder):
 
     
 def test():
-    print getDownload_url(5101)
+    print getDownloadUrl(5101)
     print getZipfilepath(5101)
     print getUnzippedpath(5101)
-    print getPngpath(5101)
-    print getPngpath(0)
+    print getImagespath(5101)
+    print getImagespath(0)
     
     #. test this with a tar.gz
-    print 'unzipping test file...'
-    unzipFile('test/unzip_test.tar', 'test/unzip_test')
-    print 'All done.'
+    # print 'unzipping test file...'
+    # unzipFile('test/unzip_test.tar', 'test/unzip_test')
+    # print 'All done.'
     
 if __name__ == '__main__':
     test()

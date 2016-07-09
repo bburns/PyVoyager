@@ -8,6 +8,8 @@ import config
 import lib
 
         
+# vg download 5101 -> buildDownload(5101)
+
 def downloadVolume(volnumber, folder=config.downloadFolder):
     "Download a Voyager image volume to the given folder"
     # eg downloadVolume(5101)
@@ -26,7 +28,8 @@ def downloadVolume(volnumber, folder=config.downloadFolder):
     
 
 if __name__ == '__main__':
-    downloadVolume(5107)
+    # downloadVolume(5107)
+    downloadVolume(8210)
     
     # # download a certain number of volumes
     # n = config.nvolumesToDownload

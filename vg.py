@@ -7,7 +7,7 @@ import sys
 import os
 import inspect
 
-import vg_build
+import vgBuild
 
 
 # get command and arguments
@@ -21,23 +21,23 @@ else:
 # call relevant routines in vg_build.py
 if cmd=="download":
     volnum = args.pop(0)
-    vg_build.buildDownload(volnum)
+    vgBuild.buildDownload(volnum)
     
 elif cmd=="unzip":
     volnum = args.pop(0)
-    vg_build.buildUnzip(volnum)
+    vgBuild.buildUnzip(volnum)
     
 elif cmd=="images":
     volnum = args.pop(0)
-    vg_build.buildImages(volnum)
+    vgBuild.buildImages(volnum)
     
 elif cmd=="centers":
     volnum = args.pop(0)
-    vg_build.buildCenters(volnum)
+    vgBuild.buildCenters(volnum)
     
 elif cmd=="center":
     centernum = args.pop(0)
-    vg_build.buildCenter(centernum)
+    vgBuild.buildCenter(centernum)
 
 elif cmd=="help":
     pass

@@ -76,32 +76,39 @@ downloadFolder   = offlineFolder + "step1_downloads"
 unzipFolder      = offlineFolder + "step2_unzips"
 imagesFolder     = onlineFolder  + "step3_images"
 centersFolder    = onlineFolder  + "step4_centers"
-compositesFolder = onlineFolder  + "step6_composites"
-mosaicsFolder    = onlineFolder  + "step7_mosaics"
+compositesFolder = onlineFolder  + "step5_composites"
+mosaicsFolder    = onlineFolder  + "step6_mosaics"
+targetFolder     = onlineFolder  + "step7_targets"
 moviesFolder     = onlineFolder  + "step8_movies"
-movieFolder      = onlineFolder  + "step9_movie"
-targetFolder     = onlineFolder  + "targets"
 
 
-# index file and useful columns
+# database folder
+dbFolder = 'db'
+
+# index folder
+indexFolder = 'db/index'
+
+# useful columns in the index files
 # indexfile     = '../data/catalog/cumindex.tab'
-indexfile     = '../data/catalog/rawimages.tab'
-col_volume = 0 # eg VGISS_5101
-col_filename = 2 # eg C1389407_GEOMED.IMG
-col_filetype = 3 # eg CALIBRATED_IMAGE
-col_craft = 4 # eg VOYAGER 1
-col_phase = 5 # eg JUPITER ENCOUNTER
-col_target = 6 # eg IO
-col_instrument = 11 # eg WIDE ANGLE CAMERA
-col_filter = 16 # eg ORANGE
-col_note = 19 # eg 3 COLOR ROTATION MOVIE
+# indexfile     = '../data/catalog/rawimages.tab'
+colVolume = 0 # eg VGISS_5101
+colFilename = 2 # eg C1389407_GEOMED.IMG
+colFiletype = 3 # eg CALIBRATED_IMAGE
+colCraft = 4 # eg VOYAGER 1
+colPhase = 5 # eg JUPITER ENCOUNTER
+colTarget = 6 # eg IO
+colInstrument = 11 # eg WIDE ANGLE CAMERA
+colFilter = 16 # eg ORANGE
+colNote = 19 # eg 3 COLOR ROTATION MOVIE
 
-
-# index file field value translations
-translations = {
+# index field value translations
+indexTranslations = {
     'VOYAGER 1': 'Voyager1',
     'VOYAGER 2': 'Voyager2',
     'JUPITER ENCOUNTER': 'Jupiter',
+    'SATURN ENCOUNTER': 'Saturn',
+    'URANUS ENCOUNTER': 'Uranus',
+    'NEPTUNE ENCOUNTER': 'Neptune',
     'WIDE ANGLE CAMERA': 'Wide',
     'NARROW ANGLE CAMERA': 'Narrow',
     'CALIBRATED_IMAGE': 'Calibrated',
@@ -113,7 +120,7 @@ translations = {
 
 
 # file databases
-dbfolder = '../data/db/'
+dbfolder = 'db/'
 filesdb = dbfolder + 'files.txt'
 centersdb = dbfolder + 'centers.txt'
 compositesdb = dbfolder + 'composites.txt'

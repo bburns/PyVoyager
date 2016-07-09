@@ -1,0 +1,14 @@
+compositeId,childId,filter,weight
+
+C1537728.composite,C1537728.center,Blue,1
+C1537728.composite,C1537730.center,Orange,1
+C1537728.composite,C1537732.center,Green,1
+
+C1537734.composite,C1537734.center,Blue,1
+C1537734.composite,C1537736.center,Orange,1
+C1537734.composite,C1537738.center,Green,1
+
+C1537740.composite,C1537740.center,Blue,1
+C1537740.composite,C1537742.center,Orange,1
+C1537740.composite,C1537744.center,Green,1
+

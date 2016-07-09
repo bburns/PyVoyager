@@ -102,11 +102,10 @@ def buildImages(volumeNum):
     # else:
     #     lib.img2png(imgdir, imgfile, pngdir):
     
-prefix = 'centered_'
 
 def buildCenters(volumeNum):
-    "build centered images for given volume, if it doesn't exist yet"
-    # build plain images for the volume, if not already there
+    "build centered images for given volume, if they don't exist yet"
+    # first build the plain images for the volume, if not already there
     buildImages(volumeNum)
     imagespath = lib.getImagespath(volumeNum)
     centerspath = lib.getCenterspath(volumeNum)
@@ -122,7 +121,7 @@ def buildCenters(volumeNum):
                 ext = filename[-4:]
                 if ext=='.png':
                     infile = imagespath + '/' + filename
-                    outfile = centerspath + '/' + prefix + filename
+                    outfile = centerspath + '/' + config.centersprefix + filename
                     print 'center %d/%d: %s' %(i,nfiles,infile)
                     libimg.centerImageFile(infile, outfile, config.rotateImage)
                     i += 1
@@ -132,6 +131,7 @@ def buildCenters(volumeNum):
 def buildCenter(centerNum):
     "build a centered image, if it doesn't exist yet"
     print 'build center', centerNum
+    
     # need to lookup center parameters in centers.txt
     # eg
     # center_id,child_id,x,y
@@ -170,6 +170,10 @@ def buildComposite(compositeNum):
     # C1537728,VGISS_5103,Jupiter,Voyager1,Jupiter,Narrow,BLUE,3 COLOR ROTATION MOVIE
     # C1537730,VGISS_5103,Jupiter,Voyager1,Jupiter,Narrow,ORANGE,3 COLOR ROTATION MOVIE
     # C1537732,VGISS_5103,Jupiter,Voyager1,Jupiter,Narrow,GREEN,3 COLOR ROTATION MOVIE
+    # compositeId,childId,filter,weight
+    # C1537728.composite,C1537728.center,Blue,1
+    # C1537728.composite,C1537730.center,Orange,1
+    # C1537728.composite,C1537732.center,Green,1
     pass
 
 
@@ -178,7 +182,7 @@ def buildMosaic(mosaicNum):
     pass
 
 
-def buildMovie(movieNum):
+def buildMovie(movieId):
     "build a movie"
 
     print 'build movie'
@@ -187,36 +191,22 @@ def buildMovie(movieNum):
     # for each frame, call buildItem, which will dispatch on the item type and recurse
     # then at the end of the list, stage the images and run ffmpeg on them
     
-    # eg
-    # movies.txt
-    # movie_id,child_id,duration
-    # movie1,file6,1
-    # movie1,file7,1
-    # movie1,file8,1
+    filenamePattern = 'img%04d.png'
     
-    # files.txt
-    # file6,VGISS_5101,C1462321,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-    # file7,VGISS_5101,C1462323,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-    # file8,VGISS_5101,C1462325,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-
     # so need to open movies.txt, scan through rows till find movieId,
     # gather all child_ids and params
     # call buildItem with the id and params
     filein = open(config.moviesdb, 'rt')
-    i = 1
-    filenamePattern = 'img%04d.png'
+    i = 0
     try:
         reader = csv.reader(filein)
         for row in reader:
-            if row[0]=='movie_id':
+            if i==0:
                 pass
             else:
-                # filename = row[config.col_filename].strip()
+                movieId = row[0]
+                # if movieId==
                 childId = row[1]
-                duration = row[2]
-                #. for now can implement duration by copying the file <duration> times.
-                #. but bogus for large mosaics etc
-                # params = {duration: duration}
                 buildItem(childId)
                 #. copy item to sequential staging folder
                 print 'copy item', filenamePattern % i
@@ -251,7 +241,8 @@ def buildItem(itemId):
     
     # dispatch on item type
     if itemType=='movie':
-        buildMovie(itemNum)
+        # buildMovie(itemNum)
+        buildMovie(itemId)
     elif itemType=='center':
         buildCenter(itemNum)
     elif itemType=='composite':
@@ -269,7 +260,7 @@ if __name__ == '__main__':
     # buildItem('center1')
     # buildItem('C1537728_center')
 
-    buildCenters(5108)
+    # buildCenters(5108)
     
     # ? 
     # buildComposites(5101)
@@ -279,3 +270,7 @@ if __name__ == '__main__':
     # buildCenter('C1537732')
     # buildComposite('C1537728')
     
+    buildItem('foo.movie')
+    
+    pass
+

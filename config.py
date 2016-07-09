@@ -7,16 +7,24 @@
 # print config.volumes
 
 
-
+# filetype to extract using img2png
 filetype = 'RAW'
+# imagetypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imagetype = "RAW"
+# filespec = "*" + imagetype + ".img"
+# filespec = "*" # do all image types
 
+# prefix for centered filenames
+centersprefix = 'centered_' 
 
-# output options
+# rotate image 180 degrees during centering step
 rotateImage = True
 
+# draw a bounding box around planet during centering step
 # drawBoundingBox = True
 drawBoundingBox = False
 
+# draw crosshairs on image during centering step
 # drawCrosshairs = True
 drawCrosshairs = False
 
@@ -29,11 +37,11 @@ frameRate = 10 # fps
 
 
 # number of volumes to process for each step
-nvolumesToDownload = 1
-nvolumesToUnzip = 1
-nvolumesToPng = 1
-nvolumesToCenter = 5
-nvolumesToMovieize = 6
+# nvolumesToDownload = 1
+# nvolumesToUnzip = 1
+# nvolumesToPng = 1
+# nvolumesToCenter = 5
+# nvolumesToMovieize = 6
 
 # method of center detection
 # centerMethod = 'blob'
@@ -64,15 +72,15 @@ onlineFolder  = "../data/"
 offlineFolder = "../data/" #. will be f:/...
 testFolder    = '../test_cases/'
 
-downloadFolder = offlineFolder + "step1_downloads"
-unzipFolder    = offlineFolder + "step2_unzips"
-imagesFolder   = onlineFolder  + "step3_images"
-centersFolder  = onlineFolder  + "step4_centers"
+downloadFolder   = offlineFolder + "step1_downloads"
+unzipFolder      = offlineFolder + "step2_unzips"
+imagesFolder     = onlineFolder  + "step3_images"
+centersFolder    = onlineFolder  + "step4_centers"
 compositesFolder = onlineFolder  + "step6_composites"
-framesFolder   = onlineFolder  + "step7_frames"
-moviesFolder   = onlineFolder  + "step8_movies"
-movieFolder    = onlineFolder  + "step9_movie"
-targetFolder   = onlineFolder  + "targets"
+mosaicsFolder    = onlineFolder  + "step7_mosaics"
+moviesFolder     = onlineFolder  + "step8_movies"
+movieFolder      = onlineFolder  + "step9_movie"
+targetFolder     = onlineFolder  + "targets"
 
 
 # index file and useful columns

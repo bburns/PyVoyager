@@ -36,9 +36,8 @@ elif cmd=="centers":
     vg_build.buildCenters(volnum)
     
 elif cmd=="center":
-    # s = "python " + thispath + "/vr_center.py " + " ".join(args)
-    # os.system(s)
-    pass
+    centernum = args.pop(0)
+    vg_build.buildCenter(centernum)
 
 elif cmd=="help":
     pass

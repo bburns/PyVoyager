@@ -1,0 +1,300 @@
+PDS_VERSION_ID                  = PDS3
+RECORD_TYPE                     = FIXED_LENGTH
+RECORD_BYTES                    = 393
+FILE_RECORDS                    = 29037
+^INDEX_TABLE                    = "RAWIMAGES.TAB"
+
+DATA_SET_ID                     = "VG1/VG2-S-ISS-2/3/4/6-PROCESSED-V1.1"
+PRODUCT_CREATION_TIME           = 2012-05-31T12:00:00
+
+OBJECT                          = TABLE
+   INTERCHANGE_FORMAT           = ASCII
+   ROWS                         = 29037
+   COLUMNS                      = 22
+   ROW_BYTES                    = 393
+   DESCRIPTION                  = "This alternative index lists only the RAW
+images found in file CUMINDEX.TAB. It may be quicker for searching, because it
+contains only one line per Voyager image rather than the six lines lines per
+image found in CUMINDEX.TAB. The format is otherwise identical."
+
+   OBJECT                       = COLUMN
+     NAME                       = VOLUME_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 1
+     START_BYTE                 = 2
+     BYTES                      = 10
+     FORMAT                     = "A10"
+     DESCRIPTION                = "The PDS identification for this volume."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = FILE_SPECIFICATION_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 2
+     START_BYTE                 = 15
+     BYTES                      = 34
+     FORMAT                     = "A34"
+     DESCRIPTION                = "The name and directory path of the PDS
+label file describing this particular file or files."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = PRODUCT_ID
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 3
+     START_BYTE                 = 52
+     BYTES                      = 20
+     FORMAT                     = "A20"
+     DESCRIPTION                = "The unique identifier assigned to the data
+product. In this data set, it is equivalent to the file name (without the
+directory path."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = PRODUCT_TYPE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 4
+     START_BYTE                 = 75
+     BYTES                      = 29
+     FORMAT                     = "A29"
+     DESCRIPTION                = "Description of the type of data file, one
+of: BLEMISH_TABLE, CALIBRATED_IMAGE, CALIBRATION_MODEL, CLEANED_IMAGE,
+DARK_CURRENT_IMAGE, TIEPOINT_TABLE, GEOMETRICALLY_CORRECTED_IMAGE,
+DECOMPRESSED_RAW_IMAGE, or RESEAU_TABLE."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = SPACECRAFT_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 5
+     START_BYTE                 = 107
+     BYTES                      = 9
+     FORMAT                     = "A9"
+     DESCRIPTION                = "The spacecraft name associated with the
+image, either VOYAGER 1 and VOYAGER 2."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = MISSION_PHASE_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 6
+     START_BYTE                 = 119
+     BYTES                      = 17
+     FORMAT                     = "A17"
+     DESCRIPTION                = "Name of mission phase for this image, one
+of JUPITER ENCOUNTER, SATURN ENCOUNTER, URANUS ENCOUNTER, or NEPTUNE
+ENCOUNTER."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = TARGET_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 7
+     START_BYTE                 = 139
+     BYTES                      = 10
+     FORMAT                     = "A10"
+     DESCRIPTION                = "The nominal or intended primary target
+of the observation. The values in this column are occasionally incorrect
+and frequently are not comprehensive. The values given are based on
+information in the original data file label. In some cases the nominal
+target was misidentified. Further, while only one target is listed, many
+images contain multiple targets within the field of view."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = IMAGE_ID
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 8
+     START_BYTE                 = 152
+     BYTES                      = 10
+     FORMAT                     = "A10"
+     DESCRIPTION                = "Image identification, which takes the form:
+nnnnes+ddd, where 'nnnn' = picture sequence number for a given day, 'e' =
+planet of encounter (J=Jupiter, S=Saturn, U=Uranus, N=Neptune), 's' = Voyager
+spacecraft (1 or 2), - sign indicates before and a + sign indicates after
+closest planetary approach, 'ddd' = number of days from closest approach."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = IMAGE_NUMBER
+     DATA_TYPE                  = ASCII_REAL
+     COLUMN_NUMBER              = 9
+     START_BYTE                 = 164
+     BYTES                      = 8
+     FORMAT                     = "F8.2"
+     DESCRIPTION                = "The unique number which identifies this
+image. IMAGE_NUMBER is extracted from the Flight Data Subsystem (FDS) clock
+count at time of image acquisition. For Voyager images the number is a
+seven-digit value, with 5 digits to the left of the decimal point (the modulo
+16-bit (65536) count and 2 digits to the right of the decimal point (the
+modulo 60 count)."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = IMAGE_TIME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 10
+     START_BYTE                 = 174
+     BYTES                      = 19
+     FORMAT                     = "A19"
+     DESCRIPTION                = "Time at which image was acquired, in the
+format yyyy-mm-ddThh:mm:ss.  The time system is Universal Time (UTC).  'yyyy'
+for year, 'mm' for month, 'dd' for day of month, 'hh' for hour, 'mm' for
+minute, 'ss' for second."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = EARTH_RECEIVED_TIME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 11
+     START_BYTE                 = 196
+     BYTES                      = 19
+     FORMAT                     = "A19"
+     DESCRIPTION                = "Time at which image data was received on
+earth, in the format yyyy-mm-ddThh:mm:ss. The time system is Universal Time
+(UTC). 'yyyy' = year, 'mm' = month, 'dd' = day of month, 'hh' = hour, 'mm' =
+minute, 'ss' = second."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = INSTRUMENT_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 12
+     START_BYTE                 = 218
+     BYTES                      = 19
+     FORMAT                     = "A19"
+     DESCRIPTION                = "The camera used to acquire the image,
+either NARROW ANGLE CAMERA or WIDE ANGLE CAMERA."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = SCAN_MODE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 13
+     START_BYTE                 = 240
+     BYTES                      = 4
+     FORMAT                     = "A4"
+     DESCRIPTION                = "The scan rate of vidicon readout. Values
+can be '1:1', '2:1', '3:1', '5:1', and '10:1'. The instrument scan rate
+affects the radiometric properties of the camera because of the dark current
+buildup on the vidicon."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = SHUTTER_MODE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 14
+     START_BYTE                 = 247
+     BYTES                      = 6
+     FORMAT                     = "A6"
+     DESCRIPTION                = "The instrument shutter mode, one of:
+   NAONLY - narrow angle camera shuttered only;
+   WAONLY - wide angle camera shuttered only;
+   BOTSIM - both cameras shuttered simultaneously;
+   BOTALT - both cameras shuttered alternately;
+   BSIMAN - BOTSIM mode followed by NAONLY;
+   BODARK - shutter remained closed for entire exposure time.
+"
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = GAIN_MODE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 15
+     START_BYTE                 = 256
+     BYTES                      = 4
+     FORMAT                     = "A4"
+     DESCRIPTION                = "The gain mode (LOW or HIGH, typically LOW)
+of the camera."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = EDIT_MODE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 16
+     START_BYTE                 = 263
+     BYTES                      = 4
+     FORMAT                     = "A4"
+     DESCRIPTION                = "The edit mode of the camera. Values are
+'1:1', which indicates the full resolution of the vidicon, and '3:4', '3:5',
+'1:2', '2:5', '1:3', '1:5', and '1:10' for partial resolution images. This
+indicates the amount of data read from the vidicon."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = FILTER_NAME
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 17
+     START_BYTE                 = 270
+     BYTES                      = 6
+     FORMAT                     = "A6"
+     DESCRIPTION                = "The optical filter used for the image, one
+of CLEAR, CH4_U, CH4_JS, UV, VIOLET, BLUE, GREEN, ORANGE, and SODIUM."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = FILTER_NUMBER
+     DATA_TYPE                  = ASCII_INTEGER
+     COLUMN_NUMBER              = 18
+     START_BYTE                 = 278
+     BYTES                      = 1
+     FORMAT                     = "I1"
+     DESCRIPTION                = "The optical filter number (0-7), which
+contains the unique number associated with the optical filter for the image.
+It is needed to differentiate between the two CLEAR and two GREEN filters on
+the Voyager narrow angle camera."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = EXPOSURE_DURATION
+     DATA_TYPE                  = ASCII_REAL
+     COLUMN_NUMBER              = 19
+     START_BYTE                 = 280
+     BYTES                      = 7
+     FORMAT                     = "F9.4"
+     DESCRIPTION                = "Exposure duration for the image, in
+seconds."
+     NULL_CONSTANT              = -99.9999
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = NOTE
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 20
+     START_BYTE                 = 291
+     BYTES                      = 80
+     FORMAT                     = "A80"
+     DESCRIPTION                = "A brief comment about the image.
+The information in this field was transferred from the original data
+files. We were unable to verify the validity of the information
+although we do know that in some cases it is incorrect."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = SAMPLE_BIT_MASK
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 21
+     START_BYTE                 = 374
+     BYTES                      = 8
+     FORMAT                     = "A8"
+     DESCRIPTION                = "The character string contains ones and
+zeros to indicate the active bits in each sample of the raw image. If the bits
+are all active, then the mask is '11111111'."
+   END_OBJECT                   = COLUMN
+
+   OBJECT                       = COLUMN
+     NAME                       = DATA_ANOMALY
+     DATA_TYPE                  = CHARACTER
+     COLUMN_NUMBER              = 22
+     START_BYTE                 = 385
+     BYTES                      = 6
+     FORMAT                     = "A6"
+     DESCRIPTION                = "A text field which identifies anomalies
+associated with an image. A value of NONE indicates that no anomalies were
+detected. A value of RAMCOR indicates that spurious values exist in the image
+data due to corruption of the random access memory onboard the spacecraft."
+   END_OBJECT                   = COLUMN
+
+END_OBJECT                      = TABLE
+
+END

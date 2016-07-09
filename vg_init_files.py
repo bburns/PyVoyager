@@ -10,7 +10,7 @@ import lib
         
 
 def buildFilesTable():
-    "build the files table (files.txt) from the cumulative index file (cumindex.tab)"
+    "build the files table (files.txt) from the index files (rawimages*.tab)"
     
     # iterate down the giant csv file
     # get the craft, flyby, target, camera
@@ -18,7 +18,6 @@ def buildFilesTable():
     filein = open(config.indexfile, 'rt')
     fileout = open(config.filesdb, 'wb')
     i = 1
-    # fields = 'fileid,volume,filetitle,phase,craft,target,instrument,filter,note'.split(',') # keep in synch with row, below
     fields = 'fileid,volume,phase,craft,target,instrument,filter,note'.split(',') # keep in synch with row, below
     try:
         reader = csv.reader(filein)
@@ -47,8 +46,6 @@ def buildFilesTable():
             # filetitle = filename.split('_')[0]
             fileid = filename.split('_')[0]
             # fileid = 'file' + str(i)
-            # row = [fileid, filetitle, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
-            # row = [fileid, volume, filetitle, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
             row = [fileid, volume, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
             # print row
             writer.writerow(row)

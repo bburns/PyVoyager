@@ -8,6 +8,8 @@ from setuptools import archive_util # for unpack_archive
 import errno
 import re # for findall
 
+
+#.. should pass any constants into functions - this is a cheat
 import config # constants
 
 
@@ -111,7 +113,7 @@ def getDownloadUrl(volnumber):
 
 
 def getVolumeTitle(volnumber):
-    if volnumber==0:
+    if int(volnumber)==0:
         return "test"
     else:
         return "VGISS_" + str(volnumber)

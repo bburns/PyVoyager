@@ -35,14 +35,14 @@ def initFiles():
                     row = [field.strip() for field in row]
 
                     # get field values
-                    volume = row[config.colVolume] # eg VGISS_5101
-                    filename = row[config.colFilename] # eg C1385455_RAW.IMG
-                    craft = row[config.colCraft] # eg VOYAGER 1
-                    phase = row[config.colPhase] # eg JUPITER ENCOUNTER
-                    target = row[config.colTarget].title() # eg IO
-                    instrument = row[config.colInstrument] # eg NARROW ANGLE CAMERA
-                    filter = row[config.colFilter] # eg ORANGE
-                    note = row[config.colNote] 
+                    volume = row[config.indexFileColVolume] # eg VGISS_5101
+                    filename = row[config.indexFileColFilename] # eg C1385455_RAW.IMG
+                    craft = row[config.indexFileColCraft] # eg VOYAGER 1
+                    phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
+                    target = row[config.indexFileColTarget].title() # eg IO
+                    instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
+                    filter = row[config.indexFileColFilter] # eg ORANGE
+                    note = row[config.indexFileColNote] 
 
                     fileid = filename.split('_')[0] # eg C1385455
                     

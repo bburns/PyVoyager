@@ -3,9 +3,11 @@
 
 import csv
 
-import config
 import lib
 
+
+#. should pass any constants into functions
+import config
 
 
 def getItem(itemIdOrType, itemNum=''):
@@ -25,8 +27,7 @@ def getItem(itemIdOrType, itemNum=''):
     try:
         reader = csv.reader(filein)
         for row in reader:
-            if i==0: # header
-                # read header field names
+            if i==0:
                 fields = row
             else:
                 if row[0]==itemId:

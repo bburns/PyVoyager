@@ -18,6 +18,7 @@ if nargs==0:
 else:
     cmd = args.pop(0) # first item
 
+ 
 # call relevant routines in vg_build.py
 if cmd=="download":
     volnum = args.pop(0)
@@ -35,9 +36,21 @@ elif cmd=="centers":
     volnum = args.pop(0)
     vgBuild.buildCenters(volnum)
     
-elif cmd=="center":
-    centernum = args.pop(0)
-    vgBuild.buildCenter(centernum)
+elif cmd=="composites":
+    volnum = args.pop(0)
+    vgBuild.buildComposites(volnum)
+    
+elif cmd=="targets":
+    targetPath = args.pop(0)
+    vgBuild.buildTargets(targetPath)
+    
+elif cmd=="movies":
+    targetPath = args.pop(0)
+    vgBuild.buildMovies(targetPath)
+    
+# elif cmd=="center":
+#     centernum = args.pop(0)
+#     vgBuild.buildCenter(centernum)
 
 elif cmd=="help":
     pass
@@ -53,18 +66,23 @@ if cmd=="help":
     print "  vg unzip <volnumber>"
     print "  vg images <volnumber>"
     print "  vg centers <volnumber>"
+    print "  vg composites <volnumber>"
+    print "  vg mosaics <volnumber>"
     print
-    print "  vg center <centerId>"
-    print "  vg composite <compositeId>"
-    print "  vg mosaic <mosaicId>"
-    print "  vg movie <movieId>"
+    print "  vg targets <system>/<spacecraft>/<target>/<camera>"
+    print "  vg movies <system>/<spacecraft>/<target>/<camera>"
     print
-    print "  vg init images"
-    print "  vg init centers"
-    print "  vg init composites"
-    print "  vg init mosaics"
-    print "  vg init movies"
-    print
+    # print "  vg center <centerId>"
+    # print "  vg composite <compositeId>"
+    # print "  vg mosaic <mosaicId>"
+    # print "  vg movie <movieId>"
+    # print
+    # print "  vg init images"
+    # print "  vg init centers"
+    # print "  vg init composites"
+    # print "  vg init mosaics"
+    # print "  vg init movies"
+    # print
     
 
 # if __name__ == '__main__':

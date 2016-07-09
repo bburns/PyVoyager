@@ -9,7 +9,7 @@ import numpy as np # for zeros, array, copy
 import cv2 # for hough circle detection
 
 
-#. cheating for now
+#. should pass any constants into functions - this is a cheat
 import config
 
 
@@ -138,19 +138,19 @@ def findCircles(im):
     
 
 
-def centerImageFile(infile, outfile, rotateImage=False):
+def centerImageFile(infile, outfile, blobThreshold, rotateImage=False):
     "center the given image file on a planet"
     im = mpim.imread(infile)
     if rotateImage:
         im = np.rot90(im, 2) # rotate by 180
     if config.centerMethod=='blob':
-        boundingBox = findBoundingBoxByBlob(im)
+        boundingBox = findBoundingBoxByBlob(im, blobThreshold)
     elif config.centerMethod=='box':
         boundingBox = findBoundingBoxByEdges(im)
     elif config.centerMethod=='circle':
         boundingBox = findBoundingBoxByCircle(im)
     elif config.centerMethod=='all':
-        boundingBox = findBoundingBox(im)
+        boundingBox = findBoundingBox(im, blobThreshold)
     if config.drawBoundingBox:
         im = drawBoundingBox(im, boundingBox)
     imCentered = centerImage(im, boundingBox)
@@ -192,9 +192,9 @@ def centerImage(im, boundingBox):
 
 def drawBoundingBox(im, boundingBox):
     "draw a box on image, return new image"
+    
     [x1,y1,x2,y2] = boundingBox
     imBox = np.copy(im)
-    
     cv2.rectangle(imBox, (y1,x1), (y2,x2), (0,255,0), 2)
     
     # c = 0.5
@@ -215,11 +215,13 @@ def drawBoundingBox(im, boundingBox):
     return imBox
 
 
-def findBoundingBox(im):
+def findBoundingBox(im, blobThreshold):
     """find the center of a planet using blobs, hough circle detection, and/or other means,
     and return the bounding box"""
-    boundingBox = findBoundingBoxByBlob(im)
+    boundingBox = findBoundingBoxByBlob(im, blobThreshold)
     [x1,y1,x2,y2] = boundingBox
+    if config.drawBlob:
+        im = drawBoundingBox(im, boundingBox)
     # make sure box is ~square
     width = x2 - x1
     height = y2 - y1
@@ -233,13 +235,13 @@ def findBoundingBox(im):
     return boundingBox
     
 
-def findBoundingBoxByBlob(im):
+def findBoundingBoxByBlob(im, blobThreshold):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
     
     def findBlobs(im):
         "Find set of blobs in the given image"
-        # b = 1*(im>epsilon) # threshold to binary image
-        b = 1*(im>config.blobEpsilon) # threshold to binary image
+        b = 1*(im>blobThreshold) # threshold to binary image
+        # b = 1*(im>config.blobEpsilon) # threshold to binary image
         lbl, nobjs = ndimage.measurements.label(b) # label objects
         # find position of objects - index is 0-based
         blobs = ndimage.find_objects(lbl)
@@ -274,7 +276,7 @@ def findBoundingBoxByBlob(im):
         y1 = 0
         y2 = im.shape[1] - 1
 
-    #. sometimes get > 799
+    #. sometimes get > 799 ? 
     if x2>=im.shape[0]:
         x2 = im.shape[0] - 1
     if y2>=im.shape[1]:

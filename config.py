@@ -7,12 +7,17 @@
 # print config.volumes
 
 
-# filetype to extract using img2png
-filetype = 'RAW'
-# imagetypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
-# imagetype = "RAW"
-# filespec = "*" + imagetype + ".img"
-# filespec = "*" # do all image types
+# imagetype to extract using img2png
+# RAW images often have bright backgrounds,
+# which make it harder to threshold the image properly for blob detection.
+# so switching to CALIB images, which have darker backgrounds.
+# GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
+# CLEANED images just have the riseau marks removed.
+# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imageType = 'RAW'
+imageType = 'CALIB'
+# imageFilespec = "*" # do all image types
+imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 
 # prefix for centered filenames
 centersprefix = 'centered_' 
@@ -20,12 +25,13 @@ centersprefix = 'centered_'
 # rotate image 180 degrees during centering step
 rotateImage = True
 
+# draw bounding box around biggest blob during centering step
+drawBlob = False
+
 # draw a bounding box around planet during centering step
-# drawBoundingBox = True
 drawBoundingBox = False
 
 # draw crosshairs on image during centering step
-# drawCrosshairs = True
 drawCrosshairs = False
 
 # use slow frame rate for first dataset
@@ -51,9 +57,27 @@ centerMethod = 'all'
 
 # blob detection
 # binary threshold
-# blobEpsilon = 0.05 # way too broad
-# blobEpsilon = 0.1 # misses some dim edges of planet
-blobEpsilon = 0.09
+#. could make a table of values for different volumes, or change it at different image numbers
+# blobThreshold = 0.05 # way too broad
+# blobThreshold = 0.1 # misses some dim edges of planet
+# blobThreshold = 0.09 # try to catch dim edges of planet, works well on jupiter voy1
+blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
+# blobThreshold = 0.20 # try for later neptune images
+
+blobThresholds = [
+    ['C0000000',0.10], # arbitrary start
+    ['C0896631',0.15], # neptune bright bg
+    ['C0903826',0.15], # moon, dark
+    ['C0936002',0.16], # neptune brighter bg
+    ['C1385455',0.09], # jupiter voy1
+    ]
+# blobThresholds = 
+
+
+
+
+
+
 
 # bounding box detection
 # N is the number of rows/columns to average over, for running average
@@ -78,7 +102,7 @@ imagesFolder     = onlineFolder  + "step3_images"
 centersFolder    = onlineFolder  + "step4_centers"
 compositesFolder = onlineFolder  + "step5_composites"
 mosaicsFolder    = onlineFolder  + "step6_mosaics"
-targetFolder     = onlineFolder  + "step7_targets"
+targetsFolder    = onlineFolder  + "step7_targets"
 moviesFolder     = onlineFolder  + "step8_movies"
 
 
@@ -91,15 +115,15 @@ indexFolder = 'db/index'
 # useful columns in the index files
 # indexfile     = '../data/catalog/cumindex.tab'
 # indexfile     = '../data/catalog/rawimages.tab'
-colVolume = 0 # eg VGISS_5101
-colFilename = 2 # eg C1389407_GEOMED.IMG
-colFiletype = 3 # eg CALIBRATED_IMAGE
-colCraft = 4 # eg VOYAGER 1
-colPhase = 5 # eg JUPITER ENCOUNTER
-colTarget = 6 # eg IO
-colInstrument = 11 # eg WIDE ANGLE CAMERA
-colFilter = 16 # eg ORANGE
-colNote = 19 # eg 3 COLOR ROTATION MOVIE
+indexFileColVolume = 0 # eg VGISS_5101
+indexFileColFilename = 2 # eg C1389407_GEOMED.IMG
+indexFileColFiletype = 3 # eg CALIBRATED_IMAGE
+indexFileColCraft = 4 # eg VOYAGER 1
+indexFileColPhase = 5 # eg JUPITER ENCOUNTER
+indexFileColTarget = 6 # eg IO
+indexFileColInstrument = 11 # eg WIDE ANGLE CAMERA
+indexFileColFilter = 16 # eg ORANGE
+indexFileColNote = 19 # eg 3 COLOR ROTATION MOVIE
 
 # index field value translations
 indexTranslations = {
@@ -126,6 +150,8 @@ centersdb = dbfolder + 'centers.txt'
 compositesdb = dbfolder + 'composites.txt'
 mosaicsdb = dbfolder + 'mosaics.txt'
 moviesdb = dbfolder + 'movies.txt'
+
+
 
 
 

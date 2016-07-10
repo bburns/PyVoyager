@@ -15,28 +15,28 @@ They were copied here, with a suffix indicating the planet:
 
 Columns (extracted from rawimages.lbl):
 
-VOLUME_NAME
-FILE_SPECIFICATION_NAME
-PRODUCT_ID
-PRODUCT_TYPE
-INSTRUMENT_HOST_NAME
-MISSION_PHASE_NAME
-TARGET_NAME
-IMAGE_ID
-IMAGE_NUMBER
-IMAGE_TIME
-EARTH_RECEIVED_TIME
-INSTRUMENT_NAME
-SCAN_MODE
-SHUTTER_MODE
-GAIN_MODE
-EDIT_MODE
-FILTER_NAME
-FILTER_NUMBER
-EXPOSURE_DURATION
-NOTE
-SAMPLE_BIT_MASK
-DATA_ANOMALY
+    VOLUME_NAME
+    FILE_SPECIFICATION_NAME
+    PRODUCT_ID
+    PRODUCT_TYPE
+    INSTRUMENT_HOST_NAME
+    MISSION_PHASE_NAME
+    TARGET_NAME
+    IMAGE_ID
+    IMAGE_NUMBER
+    IMAGE_TIME
+    EARTH_RECEIVED_TIME
+    INSTRUMENT_NAME
+    SCAN_MODE
+    SHUTTER_MODE
+    GAIN_MODE
+    EDIT_MODE
+    FILTER_NAME
+    FILTER_NUMBER
+    EXPOSURE_DURATION
+    NOTE
+    SAMPLE_BIT_MASK
+    DATA_ANOMALY
 
 
 in more detail:
@@ -49,56 +49,38 @@ in more detail:
      NAME                       = FILE_SPECIFICATION_NAME
      COLUMN_NUMBER              = 2
      FORMAT                     = "A34"
-     DESCRIPTION                = "The name and directory path of the PDS
-label file describing this particular file or files."
+     DESCRIPTION                = "The name and directory path of the PDS label file describing this particular file or files."
 
      NAME                       = PRODUCT_ID
      COLUMN_NUMBER              = 3
      FORMAT                     = "A20"
-     DESCRIPTION                = "The unique identifier assigned to the data
-product. In this data set, it is equivalent to the file name without the
-directory path. In cases where a combined-detached label describes two files,
-this is the name of the binary file (ending in '.DAT'); the corresponding
-ASCII text file (ending in '.TAB') is not listed in the index."
+     DESCRIPTION                = "The unique identifier assigned to the data product. In this data set, it is equivalent to the file name without the directory path. In cases where a combined-detached label describes two files, this is the name of the binary file (ending in '.DAT'); the corresponding ASCII text file (ending in '.TAB') is not listed in the index."
 
      NAME                       = PRODUCT_TYPE
      COLUMN_NUMBER              = 4
      FORMAT                     = "A29"
-     DESCRIPTION                = "Description of the type of data file, one
-of: BLEMISH_TABLE, CALIBRATED_IMAGE, CALIBRATION_MODEL, CLEANED_IMAGE,
-DARK_CURRENT_IMAGE, TIEPOINT_TABLE, GEOMETRICALLY_CORRECTED_IMAGE,
-DECOMPRESSED_RAW_IMAGE, or RESEAU_TABLE."
+     DESCRIPTION                = "Description of the type of data file, one of: BLEMISH_TABLE, CALIBRATED_IMAGE, CALIBRATION_MODEL, CLEANED_IMAGE, DARK_CURRENT_IMAGE, TIEPOINT_TABLE, GEOMETRICALLY_CORRECTED_IMAGE, DECOMPRESSED_RAW_IMAGE, or RESEAU_TABLE."
 
      NAME                       = INSTRUMENT_HOST_NAME
      COLUMN_NUMBER              = 5
      FORMAT                     = "A9"
-     DESCRIPTION                = "The spacecraft name associated with the
-image, either VOYAGER 1 and VOYAGER 2."
+     DESCRIPTION                = "The spacecraft name associated with the image, either VOYAGER 1 and VOYAGER 2."
 
      NAME                       = MISSION_PHASE_NAME
      COLUMN_NUMBER              = 6
      FORMAT                     = "A17"
-     DESCRIPTION                = "Name of mission phase for this image, one
-of JUPITER ENCOUNTER, SATURN ENCOUNTER, URANUS ENCOUNTER, or NEPTUNE
-ENCOUNTER."
+     DESCRIPTION                = "Name of mission phase for this image, one of JUPITER ENCOUNTER, SATURN ENCOUNTER, URANUS ENCOUNTER, or NEPTUNE ENCOUNTER."
 
      NAME                       = TARGET_NAME
      COLUMN_NUMBER              = 7
      FORMAT                     = "A10"
-     DESCRIPTION                = "The nominal or intended primary target 
-of the observation. The values in this column are occasionally incorrect 
-and frequently are not comprehensive. The values given are based on 
-information in the original data file label. In some cases the nominal 
-target was misidentified. Further, while only one target is listed, many 
-images contain multiple targets within the field of view."
+     DESCRIPTION                = "The nominal or intended primary target of the observation. The values in this column are occasionally incorrect and frequently are not comprehensive. The values given are based on information in the original data file label. In some cases the nominal target was misidentified. Further, while only one target is listed, many images contain multiple targets within the field of view."
 
      NAME                       = IMAGE_ID
      COLUMN_NUMBER              = 8
      FORMAT                     = "A10"
-     DESCRIPTION                = "
-Image identification, which takes the form: nnnnes+ddd, where 'nnnn' = picture sequence number for a given day, 'e' = planet of encounter (J=Jupiter, S=Saturn, U=Uranus, N=Neptune), 's' = Voyager spacecraft (1 or 2), - sign indicates before and a + sign indicates after closest planetary approach, 'ddd' = number of days from closest approach."
-
-Image identification: nnnnes+ddd, where nnnn=picture sequence number for a given day, e=planet of encounter (J,S,U,N), s=Voyager 1 or 2, - indicates before and + indicates after closest planetary approach, ddd=number of days from closest approach.
+     DESCRIPTION                = "Image identification, which takes the form: nnnnes+ddd, where 'nnnn' = picture sequence number for a given day, 'e' = planet of encounter (J=Jupiter, S=Saturn, U=Uranus, N=Neptune), 's' = Voyager spacecraft (1 or 2), - sign indicates before and a + sign indicates after closest planetary approach, 'ddd' = number of days from closest approach."
+    Image identification: nnnnes+ddd, where nnnn=picture sequence number for a given day, e=planet of encounter (J,S,U,N), s=Voyager 1 or 2, - indicates before and + indicates after closest planetary approach, ddd=number of days from closest approach.
 
 
      NAME                       = IMAGE_NUMBER
@@ -126,21 +108,20 @@ Image identification: nnnnes+ddd, where nnnn=picture sequence number for a given
      NAME                       = SCAN_MODE
      COLUMN_NUMBER              = 13
      FORMAT                     = "A4"
-     DESCRIPTION                = "
-The scan rate of vidicon readout. Values can be '1:1', '2:1', '3:1', '5:1', and '10:1'. The instrument scan rate affects the radiometric properties of the camera because of the dark current buildup on the vidicon."
+     DESCRIPTION                = "The scan rate of vidicon readout. Values can be '1:1', '2:1', '3:1', '5:1', and '10:1'. The instrument scan rate affects the radiometric properties of the camera because of the dark current buildup on the vidicon."
 
      NAME                       = SHUTTER_MODE
      COLUMN_NUMBER              = 14
      FORMAT                     = "A6"
      DESCRIPTION                = "The instrument shutter mode, one of:
-   NAONLY - narrow angle camera shuttered only;
-   WAONLY - wide angle camera shuttered only;
-   BOTSIM - both cameras shuttered simultaneously;
-   BOTALT - both cameras shuttered alternately;
-   BSIMAN - BOTSIM mode followed by NAONLY;
-   BODARK - shutter remained closed for entire exposure time.
-"
-The instrument shutter mode: NAONLY - narrow angle camera only; WAONLY - wide angle camera only; BOTSIM - both cameras simultaneously; BOTALT - both cameras alternately; BSIMAN - BOTSIM mode followed by NAONLY; BODARK - shutter closed.
+    NAONLY - narrow angle camera shuttered only;
+    WAONLY - wide angle camera shuttered only;
+    BOTSIM - both cameras shuttered simultaneously;
+    BOTALT - both cameras shuttered alternately;
+    BSIMAN - BOTSIM mode followed by NAONLY;
+    BODARK - shutter remained closed for entire exposure time.
+    "
+    The instrument shutter mode: NAONLY - narrow angle camera only; WAONLY - wide angle camera only; BOTSIM - both cameras simultaneously; BOTALT - both cameras alternately; BSIMAN - BOTSIM mode followed by NAONLY; BODARK - shutter closed.
    
 
      NAME                       = GAIN_MODE
@@ -151,8 +132,7 @@ The instrument shutter mode: NAONLY - narrow angle camera only; WAONLY - wide an
      NAME                       =   EDIT_MODE
      COLUMN_NUMBER              = 16
      FORMAT                     = "A4"
-     DESCRIPTION                = "
-The edit mode of the camera. Values are '1:1', which indicates the full resolution of the vidicon, and '3:4', '3:5', '1:2', '2:5', '1:3', '1:5', and '1:10' for partial resolution images. This indicates the amount of data read from the vidicon."
+     DESCRIPTION                = "The edit mode of the camera. Values are '1:1', which indicates the full resolution of the vidicon, and '3:4', '3:5', '1:2', '2:5', '1:3', '1:5', and '1:10' for partial resolution images. This indicates the amount of data read from the vidicon."
 
      NAME                       = FILTER_NAME
      COLUMN_NUMBER              = 17
@@ -162,8 +142,7 @@ The edit mode of the camera. Values are '1:1', which indicates the full resoluti
      NAME                       = FILTER_NUMBER
      COLUMN_NUMBER              = 18
      FORMAT                     = "I1"
-     DESCRIPTION                = "
-The optical filter number (0-7), which contains the unique number associated with the optical filter for the image. It is needed to differentiate between the two CLEAR and two GREEN filters on the Voyager narrow angle camera."
+     DESCRIPTION                = "The optical filter number (0-7), which contains the unique number associated with the optical filter for the image. It is needed to differentiate between the two CLEAR and two GREEN filters on the Voyager narrow angle camera."
 
      NAME                       = EXPOSURE_DURATION
      COLUMN_NUMBER              = 19

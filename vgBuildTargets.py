@@ -6,33 +6,26 @@ import config
 import lib
 
 
-def buildTargets(targetPath):
-    "copy/link images to correct subfolders (eg Jupiter/Voyager1/Io/Narrow)"
+# def buildTargets(targetPath):
+    # "copy/link images to target subfolders (eg Jupiter/Voyager1/Io/Narrow)"
+    # assume these are all None for now
+    # ie just copy ALL images available
+    # [system, craft, target, camera] = targetPath.split('/')
     
-    #.. if we make these links then will automatically update when recenter images/tweak composite colors etc
+def buildTargets(volnum):
+    "copy/link images in volume to target subfolders"
+    
+    # if we make these links then will automatically update when recenter images/tweak composite colors etc
     # same with movie frames, so would just need to do vg movie to generate corrected movie
+    # (but wouldn't work with image viewer)
     
     # iterate down files.txt
     # if target path matches row,
-    # copy that image to new subfolder
-    
-    #. assume these are all None for now
-    # ie just copy ALL images available
-    # [system, craft, target, camera] = targetPath.split('/')
+    # copy that image to target subfolder
     
     # files.txt:
     # volume,fileid,phase,craft,target,instrument,filter,note
     # VGISS_5101,C1385455,Jupiter,Voyager1,Dark,Wide,CLEAR,DARK CURRENT CALIBRATION
-    
-    # columns in files.txt
-    filesColVolume = 0
-    filesColFileId = 1
-    filesColPhase = 2
-    filesColCraft = 3
-    filesColTarget = 4
-    filesColInstrument = 5
-    filesColFilter = 6
-    filesColNote = 7
     
     f = open(config.filesdb, 'rt')
     i = 0
@@ -52,7 +45,8 @@ def buildTargets(targetPath):
                 
                 # get source filename
                 # eg centered_C1327321_RAW_ORANGE.PNG
-                centeredfilename = config.centersprefix + fileid + '_' + config.filetype + '_' + filter + '.PNG' 
+                centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
+                # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
                 src = centersSubfolder + '/' + centeredfilename
 
                 # if file exists, create subfolder and copy/link image
@@ -76,11 +70,20 @@ def buildTargets(targetPath):
                         lib.mkdir_p(targetpath)
 
                         # copy file
-                        # cp -s, --symbolic-link - make symbolic links instead of copying [but is ignored on windows]
-                        #. mklink requires admin privileges - handle later
+                        # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
                         cmd = 'cp ' + src + ' ' + targetpath
                         print cmd
                         os.system(cmd)
+                        
+                        # links work, but then can't browse folders with image viewer... so back to copying
+                        # # link to file
+                        # # note: mklink requires admin privileges, so must run this script in an admin console
+                        # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                        # src2 = '../../../../../' + src # need to get out of the target dir
+                        # cmd = 'mklink ' + targetfile + ' ' + src2
+                        # cmd = cmd.replace('/','\\')
+                        # print cmd
+                        # os.system(cmd)
 
             i += 1
 

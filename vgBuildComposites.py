@@ -8,6 +8,9 @@ import lib
 import libimg
 
 
+
+
+
 def buildComposites(volnum):
     "build composite images by combining channel images"
     # walks over records in composites.txt, merges channel images, writes to composites folder
@@ -57,7 +60,7 @@ def processChannels(channelRows):
         volume = row[0]
         compositeId = row[1]
         centerId = row[2]
-        filter = row[3]
+        filter = row[3].title()
         # folder = lib.getCenterspath(volume)
         folder = config.centersFolder + '/' + volume
         filetitle = config.centersprefix + centerId + '_' + config.imageType + '_' + filter + '.png'

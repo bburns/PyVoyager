@@ -172,7 +172,7 @@ def unzipFile(zipfile, destfolder):
         return False
     else:
         #. tried just building a commandline cmd but had issues with windows paths etc
-        # os.mkdir(destfolder)
+        # mkdir(destfolder)
         # archive_util.unpack_archive(zipfile, destfolder)
         parentfolder = destfolder + "/.."
         archive_util.unpack_archive(zipfile, parentfolder)

@@ -19,7 +19,7 @@ def initFiles():
     # write to files.txt
     
     fileout = open(config.filesdb, 'wb')
-    fields = 'volume,fileid,phase,craft,target,instrument,filter,note'.split(',') # keep in synch with row, below
+    fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
     writer.writerow(fields)
     
@@ -40,6 +40,7 @@ def initFiles():
                     craft = row[config.indexFileColCraft] # eg VOYAGER 1
                     phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
                     target = row[config.indexFileColTarget].title() # eg IO
+                    time = row[config.indexFileColTime].title() # eg 1979-03-05T15:32:56
                     instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
                     filter = row[config.indexFileColFilter] # eg ORANGE
                     note = row[config.indexFileColNote] 
@@ -52,7 +53,7 @@ def initFiles():
                     instrument = config.indexTranslations[instrument] # eg Narrow
 
                     # write row
-                    row = [volume, fileid, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
+                    row = [volume, fileid, phase, craft, target, time, instrument, filter, note] # keep in sync with fields, above
                     # print row # too slow
                     writer.writerow(row)
 
@@ -65,7 +66,4 @@ def initFiles():
 if __name__ == '__main__':
     initFiles()
     print 'done'
-    
-                
-    
     

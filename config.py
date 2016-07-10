@@ -43,6 +43,17 @@ frameRate = 10 # fps
 # frameRate = 30 # fps
 
 
+
+# zip/tar/archive program to use
+# tarProgram = 'tar'
+# tarExtract = 'xf'
+# tarOutput = ''
+# tarProgram = '7zip'
+# tarExtract = 'x'
+# tarOutput = '-o'
+
+
+
 # number of volumes to process for each step
 # nvolumesToDownload = 1
 # nvolumesToUnzip = 1
@@ -111,6 +122,7 @@ dbFolder = 'db'
 indexFolder = 'db/index'
 
 # useful columns in the index files
+# (see db/index/readme.md)
 # indexfile     = '../data/catalog/cumindex.tab'
 # indexfile     = '../data/catalog/rawimages.tab'
 indexFileColVolume = 0 # eg VGISS_5101
@@ -119,6 +131,7 @@ indexFileColFiletype = 3 # eg CALIBRATED_IMAGE
 indexFileColCraft = 4 # eg VOYAGER 1
 indexFileColPhase = 5 # eg JUPITER ENCOUNTER
 indexFileColTarget = 6 # eg IO
+indexFileColTime = 10 # eg 1979-03-05T15:32:56
 indexFileColInstrument = 11 # eg WIDE ANGLE CAMERA
 indexFileColFilter = 16 # eg ORANGE
 indexFileColNote = 19 # eg 3 COLOR ROTATION MOVIE
@@ -143,16 +156,24 @@ indexTranslations = {
 
 # file databases
 dbfolder = 'db/'
-filesdb = dbfolder + 'files.txt'
-centersdb = dbfolder + 'centers.txt'
-compositesdb = dbfolder + 'composites.txt'
-mosaicsdb = dbfolder + 'mosaics.txt'
-moviesdb = dbfolder + 'movies.txt'
+filesdb = dbfolder + 'files.txt' #. csv
+centersdb = dbfolder + 'centers.csv'
+compositesdb = dbfolder + 'composites.csv'
+mosaicsdb = dbfolder + 'mosaics.csv'
+moviesdb = dbfolder + 'movies.csv'
 
 
 
-
-
+# columns in files.csv
+filesColVolume = 0
+filesColFileId = 1
+filesColPhase = 2
+filesColCraft = 3
+filesColTarget = 4
+#... filesColTime = 5
+filesColInstrument = 5
+filesColFilter = 6
+filesColNote = 7
 
 
 

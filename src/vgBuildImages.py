@@ -37,7 +37,7 @@ def buildImages(volumeNum):
                 dirpath = os.path.join(root, subdir)
                 dirpath = os.path.abspath(dirpath)
                 print 'dir %d/%d: %s' % (i,ndirs,dirpath)
-                lib.img2png(dirpath, filespec, imagespath)
+                lib.img2png(dirpath, filespec, imagespath, config.img2pngOptions)
                 i += 1
         return True
 

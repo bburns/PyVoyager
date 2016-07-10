@@ -14,17 +14,19 @@ import config
 
 
 
-def img2png(src, filespec, dst):
+def img2png(src, filespec, dst, options):
     "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
     # first convert img's to png's, then move them to the dest dir
     import os
     savedir = os.getcwd()
     os.chdir(src)
     # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + config.img2pngOptions
+    cmd = "img2png " + filespec + " " + options
     print cmd
     os.system(cmd)
+    os.system('dir *.png')
     # now move the png files to pngpath
+    # src is relative to the python program so need to switch back to that dir
     os.chdir(savedir)
     cmd = "move " + src +"\\*.png " + dst + "/"
     print cmd

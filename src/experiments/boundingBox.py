@@ -1,5 +1,4 @@
 
-# analyze an image
 # testbed for bounding box detection
 # --------------------------------------------------------------------------------
 

@@ -39,24 +39,25 @@ def buildCenters(volumeNum):
                     outfile = centerspath + '/' + config.centersprefix + filename
                     print 'center %d/%d: %s' %(i,nfiles,infile)
                     # blobThreshold = config.blobThreshold
-                    fileid = filename.split('_')[0] # eg C1385455
-                    blobThreshold = getBlobThreshold(fileid)
-                    libimg.centerImageFile(infile, outfile, blobThreshold, config.rotateImage)
+                    # fileid = filename.split('_')[0] # eg C1385455
+                    # blobThreshold = getBlobThreshold(fileid)
+                    # libimg.centerImageFile(infile, outfile, blobThreshold, config.rotateImage)
+                    libimg.centerImageFile(infile, outfile, 0, config.rotateImage) #. don't need blob threshold with new routine
                     i += 1
         return True
 
-def getBlobThreshold(fileid):
-    "get the blob-detection threshold based on the given file id"
-    # so can set different thresholds for different image sets,
-    # which may have darker or brighter backgrounds
-    # for pair in config.blobThresholds:
-    # iterate backwards over list
-    # find the first pair that it comes after
-    for pair in list(reversed(config.blobThresholds)):
-        if fileid>=pair[0]:
-            blobThreshold = pair[1]
-            break
-    return blobThreshold
+# def getBlobThreshold(fileid):
+#     "get the blob-detection threshold based on the given file id"
+#     # so can set different thresholds for different image sets,
+#     # which may have darker or brighter backgrounds
+#     # for pair in config.blobThresholds:
+#     # iterate backwards over list
+#     # find the first pair that it comes after
+#     for pair in list(reversed(config.blobThresholds)):
+#         if fileid>=pair[0]:
+#             blobThreshold = pair[1]
+#             break
+#     return blobThreshold
 
 # print getBlobThreshold('C1')
 # print getBlobThreshold('C2')

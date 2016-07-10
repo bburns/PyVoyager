@@ -14,6 +14,56 @@ import config
 
 
 
+
+def getBlobDetector(minThreshold=10, maxThreshold=20, thresholdStep=10):
+    "get a cv2 simple blob detector"
+    # details: http://docs.opencv.org/master/d0/d7a/classcv_1_1SimpleBlobDetector.html#gsc.tab=0
+    # keypoint params: http://docs.opencv.org/2.4/modules/features2d/doc/common_interfaces_of_feature_detectors.html
+    # sourcecode: https://github.com/opencv/opencv/blob/1307bb1d033af3baeb55afb63c3989d3d6791c80/modules/features2d/src/blobdetector.cpp
+    
+    # You should set filterBy* to true/false to turn on/off corresponding filtration. Available filtrations:
+    # By color. This filter compares the intensity of a binary image at the
+    # center of a blob to blobColor. If they differ, the blob is filtered out.
+    # Use blobColor = 0 to extract dark blobs and blobColor = 255 to extract
+    # light blobs.
+    # Default values of parameters are tuned to extract dark circular blobs.
+    # ie it's easier than subtracting entire array from 255
+    
+    params = cv2.SimpleBlobDetector_Params()
+    # print params.thresholdStep # default=10.0
+    # print params.minDistBetweenBlobs # default=10.0
+    # print params.filterByArea # default=True
+    # print params.maxArea # default=5000.0
+    params.minThreshold = minThreshold;
+    params.maxThreshold = maxThreshold;
+    params.thresholdStep = thresholdStep;
+    params.filterByColor = True
+    params.blobColor = 255 # use 255 to extract light colored blobs
+    # params.filterByArea = False
+    params.filterByArea = True
+    params.minArea = 1
+    params.maxArea = 1000000 # ? 
+    ver = (cv2.__version__).split('.')
+    # print ver # [2,4,3]
+    if int(ver[0]) < 3 :
+        detector = cv2.SimpleBlobDetector(params)
+    else : 
+        detector = cv2.SimpleBlobDetector_create(params)
+    return detector
+
+
+def show(im):
+    "Show a cv2 image and wait for a keypress"
+    cv2.imshow("cv2 image - press escape to continue", im)
+    cv2.waitKey(0)    
+
+
+def showMpim(im):
+    "Show an mpim image and wait for a keypress"
+    im2 = mpim2cv2(im)
+    show(im2)
+
+    
 def combineChannels(channels):
     "combine the given weighted channels and return a single image"
     
@@ -55,8 +105,10 @@ def combineChannels(channels):
     return im
 
 
+
 def mpim2cv2(im):
     "convert mpim (matplotimage library) image to cv2 (opencv) image"
+    # mpim images are 0.0-1.0, cv2 are 0-255
     # im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
     im = im.astype('uint8')
@@ -184,7 +236,8 @@ def centerImageFile(infile, outfile, blobThreshold, rotateImage=False):
     if rotateImage:
         im = np.rot90(im, 2) # rotate by 180
     if config.centerMethod=='blob':
-        boundingBox = findBoundingBoxByBlob(im, blobThreshold)
+        # boundingBox = findBoundingBoxByBlob(im, blobThreshold)
+        boundingBox = findBoundingBoxByBlob2(im)
     elif config.centerMethod=='box':
         boundingBox = findBoundingBoxByEdges(im)
     elif config.centerMethod=='circle':
@@ -255,25 +308,75 @@ def drawBoundingBox(im, boundingBox):
     return imBox
 
 
+#. remove param
 def findBoundingBox(im, blobThreshold):
     """find the center of a planet using blobs, hough circle detection, and/or other means,
     and return the bounding box"""
-    boundingBox = findBoundingBoxByBlob(im, blobThreshold)
+    # boundingBox = findBoundingBoxByBlob(im, blobThreshold)
+    boundingBox = findBoundingBoxByBlob2(im)
     [x1,y1,x2,y2] = boundingBox
     if config.drawBlob:
         im = drawBoundingBox(im, boundingBox)
     # make sure box is ~square
     width = x2 - x1
     height = y2 - y1
-    if abs(width-height) > 10:
+    if abs(width-height) > 10: #. arbitrary parameter
         # # make sure center of box would be on screen (hough doesn't work otherwise)
         # x = (x1+x2)/2
         # y = (y1+y2)/2
         # if x>=0 and x<800 and y>=0 and y<800:
         #     boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
-        boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
+        # boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
+        print boundingBox
+        # imcrop = im[y1:y2,x1:x2]
+        imcrop = im[x1:x2,y1:y2]
+        print imcrop
+        if width!=0 and height!=0:
+            boundingBox = findBoundingBoxByCircle(imcrop) # use hough to find circle
+            boundingBox[0] += x1
+            boundingBox[1] += y1
+            boundingBox[2] += x1
+            boundingBox[3] += y1
     return boundingBox
+
+
+def findBoundingBoxByBlob2(im):
+    "find the biggest and best blob, iterating over different threshold values. returns bounding box"
+    #. clean up
     
+    # calls findBoundingBoxByBlob ~15 times.
+    # but seems able to handle many different lighting conditions.
+    # the idea is to look for the place where the slope of area vs threshold starts to level out.
+    # that seemed to be the tipping point of where to find the best threshold value.
+    
+    # iterate over threshold values
+    # th is threshold
+    thmin = 0.05
+    thmax = 0.20
+    thstep = 0.01
+    imax = int((thmax-thmin)/thstep)+1
+
+    lastarea = 1
+    maxarea = 800*800.0
+    maxderiv = 1/thstep  # ie going from area=1 to area=0 in the delta of thstep
+    thdiff = -0.9 # this seemed to be a good point to look for the inflection, based on some matplotlib plots for various images
+    thbest = 0
+    areabest = 0
+    boundingBoxBest = [0,0,799,799]
+    for i in range(0,imax):
+        th = thmin + i * thstep
+        boundingBox = findBoundingBoxByBlob(im, th)
+        x1,y1,x2,y2 = boundingBox
+        area = (x2-x1)*(y2-y1) / maxarea # area = 0 to 1
+        deriv = (area - lastarea) / thstep / maxderiv
+        if deriv>thdiff:
+            thbest = th
+            areabest = area
+            boundingBoxBest = boundingBox
+        lastarea = area
+    return boundingBoxBest
+
+
 
 def findBoundingBoxByBlob(im, blobThreshold):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
@@ -327,55 +430,55 @@ def findBoundingBoxByBlob(im, blobThreshold):
 
 
 
-# def findBoundingBoxByEdges(im, epsilon=0, N=5):
-def findBoundingBoxByEdges(im):
-    "find edges of largest object in image based on the most prominent edges, and return bounding box"
+# # def findBoundingBoxByEdges(im, epsilon=0, N=5):
+# def findBoundingBoxByEdges(im):
+#     "find edges of largest object in image based on the most prominent edges, and return bounding box"
 
-    # def findEdges1d(a, epsilon = 0):
-    def findEdges1d(array):
-        "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
-        icount = len(array)
-        istart = 4 #. why skip 4? oh, the running average of N=5 columns
-        iend = icount # skip 4 here also?
-        # epsilon is the threshold value over which the smoothed value must cross
-        epsilon = config.boxEpsilon
-        # find first value over threshold
-        ifirst = 0
-        for i in xrange(istart, iend, 1):
-            if array[i] > epsilon:
-                ifirst = i
-                break
-        # find last value over threshold
-        ilast = iend-1
-        for i in xrange(iend-1, istart-1, -1):
-            if array[i] > epsilon:
-                ilast = i
-                break
-        return ifirst,ilast
+#     # def findEdges1d(a, epsilon = 0):
+#     def findEdges1d(array):
+#         "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
+#         icount = len(array)
+#         istart = 4 #. why skip 4? oh, the running average of N=5 columns
+#         iend = icount # skip 4 here also?
+#         # epsilon is the threshold value over which the smoothed value must cross
+#         epsilon = config.boxEpsilon
+#         # find first value over threshold
+#         ifirst = 0
+#         for i in xrange(istart, iend, 1):
+#             if array[i] > epsilon:
+#                 ifirst = i
+#                 break
+#         # find last value over threshold
+#         ilast = iend-1
+#         for i in xrange(iend-1, istart-1, -1):
+#             if array[i] > epsilon:
+#                 ilast = i
+#                 break
+#         return ifirst,ilast
 
-    # def findEdges(im, axis, epsilon=0, N=5):
-    def findEdges(im, axis):
-        "find the edges for the given axis (0 or 1), return min,max"
-        sums = np.sum(im, axis=axis)
-        diff = np.diff(sums)
-        diffsq = np.square(diff)
-        diffsqln = np.log(diffsq)
-        # config.N is the number of rows/columns to average over, for running average
-        N = config.boxN
-        if N>0:
-            smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
-            i1, i2 = findEdges1d(smoothed)
-        else:
-            i1, i2 = findEdges1d(diffsqln)
-        return i1, i2
+#     # def findEdges(im, axis, epsilon=0, N=5):
+#     def findEdges(im, axis):
+#         "find the edges for the given axis (0 or 1), return min,max"
+#         sums = np.sum(im, axis=axis)
+#         diff = np.diff(sums)
+#         diffsq = np.square(diff)
+#         diffsqln = np.log(diffsq)
+#         # config.N is the number of rows/columns to average over, for running average
+#         N = config.boxN
+#         if N>0:
+#             smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
+#             i1, i2 = findEdges1d(smoothed)
+#         else:
+#             i1, i2 = findEdges1d(diffsqln)
+#         return i1, i2
 
-    x1, x2 = findEdges(im, 1)
-    y1, y2 = findEdges(im, 0)
+#     x1, x2 = findEdges(im, 1)
+#     y1, y2 = findEdges(im, 0)
     
-    #. now try to make it a square
+#     #. now try to make it a square
     
-    boundingBox = [x1,y1,x2,y2]
-    return boundingBox
+#     boundingBox = [x1,y1,x2,y2]
+#     return boundingBox
 
 
 
@@ -409,7 +512,7 @@ def test():
     im = drawBoundingBox(im, boundingBox)
     
     # save image
-    misc.imsave('test/test_bounding_box.png', im)
+    # misc.imsave('test/test_bounding_box.png', im)
 
     # center image
     im = centerImage(im, boundingBox)
@@ -419,11 +522,11 @@ def test():
     im[0:799, 399] = 0.25
     
     # save image
-    misc.imsave('test/test_centered.png', im)
+    # misc.imsave('test/test_centered.png', im)
 
     # test the center_image_file fn
     # centerImageFile(infile, 'test/test_cif.png')
-    centerImageFile(infile, 'test/test_cif.png', True)
+    # centerImageFile(infile, 'test/test_cif.png', True)
 
     print 'done.'
     

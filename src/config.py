@@ -20,15 +20,22 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # imagetype to extract using img2png
 # RAW images can have bright backgrounds.
 # CLEANED images just have the riseau marks removed.
-# CALIB images have darker backgrounds, but often dim the planet too much (eg neptune).
+# CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
-imageType = 'RAW'
+# imageType = 'RAW'
+imageType = 'CALIB'
 # imageFilespec = "*" # do all image types
 imageFilespec = "*" + imageType + ".IMG" # eg *RAW.IMG
 
+# imageTypes = ['RAW', 'CALIB']
+# imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
+
 # img2png options
-img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
+# img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
+# -fnamefilter - append filter name, eg _ORANGE
+# -loglevel0 - not so much info
+img2pngOptions = "-fnamefilter -loglevel0" 
 
 
 # centers
@@ -46,16 +53,18 @@ centerMethod = 'all'
 # blobThreshold = 0.05 # way too broad
 # blobThreshold = 0.1 # misses some dim edges of planet
 # blobThreshold = 0.09 # try to catch dim edges of planet, works well on jupiter voy1
-blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
+# blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
 # blobThreshold = 0.20 # need for later neptune images
 
-blobThresholds = [
-    ['C0000000',0.10], # arbitrary start
-    ['C0896631',0.15], # neptune bright bg
-    ['C0903826',0.15], # moon, dark
-    ['C0936002',0.16], # neptune brighter bg
-    ['C1385455',0.09], # jupiter voy1
-    ]
+# out at neptune the background levels vary so much you'd be setting this per image, practically.
+# need a better approach.
+# blobThresholds = [
+#     ['C0000000',0.10], # arbitrary start
+#     ['C0896631',0.15], # neptune bright bg
+#     ['C0903826',0.15], # moon, dark
+#     ['C0936002',0.16], # neptune brighter bg
+#     ['C1385455',0.09], # jupiter voy1
+#     ]
 
 # prefix for centered filenames
 centersprefix = 'centered_' 
@@ -73,8 +82,8 @@ drawCircle = False # draw detected hough circle
 # N is the number of rows/columns to average over, for running average
 # epsilon is the threshold value over which the smoothed value must cross
 # (this approach doesn't work well, at all)
-boxN = 5
-boxEpsilon = 0.2 # this is enough to ignore the dead pixel
+# boxN = 5
+# boxEpsilon = 0.2 # this is enough to ignore the dead pixel
 
 
 # composites
@@ -104,7 +113,6 @@ frameRate = 10 # fps
 # use offline folder for large datasets (multi gigabyte)
 onlineFolder  = "data"
 offlineFolder = "data" #. will be f:/...
-# testFolder    = '../test_cases/'
 
 downloadFolder   = offlineFolder + "/step1_downloads"
 unzipFolder      = offlineFolder + "/step2_unzips"
@@ -115,6 +123,8 @@ mosaicsFolder    = onlineFolder  + "/step6_mosaics"
 targetsFolder    = onlineFolder  + "/step7_targets"
 moviesFolder     = onlineFolder  + "/step8_movies"
 
+# test images go here
+testFolder    = 'data/step3_images/test'
 
 # database folder
 dbFolder = 'db'

@@ -156,7 +156,7 @@ indexTranslations = {
 
 # file databases
 dbfolder = 'db/'
-filesdb = dbfolder + 'files.txt' #. csv
+filesdb = dbfolder + 'files.csv'
 centersdb = dbfolder + 'centers.csv'
 compositesdb = dbfolder + 'composites.csv'
 mosaicsdb = dbfolder + 'mosaics.csv'
@@ -165,15 +165,16 @@ moviesdb = dbfolder + 'movies.csv'
 
 
 # columns in files.csv
+# keep in synch with vgInitFiles.py, etc
 filesColVolume = 0
 filesColFileId = 1
 filesColPhase = 2
 filesColCraft = 3
 filesColTarget = 4
-#... filesColTime = 5
-filesColInstrument = 5
-filesColFilter = 6
-filesColNote = 7
+filesColTime = 5
+filesColInstrument = 6
+filesColFilter = 7
+filesColNote = 8
 
 
 

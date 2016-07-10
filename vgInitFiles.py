@@ -1,6 +1,6 @@
 
-# build the files.txt table from the VGISS index files
-# files.txt lists ALL available voyager images
+# build the files.csv table from the VGISS index files
+# files.csv lists ALL available voyager images
 
 
 import os
@@ -12,14 +12,14 @@ import lib
         
 
 def initFiles():
-    "build the files table (files.txt) from the VGISS index files (rawimages_*.tab)"
+    "build the files table (files.csv) from the VGISS index files (rawimages_*.tab)"
     
     # iterate down the giant csv files
     # get the fileid, craft, flyby, target, camera
-    # write to files.txt
+    # write to files.csv
     
     fileout = open(config.filesdb, 'wb')
-    fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',') # keep in synch with row, below
+    fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',') # keep in synch with row, below, and config.filesCol*
     writer = csv.writer(fileout)
     writer.writerow(fields)
     
@@ -39,18 +39,18 @@ def initFiles():
                     filename = row[config.indexFileColFilename] # eg C1385455_RAW.IMG
                     craft = row[config.indexFileColCraft] # eg VOYAGER 1
                     phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
-                    target = row[config.indexFileColTarget].title() # eg IO
-                    time = row[config.indexFileColTime].title() # eg 1979-03-05T15:32:56
+                    target = row[config.indexFileColTarget] # eg N RINGS
+                    time = row[config.indexFileColTime] # eg 1979-03-05T15:32:56
                     instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
                     filter = row[config.indexFileColFilter] # eg ORANGE
                     note = row[config.indexFileColNote] 
 
-                    fileid = filename.split('_')[0] # eg C1385455
-                    
                     # translate where needed
+                    fileid = filename.split('_')[0] # eg C1385455
                     phase = config.indexTranslations[phase] # eg Jupiter
                     craft = config.indexTranslations[craft] # eg Voyager1
                     instrument = config.indexTranslations[instrument] # eg Narrow
+                    target = target.title().replace(' ','_') # eg N_Rings
 
                     # write row
                     row = [volume, fileid, phase, craft, target, time, instrument, filter, note] # keep in sync with fields, above

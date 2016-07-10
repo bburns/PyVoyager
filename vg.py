@@ -8,6 +8,7 @@ import os
 import inspect
 
 import vgBuild
+import vgInitFiles
 
 
 # get command and arguments
@@ -41,12 +42,19 @@ elif cmd=="composites":
     vgBuild.buildComposites(volnum)
     
 elif cmd=="targets":
-    targetPath = args.pop(0)
-    vgBuild.buildTargets(targetPath)
+    # targetPath = args.pop(0)
+    # vgBuild.buildTargets(targetPath)
+    volnum = args.pop(0)
+    vgBuild.buildTargets(volnum)
     
 elif cmd=="movies":
     targetPath = args.pop(0)
     vgBuild.buildMovies(targetPath)
+    
+elif cmd=="init":
+    noun = args.pop(0)
+    if noun=='files':
+        vgInitFiles.initFiles()
     
 # elif cmd=="center":
 #     centernum = args.pop(0)
@@ -68,8 +76,8 @@ if cmd=="help":
     print "  vg centers <volnumber>"
     print "  vg composites <volnumber>"
     print "  vg mosaics <volnumber>"
+    print "  vg targets <volnumber>"
     print
-    print "  vg targets <system>/<spacecraft>/<target>/<camera>"
     print "  vg movies <system>/<spacecraft>/<target>/<camera>"
     print
     # print "  vg center <centerId>"
@@ -77,12 +85,13 @@ if cmd=="help":
     # print "  vg mosaic <mosaicId>"
     # print "  vg movie <movieId>"
     # print
+    print "  vg init files"
     # print "  vg init images"
     # print "  vg init centers"
     # print "  vg init composites"
     # print "  vg init mosaics"
     # print "  vg init movies"
-    # print
+    print
     
 
 # if __name__ == '__main__':

@@ -16,6 +16,7 @@ import config
 
 def combineChannels(channels):
     "combine the given weighted channels and return a single image"
+    
     # eg channels = {
     # 'Orange':'composites/orange.png',
     # 'Green':'composites/green.png',
@@ -54,11 +55,8 @@ def combineChannels(channels):
     return im
 
 
-
-
-
 def mpim2cv2(im):
-    "convert mpim image to cv2 image"
+    "convert mpim (matplotimage library) image to cv2 (opencv) image"
     # im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
     im = im.astype('uint8')
@@ -96,13 +94,12 @@ def mpim2cv2(im):
     
     
 def drawCircle(im, circle):
-    ""
+    "draw a circle on the image and return a new image"
     # cv2.circle(im, (x,y), r, (0,255,0), 4)
     im = im.copy()
     (x,y,r) = circle
     cv2.circle(im, (x,y), r, (0,255,0), 2)
     return im
-    
 
 
 def findBoundingBoxByCircle(im):

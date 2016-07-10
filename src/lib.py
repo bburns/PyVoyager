@@ -1,6 +1,6 @@
 
-# library routines for pyvoyager
-# used by different files
+# library routines for voyager
+
 
 import os # for system, mkdir, mkdirs
 import os.path # for isfile
@@ -9,11 +9,10 @@ import errno
 import re # for findall
 
 
-#.. should pass any constants into functions - this is a cheat
-import config # constants
+#.. should pass any constants into functions!
+import config
 
 
-img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 
 def img2png(src, filespec, dst):
     "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
@@ -22,7 +21,7 @@ def img2png(src, filespec, dst):
     savedir = os.getcwd()
     os.chdir(src)
     # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + img2pngOptions
+    cmd = "img2png " + filespec + " " + config.img2pngOptions
     print cmd
     os.system(cmd)
     # now move the png files to pngpath
@@ -32,15 +31,15 @@ def img2png(src, filespec, dst):
     os.system(cmd)
 
 
-def splitId(itemId):
-    "Split an id like 'movie15' into ['movie','15']"
-    itemType, itemNum = re.findall(r"[^\W\d_]+|\d+", itemId)
-    return [itemType, itemNum]
-
+# def splitId(itemId):
+#     "Split an id like 'movie15' into ['movie','15']"
+#     itemType, itemNum = re.findall(r"[^\W\d_]+|\d+", itemId)
+#     return [itemType, itemNum]
 
 
 def copyFilesSequenced(src, dst, filenamePattern):
     "Copy all files from src to dst folders, numbering sequentially using given pattern"
+    #. make links, not copies
     # used for staging files for use by ffmpeg
     # eg pattern = 'img%04d.png'
     mkdir(dst)
@@ -82,22 +81,22 @@ def mkdir_p(path):
             pass
         else:
             raise
+
         
 def pngsToMp4(folder, filenamePattern, outputFilename, frameRate):
     "Convert a sequentially numbered set of pngs to an mp4 movie"
     os.chdir(folder)
-    # eg "ffmpeg -y -i img%04d.png -r 15 a.mp4"
+    # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
     cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
     print cmd
     os.system(cmd)
 
 
-
 def downloadFile(url, filepath):
-    "download a file from a url to a given filepath using curl"
+    "Download a file from a url to a given filepath using curl"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     if os.path.isfile(filepath):
-        print "file " + filepath + " already exists"
+        print "File " + filepath + " already exists"
         return False
     else:
         cmd = "curl -o " + filepath + " " + url
@@ -107,7 +106,7 @@ def downloadFile(url, filepath):
 
 
 def getDownloadUrl(volnumber):
-    "get url to download a volume"
+    "Get url to download a volume"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     volprefix = str(volnumber)[0:1] # first digit (=planet number)
     url = config.downloadUrl.format(volprefix, volnumber)
@@ -115,6 +114,7 @@ def getDownloadUrl(volnumber):
 
 
 def getVolumeTitle(volnumber):
+    "Get name of Voyager volume associated with the volume number"
     if int(volnumber)==0:
         return "test"
     else:
@@ -122,7 +122,7 @@ def getVolumeTitle(volnumber):
 
 
 def getZipfilepath(volnumber):
-    "get filepath for zipfile corresponding to a volume number"
+    "Get filepath for zipfile corresponding to a volume number"
     # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
     sourcefolder = config.downloadFolder
     url = getDownloadUrl(volnumber)
@@ -131,16 +131,18 @@ def getZipfilepath(volnumber):
     return zipfilepath
     
 
+#. remove this
 def getUnzippedpath(volnumber):
-    "get folder path for unzipped volume"
+    "Get folder path for unzipped volume"
     # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
     unzipfolder = config.unzipFolder
-    url = getDownloadUrl(volnumber)
+    # url = getDownloadUrl(volnumber)
     filetitle = getVolumeTitle(volnumber)
     unzippedpath = unzipfolder + '/' + filetitle
     return unzippedpath
 
 
+#. remove this
 def getImagespath(volnumber):
     "get folder path for png images"
     # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
@@ -150,6 +152,7 @@ def getImagespath(volnumber):
     return imagespath
 
 
+#. remove this
 def getCenterspath(volnumber):
     "get folder path for centered images"
     # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
@@ -160,20 +163,22 @@ def getCenterspath(volnumber):
 
 
 def unzipFile(zipfile, destfolder):
-    """unzip a file to a destination folder.
-    assumes zip file is a .tar or .tar.gz file.
-    doesn't unzip file if destination folder already exists.
-    eg unzipFile('test/unzip_test.tar', 'test/unzip_test')"""
+    "Unzip a file to a destination folder."
+    
+    # assumes zip file is a .tar or .tar.gz file.
+    # doesn't unzip file if destination folder already exists.
+    # eg unzipFile('test/unzip_test.tar', 'test/unzip_test')
+    
     #. but note - tar file can have a top-level folder, or not -
     # this is assuming that it does, which is why we extract the tarfile
     # to the parent folder of destfolder.
+    
     if os.path.isdir(destfolder):
         print "Folder " + destfolder + " already exists - not unzipping"
         return False
     else:
-        #. tried just building a commandline cmd but had issues with windows paths etc
-        # mkdir(destfolder)
-        # archive_util.unpack_archive(zipfile, destfolder)
+        # tried just building a commandline tar cmd but had issues with windows paths etc
+        # this is just as fast anyway
         parentfolder = destfolder + "/.."
         archive_util.unpack_archive(zipfile, parentfolder)
         return True

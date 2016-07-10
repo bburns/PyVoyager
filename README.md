@@ -1,20 +1,19 @@
 
-PyVoyager
+Voyager
 ========================================
 
 Creates and stabilizes Voyager flyby movies. 
 
-PyVoyager consists of a pipeline of Python programs with the following steps: 
+Voyager consists of a pipeline of Python programs with the following steps: 
 
 * 1. Download Voyager datasets from **PDS archives** [1] 
 * 2. Extract the contents of the tar.gz archives
-* 3. Convert Voyager PDS images to PNGs using **img2png** by Bjorn Jonsson [2]
+* 3. Convert Voyager IMG images to PNGs using **img2png** by Bjorn Jonsson [2]
 * 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6].
 * 5. Colorize frames by combining images, where appropriate
-* 6. Make set of frames for movies, including titles
-* 7. Make a movie from the images from each volume using **ffmpeg** [7]
-* 8. Combine the separate movies into one movie with **ffmpeg**
-* 9. (Add music with **ffmpeg**)
+* 6. Build mosaics from images, where appropriate
+* 7. Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
+* 8. Make movies from previous step and add titles and music using **ffmpeg** [7]
 
 To center the images, blob detection is first done to identify the largest contiguous region in the image, then if this region is not approximately square, circle detection is done in order to identify the center and radius of the planet/moon. 
 
@@ -23,14 +22,13 @@ The current version is likely to undergo changes in order to handle different ta
 
 Version 0.2
 ----------------------------------------
-
-Working on colorization of movies
+- Add command line interface
+- Working on automatic colorization of movies
 2016-07-07
 
 
 Version 0.1
 ----------------------------------------
-
 The sequence from VGISS_5104-5105 works best at the moment, so those were combined into one movie. 
 2016-07-04
 

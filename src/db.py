@@ -1,5 +1,7 @@
 
 # ~oo text file database routines
+# not currently used
+
 
 import csv
 

@@ -8,19 +8,20 @@
 
 
 # imagetype to extract using img2png
-# RAW images often have bright backgrounds,
-# which make it harder to threshold the image properly for blob detection.
-# so switching to CALIB images, which have darker backgrounds.
-# GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
+# RAW images can have bright backgrounds.
 # CLEANED images just have the riseau marks removed.
+# CALIB images have darker backgrounds, but often dim the planet too much (eg neptune).
+# GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
-# imageType = 'RAW'
-imageType = 'CALIB'
+imageType = 'RAW'
 # imageFilespec = "*" # do all image types
-imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
+imageFilespec = "*" + imageType + ".IMG" # eg *RAW.IMG
 
 # prefix for centered filenames
 centersprefix = 'centered_' 
+
+# prefix for composite filenames
+compositesPrefix = 'composite_'
 
 # rotate image 180 degrees during centering step
 rotateImage = True
@@ -72,9 +73,6 @@ blobThresholds = [
     ['C1385455',0.09], # jupiter voy1
     ]
 # blobThresholds = 
-
-
-
 
 
 
@@ -150,6 +148,9 @@ centersdb = dbfolder + 'centers.txt'
 compositesdb = dbfolder + 'composites.txt'
 mosaicsdb = dbfolder + 'mosaics.txt'
 moviesdb = dbfolder + 'movies.txt'
+
+
+
 
 
 

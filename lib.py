@@ -43,11 +43,12 @@ def copyFilesSequenced(src, dst, filenamePattern):
     "Copy all files from src to dst folders, numbering sequentially using given pattern"
     # used for staging files for use by ffmpeg
     # eg pattern = 'img%04d.png'
-    lib.mkdir(dst)
+    mkdir(dst)
     # copy files, numbering them sequentially
     # (wasteful, but necessary as ffmpeg doesn't handle globbing on windows)
-    i = 0
+    i = 1
     for root, dirs, files in os.walk(src):
+        nfiles = len(files)
         for infile in files:
             inpath = src + '/' + infile
             # print inpath
@@ -55,12 +56,13 @@ def copyFilesSequenced(src, dst, filenamePattern):
             outfile = filenamePattern % i
             outpath = dst + '/' + outfile
             # print outpath
-            i += 1
             # print 'copy ' + str(i) + ': ' + inpath
             cmd = "cp " + inpath + " " + outpath
             # print cmd
             os.system(cmd)
-            print 'copied ' + str(i) + ': ' + outpath
+            # print 'copied ' + str(i) + ': ' + outpath
+            print 'copied %d/%d: %s' % (i,nfiles,outpath)
+            i += 1
     
 
 
@@ -183,6 +185,7 @@ def test():
     print getUnzippedpath(5101)
     print getImagespath(5101)
     print getImagespath(0)
+    print getCenterspath(5101)
     
     #. test this with a tar.gz
     # print 'unzipping test file...'

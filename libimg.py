@@ -9,8 +9,51 @@ import numpy as np # for zeros, array, copy
 import cv2 # for hough circle detection
 
 
-#. should pass any constants into functions - this is a cheat
+#. should pass any constants into functions
 import config
+
+
+
+def combineChannels(channels):
+    "combine the given weighted channels and return a single image"
+    # eg channels = {
+    # 'Orange':'composites/orange.png',
+    # 'Green':'composites/green.png',
+    # 'Blue':'composites/blue.png',
+    # }
+    # if missing a channel will use a blank/black image for that channel
+    
+    # get filenames
+    redfile = channels.get('Orange')
+    greenfile = channels.get('Green') or channels.get('Clear')
+    bluefile = channels.get('Blue') or channels.get('Violet') or channels.get('Ultraviolet')
+    
+    # read images
+    # returns None if filename is invalid - doesn't throw an error
+    red = cv2.imread(redfile,cv2.IMREAD_GRAYSCALE)
+    green = cv2.imread(greenfile,cv2.IMREAD_GRAYSCALE)
+    blue = cv2.imread(bluefile,cv2.IMREAD_GRAYSCALE)
+    
+    # assign a blank image if missing a channel
+    blank = np.zeros((800,800), np.uint8)
+    if red==None:
+        red = blank
+    if green==None:
+        green = blank
+    if blue==None:
+        blue = blank
+    
+    # apply weights
+    # blue = cv2.multiply(blue,0.6)
+    # red = cv2.multiply(red,0.5)
+    # green = cv2.multiply(green,1.0)
+
+    # merge channels - BGR for cv2
+    im = cv2.merge((blue, green, red))
+    
+    return im
+
+
 
 
 

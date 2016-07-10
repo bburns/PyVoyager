@@ -20,7 +20,7 @@ def makeMovieVolume(volnum):
         return False
     else:
         # stage files for ffmpeg
-        filenamePattern = 'img%04d.png'
+        filenamePattern = 'img%05d.png'
         lib.copyFilesSequenced(src, dst, filenamePattern)
         # now make movie with ffmpeg
         movieName = '_' + voltitle + '.mp4' # prepend _ so sorts at start of file list
@@ -29,14 +29,15 @@ def makeMovieVolume(volnum):
 
         
 def main():
+    makeMovieVolume(8202)
     # makeMovieVolume(0)
     
-    # center a certain number of volumes
-    n = config.nvolumesToMovieize
-    for volume in config.volumes:
-        if n>0:
-            if makeMovieVolume(volume):
-                n -= 1
+    # # center a certain number of volumes
+    # n = config.nvolumesToMovieize
+    # for volume in config.volumes:
+    #     if n>0:
+    #         if makeMovieVolume(volume):
+    #             n -= 1
                 
 if __name__ == '__main__':
     main()

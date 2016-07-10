@@ -4,3 +4,4 @@ movies/
 screenshots/
 voyager.org
 !backup_to_dropbox.bat
+test/output

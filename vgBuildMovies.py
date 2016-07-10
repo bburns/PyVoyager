@@ -1,4 +1,8 @@
 
+# build movies associated with target subfolders,
+# eg Jupiter/Voyager1/Io/Narrow
+
+
 import csv
 
 import config
@@ -9,11 +13,8 @@ import lib
 def buildMovies(targetPath):
     "build movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
 
-
-    # so this will be similar to buildtargets, but
-    # 
-    
-    
+    # this will be similar to buildtargets, but make links instead of copying files
+    # and number them sequentially also
     
     pass
 

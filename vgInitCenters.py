@@ -1,5 +1,5 @@
 
-# build centers.txt file by attempting to center images in files.txt 
+# build centers.csv file by attempting to center images in files.csv 
 
 
 

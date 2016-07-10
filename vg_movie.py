@@ -1,7 +1,7 @@
 
 # combine individual movies into one using ffmpeg
 
-# http://trac.ffmpeg.org/wiki/Concatenate#demuxer
+# see http://trac.ffmpeg.org/wiki/Concatenate#demuxer
 
 
 import os

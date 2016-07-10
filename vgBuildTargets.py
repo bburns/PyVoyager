@@ -1,9 +1,15 @@
 
+# build target subfolders like Jupiter/Voyager1/Io/Narrow
+# and copy images to them from a specified volume
+
+
 import os
 import csv
 
 import config
 import lib
+
+from vgBuildCenters import buildCenters
 
 
 # def buildTargets(targetPath):
@@ -25,72 +31,69 @@ def buildTargets(volnum):
     
     volid = lib.getVolumeTitle(volnum) # eg VGISS_5101
     
-    # files.txt:
-    # volume,fileid,phase,craft,target,instrument,filter,note
-    # VGISS_5101,C1385455,Jupiter,Voyager1,Dark,Wide,CLEAR,DARK CURRENT CALIBRATION
+    # center the volume, if not already there
+    buildCenters(volnum)
     
     f = open(config.filesdb, 'rt')
     i = 0
     # item = {}
-    try:
-        reader = csv.reader(f)
-        for row in reader:
-            if i==0:
-                fields = row
-            else:
-                volume = row[config.filesColVolume]
-                if volume==volid:
-                    fileid = row[config.filesColFileId]
-                    filter = row[config.filesColFilter]
+    reader = csv.reader(f)
+    for row in reader:
+        if i==0:
+            fields = row
+        else:
+            volume = row[config.filesColVolume]
+            if volume==volid:
+                fileid = row[config.filesColFileId]
+                filter = row[config.filesColFilter]
 
-                    # get subfolder, eg ../data/step3_centers/VGISS_5101
-                    centersSubfolder = config.centersFolder + '/' + volume
+                # get subfolder, eg ../data/step3_centers/VGISS_5101
+                centersSubfolder = config.centersFolder + '/' + volume
 
-                    # get source filename
-                    # eg centered_C1327321_RAW_ORANGE.PNG
-                    centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
-                    # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                    src = centersSubfolder + '/' + centeredfilename
+                # get source filename and path
+                # eg centered_C1327321_RAW_ORANGE.PNG
+                # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
+                centeredpath = centersSubfolder + '/' + centeredfilename
 
-                    # if file exists, create subfolder and copy/link image
-                    if os.path.isfile(src):
+                # if file exists, create subfolder and copy/link image
+                if os.path.isfile(centeredpath):
 
-                        # get subfolder, eg Jupiter/Voyager1/Io/Narrow
-                        phase = row[config.filesColPhase]
-                        craft = row[config.filesColCraft]
-                        target = row[config.filesColTarget]
-                        instrument = row[config.filesColInstrument]
-                        subfolder = phase +'/' + craft + '/' + target +'/' + instrument 
-                        
-                        # get target file, eg ../data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                        targetpath = config.targetsFolder + '/' + subfolder
-                        targetfile = targetpath + '/' + centeredfilename
+                    # get subfolder, eg Jupiter/Voyager1/Io/Narrow
+                    phase = row[config.filesColPhase]
+                    craft = row[config.filesColCraft]
+                    target = row[config.filesColTarget]
+                    instrument = row[config.filesColInstrument]
+                    subfolder = phase +'/' + craft + '/' + target +'/' + instrument 
 
-                        # skip if file already exists (to save time on copying)
-                        if True:
-                        # if not os.path.isfile(targetfile):
+                    # get target file, eg ../data/step7_targets/jupiter/voyager1/io/narrow/centered_....
+                    targetpath = config.targetsFolder + '/' + subfolder
+                    targetfile = targetpath + '/' + centeredfilename
 
-                            # create subfolder
-                            lib.mkdir_p(targetpath)
+                    # skip if file already exists (to save time on copying)
+                    if True:
+                    # if not os.path.isfile(targetfile):
 
-                            # copy file
-                            # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
-                            cmd = 'cp ' + src + ' ' + targetpath
-                            print cmd
-                            os.system(cmd)
+                        # create subfolder
+                        lib.mkdir_p(targetpath)
 
-                            # links work, but then can't browse folders with image viewer... so back to copying
-                            # # link to file
-                            # # note: mklink requires admin privileges, so must run this script in an admin console
-                            # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                            # src2 = '../../../../../' + src # need to get out of the target dir
-                            # cmd = 'mklink ' + targetfile + ' ' + src2
-                            # cmd = cmd.replace('/','\\')
-                            # print cmd
-                            # os.system(cmd)
+                        # copy file
+                        # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
+                        cmd = 'cp ' + centeredpath + ' ' + targetpath
+                        print cmd
+                        os.system(cmd)
 
-            i += 1
+                        # links work, but then can't browse folders with image viewer... so back to copying
+                        # # link to file
+                        # # note: mklink requires admin privileges, so must run this script in an admin console
+                        # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                        # src2 = '../../../../../' + src # need to get out of the target dir
+                        # cmd = 'mklink ' + targetfile + ' ' + src2
+                        # cmd = cmd.replace('/','\\')
+                        # print cmd
+                        # os.system(cmd)
 
-    finally:
-        f.close()
+        i += 1
+
+    f.close()
     

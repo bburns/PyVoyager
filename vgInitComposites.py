@@ -1,5 +1,5 @@
 
-# build composites.txt, which will attempt to describe how to combine image channels
+# build composites.csv, which will attempt to describe how to combine image channels
 
 # based on image number (~time), filter, target, camera, NOTE field
 

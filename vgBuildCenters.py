@@ -1,4 +1,7 @@
 
+# build centered images from plain images (pngs)
+
+
 import os
 import os.path
 

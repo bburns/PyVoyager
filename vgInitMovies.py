@@ -1,5 +1,5 @@
 
-# initialize the movies.txt db
+# initialize the movies.csv db
 
 
 

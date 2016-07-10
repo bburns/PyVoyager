@@ -1,4 +1,7 @@
 
+# convert Voyager IMG files to PNG files using img2png
+
+
 import os.path
 
 import config
@@ -7,16 +10,12 @@ import lib
 from vgBuildUnzip import buildUnzip
 
 
-# more efficient to build all images in a volume at once    
-# filespec = "*" # do all image types
-# filespec = "*RAW.IMG"
-
 def buildImages(volumeNum):
     "convert IMG files to PNG files, if folder doesn't exist yet"
     print 'build images'
     unzippedpath = lib.getUnzippedpath(volumeNum)
     imagespath = lib.getImagespath(volumeNum)
-    filespec = config.imageFilespec # eg "*CALIB.IMG"
+    filespec = config.imageFilespec # eg "*RAW.IMG"
     if int(volumeNum)==0: # do nothing if asking for test volume
         print 'volume 0 is a test volume, which should be manually created in step3_images/test,'
         print 'and populated with test cases for centering, etc.'

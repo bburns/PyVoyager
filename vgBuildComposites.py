@@ -1,4 +1,8 @@
 
+# build composite images from centered images,
+# based on records in composites.csv.
+# see also vgInitComposites.py, which builds initial pass at composites.csv.
+
 
 import csv
 import cv2
@@ -8,12 +12,17 @@ import lib
 import libimg
 
 
-
-
+compositesColVolume = 0
+compositesColCompositeId = 1
+compositesColCenterId = 2
+compositesColFilter = 3
+compositesColWeight = 4
+    
 
 def buildComposites(volnum):
     "build composite images by combining channel images"
-    # walks over records in composites.txt, merges channel images, writes to composites folder
+    
+    # walks over records in composites.csv, merges channel images, writes to composites folder
     # eg
     # composites: 
     # volume,compositeId,centerId,filter,weight
@@ -24,7 +33,7 @@ def buildComposites(volnum):
     # VGISS_5103,C1537728,Jupiter,Voyager1,Jupiter,Narrow,BLUE,3 COLOR ROTATION MOVIE
     # VGISS_5103,C1537730,Jupiter,Voyager1,Jupiter,Narrow,ORANGE,3 COLOR ROTATION MOVIE
     # VGISS_5103,C1537732,Jupiter,Voyager1,Jupiter,Narrow,GREEN,3 COLOR ROTATION MOVIE
-    
+
     # iterate over composites.txt records
     filein = open(config.compositesdb,'rt')
     reader = csv.reader(filein)
@@ -36,9 +45,9 @@ def buildComposites(volnum):
         if i==0:
             fields = row
         else:
-            vol = row[0]
+            vol = row[compositesColVolume]
             if volume==vol:
-                compositeId = row[1]
+                compositeId = row[compositesColCompositeId]
                 if compositeId == startId:
                     channelRows.append(row)
                 else:
@@ -57,10 +66,10 @@ def processChannels(channelRows):
     volume = ''
     compositeId = ''
     for row in channelRows:
-        volume = row[0]
-        compositeId = row[1]
-        centerId = row[2]
-        filter = row[3].title()
+        volume = row[compositesColVolume]
+        compositeId = row[compositesColCompositeId]
+        centerId = row[compositesColCenterId]
+        filter = row[compositesColTitle].title()
         # folder = lib.getCenterspath(volume)
         folder = config.centersFolder + '/' + volume
         filetitle = config.centersprefix + centerId + '_' + config.imageType + '_' + filter + '.png'
@@ -78,3 +87,4 @@ def processChannels(channelRows):
 if __name__ == '__main__':
     buildComposites(5103)
     print 'done'
+

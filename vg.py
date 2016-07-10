@@ -42,10 +42,10 @@ elif cmd=="composites":
     vgBuild.buildComposites(volnum)
     
 elif cmd=="targets":
-    # targetPath = args.pop(0)
-    # vgBuild.buildTargets(targetPath)
     volnum = args.pop(0)
     vgBuild.buildTargets(volnum)
+    # targetPath = args.pop(0)
+    # vgBuild.buildTargets(targetPath)
     
 elif cmd=="movies":
     targetPath = args.pop(0)

@@ -1,3 +1,6 @@
-*.pyc
-test/output/
-old/pyplanet/test
+data/
+docs/
+movies/
+screenshots/
+voyager.org
+!backup_to_dropbox.bat

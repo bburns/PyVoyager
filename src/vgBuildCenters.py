@@ -34,7 +34,7 @@ def buildCenters(volumeNum):
             del dirs[:] # don't recurse
             for filename in files: # eg C1385455_RAW_CLEAR.png
                 ext = filename[-4:]
-                if ext=='.png':
+                if ext=='.png' or ext=='.PNG':
                     infile = imagespath + '/' + filename
                     outfile = centerspath + '/' + config.centersprefix + filename
                     print 'center %d/%d: %s' %(i,nfiles,infile)

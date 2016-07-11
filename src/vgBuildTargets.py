@@ -36,7 +36,6 @@ def buildTargets(volnum):
     
     f = open(config.filesdb, 'rt')
     i = 0
-    # item = {}
     reader = csv.reader(f)
     for row in reader:
         if i==0:
@@ -47,18 +46,18 @@ def buildTargets(volnum):
                 fileid = row[config.filesColFileId]
                 filter = row[config.filesColFilter]
 
-                # get subfolder, eg ../data/step3_centers/VGISS_5101
+                # get subfolder, eg data/step3_centers/VGISS_5101
                 centersSubfolder = config.centersFolder + '/' + volume
 
                 # get source filename and path
                 # eg centered_C1327321_RAW_ORANGE.PNG
-                # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
                 centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
                 centeredpath = centersSubfolder + '/' + centeredfilename
-
+                
                 # if file exists, create subfolder and copy/link image
                 if os.path.isfile(centeredpath):
-
+                    
                     # get subfolder, eg Jupiter/Voyager1/Io/Narrow
                     phase = row[config.filesColPhase]
                     craft = row[config.filesColCraft]
@@ -66,7 +65,7 @@ def buildTargets(volnum):
                     instrument = row[config.filesColInstrument]
                     subfolder = phase +'/' + craft + '/' + target +'/' + instrument 
 
-                    # get target file, eg ../data/step7_targets/jupiter/voyager1/io/narrow/centered_....
+                    # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
                     targetpath = config.targetsFolder + '/' + subfolder
                     targetfile = targetpath + '/' + centeredfilename
 

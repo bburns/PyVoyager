@@ -115,8 +115,6 @@ def mpim2cv2(im):
     # print type(im)
     # print im.shape
     # print type(im[0,0])
-    # cv2.imshow("image",im)
-    # cv2.waitKey(0)
     return im
 
     # A simple call to the imread method loads our image as a multi-dimensional
@@ -125,8 +123,7 @@ def mpim2cv2(im):
     # OpenCV represents RGB images as multi-dimensional NumPy arrays - but in reverse order!
     # This means that images are actually represented in BGR order rather than RGB!
     # im = cv2.imread(infile)
-    # There's an easy fix though.
-    # All we need to do is convert the image from BGR to RGB
+    # There's an easy fix though. All we need to do is convert the image from BGR to RGB
     # im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
     
     # # output = im.copy()
@@ -136,28 +133,20 @@ def mpim2cv2(im):
     # print gray.shape
     # print type(gray[0,0])
     
-    # gray = im.copy()
-    # rotate 180deg
-    # rows, cols = gray.shape
-    # M = cv2.getRotationMatrix2D((cols/2,rows/2),180,1)
-    # gray = cv2.warpAffine(gray, M, (cols, rows))
-    
-
     
     
-def drawCircle(im, circle):
-    "draw a circle on the image and return a new image"
-    # cv2.circle(im, (x,y), r, (0,255,0), 4)
-    im = im.copy()
+def drawCircle(im, circle, color = (0,255,0)):
+    "draw a (green) circle on the image"
     (x,y,r) = circle
-    cv2.circle(im, (x,y), r, (0,255,0), 2)
-    return im
+    lineWidth = 1
+    cv2.circle(im, (x,y), r, color, lineWidth)
 
 
 def findBoundingBoxByCircle(im):
     "Find the bounding box enclosing the best circle in image and return it."
     circle = findCircle(im)
-    if circle!=None:
+    # if circle!=None:
+    if type(circle) != type(None):
         (x,y,r) = circle        
         #. note: x and y are reversed (rows given first?)
         x1 = y-r
@@ -177,59 +166,79 @@ def findBoundingBoxByCircle(im):
 def findCircle(im):
     "find best(?) circle in given image/file"
     circles = findCircles(im)
-    if circles!=None:
+    # if circles!=None:
+    if type(circles) != type(None):
         circle = circles[0]
         return circle # (x,y,r)
     else:
         return None
 
-    
+
+def gray2rgb(im):
+    "convert a gray cv2 image to rgb, return new image"
+    im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
+    return im
+
+
 def findCircles(im):
-    "find circles in the given image/file"
+    "find circles in the given grayscale image"
+    # internally the HoughCircles function calls the Canny edge detector
     
     # convert mpim image to cv2 image format
+    # ok if im is already cv2 format
     im = mpim2cv2(im)
-
-    gray = im
     
-    # param1  -  First method-specific parameter. In case of CV_HOUGH_GRADIENT
-    # , it is the higher threshold of the two passed to the Canny() edge
+    method = cv2.cv.CV_HOUGH_GRADIENT
+    
+    # size of parameter space relative to input image - should affect precision of result
+    dp = 1 
+    
+    # distance between circles
+    # minDist = 1 # way too many found
+    # minDist = 10 
+    minDist = 200
+    # minDist = 1000
+    
+    # First method-specific parameter. In case of CV_HOUGH_GRADIENT,
+    # it is the higher threshold of the two passed to the Canny() edge
     # detector (the lower one is twice smaller).
     # Param 1 will set the sensitivity; how strong the edges of the circles need
     # to be. Too high and it won't detect anything, too low and it will find too
     # much clutter.
+    canny_threshold=200 # 0-255?
     
-    # param2  -  Second method-specific parameter. In case of CV_HOUGH_GRADIENT
-    # , it is the accumulator threshold for the circle centers at the detection
+    # Second method-specific parameter. In case of CV_HOUGH_GRADIENT,
+    # it is the accumulator threshold for the circle centers at the detection
     # stage. The smaller it is, the more false circles may be detected. Circles,
     # corresponding to the larger accumulator values, will be returned first.
     # Param 2 will set how many edge points it needs to find to
     # declare that it's found a circle. Again, too high will detect nothing, too
     # low will declare anything to be a circle. The ideal value of param 2 will
     # be related to the circumference of the circles.
-
-    # So, as you can see, internally the HoughCircles function calls the Canny
-    # edge detector, this means that you can use a gray image in the function,
-    # instead of their contours.
-
+    # acc_threshold=50
+    # acc_threshold=200
+    acc_threshold=250
+    # acc_threshold=300
+    # acc_threshold=500
+    # acc_threshold=600
+    # acc_threshold=750
+    # acc_threshold=1000
     
-    dp = 1.2 # size of parameter space relative to input image
-    minDist = 1000 # distance between circles
-    # minDist = 1 # distance between circles
-    param1=0.1
-    param2=200
-    minRadius=10
-    maxRadius=100
-    circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT,
-                               dp, minDist, param1, param2, minRadius, maxRadius)
-    if circles is not None:
-        circles = np.round(circles[0,:]).astype('int')
+    # not sure what units these are - need a min of 1 to find one with fairly large radius
+    minRadius=1
+    maxRadius=10
+    
+    circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
+    # if circles is not None:
+    if type(circles) != type(None):
+        circles = circles[0,:] # extract array
+        # circles = np.round(circles).astype('int') # round all values to ints
         return circles # array of (x,y,r)
     else:
         return None
     
 
-
+#. remove param
 def centerImageFile(infile, outfile, blobThreshold, rotateImage=False):
     "center the given image file on a planet"
     im = mpim.imread(infile)
@@ -258,9 +267,6 @@ def centerImageFile(infile, outfile, blobThreshold, rotateImage=False):
 def centerImage(im, boundingBox):
     "center image on bounding box, crop to it, return new image"
     
-    # cx, cy = findBoundingBoxByBlob(im)
-    # cx, cy = findCenterBy_edges(im)
-    # x1,x2,y1,y2 = find_object_edges(im)
     [x1,y1,x2,y2] = boundingBox
     cx = (x1+x2)/2.0
     cy = (y1+y2)/2.0
@@ -327,10 +333,10 @@ def findBoundingBox(im, blobThreshold):
         # if x>=0 and x<800 and y>=0 and y<800:
         #     boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
         # boundingBox = findBoundingBoxByCircle(im) # use hough to find circlce
-        print boundingBox
+        # print boundingBox
         # imcrop = im[y1:y2,x1:x2]
         imcrop = im[x1:x2,y1:y2]
-        print imcrop
+        # print imcrop
         if width!=0 and height!=0:
             boundingBox = findBoundingBoxByCircle(imcrop) # use hough to find circle
             boundingBox[0] += x1
@@ -498,7 +504,7 @@ def test():
     # # find circle
     # circle = findCircle(im)
     # print circle
-    # im = drawCircle(im, circle)
+    # drawCircle(im, circle)
     # misc.imsave('test/test_circle.png', im)
     
     # find bounding box around planet

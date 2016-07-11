@@ -7,10 +7,39 @@ import os.path # for isfile
 from setuptools import archive_util # for unpack_archive
 import errno
 import re # for findall
-
+import csv
 
 #.. should pass any constants into functions!
 import config
+
+
+def readCsv(filename):
+    "read a csv file into a dict of dicts. first column is key. use on small files only."
+    #.. ignore rows starting with #
+    f = open(filename, 'rt')
+    i = 0
+    items = {}
+    reader = csv.reader(f)
+    for row in reader:
+        # if row[0]=='#':
+            # continue
+        if i==0:
+            fields = row
+        else:
+            j = 0
+            item = {}
+            for value in row:
+                if j==0:
+                    pass
+                else:
+                    fieldname = fields[j]
+                    item[fieldname] = value
+                j += 1
+            key = row[0]
+            items[key] = item
+        i += 1
+    f.close()
+    return items
 
 
 

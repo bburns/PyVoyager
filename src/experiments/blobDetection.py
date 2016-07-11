@@ -25,7 +25,7 @@ import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 
 
 # get path
-folder = 'blobDetection/'
+folder = 'images/'
 # filepath = folder + 'ok.png'
 filepath = folder + 'dim.png'
 # filepath = folder + 'huge.png'
@@ -41,10 +41,6 @@ print 'file',filepath
 
 im = mpim.imread(filepath) # values are 0.0-1.0
 
-
-
-
-
 # print im.min(), im.max()  # 0.0, 0.5294
 # # stretch the histogram - works
 # im2 = libimg.mpim2cv2(im)
@@ -53,10 +49,6 @@ im = mpim.imread(filepath) # values are 0.0-1.0
 # # cv2.imwrite('res.png',res)
 # libimg.show(res)
 # end
-
-
-
-
 
 # thmin = 0.05
 # thmax = 0.20
@@ -146,9 +138,6 @@ x1,y1,x2,y2 = boundingBox
 # imcrop = im[y1:y2,x1:x2]
 imcrop = im[x1:x2,y1:y2]
 libimg.showMpim(imcrop)
-
-
-
 
 
 

@@ -1,104 +1,179 @@
 
 # experiments with blob detection
 
+
 # need to have robust algorithm that can handle varying light levels
-# simple thresholding won't work across all images
+# simple thresholding doesn't work across all images
 
-# something about varying theta,
-# checking the size of the biggest blob,
+# try varying theta, checking the size of the biggest blob,
 # and at some point on the graph deciding on the optimal theta value.
-
 # need to do some plots of this for various images and see what kind of curves result
+
+# looks like at the foot of the slope of area would be a good place for theta.
+
 
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import matplotlib.image as mpim # for imread
+import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 
 import sys; sys.path.append('..') # so can import from main src folder
 import config
 import lib
 import libimg
 
-import matplotlib.image as mpim # for imread
-import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 
 
 # get path
 folder = 'images/'
+# filepath = folder + 'calib.png'
+# filepath = folder + 'calib2.png' #.
 # filepath = folder + 'ok.png'
-filepath = folder + 'dim.png'
+# filepath = folder + 'dimsmall.png'
+# filepath = folder + 'sharp.png'
+# filepath = folder + 'faint.png'
+# filepath = folder + 'crescent.png' #.
+
+# filepath = folder + 'saturn.png'
 # filepath = folder + 'huge.png'
 # filepath = folder + 'limb.png'
-# filepath = folder + 'saturn.png'
-# filepath = folder + 'sharp.png'
 # filepath = folder + 'noise.png'
-print 'file',filepath
+# filepath = folder + 'blank.png'
+# filepath = folder + 'edge.png'
+# filepath = folder + 'large.png'
+# filepath = folder + 'limb2.png'
+# filepath = folder + 'point.png'
+# filepath = folder + 'blurred.png'
+# filepath = folder + 'small.png' #.
+# print 'file',filepath
+
+# so having probs with faint images and small ones
+# the crescent could be found by hough, but how would you know you needed it? 
+
+# *maybe we should be using hough with a high acc th,
+# so we'd be sure of having a circle
+# if no circle found, use the blob test
+
+# thdiff = -0.02
+# thdiff = -0.05
+# thdiff = -0.5
+# thdiff = -0.015
+# thdiff = -0.0125
+thdiff = config.blobAreaDerivativeMax
 
 
-# iterate over some threshold values,
-# plot max blobsize vs threshold
+results = lib.readCsv('images/_files.csv')
+fileids = results.keys()
+fileids.sort()
+for fileid in fileids:
+    
+    filename = fileid + '.png'
+    filepath = folder + filename
+    im = mpim.imread(filepath) # values are 0.0-1.0
+    outpath = folder + 'out/' + filename
+    
+    # libimg.show(im)
+    # stretch
+    im = cv2.normalize(im, None, 0, 1.0, cv2.NORM_MINMAX)
 
-im = mpim.imread(filepath) # values are 0.0-1.0
+    # print im.min(), im.max()  # 0.0, 0.5294
+    # # stretch the histogram - works
+    # im2 = libimg.mpim2cv2(im)
+    # equ = cv2.equalizeHist(im2)
+    # im = libimg.cv22mpim(equ)
+    # res = np.hstack((im2,equ)) #stacking images side-by-side
+    # # cv2.imwrite('res.png',res)
+    # libimg.show(res)
+    # end
 
-# print im.min(), im.max()  # 0.0, 0.5294
-# # stretch the histogram - works
-# im2 = libimg.mpim2cv2(im)
-# equ = cv2.equalizeHist(im2)
-# res = np.hstack((im2,equ)) #stacking images side-by-side
-# # cv2.imwrite('res.png',res)
-# libimg.show(res)
-# end
-
-# thmin = 0.05
-# thmax = 0.20
-# thstep = 0.01
-# imax = int((thmax-thmin)/thstep)+1
-# print imax
-
-# ths = []
-# areas = []
-# # logareas = []
-# derivs = []
-# lastarea = 1
-# maxarea = 800*800.0
-# maxderiv = 1/thstep
-# thdiff = -0.9
-# # derivmin = -1
-# # derivmax = -0.9
-# thbest = 0
-# areabest = 0
-# boundingBoxBest = []
-# for i in range(0,imax):
-#     th = thmin + i * thstep
-#     ths.append(th)
-#     boundingBox = libimg.findBoundingBoxByBlob(im, th)
-#     x1,y1,x2,y2 = boundingBox
-#     area = (x2-x1)*(y2-y1) / maxarea # area = 0 to 1
-#     # logarea = math.log(area)
-#     deriv = (area - lastarea) / thstep / maxderiv
-#     print i, th, area, deriv
-#     areas.append(area)
-#     # logareas.append(logarea)
-#     derivs.append(deriv)
-#     if deriv>thdiff:
-#         thbest = th
-#         areabest = area
-#         boundingBoxBest = boundingBox
-#     # if deriv>=derivmin and deriv<=derivmax:
-#         # thbest = th
-#         # break
-#     # print i, th, area, logarea, deriv
+    # adaptive thresholding
+    # put into findboundingboxbyblob2
 
 
-# print thbest
-# print areabest
-# print boundingBoxBest
+    # # show binarized image with bounding box
+    # config.debugImages = True
+    # th = 0.13
+    # boundingBox = libimg.findBoundingBoxByBlob(im, th)
 
-# plt.plot(ths, areas)
-# # plt.plot(ths, logareas)
-# plt.plot(ths, derivs)
-# plt.show()
+    # show image with best bounding box
+    config.debugImages = False
+    boundingBox = libimg.findBoundingBoxByBlob2(im, thdiff)
+    im2 = libimg.mpim2cv2(im)
+    im2 = libimg.gray2rgb(im2)
+    libimg.drawBoundingBox(im2, boundingBox)
+    # libimg.show(im2)
+    cv2.imwrite(outpath, im2)
+
+
+
+
+def plotAreaByThreshold(im, thdiff):
+    
+    config.debugImages = False
+    
+    thmin = 0.02
+    thmax = 0.25
+    thstep = 0.01
+    imax = int((thmax-thmin)/thstep)+1
+
+    # lastarea = 1
+    lastarea = 0
+    maxarea = 800*800.0
+    maxderiv = 1/thstep
+    ths = []
+    areas = []
+    derivs = []
+    # thdiff = -0.05
+    thbest = 0
+    areabest = 0
+    boundingBoxBest = [0,0,799,799]
+    for i in range(0,imax):
+        th = thmin + i * thstep
+        ths.append(th)
+        boundingBox = libimg.findBoundingBoxByBlob(im, th)
+        x1,y1,x2,y2 = boundingBox
+        area = (x2-x1)*(y2-y1) / maxarea # area = 0 to 1
+        area = math.log(area) # area goes from 1 to 0, so this should go from 0 to -infinity
+        deriv = (area - lastarea) / thstep / maxderiv
+        # deriv = (math.log(area) - math.log(lastarea)) / thstep / maxderiv
+        # logarea = math.log(area)
+        print i, th, area, deriv
+        areas.append(area)
+        derivs.append(deriv)
+        # if deriv<thdiff and deriv<0:
+        if deriv<thdiff:
+            thbest = th
+            areabest = area
+            boundingBoxBest = boundingBox
+        lastarea = area
+
+    # derivs = np.diff(areas)
+    print thbest
+    print areabest
+    print boundingBoxBest
+
+    plt.plot(ths, areas) # blue
+    plt.plot(ths, derivs) # green
+    plt.axvline(thbest)
+    plt.show()
+    
+    return thbest
+
+# show plot of logarea and derivative vs threshold
+# thbest = plotAreaByThreshold(im, thdiff)
+# config.debugImages = True
+# boundingBox = libimg.findBoundingBoxByBlob(im, thbest)
+
+
+
+# show binarized image with bounding box
+# thbest = 0.16
+# for thbest in [0.02,0.04,0.06,0.08,0.10,0.12,0.14,0.16]: #,0.18,0.20,0.22,0.24,0.26,0.28,0.30]:
+    # config.debugImages = True
+    # boundingBox = libimg.findBoundingBoxByBlob(im, thbest)
+
 
 
 
@@ -125,19 +200,11 @@ im = mpim.imread(filepath) # values are 0.0-1.0
 # #     return ret
 
 
-boundingBox = libimg.findBoundingBoxByBlob2(im)
-# # im = [im,im,im]
-# # im = bw2rgb(im)
-# # im = libimg.mpim2cv2(im)
-# # im = cv2.cvtColor(im,cv2.COLOR_GRAY2RGB)
-im2 = libimg.drawBoundingBox(im, boundingBox)
-libimg.showMpim(im2)
 
-
-x1,y1,x2,y2 = boundingBox
-# imcrop = im[y1:y2,x1:x2]
-imcrop = im[x1:x2,y1:y2]
-libimg.showMpim(imcrop)
+# show cropped image
+# x1,y1,x2,y2 = boundingBox
+# imcrop = im[x1:x2,y1:y2]
+# libimg.showMpim(imcrop)
 
 
 

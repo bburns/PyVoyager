@@ -9,6 +9,7 @@ import inspect
 
 import vgBuild
 import vgInitFiles
+import vgInitComposites
 
 
 # get command and arguments
@@ -55,6 +56,8 @@ elif cmd=="init":
     noun = args.pop(0)
     if noun=='files':
         vgInitFiles.initFiles()
+    elif noun=='composites':
+        vgInitComposites.initComposites()
     
 # elif cmd=="center":
 #     centernum = args.pop(0)

@@ -20,6 +20,39 @@ To center the images, blob detection is first done to identify the largest conti
 The current version is likely to undergo changes in order to handle different targets and cameras used, and to improve the centering algorithm for large planet images. 
 
 
+Usage
+----------------------------------------
+
+Download a tarfile volume, e.g. volume 5101 - the first dataset, Jupiter approach
+
+    > vg download 5101
+    
+Unzip the tarfile
+
+    > vg unzip 5101
+
+Convert the PDS IMG files to PNGs
+
+    > vg images 5101
+
+Calculate the centers of the main body in the images
+
+    > vg calc centers 5101
+
+Center the images
+
+    > vg centers 5101
+
+or to do all of these steps, 
+
+    > vg centers 5101
+
+Then make movies of all the downloaded datasets, organized by planet/spacecraft/target/camera
+
+    > vg movies
+
+
+
 Version 0.2
 ----------------------------------------
 - Add command line interface
@@ -38,8 +71,6 @@ Next steps
 
 * Handle larger planet images - not centering correctly, eg in VGISS_5106.
 * Option to make movie using one filter, to reduce flickering. 
-* Put images into separate folders for each target sequence, eg JupiterTelescope, JupiterWide, Europa, Io. Each can make a movie with a different framerate. 
-* Add command-line interface, e.g. something like vg download 5105-5106, vg unzip 5105, vg pngs 5110, vg center 5118, vg all 5119?
 
 
 [1]: http://pds-rings.seti.org/archives/

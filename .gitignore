@@ -5,3 +5,4 @@ screenshots/
 voyager.org
 !backup_to_dropbox.bat
 test/output
+src/experiments/images/out

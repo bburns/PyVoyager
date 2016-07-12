@@ -15,14 +15,14 @@ import config
 
 def readCsv(filename):
     "read a csv file into a dict of dicts. first column is key. use on small files only."
-    #.. ignore rows starting with #
+    # comments or blank lines are allowed
     f = open(filename, 'rt')
     i = 0
     items = {}
     reader = csv.reader(f)
     for row in reader:
-        # if row[0]=='#':
-            # continue
+        if row==[] or row[0][0]=='#': # skip blank lines and comments
+            continue
         if i==0:
             fields = row
         else:
@@ -51,14 +51,15 @@ def img2png(src, filespec, dst, options):
     os.chdir(src)
     # eg "img2png *.img -fnamefilter"
     cmd = "img2png " + filespec + " " + options
-    print cmd
+    # print cmd
     os.system(cmd)
-    os.system('dir *.png')
+    # os.system('dir *.png')
     # now move the png files to pngpath
     # src is relative to the python program so need to switch back to that dir
     os.chdir(savedir)
-    cmd = "move " + src +"\\*.png " + dst + "/"
-    print cmd
+    # cmd = "move " + src +"\\*.png " + dst + "/"
+    cmd = "move " + src +"\\*.png " + dst + "/ > nul"
+    # print cmd
     os.system(cmd)
 
 

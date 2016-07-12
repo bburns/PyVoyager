@@ -6,105 +6,131 @@
 
 import os
 import csv
+import pprint
 
 import config
 import lib
 
         
-# ex composites.txt
-# volume,compositeId,centerId,filter,weight
-# VGISS_5103,C1537728,C1537728,Blue
-# VGISS_5103,C1537728,C1537730,Orange
-# VGISS_5103,C1537728,C1537732,Green
-# VGISS_5103,C1537734,C1537734,Blue
-# VGISS_5103,C1537734,C1537736,Orange
-# VGISS_5103,C1537734,C1537738,Green
-# VGISS_5103,C1537740,C1537740,Blue
-# VGISS_5103,C1537740,C1537742,Orange
-# VGISS_5103,C1537740,C1537744,Green
-# VGISS_8203,C1027859,C1027859,VIOLET
-# VGISS_8203,C1027859,C1027905,GREEN
-# VGISS_8203,C1027859,C1027912,ORANGE
-# VGISS_8203,C1027937,C1027937,VIOLET
-# VGISS_8203,C1027937,C1027943,GREEN
-# VGISS_8203,C1027937,C1027950,ORANGE
 
 
+# from files.csv
+# volume,fileid,phase,craft,target,time,instrument,filter,note
+# VGISS_5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,UV,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# VGISS_5101,C1471040,Jupiter,Voyager1,Jupiter,1979-01-09T00:51:49,Narrow,BLUE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# VGISS_5101,C1471042,Jupiter,Voyager1,Jupiter,1979-01-09T00:55:01,Narrow,GREEN,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# VGISS_5101,C1471044,Jupiter,Voyager1,Jupiter,1979-01-09T00:58:13,Narrow,ORANGE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# ->
+# composites.csv
+# volume,compositeId,centerId,filter
+# VGISS_5101,C1471038,C1471038,UV
+# VGISS_5101,C1471038,C1471040,BLUE
+# VGISS_5101,C1471038,C1471042,GREEN
+# VGISS_5101,C1471038,C1471044,ORANGE
 
 
-# from files.txt
-# volume,fileid,phase,craft,target,instrument,filter,note
-# ['VGISS_5101', 'C1464108', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'UV', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464110', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'BLUE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE ; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464112', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'GREEN', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464114', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'ORANGE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464330', 'Jupiter', 'Voyager1', 'Europa', 'Narrow', 'CLEAR', 'OPTICAL NAVIGATION']
-# ['VGISS_5101', 'C1464337', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'UV', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464339', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'BLUE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE ; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464341', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'GREEN', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464343', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'ORANGE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464606', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'UV', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464608', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'BLUE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE ; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464610', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'GREEN', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464612', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'ORANGE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464835', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'UV', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA']
-# ['VGISS_5101', 'C1464837', 'Jupiter', 'Voyager1', 'Jupiter', 'Narrow', 'BLUE', 'ROUTINE MULTISPECTRAL LONGITUDE COVERAGE ; 1 OF 4 NA']
-
+# tdeltamax = 5mins
 
 def initComposites():
-    "build the composites.txt file from likely looking images in files.txt"
+    "build the composites.csv file from likely looking images in files.csv"
     
-    # open the composites.txt file
-    # fileout = open(config.compositesdb, 'wb')
-    # fields = 'volume,compositeId,centerId,filter,weight'.split(',') # keep in synch with row, below
-    # writer = csv.writer(fileout)
-    # writer.writerow(fields)
+    # open the composites.csv file
+    fileout = open(config.compositesdb, 'wb')
+    fields = 'volume,compositeId,centerId,filter'.split(',') # keep in synch with row, below
+    writer = csv.writer(fileout)
+    writer.writerow(fields)
     
-    # iterate over files
+    # iterate over all image files
     filein = open(config.filesdb, 'rt')
     reader = csv.reader(filein)
     
     # circular buffer with 7 empty lists - the maximum number of filters in a group we're checking for
+    #. but would need more to handle interpolated records for different cameras, targets etc
     buffer = [[],[],[],[],[],[],[]] 
     i = 0
     
     for row in reader:
-        # print row
+        if row==[] or row[0][0]=="#":
+            continue
         if i==0:
             fields = row
         else:
+            # get field values
+            # volume,fileid,phase,craft,target,time,instrument,filter,note
+            volume = row[config.filesColVolume] # eg VGISS_5101
+            fileid = row[config.filesColFileId] # eg C1385455
+            phase = row[config.filesColPhase] # eg Jupiter
+            craft = row[config.filesColCraft] # eg Voyager1
+            target = row[config.filesColTarget] # eg Io
+            instrument = row[config.filesColInstrument] # eg Narrow
+            # filter = row[config.filesColFilter] # eg ORANGE
+            filter = row[config.filesColFilter].title() # eg Orange
+            note = row[config.filesColNote] 
+            # print volume, fileid, phase, craft, target, instrument, filter
+            # print row[:-1]
+
+            # now iterate over circular buffer, checking for matches (skip last item in buffer though to avoid single cycle groups)
+            # if found, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
+            # so write them out together, and reset the buffer
+            # for bufferRow in reversed(buffer):
+            for bufferRow in reversed(buffer[:-1]):
+                if bufferRow==[]:
+                    pass
+                else:
+                    bufferVolume = bufferRow[config.filesColVolume] # eg VGISS_5101
+                    bufferFileid = bufferRow[config.filesColFileId] # eg C1385455
+                    bufferPhase = bufferRow[config.filesColPhase] # eg Jupiter
+                    bufferCraft = bufferRow[config.filesColCraft] # eg Voyager1
+                    bufferTarget = bufferRow[config.filesColTarget] # eg Io
+                    bufferInstrument = bufferRow[config.filesColInstrument] # eg Narrow
+                    # bufferFilter = bufferRow[config.filesColFilter] # eg Orange
+                    bufferFilter = bufferRow[config.filesColFilter].title() # eg Orange
+                    # bufferNote = bufferRow[config.filesColNote] 
+                    # print bufferRow[:-1] # skip note
+                    # print bufferRow # skip note
+                    if filter==bufferFilter:
+                        # print 'filters match - check other values'
+                        if phase==bufferPhase and craft==bufferCraft and target==bufferTarget and instrument==bufferInstrument:
+                            # print 'values match - assume we have a cycle, so dump non-empty buffer rows into composites.csv, clear buffer'
+                            # print buffer
+                            # pprint.pprint(buffer)
+                            # print [row[config.filesColFilter] for row in buffer]
+                            # print buffer.join('\n')
+                            outCompositeId = None
+                            for bufferRow2 in buffer:
+                                if bufferRow2==[]:
+                                    pass
+                                else:
+                                    # volume,compositeId,centerId,filter
+                                    outVolume = bufferRow2[config.filesColVolume]
+                                    if outCompositeId == None:
+                                        outCompositeId = bufferRow2[config.filesColFileId]
+                                    outCenterId = bufferRow2[config.filesColFileId]
+                                    outFilter = bufferRow2[config.filesColFilter].title()
+                                    outRow = [outVolume, outCompositeId, outCenterId, outFilter]
+                                    # print outRow
+                                    writer.writerow(outRow)
+                            buffer = [[],[],[],[],[],[],[]] 
+                            
+        
+            # add row to buffer
             buffer.pop(0) # remove from front of list
-            buffer.append(row) # append item to end of list
-        print buffer
-        i += 1
-
-        # get field values
-        # volume = row[config.indexFileColVolume] # eg VGISS_5101
-        # filename = row[config.indexFileColFilename] # eg C1385455_RAW.IMG
-        # craft = row[config.indexFileColCraft] # eg VOYAGER 1
-        # phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
-        # target = row[config.indexFileColTarget].title() # eg IO
-        # instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
-        # filter = row[config.indexFileColFilter] # eg ORANGE
-        # note = row[config.indexFileColNote] 
-
-        # fileid = filename.split('_')[0] # eg C1385455
-
-        # translate where needed
-        # phase = config.indexTranslations[phase] # eg Jupiter
-        # craft = config.indexTranslations[craft] # eg Voyager1
-        # instrument = config.indexTranslations[instrument] # eg Narrow
+            # buffer.append(row) # append item to end of list
+            buffer.append(row[:-1]) # append item to end of list
+            # print buffer
 
         # write row
         # row = [volume, fileid, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
         # print row # too slow
         # writer.writerow(row)
+        i += 1
 
     filein.close()
-    # fileout.close()
+    fileout.close()
     
 
 if __name__ == '__main__':
+    os.chdir('..')
     initComposites()
     print 'done'
     

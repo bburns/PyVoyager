@@ -4,28 +4,57 @@
 
 
 import csv
+import os
+import os.path
 
 import config
 import lib
 
 
 
-def buildMovies(targetPath):
-    "build movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
-    # eg buildMovies("Jupiter")
+filespec = 'img%05d.png'
 
-    # this will be similar to buildtargets, but make links instead of copying files
-    # and number them sequentially also
+def renameFilesSequentially():
+    # now need to go through and rename files sequentially for ffmpeg
+    # for each subdir in datadir, cd subdir, run img2png on all img files in it
+    folder = config.moviesFolder
+    for root, dirs, files in os.walk(folder):
+        print root, dirs
+        if dirs==[]: # reached the leaf level
+            print root
+            i = 1
+            for filename in files:
+                dest = filespec % i
+                if filename!=dest:
+                    filepath = root + '\\' + filename
+                    destpath = root + '\\' + dest
+                    print 'rename ' + filepath + ' -> ' + dest
+                    cmd = 'mv ' + filepath + ' ' + destpath
+                    os.system(cmd)
+                i += 1
+            
     
-    #. for now say they're all on
-    # parts = targetPath.split('/')
-    # while len(parts)<4:
-        # parts.append(None)
-    # print parts
-    # pathSystem, pathCraft, pathTarget, pathCamera = parts
-    pathSystem, pathCraft, pathTarget, pathCamera = [None,None,None,None]
+def makeMovies():
+    ""
+    folder = config.moviesFolder
+    print folder
+    for root, dirs, files in os.walk(folder):
+        print root, dirs
+        # os.chdir(folder)
+        if dirs==[]: # reached the leaf level
+            # print 'pngtomp4'
+            d = os.getcwd()
+            moviefolder = os.path.abspath(root)
+            print moviefolder
+            movieName = '_movie.mp4'
+            lib.pngsToMp4(moviefolder, filespec, movieName, config.frameRate)
+            os.chdir(d)
 
-    # iterate through all files
+
+    
+def makeLinks():
+    
+    # iterate through all possible images
     f = open(config.filesdb, 'rt')
     i = 0
     reader = csv.reader(f)
@@ -57,69 +86,66 @@ def buildMovies(targetPath):
                 # get subfolder, eg Jupiter/Voyager1/Io/Narrow
                 subfolder = system +'/' + craft + '/' + target +'/' + camera 
 
-                # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_.....png
-                targetpath = config.targetsFolder + '/' + subfolder
-                targetfile = targetpath + '/' + centeredfilename
+                # get target file, eg data/step8_movies/jupiter/voyager1/io/narrow/centered....png
+                targetfolder = config.moviesFolder + '/' + subfolder
+                targetpath = targetfolder + '/' + centeredfilename
 
                 # skip if file already exists (to save time on copying)
                 if True:
-                # if not os.path.isfile(targetfile):
+                # if not os.path.isfile(targetpath):
 
                     # create subfolder
-                    lib.mkdir_p(targetpath)
+                    lib.mkdir_p(targetfolder)
 
                     # # copy file
                     # # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
-                    # cmd = 'cp ' + centeredpath + ' ' + targetpath
+                    # cmd = 'cp ' + centeredpath + ' ' + targetfolder
                     # print cmd
                     # os.system(cmd)
 
                     # links work, but then can't browse folders with image viewer... so back to copying
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
-                    # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                    src2 = '../../../../../' + src # need to get out of the target dir
-                    cmd = 'mklink ' + targetfile + ' ' + src2
+                    # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                    src2 = '../../../../../../' + centeredpath # need to get out of the target dir
+                    cmd = 'mklink ' + targetpath + ' ' + src2 + ' > nul'
                     cmd = cmd.replace('/','\\')
-                    print cmd
+                    # print cmd
+                    print 'makelink ' + targetpath
                     os.system(cmd)
 
         i += 1
 
     f.close()
     
-    # filein = open(config.filesdb, 'rt')
-    # reader = csv.reader(filein)
-    # for row in reader:
-    #     row = [field.strip() for field in row]
 
-    #     # get field values
-    #     volume = row[config.indexFileColVolume] # eg VGISS_5101
-    #     filename = row[config.indexFileColFilename] # eg C1385455_RAW.IMG
-    #     craft = row[config.indexFileColCraft] # eg VOYAGER 1
-    #     phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
-    #     target = row[config.indexFileColTarget] # eg N RINGS
-    #     time = row[config.indexFileColTime] # eg 1979-03-05T15:32:56
-    #     instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
-    #     filter = row[config.indexFileColFilter] # eg ORANGE
-    #     note = row[config.indexFileColNote] 
+def buildMovies(targetPath):
+    "build movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
+    # eg buildMovies("Jupiter")
 
-    #     # translate where needed
-    #     fileid = filename.split('_')[0] # eg C1385455
-    #     phase = config.indexTranslations[phase] # eg Jupiter
-    #     craft = config.indexTranslations[craft] # eg Voyager1
-    #     instrument = config.indexTranslations[instrument] # eg Narrow
-    #     target = target.title().replace(' ','_') # eg N_Rings
+    # this will be similar to buildtargets, but make links instead of copying files
+    # and number them sequentially also
+    
+    #. for now say they're all on
+    # parts = targetPath.split('/')
+    # while len(parts)<4:
+        # parts.append(None)
+    # print parts
+    # pathSystem, pathCraft, pathTarget, pathCamera = parts
+    # pathSystem, pathCraft, pathTarget, pathCamera = [None,None,None,None]
 
-    #     # write row
-    #     row = [volume, fileid, phase, craft, target, time, instrument, filter, note] # keep in sync with fields, above
-    #     # print row # too slow
-    #     writer.writerow(row)
+    # makeLinks()
+    # renameFilesSequentially()
+    makeMovies()
+
     
 
-
 if __name__ == '__main__':
-    buildMovies("Neptune")
+    os.chdir('..')
+    # buildMovies("Neptune")
+    # makeLinks()
+    # renameFilesSequentially()
+    makeMovies()
     print 'done'
 
 
@@ -173,3 +199,4 @@ if __name__ == '__main__':
     # # # now make movie with ffmpeg
     # # movieName = '_' + voltitle + '.mp4' # prepend _ so sorts at start of file list
     # # lib.pngsToMp4(dst, filenamePattern, movieName, config.frameRate)
+

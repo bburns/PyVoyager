@@ -7,6 +7,14 @@
 # print config.volumes
 
 
+# debugging
+# ----------------------------------------
+
+debugImages = False
+
+
+
+
 # downloads
 # ----------------------------------------
 
@@ -22,20 +30,26 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # CLEANED images just have the riseau marks removed.
 # CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
-# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
-imageType = 'RAW'
+# imageType = 'RAW'
 # imageType = 'CALIB'
+# imageType = 'CLEANED'
+# imageFilespec = "*" + imageType + ".IMG" # eg *RAW.IMG
 # imageFilespec = "*" # do all image types
-imageFilespec = "*" + imageType + ".IMG" # eg *RAW.IMG
 
-# imageTypes = ['RAW', 'CALIB']
-# imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
+# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imageTypes = ['RAW', 'CLEANED', 'CALIB']
+# imageTypes = ['CLEANED', 'CALIB']
+# imageTypes = ['CLEANED']
+# imageTypes = ['RAW']
+imageTypes = ['CALIB']
+imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
 # img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel0 - not so much info
-img2pngOptions = "-fnamefilter -loglevel0" 
+# img2pngOptions = "-fnamefilter -loglevel0" 
+img2pngOptions = "-fnamefilter -loglevel0 > nul" 
 
 
 # centers
@@ -46,6 +60,9 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # centerMethod = 'box'
 # centerMethod = 'circle'
 centerMethod = 'all'
+
+blobAreaDerivativeMax = -0.02
+
 
 # blob detection
 # binary threshold
@@ -78,12 +95,6 @@ drawBoundingBox = False # draw a bounding box around planet
 drawCrosshairs = False # draw crosshairs on image
 drawCircle = False # draw detected hough circle
 
-# bounding box detection
-# N is the number of rows/columns to average over, for running average
-# epsilon is the threshold value over which the smoothed value must cross
-# (this approach doesn't work well, at all)
-# boxN = 5
-# boxEpsilon = 0.2 # this is enough to ignore the dead pixel
 
 
 # composites
@@ -98,9 +109,9 @@ compositesPrefix = 'composite_'
 
 # use slow frame rate for first dataset
 # switch to higher rate at frame 242 of set 5103
-frameRate = 10 # fps
+# frameRate = 10 # fps
 # frameRate = 15 # fps
-# frameRate = 20 # fps
+frameRate = 20 # fps
 # frameRate = 30 # fps
 
 

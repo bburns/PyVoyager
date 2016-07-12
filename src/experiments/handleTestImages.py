@@ -82,8 +82,8 @@ def removeTestImages():
                 os.system(cmd)
                 
 
-# grabTestImages()
-removeTestImages()
+grabTestImages()
+# removeTestImages()
 
 
 

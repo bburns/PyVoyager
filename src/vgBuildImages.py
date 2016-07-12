@@ -12,32 +12,32 @@ from vgBuildUnzip import buildUnzip
 
 def buildImages(volumeNum):
     "convert IMG files to PNG files, if folder doesn't exist yet"
-    print 'build images'
     unzippedpath = lib.getUnzippedpath(volumeNum)
     imagespath = lib.getImagespath(volumeNum)
-    filespec = config.imageFilespec # eg "*RAW.IMG"
     if int(volumeNum)==0: # do nothing if asking for test volume
-        print 'volume 0 is a test volume, which should be manually created in step3_images/test,'
+        print 'Volume 0 is a test volume, which should be manually created in step3_images/test,'
         print 'and populated with test cases for centering, etc.'
         print
     elif os.path.isdir(imagespath):
-        print "Folder exists: " + imagespath
+        print "Images folder exists: " + imagespath
         return False
     else:
         # unzip the download, if not already there
         buildUnzip(volumeNum)
         lib.mkdir(imagespath) # create folder
         datadir = unzippedpath + '/DATA'
-        print "converting imgs to pngs for " + datadir
+        print "Converting imgs to pngs for " + datadir
         # for each subdir in datadir, cd subdir, run img2png on all img files in it
         i = 1
+        # filespec = config.imageFilespec # eg "*RAW.IMG"
         for root, dirs, files in os.walk(datadir):
             ndirs = len(dirs)
             for subdir in dirs:
                 dirpath = os.path.join(root, subdir)
                 dirpath = os.path.abspath(dirpath)
                 print 'dir %d/%d: %s' % (i,ndirs,dirpath)
-                lib.img2png(dirpath, filespec, imagespath, config.img2pngOptions)
+                for filespec in config.imageFilespecs:
+                    lib.img2png(dirpath, filespec, imagespath, config.img2pngOptions)
                 i += 1
         return True
 

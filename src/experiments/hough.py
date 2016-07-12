@@ -27,16 +27,19 @@ folder = 'images/'
 # filepath = folder + 'noise.png' # nowork
 # filepath = folder + 'point.png' # nowork
 # filepath = folder + 'blank.png' # nowork
-# filepath = folder + 'blank.png' # nowork
 # filepath = folder + 'edge.png' # nowork
 # filepath = folder + 'saturn.png' # nearly right
-filepath = folder + 'small.png' # not quite
-# filepath = folder + 'crescentFaint.png'
+# filepath = folder + 'small.png' # not quite
+# filepath = folder + 'faint.png' # works!
+# filepath = folder + 'crescent.png' # works with equalizeHist
 # filepath = folder + 'ok.png' # works
 # filepath = folder + 'dimSmall.png' # works
 # filepath = folder + 'limb2.png' # works
 # filepath = folder + 'large.png' # works
 # filepath = folder + 'sharp.png' # works
+# filepath = folder + 'calib.png'
+# filepath = folder + 'calib2.png'
+# filepath = folder + 'blurred.png'
 print 'file',filepath
 
 
@@ -45,25 +48,36 @@ print 'file',filepath
 # but then normal circles aren't detected
 
 
+
 # load image
 im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE) # values are 0-255
 
 # yuck
 # im = cv2.equalizeHist(im)
 
+# stretch
+# im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+
 # blur image to diminish reseau marks
-kernelSize = 5 # aperture size - should be odd
-gaussianSigma = 7
-im = cv2.GaussianBlur(im, (kernelSize, kernelSize), gaussianSigma)
+# kernelSize = 5 # aperture size - should be odd
+# gaussianSigma = 7
+# im = cv2.GaussianBlur(im, (kernelSize, kernelSize), gaussianSigma)
+# libimg.show(im)
+
+
+
+# thdiff = -0.025
+thdiff = -0.0125
+bbox = libimg.findBoundingBoxByHoughThenBlob(im, thdiff)
+im = libimg.gray2rgb(im)
+libimg.drawBoundingBox(im, bbox)
 libimg.show(im)
 
-
-# show canny edge detection, which is what hough works with
-# works nicely
-lower = 100
-upper = 200
-im2 = cv2.Canny(im, lower, upper)
-libimg.show(im2)
+# # show canny edge detection, which is what hough works with
+# lower = 100
+# upper = 200
+# im2 = cv2.Canny(im, lower, upper)
+# libimg.show(im2)
 
 
 # # find 'best' circle
@@ -75,20 +89,20 @@ libimg.show(im2)
 
 
 
-# find circles
-# works
-circles = libimg.findCircles(im)
-print 'circles found:',len(circles)
-im = libimg.gray2rgb(im)
-i = 0
-for circle in circles: # circle = (x,y,r)
-    if i==0:
-        libimg.drawCircle(im, circle, red)
-        # break
-    else:
-        libimg.drawCircle(im, circle, green)
-    i += 1
-libimg.show(im)
+# # find circles
+# # works
+# circles = libimg.findCircles(im)
+# print 'circles found:',len(circles)
+# im = libimg.gray2rgb(im)
+# i = 0
+# for circle in circles: # circle = (x,y,r)
+#     if i==0:
+#         libimg.drawCircle(im, circle, red)
+#         # break
+#     else:
+#         libimg.drawCircle(im, circle, green)
+#     i += 1
+# libimg.show(im)
 
 
 # # combined algos

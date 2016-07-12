@@ -66,19 +66,19 @@ def buildTargets(volnum):
                     subfolder = phase +'/' + craft + '/' + target +'/' + instrument 
 
                     # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetpath = config.targetsFolder + '/' + subfolder
-                    targetfile = targetpath + '/' + centeredfilename
+                    targetfolder = config.targetsFolder + '/' + subfolder
+                    targetpath = targetfolder + '/' + centeredfilename
 
                     # skip if file already exists (to save time on copying)
                     if True:
-                    # if not os.path.isfile(targetfile):
+                    # if not os.path.isfile(targetpath):
 
                         # create subfolder
-                        lib.mkdir_p(targetpath)
+                        lib.mkdir_p(targetfolder)
 
                         # copy file
                         # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
-                        cmd = 'cp ' + centeredpath + ' ' + targetpath
+                        cmd = 'cp ' + centeredpath + ' ' + targetfolder
                         print cmd
                         os.system(cmd)
 
@@ -87,7 +87,7 @@ def buildTargets(volnum):
                         # # note: mklink requires admin privileges, so must run this script in an admin console
                         # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
                         # src2 = '../../../../../' + src # need to get out of the target dir
-                        # cmd = 'mklink ' + targetfile + ' ' + src2
+                        # cmd = 'mklink ' + targetpath + ' ' + src2
                         # cmd = cmd.replace('/','\\')
                         # print cmd
                         # os.system(cmd)

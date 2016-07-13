@@ -15,48 +15,57 @@ import lib
 filespec = 'img%05d.png'
 
 def renameFilesSequentially():
+    ""
     # now need to go through and rename files sequentially for ffmpeg
     # for each subdir in datadir, cd subdir, run img2png on all img files in it
+    print 'rename files sequentially'
     folder = config.moviesFolder
     for root, dirs, files in os.walk(folder):
-        print root, dirs
+        # print root, dirs
         if dirs==[]: # reached the leaf level
-            print root
+            # print root
             i = 1
             for filename in files:
                 dest = filespec % i
                 if filename!=dest:
                     filepath = root + '\\' + filename
                     destpath = root + '\\' + dest
-                    print 'rename ' + filepath + ' -> ' + dest
-                    cmd = 'mv ' + filepath + ' ' + destpath
+                    # print 'rename ' + filepath + ' -> ' + dest
+                    # cmd = 'mv ' + filepath + ' ' + destpath
+                    cmd = 'mv ' + filepath + ' ' + destpath + ' > nul'
                     os.system(cmd)
                 i += 1
             
     
 def makeMovies():
     ""
+    print 'make mp4 movies using ffmpeg'
     folder = config.moviesFolder
-    print folder
+    # print folder
     for root, dirs, files in os.walk(folder):
-        print root, dirs
+        # print root, dirs
         # os.chdir(folder)
         if dirs==[]: # reached the leaf level
-            # print 'pngtomp4'
-            d = os.getcwd()
+            print 'directory', root
+            savedir = os.getcwd()
             moviefolder = os.path.abspath(root)
-            print moviefolder
+            # print moviefolder
             movieName = '_movie.mp4'
             lib.pngsToMp4(moviefolder, filespec, movieName, config.frameRate)
-            os.chdir(d)
+            os.chdir(savedir)
 
 
     
 def makeLinks():
+    "make links from source files (centers or composites or mosaics) to movies folders"
     
-    # iterate through all possible images
+    print 'making links from source files'
+    
+    
+    # iterate through all available images
     f = open(config.filesdb, 'rt')
     i = 0
+    lastVolume=''
     reader = csv.reader(f)
     for row in reader:
         if i==0:
@@ -66,17 +75,24 @@ def makeLinks():
             fileid = row[config.filesColFileId]
             filter = row[config.filesColFilter]
 
+            if volume!=lastVolume:
+                print 'volume', volume
+                lastVolume = volume
+                
             # get subfolder, eg data/step3_centers/VGISS_5101
-            centersSubfolder = config.centersFolder + '/' + volume
+            # sourceSubfolder = config.centersFolder + '/' + volume
+            sourceSubfolder = config.compositesFolder + '/' + volume
 
             # get source filename and path
             # eg centered_C1327321_RAW_ORANGE.PNG
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-            centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
-            centeredpath = centersSubfolder + '/' + centeredfilename
+            #. make consistent
+            # sourcefilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
+            sourcefilename = config.compositesPrefix + fileid + '.PNG' 
+            sourcepath = sourceSubfolder + '/' + sourcefilename
 
             # if file exists, create subfolder and copy/link image
-            if os.path.isfile(centeredpath):
+            if os.path.isfile(sourcepath):
 
                 system = row[config.filesColPhase]
                 craft = row[config.filesColCraft]
@@ -88,35 +104,29 @@ def makeLinks():
 
                 # get target file, eg data/step8_movies/jupiter/voyager1/io/narrow/centered....png
                 targetfolder = config.moviesFolder + '/' + subfolder
-                targetpath = targetfolder + '/' + centeredfilename
+                targetpath = targetfolder + '/' + sourcefilename
 
                 # skip if file already exists (to save time on copying)
                 if True:
                 # if not os.path.isfile(targetpath):
 
-                    # create subfolder
+                    # make sure subfolder exists
                     lib.mkdir_p(targetfolder)
 
-                    # # copy file
-                    # # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
-                    # cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                    # print cmd
-                    # os.system(cmd)
-
-                    # links work, but then can't browse folders with image viewer... so back to copying
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
-                    # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                    src2 = '../../../../../../' + centeredpath # need to get out of the target dir
+                    # eg sourcepath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
+                    src2 = '../../../../../../' + sourcepath # need to get out of the target dir
                     cmd = 'mklink ' + targetpath + ' ' + src2 + ' > nul'
                     cmd = cmd.replace('/','\\')
                     # print cmd
-                    print 'makelink ' + targetpath
+                    # print 'makelink ' + targetpath
                     os.system(cmd)
 
         i += 1
 
     f.close()
+    # print
     
 
 def buildMovies(targetPath):
@@ -133,9 +143,11 @@ def buildMovies(targetPath):
     # print parts
     # pathSystem, pathCraft, pathTarget, pathCamera = parts
     # pathSystem, pathCraft, pathTarget, pathCamera = [None,None,None,None]
+    
+    #. need to remove any existing folders here
 
-    # makeLinks()
-    # renameFilesSequentially()
+    makeLinks()
+    renameFilesSequentially()
     makeMovies()
 
     

@@ -77,11 +77,11 @@ def processChannels(channelRows):
         filetitle = config.centersprefix + centerId + '_' + config.imageType + '_' + filter + '.png'
         channelfilename = folder + '/' + filetitle
         channels[filter] = channelfilename
-    print channels
+    # print channels
     folder = config.compositesFolder + '/' + volume
     lib.mkdir(folder)
     outfilename = folder + '/' + config.compositesPrefix + compositeId + '.png'
-    print outfilename
+    # print outfilename
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)
     

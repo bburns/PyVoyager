@@ -1,8 +1,29 @@
 
-Voyager
+PyVoyager
 ========================================
 
-Creates and stabilizes Voyager flyby movies. 
+PyVoyager automatically creates and stabilizes Voyager flyby movies. 
+
+It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
+
+
+Examples
+----------------------------------------
+
+These are still in early stages, so pardon the jitters and the mini 'volcanoes'. 
+
+https://www.youtube.com/watch?v=VF3UCo2P-4Y  
+Voyager 2 Neptune flyby (narrow angle camera) - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
+
+https://www.youtube.com/watch?v=c8O2BKqM0Qc  
+Voyager 2 Neptune flyby - automatically colorized version
+
+https://www.youtube.com/watch?v=o4zh8C-ma_A  
+Voyager 1 Jupiter approach (raw images with riseau marks)
+
+
+Pipeline
+----------------------------------------
 
 Voyager consists of a pipeline of Python programs with the following steps: 
 
@@ -10,14 +31,16 @@ Voyager consists of a pipeline of Python programs with the following steps:
 * 2. Extract the contents of the tar.gz archives
 * 3. Convert Voyager IMG images to PNGs using **img2png** by Bjorn Jonsson [2]
 * 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6].
-* 5. Colorize frames by combining images, where appropriate
-* 6. Build mosaics from images, where appropriate
+* 5. Colorize frames by combining images, where possible
+* 6. [Build mosaics from images, where possible]
 * 7. Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
-* 8. Make movies from previous step and add titles and music using **ffmpeg** [7]
+* 8. Make movies from previous step [and add titles and music] using **ffmpeg** [7]
 
-To center the images, blob detection is first done to identify the largest contiguous region in the image, then if this region is not approximately square, circle detection is done in order to identify the center and radius of the planet/moon. 
 
-The current version is likely to undergo changes in order to handle different targets and cameras used, and to improve the centering algorithm for large planet images. 
+Installation
+----------------------------------------
+
+
 
 
 Usage
@@ -31,46 +54,61 @@ Unzip the tarfile
 
     > vg unzip 5101
 
-Convert the PDS IMG files to PNGs
+Convert the IMG files to PNGs
 
     > vg images 5101
 
-Calculate the centers of the main body in the images
-
-    > vg calc centers 5101
-
-Center the images
+Center the images on the main body in the images
 
     > vg centers 5101
 
-or to do all of these steps, 
+or do all of these steps automatically
 
     > vg centers 5101
+
+Colorize the images
+
+    > vg composites 5101
 
 Then make movies of all the downloaded datasets, organized by planet/spacecraft/target/camera
 
     > vg movies
 
 
-
-Version 0.2
+Compatibility
 ----------------------------------------
-- Add command line interface
-- Working on automatic colorization of movies
-2016-07-07
 
-
-Version 0.1
-----------------------------------------
-The sequence from VGISS_5104-5105 works best at the moment, so those were combined into one movie. 
-2016-07-04
+PyVoyager was written on Windows - it's mostly Python code so it could possibly be ported to Linux, except for the **img2png** program, which is only available on Windows at the moment. 
 
 
 Next steps
 ----------------------------------------
 
-* Handle larger planet images - not centering correctly, eg in VGISS_5106.
-* Option to make movie using one filter, to reduce flickering. 
+* Improve stabilization/centering routines
+* Improve color frame detection and rendering routines
+* Detect full-frame views and don't try to center them - might need to provide manual annotation for this, or base it on closest approach times
+* Slow down the movie at closest approach
+* Add titles to each target movie
+* Option to make b&w movies using one filter, to reduce flickering
+
+
+Version 0.2 (2016-07-12)
+----------------------------------------
+- Added command line interface
+- Added target discrimination - sorts images and movies into folders based on planet, spacecraft, image target, and camera
+- Uses Hough circle detection for centering
+- Preliminary handling of automatic colorization of frames and movies
+
+Made movies for Neptune flyby from volumes 8201-8210. 
+
+
+Version 0.1 (2016-07-04)
+----------------------------------------
+- No command line interface
+- Able to piece together a movie from complete volumes, but no target discrimination
+- Uses Blob detection and Hough circle detection for centering
+
+Made movie for Jupiter approach from volumes 5104-5105. 
 
 
 [1]: http://pds-rings.seti.org/archives/

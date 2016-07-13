@@ -67,23 +67,25 @@ def combineChannels(channels):
     # if missing a channel will use a blank/black image for that channel
     
     # get filenames
-    redfilename = channels.get('Orange') or channels.get('Ch4_Js') or channels.get('Clear')
+    #. what are ch4_js and ch4_u ? 
+    redfilename = channels.get('Orange') or channels.get('Clear')
     greenfilename = channels.get('Green') or channels.get('Clear')
-    bluefilename = channels.get('Blue') or channels.get('Violet') or channels.get('Uv') or channels.get('Clear')
+    bluefilename = channels.get('Blue') or channels.get('Violet') or channels.get('Uv') or channels.get('Ch4_Js') or channels.get('Ch4_U') or channels.get('Clear')
     
     # read images
     # returns None if filename is invalid - doesn't throw an error
+    # note: can't say 'or blank' here as in javascript
     red = cv2.imread(redfilename,cv2.IMREAD_GRAYSCALE)
     green = cv2.imread(greenfilename,cv2.IMREAD_GRAYSCALE)
     blue = cv2.imread(bluefilename,cv2.IMREAD_GRAYSCALE)
     
     # assign a blank image if missing a channel
     blank = np.zeros((800,800), np.uint8)
-    if red==None:
+    if type(red)==type(None):
         red = blank
-    if green==None:
+    if type(green)==type(None):
         green = blank
-    if blue==None:
+    if type(blue)==type(None):
         blue = blank
     
     # apply weights

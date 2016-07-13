@@ -2,36 +2,38 @@
 PyVoyager
 ========================================
 
-PyVoyager automatically creates and stabilizes Voyager flyby movies. 
+PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment - but the smaller segments are interesting in themselves. 
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per tar volume, with 87 volumes in total, so there is a lot to explore! 
 
-Examples
+
+Example Movies
 ----------------------------------------
 
-These are still in early stages, so pardon the jitters and the mini 'volcanoes'. 
+These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of riseau marks). 
 
 https://www.youtube.com/watch?v=VF3UCo2P-4Y  
-Voyager 2 Neptune flyby (narrow angle camera) - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
+Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
 
 https://www.youtube.com/watch?v=c8O2BKqM0Qc  
-Voyager 2 Neptune flyby - automatically colorized version
+Voyager 2 Neptune flyby color v0.2 - automatically colorized version
 
 https://www.youtube.com/watch?v=o4zh8C-ma_A  
-Voyager 1 Jupiter approach (raw images with riseau marks)
+Voyager 1 Jupiter approach v0.1 - (raw images with riseau marks)
 
 
 Pipeline
 ----------------------------------------
 
-Voyager consists of a pipeline of Python programs with the following steps: 
+Voyager consists of a command line interface to a pipeline of Python programs with the following steps: 
 
 * 1. Download Voyager datasets from **PDS archives** [1] 
 * 2. Extract the contents of the tar.gz archives
-* 3. Convert Voyager IMG images to PNGs using **img2png** by Bjorn Jonsson [2]
+* 3. Convert Voyager IMG images to PNGs using **img2png** [2]
 * 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6].
-* 5. Colorize frames by combining images, where possible
+* 5. Colorize frames by combining images, where possible, using **OpenCV**
 * 6. [Build mosaics from images, where possible]
 * 7. Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
 * 8. Make movies from previous step [and add titles and music] using **ffmpeg** [7]
@@ -40,7 +42,15 @@ Voyager consists of a pipeline of Python programs with the following steps:
 Installation
 ----------------------------------------
 
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], and **ffmpeg** [7]. 
 
+
+Compatibility
+----------------------------------------
+
+The main limitation is **img2png**, which is only available on Windows. This is what converts the PDS IMG files to PNGs, so it's a crucial step.
+
+In the future, the PNG images could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use. 
 
 
 Usage
@@ -54,7 +64,7 @@ Unzip the tarfile
 
     > vg unzip 5101
 
-Convert the IMG files to PNGs
+Convert the IMG files to PNGs with **img2png**
 
     > vg images 5101
 
@@ -62,7 +72,7 @@ Center the images on the main body in the images
 
     > vg centers 5101
 
-or do all of these steps automatically
+or do all of these steps automatically (performs missing steps)
 
     > vg centers 5101
 
@@ -75,31 +85,69 @@ Then make movies of all the downloaded datasets, organized by planet/spacecraft/
     > vg movies
 
 
-Compatibility
+How it works
 ----------------------------------------
 
-PyVoyager was written on Windows - it's mostly Python code so it could possibly be ported to Linux, except for the **img2png** program, which is only available on Windows at the moment. 
+The data for each step is put into the following folders in the 'data' subfolder: 
+
+    step1_downloads
+    step2_unzips
+    step3_images
+    step4_centers
+    step5_composites
+    step6_mosaics
+    step7_targets
+    step8_movies
+
+There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
+
+The volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
+
+    volume,fileid,phase,craft,target,time,instrument,filter,note
+    VGISS_5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,BLUE,3 COLOR ROTATION MOVIE
+    VGISS_5104,C1541424,Jupiter,Voyager1,Jupiter,1979-02-01T00:38:40,Narrow,ORANGE,3 COLOR ROTATION MOVIE
+    VGISS_5104,C1541426,Jupiter,Voyager1,Jupiter,1979-02-01T00:40:16,Narrow,GREEN,3 COLOR ROTATION MOVIE
+    ...
+
+though different targets and camera records can be also interleaved with others.
+
+This list has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters. The resulting file (db/composites.csv) looks like this: 
+
+    volume,compositeId,centerId,filter
+    VGISS_5104,C1541422,C1541422,Blue
+    VGISS_5104,C1541422,C1541424,Orange
+    VGISS_5104,C1541422,C1541426,Green
+
+This file is used by the `vg composites <volume>` command to generate the color frames. 
+
+The movies are generated with the `vg movies <targets>` command, which links all the images (either B&W or composites, currently set in code) into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
+
+Happy exploring!
 
 
 Next steps
 ----------------------------------------
 
-* Improve stabilization/centering routines
-* Improve color frame detection and rendering routines
+* Improve stabilization/centering routines - use blob detection for small circles (and crescents?), Hough otherwise
+* Improve color frame detection and rendering routines - could borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, eg orange, other ideas? 
 * Detect full-frame views and don't try to center them - might need to provide manual annotation for this, or base it on closest approach times
-* Slow down the movie at closest approach
+* Slow down the movie at closest approach - base on closest approach times
 * Add titles to each target movie
+* Combine movie segments into single movie, adding audio
 * Option to make b&w movies using one filter, to reduce flickering
+* Build mosaics with hand-annotated information, include in movies
+* Host PNG images somewhere for download
 
 
 Version 0.2 (2016-07-12)
 ----------------------------------------
 - Added command line interface
 - Added target discrimination - sorts images and movies into folders based on planet, spacecraft, image target, and camera
-- Uses Hough circle detection for centering
+- Uses Hough circle detection for centering - still fairly jittery, esp for small circles and crescents
+- Uses CALIB images, which have more contrast and darker backgrounds, which helps with circle detection in Neptune images
 - Preliminary handling of automatic colorization of frames and movies
 
-Made movies for Neptune flyby from volumes 8201-8210. 
+Made movies for Neptune flyby from volumes 8201-8210, both b&w and color.
 
 
 Version 0.1 (2016-07-04)
@@ -107,6 +155,7 @@ Version 0.1 (2016-07-04)
 - No command line interface
 - Able to piece together a movie from complete volumes, but no target discrimination
 - Uses Blob detection and Hough circle detection for centering
+- Uses RAW images, which worked alright for some of the Jupiter images, but not Neptune, which has brighter backgrounds
 
 Made movie for Jupiter approach from volumes 5104-5105. 
 

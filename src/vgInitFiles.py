@@ -46,11 +46,13 @@ def initFiles():
                     note = row[config.indexFileColNote] 
 
                     # translate where needed
+                    volume = volume[-4:] # eg 5101
                     fileid = filename.split('_')[0] # eg C1385455
                     phase = config.indexTranslations[phase] # eg Jupiter
                     craft = config.indexTranslations[craft] # eg Voyager1
                     instrument = config.indexTranslations[instrument] # eg Narrow
                     target = target.title().replace(' ','_') # eg N_Rings
+                    filter = filter.title() # eg Orange
 
                     # write row
                     row = [volume, fileid, phase, craft, target, time, instrument, filter, note] # keep in sync with fields, above
@@ -64,6 +66,7 @@ def initFiles():
 
 
 if __name__ == '__main__':
+    os.chdir('..')
     initFiles()
     print 'done'
     

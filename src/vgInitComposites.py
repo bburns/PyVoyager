@@ -1,19 +1,8 @@
 
 # build composites.csv, which will attempt to describe how to combine image channels
-
 # based on image number (~time), filter, target, camera, NOTE field
 
-
-import os
-import csv
-import pprint
-
-import config
-import lib
-
-        
-
-
+# eg
 # from files.csv
 # volume,fileid,phase,craft,target,time,instrument,filter,note
 # VGISS_5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,UV,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
@@ -29,8 +18,18 @@ import lib
 # VGISS_5101,C1471038,C1471044,ORANGE
 
 
+import os
+import csv
+import pprint
+
+import config
+import lib
+
+
+
 # tdeltamax = 5mins
 debug = False
+
 
 def initComposites():
     "build the composites.csv file from likely looking images in files.csv"

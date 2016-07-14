@@ -16,8 +16,20 @@ import config
 
 
 
+def findCenter(filename):
+    "find center of given file and return as list [x,y]"
+    im = loadImage(filename)
+    if config.rotateImage:
+        im = np.rot90(im, 2) # rotate by 180
+    bbox = libimg.findBoundingBox(im, config.centerMethod)
+    # return center of bbox
+    x1,y1,x2,y2 = bbox
+    center = [int(x1+x2)/2, int(y1+y2)/2]
+    return center
+
+
 def loadImage(filename):
-    "load an mpim image"
+    "load an mpim image (values range from 0.0-1.0)"
     im = mpim.imread(filename)
     return im
     
@@ -26,12 +38,14 @@ def saveImage(filename, im):
     im = misc.imsave(filename, im)
 
 
+#. remove this
 def centerImageFile(infile, outfile):
     "center the given image file on a planet and save it to outfile"
     im = mpim.imread(infile)
     if config.rotateImage:
         im = np.rot90(im, 2) # rotate by 180
     boundingBox = findBoundingBox(im, config.centerMethod) # blob, circle, all
+    #. nowork
     if config.drawBoundingBox:
         im = mpim2cv2(im)
         im = gray2rgb(im)

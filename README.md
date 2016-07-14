@@ -108,9 +108,9 @@ After downloading the tar files, unzipping them, and extracting the PNGs, the CA
 The volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
 
     volume,fileid,phase,craft,target,time,instrument,filter,note
-    VGISS_5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,BLUE,3 COLOR ROTATION MOVIE
-    VGISS_5104,C1541424,Jupiter,Voyager1,Jupiter,1979-02-01T00:38:40,Narrow,ORANGE,3 COLOR ROTATION MOVIE
-    VGISS_5104,C1541426,Jupiter,Voyager1,Jupiter,1979-02-01T00:40:16,Narrow,GREEN,3 COLOR ROTATION MOVIE
+    5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
+    5104,C1541424,Jupiter,Voyager1,Jupiter,1979-02-01T00:38:40,Narrow,Orange,3 COLOR ROTATION MOVIE
+    5104,C1541426,Jupiter,Voyager1,Jupiter,1979-02-01T00:40:16,Narrow,Green,3 COLOR ROTATION MOVIE
     ...
 
 though different targets and camera records can be also interleaved with others.
@@ -118,9 +118,9 @@ though different targets and camera records can be also interleaved with others.
 This list of files has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (db/composites.csv) looks like this: 
 
     volume,compositeId,centerId,filter
-    VGISS_5104,C1541422,C1541422,Blue
-    VGISS_5104,C1541422,C1541424,Orange
-    VGISS_5104,C1541422,C1541426,Green
+    5104,C1541422,C1541422,Blue
+    5104,C1541422,C1541424,Orange
+    5104,C1541422,C1541426,Green
 
 This file is used by the `vg composites <volume>` command to generate the color frames. 
 
@@ -146,6 +146,11 @@ Next steps
 * Host PNG images somewhere for download
 
 
+Version 0.3
+----------------------------------------
+- Include default centering information in centers<volume>.csv files
+
+
 Version 0.2 (2016-07-12)
 ----------------------------------------
 - Added command line interface
@@ -154,7 +159,7 @@ Version 0.2 (2016-07-12)
 - Uses CALIB images, which have more contrast and darker backgrounds, which helps with circle detection in Neptune images
 - Preliminary handling of automatic colorization of frames and movies
 
-Made movies for Neptune flyby from volumes 8201-8210, both b&w and color.
+Made rough movies for Neptune flyby from volumes 8201-8210, both b&w and color.
 
 
 Version 0.1 (2016-07-04)
@@ -164,7 +169,7 @@ Version 0.1 (2016-07-04)
 - Uses Blob detection and Hough circle detection for centering
 - Uses RAW images, which worked alright for some of the Jupiter images, but not Neptune, which has brighter backgrounds
 
-Made movie for Jupiter approach from volumes 5104-5105. 
+Made b&w movie for Jupiter approach from volumes 5104-5105. 
 
 
 [1]: http://pds-rings.seti.org/archives/

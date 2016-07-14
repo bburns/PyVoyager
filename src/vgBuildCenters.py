@@ -24,12 +24,13 @@ def buildCenters(volumeNum):
         # config.drawBoundingBox = True
         # config.drawCircle = True
         config.drawCrosshairs = True
-    if int(volumeNum)!=0 and os.path.isdir(centerspath): # for test (vol=0), can overwrite folder
+    if int(volumeNum)!=0 and os.path.isdir(centerspath): # for test (vol=0), can overwrite test folder
         print "Folder exists: " + centerspath
         return False
     else:
         # first build the plain images for the volume, if not already there
         buildImages(volumeNum)
+        # now center the files
         lib.mkdir(centerspath)
         nfile = 1
         for root, dirs, files in os.walk(imagespath):

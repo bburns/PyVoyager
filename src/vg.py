@@ -52,6 +52,7 @@ elif cmd=="movies":
     targetPath = args.pop(0)
     vgBuild.buildMovies(targetPath)
     
+    
 elif cmd=="init":
     noun = args.pop(0)
     if noun=='files':

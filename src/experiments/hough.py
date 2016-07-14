@@ -21,7 +21,8 @@ red = (0,0,255)
 green = (0,255,0)
 
 # get path
-folder = 'images/'
+# folder = 'images/'
+folder = '../../test/images/'
 # filepath = folder + 'huge.png' # nowork
 # filepath = folder + 'limb.png' # nowork
 # filepath = folder + 'noise.png' # nowork

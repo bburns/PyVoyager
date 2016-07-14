@@ -1,9 +1,11 @@
 
 # tests of hough circle detection
+# usage: python testCircles.py
+
 
 import cv2
 
-import sys; sys.path.append('..') # so can import from main src folder
+import sys; sys.path.append('../src') # so can import from main src folder
 import config
 import lib
 import libimg
@@ -12,10 +14,8 @@ import libimg
 folder = 'images/'
 maxerror = 2
 
-# read in csv file to dict of dicts
-#. ignore # so can add comments, or put in comment field
-results = lib.readCsv('images/_files.csv')
-# print results
+# read in small csv file to dict of dicts
+results = lib.readCsv(folder + '_files.csv')
 
 ntestsok = 0
 ntests = len(results)
@@ -28,6 +28,12 @@ for fileid in fileids:
     xbest = int(result['x'])
     ybest = int(result['y'])
     rbest = int(result['radius'])
+    
+    
+    #. this code needs to just call the centerimage routine, and
+    # play around with the code there - gets confusing otherwise.
+    # put it in a git branch
+    
     
     # load image
     filepath = folder + fileid + '.png'
@@ -53,7 +59,6 @@ for fileid in fileids:
     
     # show message
     if deltax<maxerror and deltay<maxerror and deltar<maxerror:
-        # print "[OK]     %s, (%d, %d, %d)" % (fileid, x, y, r)
         print "[OK]     %s" % (fileid)
         ntestsok += 1
     else:

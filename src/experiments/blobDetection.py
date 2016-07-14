@@ -27,7 +27,8 @@ import libimg
 
 
 # get path
-folder = 'images/'
+# folder = 'images/'
+folder = '../../test/images/'
 # filepath = folder + 'calib.png'
 # filepath = folder + 'calib2.png' #.
 # filepath = folder + 'ok.png'

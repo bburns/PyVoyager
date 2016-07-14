@@ -19,7 +19,8 @@ import libimg
 
 
 
-folder = 'images/'
+# folder = 'images/'
+folder = '../../test/images/'
 # filepath = folder + 'calibokayish.png'
 # filepath = folder + 'calibblurred.png' #.
 # filepath = folder + 'calibfaint.png'
@@ -53,7 +54,7 @@ folder = 'images/'
 # libimg.show(im)
 
 
-results = lib.readCsv('images/_files.csv')
+results = lib.readCsv(folder + '_files.csv')
 fileids = results.keys()
 fileids.sort()
 for fileid in fileids:

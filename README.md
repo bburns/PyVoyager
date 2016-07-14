@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment - but the smaller segments are interesting in themselves. 
+PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment.
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
@@ -12,7 +12,7 @@ There are a total of 70k+ images in the Voyager archives - the datasets are rath
 Example Movies
 ----------------------------------------
 
-These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of riseau marks). 
+These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks). 
 
 https://www.youtube.com/watch?v=VF3UCo2P-4Y  
 Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
@@ -21,7 +21,7 @@ https://www.youtube.com/watch?v=c8O2BKqM0Qc
 Voyager 2 Neptune flyby color v0.2 - automatically colorized version
 
 https://www.youtube.com/watch?v=o4zh8C-ma_A  
-Voyager 1 Jupiter approach v0.1 - (raw images with riseau marks)
+Voyager 1 Jupiter approach v0.1 - (raw images with reseau marks)
 
 
 Pipeline
@@ -48,7 +48,7 @@ You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciP
 Compatibility
 ----------------------------------------
 
-The main limitation is **img2png**, which is only available on Windows. This is what converts the PDS IMG files to PNGs, so it's a crucial step.
+The main limitation is **img2png**, which is only available on Windows - this is what converts the PDS IMG files to PNGs, so it's a crucial step.
 
 In the future, the PNG images could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use. 
 
@@ -101,6 +101,10 @@ The data for each step is put into the following folders in the 'data' subfolder
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
 
+Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED. RAW images are just that, and are 800x800 pixels, and include the reseau marks (the grid of dots) used for calibration. CLEANED images have had the reseau marks removed, but leave noticeable artifacts that look like volcanoes on the limbs of planets. CALIB images have had dark images subtracted from the CLEANED images, and GEOMED are the CALIB images geometrically corrected and projected to 1000x1000 pixels. Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used. 
+
+After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on a Hough circle detection algorithm. This works for most cases, but there is still noticeable jitter and frames where it doesn't work very well, so this has room for improvement.
+
 The volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
 
     volume,fileid,phase,craft,target,time,instrument,filter,note
@@ -111,7 +115,7 @@ The volumes come with index files for all the images they contain, which have be
 
 though different targets and camera records can be also interleaved with others.
 
-This list has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters. The resulting file (db/composites.csv) looks like this: 
+This list of files has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (db/composites.csv) looks like this: 
 
     volume,compositeId,centerId,filter
     VGISS_5104,C1541422,C1541422,Blue
@@ -122,7 +126,7 @@ This file is used by the `vg composites <volume>` command to generate the color 
 
 The movies are generated with the `vg movies <targets>` command, which links all the images (either B&W or composites, currently set in code) into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
 
-Happy exploring!
+That's about it!
 
 
 Next steps
@@ -136,6 +140,9 @@ Next steps
 * Combine movie segments into single movie, adding audio
 * Option to make b&w movies using one filter, to reduce flickering
 * Build mosaics with hand-annotated information, include in movies
+* Split centering step into two phases - detect center and offset, and apply offset to possibly different image type
+* Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
+* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Host PNG images somewhere for download
 
 

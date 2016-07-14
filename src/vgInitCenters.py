@@ -1,5 +1,6 @@
 
 # build centers<volnum>.csv file for a volume by attempting to center images in files.csv
+#. mothballing this
 
 
 import os

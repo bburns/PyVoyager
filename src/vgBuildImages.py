@@ -12,8 +12,13 @@ from vgBuildUnzip import buildUnzip
 
 def buildImages(volumeNum):
     "convert IMG files to PNG files, if folder doesn't exist yet"
-    unzippedpath = lib.getUnzippedpath(volumeNum)
-    imagespath = lib.getImagespath(volumeNum)
+    volumeNum = int(volumeNum)
+    volumeStr = str(volumeNum)
+    imageType = 'Calib' #. default
+    # unzippedpath = lib.getUnzippedpath(volumeNum)
+    # imagespath = lib.getImagespath(volumeNum)
+    unzippedpath = config.unzipFolder + '/VGISS_' + volumeStr
+    imagespath = config.imagesFolder + '/' + imageType + '/VGISS_' + volumeStr
     if int(volumeNum)==0: # do nothing if asking for test volume
         print 'Volume 0 is a test volume, which should be manually created in step3_images/test,'
         print 'and populated with test cases for centering, etc.'
@@ -24,6 +29,7 @@ def buildImages(volumeNum):
     else:
         # unzip the download, if not already there
         buildUnzip(volumeNum)
+        # now convert the images
         lib.mkdir(imagespath) # create folder
         datadir = unzippedpath + '/DATA'
         print "Converting imgs to pngs for " + datadir
@@ -42,42 +48,7 @@ def buildImages(volumeNum):
         return True
 
     
-# def buildImage(imageId):
-#     "build an image by calling buildImages for the volume associated with the image"
-#     #. we'll need a sqlite db with an index for files.txt, or maybe just need this?
-#     db = {
-#         1385455:5101
-#         }
-#     #.. or just a table of min values and associated volumes
-#     # though there are 50ish volumes, so would be a bit slow to search through.
-#     # but could split it into a btree, ie one main 'if' per encounter (6)
-#     # if cnum>1380000:
-#         # volnum=5101
-#     cnum = int(imageId[1:])
-#     volnum = db[cnum]
-#     buildImages(volnum)
-    
-#     # open the files.txt db, get the filenum specified and its params,
-#     # extract it with img2png if it's not already in the files folder
-#     # copy it to the files folder
-#     # if step2_unzips doesn't exist, unzip step1_zips
-#     # if step1_zips doesn't exist, download it
-#     # eg
-#     # file6,VGISS_5101,C1462321,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-#     # file7,VGISS_5101,C1462323,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-#     # file8,VGISS_5101,C1462325,Jupiter,Voyager1,Jupiter,Narrow,CLEAR,ISS BEAM BENDING TEST
-#     # filedef = getFiledef(fileNum)
-#     # volume = filedef['volume']
-#     # filetitle = filedef['filetitle']
-#     # filetype = 'RAW'
-#     # filter = filedef['filter']
-#     # imgdir = config.unzipFolder + '/' + volume
-#     # pngdir = config.pngFolder + '/' + volume
-#     # imgfile = filetitle + '_' + filetype + '.IMG'
-#     # pngfile = filetitle + '_' + filetype + '_' + filter + '.PNG'
-#     # imgpath = imgdir + '/' + imgfile
-#     # pngpath = pngdir + '/' + pngfile
-#     # if os.path.isfile(pngpath):
-#     #     pass
-#     # else:
-#     #     lib.img2png(imgdir, imgfile, pngdir):
+if __name__ == '__main__':
+    os.chdir('..')
+    buildImages(5101)
+    print 'done'

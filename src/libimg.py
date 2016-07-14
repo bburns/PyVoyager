@@ -16,16 +16,16 @@ import config
 
 
 
-def findCenter(filename):
-    "find center of given file and return as list [x,y]"
-    im = loadImage(filename)
-    if config.rotateImage:
-        im = np.rot90(im, 2) # rotate by 180
-    bbox = libimg.findBoundingBox(im, config.centerMethod)
-    # return center of bbox
-    x1,y1,x2,y2 = bbox
-    center = [int(x1+x2)/2, int(y1+y2)/2]
-    return center
+# def findCenter(filename):
+#     "find center of given file and return as list [x,y]"
+#     im = loadImage(filename)
+#     if config.rotateImage:
+#         im = np.rot90(im, 2) # rotate by 180
+#     bbox = libimg.findBoundingBox(im, config.centerMethod)
+#     # return center of bbox
+#     x1,y1,x2,y2 = bbox
+#     center = [int(x1+x2)/2, int(y1+y2)/2]
+#     return center
 
 
 def loadImage(filename):
@@ -55,7 +55,8 @@ def centerImageFile(infile, outfile):
         imCentered[399, 0:799] = 0.25
         imCentered[0:799, 399] = 0.25
     misc.imsave(outfile, imCentered)
-    return True
+    # return True
+    return boundingBox
     
 
 def show(im2, title='cv2 image - press esc to continue'):

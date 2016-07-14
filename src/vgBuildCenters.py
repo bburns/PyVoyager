@@ -14,17 +14,20 @@ from vgBuildImages import buildImages
 
 
 
-
 def buildCenters(volumeNum):
     "build centered images for given volume, if they don't exist yet"
-    imagespath = lib.getImagespath(volumeNum)
-    centerspath = lib.getCenterspath(volumeNum)
-    if int(volumeNum)==0: # test volume - turn on image debugging
+    volumeNum = int(volumeNum)
+    volumeStr = str(volumeNum)
+    imageTypeInput = 'Calib' # the image type to use to determine the centers
+    imageTypeOutput = 'Calib' # the image type to use for transformations
+    imagespath = config.imagesFolder + '/' + imageTypeInput + '/VGISS_' + volumeStr
+    centerspath = config.centersFolder + '/' + imageTypeOutput + '/VGISS_' + volumeStr
+    if volumeNum==0: # test volume - turn on image debugging
         # config.drawBlob = True #. not working yet?
         # config.drawBoundingBox = True
         # config.drawCircle = True
         config.drawCrosshairs = True
-    if int(volumeNum)!=0 and os.path.isdir(centerspath): # for test (vol=0), can overwrite test folder
+    if volumeNum!=0 and os.path.isdir(centerspath): # for test (vol=0), can overwrite test folder
         print "Folder exists: " + centerspath
         return False
     else:
@@ -37,33 +40,31 @@ def buildCenters(volumeNum):
             nfiles = len(files)
             del dirs[:] # don't recurse
             for filename in files: # eg C1385455_RAW_CLEAR.png
-                ext = filename[-4:]
-                if ext=='.png' or ext=='.PNG':
+                ext = filename[-4:].lower()
+                if ext=='.png':
                     infile = imagespath + '/' + filename
                     outfile = centerspath + '/' + config.centersprefix + filename
                     print 'centering %d/%d: %s' %(nfile,nfiles,infile)
+                    
                     # blobThreshold = config.blobThreshold
                     # fileid = filename.split('_')[0] # eg C1385455
                     # blobThreshold = getBlobThreshold(fileid)
                     # libimg.centerImageFile(infile, outfile, blobThreshold, config.rotateImage)
                     # libimg.centerImageFile(infile, outfile, config.rotateImage, config.centerMethod, config.drawBoundingBox, config.drawCrosshairs)
                     
-                    libimg.centerImageFile(infile, outfile)
+                    # libimg.centerImageFile(infile, outfile)
+                    boundingBox = libimg.centerImageFile(infile, outfile)
                     
-                    # split into two phases
-                    # im = libimg.loadImage(infile)
-                    # if config.rotateImage:
-                    #     im = np.rot90(im, 2) # rotate by 180
-                    # bbox = libimg.findBoundingBox(im, config.centerMethod)
-                    # #. write bbox to file
-                    # # use bbox to center a (possibly) different image
-                    # im = libimg.loadImage(filetocenter)
-                    # im = libimg.centerImage(im, bbox)
-                    # libimg.saveImage(outfile, im)
+                    print infile, boundingBox
                     
                     nfile += 1
         return True
 
+
+if __name__ == '__main__':
+    os.chdir('..')
+    buildCenters(5101)
+    print 'done'
 
 
     

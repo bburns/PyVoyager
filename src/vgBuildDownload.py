@@ -27,3 +27,8 @@ def buildDownload(volumeNum):
             print "         to " + filepath
             return lib.downloadFile(url, filepath)
 
+
+if __name__ == '__main__':
+    os.chdir('..')
+    buildDownload(5101)
+    print 'done'

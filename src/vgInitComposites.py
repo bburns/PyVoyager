@@ -1,21 +1,22 @@
 
 # build composites.csv, which will attempt to describe how to combine image channels
 # based on image number (~time), filter, target, camera, NOTE field
+# (right now just filter, target, camera fields)
 
 # eg
 # from files.csv
 # volume,fileid,phase,craft,target,time,instrument,filter,note
-# VGISS_5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,UV,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# VGISS_5101,C1471040,Jupiter,Voyager1,Jupiter,1979-01-09T00:51:49,Narrow,BLUE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# VGISS_5101,C1471042,Jupiter,Voyager1,Jupiter,1979-01-09T00:55:01,Narrow,GREEN,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# VGISS_5101,C1471044,Jupiter,Voyager1,Jupiter,1979-01-09T00:58:13,Narrow,ORANGE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# 5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,UV,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# 5101,C1471040,Jupiter,Voyager1,Jupiter,1979-01-09T00:51:49,Narrow,BLUE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# 5101,C1471042,Jupiter,Voyager1,Jupiter,1979-01-09T00:55:01,Narrow,GREEN,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
+# 5101,C1471044,Jupiter,Voyager1,Jupiter,1979-01-09T00:58:13,Narrow,ORANGE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
 # ->
 # composites.csv
 # volume,compositeId,centerId,filter
-# VGISS_5101,C1471038,C1471038,UV
-# VGISS_5101,C1471038,C1471040,BLUE
-# VGISS_5101,C1471038,C1471042,GREEN
-# VGISS_5101,C1471038,C1471044,ORANGE
+# 5101,C1471038,C1471038,UV
+# 5101,C1471038,C1471040,BLUE
+# 5101,C1471038,C1471042,GREEN
+# 5101,C1471038,C1471044,ORANGE
 
 
 import os
@@ -28,6 +29,7 @@ import lib
 
 
 # tdeltamax = 5mins
+# debug = True
 debug = False
 
 
@@ -56,14 +58,13 @@ def initComposites():
         else:
             # get field values
             # volume,fileid,phase,craft,target,time,instrument,filter,note
-            volume = row[config.filesColVolume] # eg VGISS_5101
+            volume = row[config.filesColVolume] # eg 5101
             fileid = row[config.filesColFileId] # eg C1385455
             phase = row[config.filesColPhase] # eg Jupiter
             craft = row[config.filesColCraft] # eg Voyager1
             target = row[config.filesColTarget] # eg Io
             instrument = row[config.filesColInstrument] # eg Narrow
-            # filter = row[config.filesColFilter] # eg ORANGE
-            filter = row[config.filesColFilter].title() # eg Orange
+            filter = row[config.filesColFilter] # eg Orange
             # note = row[config.filesColNote] 
             # print volume, fileid, phase, craft, target, instrument, filter
             if debug: print 'row',row[:-1] # skip note
@@ -85,30 +86,26 @@ def initComposites():
                 if bufferRow==[]:
                     pass
                 else:
-                    bufferVolume = bufferRow[config.filesColVolume] # eg VGISS_5101
+                    if debug: print 'bufferrow',bufferRow
+                    # we know the target and instrument are the same, so can skip them
+                    bufferVolume = bufferRow[config.filesColVolume] # eg 5101
                     bufferFileid = bufferRow[config.filesColFileId] # eg C1385455
                     bufferPhase = bufferRow[config.filesColPhase] # eg Jupiter
                     bufferCraft = bufferRow[config.filesColCraft] # eg Voyager1
-                    
-                    # we know the target and instrument are the same, so can skip them
-                    # bufferTarget = bufferRow[config.filesColTarget] # eg Io
-                    # bufferInstrument = bufferRow[config.filesColInstrument] # eg Narrow
-                    
-                    # bufferFilter = bufferRow[config.filesColFilter] # eg Orange
-                    bufferFilter = bufferRow[config.filesColFilter].title() # eg Orange
+                    bufferFilter = bufferRow[config.filesColFilter] # eg Orange
                     # bufferNote = bufferRow[config.filesColNote] 
-                    if debug: print 'bufferrow',bufferRow
                     if filter==bufferFilter:
                         if debug: print 'filters match - check other values'
                         # if phase==bufferPhase and craft==bufferCraft and target==bufferTarget and instrument==bufferInstrument:
                         # if True:
-                        if volume==bufferVolume: # actually had some cases of this happening
+                        if volume==bufferVolume: # actually had some cases of this failing
                             # print 'values match - assume we have a cycle, so dump non-empty buffer rows into composites.csv, clear buffer'
                             # print buffer
                             # pprint.pprint(buffer)
                             # print [row[config.filesColFilter] for row in buffer]
                             # print buffer.join('\n')
-                            nonemptyRows = [rowx for rowx in buffer if rowx != []]
+                            # nonemptyRows = [rowx for rowx in buffer if rowx != []]
+                            nonemptyRows = [row for row in buffer if row != []]
                             if len(nonemptyRows) > 1:
                                 outCompositeId = None
                                 for anotherRow in buffer:
@@ -130,8 +127,8 @@ def initComposites():
         
             # add row to buffer
             buffer.pop(0) # remove from front of list
-            # buffer.append(row) # append item to end of list
-            buffer.append(row[:-1]) # append item to end of list
+            buffer.append(row) # append item to end of list
+            # buffer.append(row[:-1]) # append item to end of list
             if debug: print buffer
 
         # write row

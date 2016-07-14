@@ -12,12 +12,6 @@ import lib
 import libimg
 
 
-compositesColVolume = 0
-compositesColCompositeId = 1
-compositesColCenterId = 2
-compositesColFilter = 3
-compositesColWeight = 4
-    
 
 def buildComposites(volnum):
     "build composite images by combining channel images"
@@ -40,16 +34,18 @@ def buildComposites(volnum):
     i = 0
     startId = ''
     channelRows = []
-    volume = lib.getVolumeTitle(volnum)
+    # volume = lib.getVolumeTitle(volnum)
+    volnum = str(volnum)
     for row in reader:
         if row==[] or row[0][0]=="#":
             continue
         if i==0:
             fields = row
         else:
-            vol = row[compositesColVolume]
-            if volume==vol:
-                compositeId = row[compositesColCompositeId]
+            vol = row[config.compositesColVolume]
+            if volnum==vol:
+                # gather image filenames into channelRows so can merge them
+                compositeId = row[config.compositesColCompositeId]
                 if compositeId == startId:
                     channelRows.append(row)
                 else:
@@ -62,25 +58,31 @@ def buildComposites(volnum):
             
     
 def processChannels(channelRows):
-    "channels is an array of rows corresponding to rows in the composites.txt file"
+    "channels is an array of rows corresponding to rows in the composites.csv file"
+    # we combine them and write them to a file in the composites folder, step5_composites
     # volnum,compositeId,centerId,filter,weight
+    # eg [
+    #   [5101,C434823,C434823,Orange]
+    #   [5101,C434823,C434825,Blue]
+    #   [5101,C434823,C434827,Green]
+    #   ]
     channels = {}
     volume = ''
     compositeId = ''
     for row in channelRows:
-        volume = row[compositesColVolume]
-        compositeId = row[compositesColCompositeId]
-        centerId = row[compositesColCenterId]
-        filter = row[compositesColFilter].title()
+        volume = row[config.compositesColVolume]
+        compositeId = row[config.compositesColCompositeId]
+        centerId = row[config.compositesColCenterId]
+        filter = row[config.compositesColFilter].title()
         # folder = lib.getCenterspath(volume)
-        folder = config.centersFolder + '/' + volume
-        filetitle = config.centersprefix + centerId + '_' + config.imageType + '_' + filter + '.png'
-        channelfilename = folder + '/' + filetitle
+        folder = config.centersFolder + 'VGISS_' + volume
+        filetitle = config.centersPrefix + centerId + '_' + config.imageType + '_' + filter + '.png'
+        channelfilename = folder + filetitle
         channels[filter] = channelfilename
     # print channels
-    folder = config.compositesFolder + '/' + volume
+    folder = config.compositesFolder + volume
     lib.mkdir(folder)
-    outfilename = folder + '/' + config.compositesPrefix + compositeId + '.png'
+    outfilename = folder + config.compositesPrefix + compositeId + '.png'
     # print outfilename
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)

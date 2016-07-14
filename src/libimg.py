@@ -80,7 +80,8 @@ def showMpim(im, title='mpim image - press esc to continue'):
 
     
 def combineChannels(channels):
-    "combine the given weighted channels and return a single cv2 image"
+    "combine the given weighted channel files and return a single cv2 image"
+    #. could pass in weights, or just define them in config
     # eg channels = {
     #   'Orange':'composites/orange.png',
     #   'Green':'composites/green.png',
@@ -103,12 +104,9 @@ def combineChannels(channels):
     
     # assign a blank image if missing a channel
     blank = np.zeros((800,800), np.uint8)
-    if type(red)==type(None):
-        red = blank
-    if type(green)==type(None):
-        green = blank
-    if type(blue)==type(None):
-        blue = blank
+    if type(red)==type(None): red = blank
+    if type(green)==type(None): green = blank
+    if type(blue)==type(None): blue = blank
     
     # apply weights
     # blue = cv2.multiply(blue,0.6)
@@ -327,72 +325,6 @@ def findBoundingBoxByCircle(im):
         y2 = im.shape[0] - 1
     boundingBox = [x1,y1,x2,y2]
     return boundingBox
-
-
-# def findBoundingBoxByBlobThenHough(im):
-#     "find center of object using blob then hough circle detection, and return bounding box"
-#     boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
-#     [x1,y1,x2,y2] = boundingBox
-#     # if box is > some size, try looking for a circle
-#     width = x2 - x1
-#     height = y2 - y1
-#     area = width*height
-#     if area>config.blobAreaCutoff: # eg 10*10 pixels
-#         boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-#     return boundingBox
-
-
-# #. clean up, parameterize
-# def findBoundingBoxByBlob2(im, thdiff):
-#     "find the biggest and best blob, iterating over different threshold values. returns bounding box"
-    
-#     # the idea is to look for the place where the slope of area vs threshold starts to level out,
-#     # which seemed to be the tipping point of where to find the best threshold value.
-    
-#     # calls findBoundingBoxByBlob ~15 times.
-#     # but seems able to handle different lighting conditions.
-    
-#     # stretch histogram
-#     im = im.copy()
-#     im = cv2.normalize(im, None, 0, 1.0, cv2.NORM_MINMAX)
-    
-#     # iterate over threshold values
-#     # th is threshold
-#     # thmin = 0.05
-#     thmin = 0.02
-#     # thmax = 0.20
-#     thmax = 0.25
-#     thstep = 0.01
-#     imax = int((thmax-thmin)/thstep)+1
-
-#     lastarea = 1
-#     maxarea = 800*800.0
-#     maxderiv = 1/thstep  # ie going from area=1 to area=0 in the delta of thstep
-#     # thdiff = -0.05
-#     # thdiff = -0.01
-#     thbest = 0
-#     areabest = 0
-#     boundingBoxBest = [0,0,799,799]
-#     for i in range(0,imax):
-#         th = thmin + i * thstep
-#         boundingBox = findBoundingBoxByBlob(im, th)
-#         x1,y1,x2,y2 = boundingBox
-#         area = (x2-x1)*(y2-y1) / maxarea # area = 1 to 0
-#         area = math.log(area) # area = 0 to -infinity
-#         deriv = (area - lastarea) / thstep / maxderiv
-#         # print th, area, deriv
-#         # if deriv>thdiff:
-#         if deriv<thdiff:
-#             thbest = th
-#             areabest = area
-#             boundingBoxBest = boundingBox
-#         lastarea = area
-#     print thbest, areabest
-#     #.
-#     # if config.drawBlob:
-#     #     drawBoundingBox(im, boundingBoxBest)
-#     return boundingBoxBest
-
 
 
 def findBoundingBoxByBlob(im, blobThreshold):

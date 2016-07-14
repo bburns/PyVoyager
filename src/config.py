@@ -210,6 +210,16 @@ filesColFilter = 7
 filesColNote = 8
 
 
+# columns in composites.csv
+# keep in synch with vgBuildComposites.py
+compositesColVolume = 0
+compositesColCompositeId = 1
+compositesColCenterId = 2
+compositesColFilter = 3
+compositesColWeight = 4
+    
+
+
 # # voyager ISS volumes
 # voyager1jupiter = range(5101,5120)
 # voyager1saturn  = range(6101,6121)

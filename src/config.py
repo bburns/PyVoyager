@@ -59,7 +59,7 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # centerMethod = 'circle'
 centerMethod = 'all'
 
-blobAreaDerivativeMax = -0.02
+# blobAreaDerivativeMax = -0.02
 
 
 # blob detection
@@ -72,7 +72,8 @@ blobAreaDerivativeMax = -0.02
 # blobThreshold = 0.20 # need for later neptune images
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
-blobThreshold = 0.025 
+# blobThreshold = 0.025 
+blobThreshold = 0.015 # eg (* 255 0.2) 51
 # blobThreshold = 0.05
 
 # area in pixels^2 at which switch from blob detection to hough circle detection

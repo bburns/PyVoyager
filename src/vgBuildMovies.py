@@ -66,14 +66,15 @@ def makeLinks():
     
     print 'making links from source files'
     
-    
     # iterate through all available images
     f = open(config.filesdb, 'rt')
     i = 0
     lastVolume=''
     reader = csv.reader(f)
     for row in reader:
-        if i==0:
+        if row==[] or row[0][0]=="#":
+            pass
+        elif i==0:
             fields = row
         else:
             volume = row[config.filesColVolume]

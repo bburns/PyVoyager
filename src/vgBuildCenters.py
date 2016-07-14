@@ -1,6 +1,7 @@
 
 # build centered images from plain images (pngs)
 
+import csv
 import os
 import os.path
 
@@ -30,24 +31,77 @@ def buildCenters(volnum):
         vgBuildImages.buildImages(volnum)
         
         # now center the files
-        #. this will work better if we're walking over the files.csv, approaches.csv, and thresholds.csv
-        # at the same time, so can pass in more parameters
-        # either that, or read them into a dictionary for the given volume first,
-        # then grab the values when get to a file - less complex code that way
         lib.mkdir(centersubfolder)
+        
+        config.drawCrosshairs = True
+        
+        # nfile = 1
+        # for root, dirs, files in os.walk(imagesubfolder):
+        #     nfiles = len(files)
+        #     del dirs[:] # don't recurse
+        #     for pngfilename in files: # eg C1385455_RAW_CLEAR.png
+        #         ext = pngfilename[-4:]
+        #         if ext=='.png':
+        #             infile = imagesubfolder + pngfilename
+        #             outfile = centersubfolder + config.centersPrefix + pngfilename
+        #             print 'centering %d/%d: %s' %(nfile,nfiles,infile)
+        #             libimg.centerImageFile(infile, outfile)
+        #             nfile += 1
+
+        centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
+        
+        # iterate through all available images, filter on desired volume
+        f = open(config.filesdb, 'rt')
+        i = 0
+        reader = csv.reader(f)
+        volnum = str(volnum) # eg '5101'
         nfile = 1
-        for root, dirs, files in os.walk(imagesubfolder):
-            nfiles = len(files)
-            del dirs[:] # don't recurse
-            for pngfilename in files: # eg C1385455_RAW_CLEAR.png
-                ext = pngfilename[-4:]
-                if ext=='.png':
+        for row in reader:
+            if row==[] or row[0][0]=="#":
+                pass
+            if i==0:
+                fields = row
+            else:
+                volume = row[config.filesColVolume]
+                if volume==volnum:
+                    fileId = row[config.filesColFileId]
+                    filter = row[config.filesColFilter]
+                    system = row[config.filesColPhase]
+                    craft = row[config.filesColCraft]
+                    target = row[config.filesColTarget]
+                    camera = row[config.filesColInstrument]
+                    
+                    # build the key
+                    planetCraftTargetCamera = system + craft + target + camera
+                    
+                    # get the info, if any
+                    # planetCraftTargetCamera,centeringOff,centeringOn
+                    info = centeringInfo.get(planetCraftTargetCamera)
+                    
+                    if info:
+                        centeringOff = info['centeringOff']
+                        centeringOn = info['centeringOn']
+                        docenter = fileId<centeringOff or fileId>centeringOn
+                    else: # if no info don't center things
+                        docenter = False
+
+                    # center the file
+                    pngfilename = fileId + '_' + config.imageType + '_' + filter + '.png'
+                    # for pngfilename in files: # eg C1385455_RAW_CLEAR.png
+                        # ext = pngfilename[-4:]
+                        # if ext=='.png':
                     infile = imagesubfolder + pngfilename
                     outfile = centersubfolder + config.centersPrefix + pngfilename
-                    print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    libimg.centerImageFile(infile, outfile)
+                    # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
+                    print 'centering %d: %s' %(nfile,infile)
+                    libimg.adjustImageFile(infile, outfile, docenter)
+                        
                     nfile += 1
 
+            i += 1
+
+        f.close()
+    
 
 if __name__ == '__main__':
     os.chdir('..')

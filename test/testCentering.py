@@ -41,7 +41,7 @@ for fileid in fileids:
     edgesfile = edgesfolder + fileid + '.png'
     
     # any experimenting should be done in this routine
-    boundingBox = libimg.centerImageFile(infile, centeredfile)
+    boundingBox = libimg.adjustImageFile(infile, centeredfile)
     x1,y1,x2,y2 = boundingBox
 
     # get binarization images (used by blob detector)
@@ -73,7 +73,7 @@ for fileid in fileids:
         deltay2 = abs(y2-y2best)
 
         # show message
-        if deltax1<maxerror and deltay1<maxerror and deltax2<maxerror and deltay2<maxerror:
+        if deltax1<=maxerror and deltay1<=maxerror and deltax2<=maxerror and deltay2<=maxerror:
             print "[OK]     %s" % (fileid)
             ntestsok += 1
         else:

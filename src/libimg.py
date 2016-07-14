@@ -37,8 +37,10 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     os.system(cmd)
     
 
-def centerImageFile(infile, outfile):
-    "Center the given image file on a target and save it to outfile."
+# def centerImageFile(infile, outfile):
+def adjustImageFile(infile, outfile, docenter=True):
+    "Adjust and optionally center the given image file on a target and save it to outfile."
+    # if docenter True, do everything but the centering step
     
     im = mpim.imread(infile)
     
@@ -47,22 +49,25 @@ def centerImageFile(infile, outfile):
     # or have that as a separate adjustments step
     im = np.rot90(im, 2) # rotate by 180
     
-    # find the bounding box of biggest object
-    boundingBox = findBoundingBox(im)
+    boundingBox = [0,0,799,799]
     
-    # center the image on the target
-    imCentered = centerImage(im, boundingBox)
+    if docenter:
+        # find the bounding box of biggest object
+        boundingBox = findBoundingBox(im)
+
+        # center the image on the target
+        im = centerImage(im, boundingBox)
     
-    if config.drawCrosshairs:
-        imCentered[399, 0:799] = 0.25
-        imCentered[0:799, 399] = 0.25
+        if config.drawCrosshairs:
+            im[399, 0:799] = 0.25
+            im[0:799, 399] = 0.25
         
     # this actually saves bw images with a colormap
-    # mpim.imsave(outfile, imCentered)
+    # mpim.imsave(outfile, im)
     
     # and this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
-    misc.imsave(outfile, imCentered)
+    misc.imsave(outfile, im)
     
     return boundingBox
     

@@ -1,6 +1,9 @@
 
 # combine individual movies into one using ffmpeg
 
+#. move this code into vgBuildMovies.py
+
+
 # see http://trac.ffmpeg.org/wiki/Concatenate#demuxer
 
 

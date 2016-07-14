@@ -3,6 +3,11 @@
 # eg Jupiter/Voyager1/Io/Narrow
 
 
+#. see also, which remove
+# lib.copyFilesSequenced(src, dst, filenamePattern)
+
+
+
 import csv
 import os
 import os.path

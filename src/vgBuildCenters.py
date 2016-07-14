@@ -21,7 +21,6 @@ def buildCenters(volnum):
     if int(volnum)==0: # test volume - turn on image debugging
         config.drawBlob = True
         config.drawCircle = True
-        # config.drawBoundingBox = True
         config.drawCrosshairs = True
         
     if int(volnum)!=0 and os.path.isdir(centersubfolder): # for test (vol=0), can overwrite test folder

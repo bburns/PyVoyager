@@ -56,7 +56,6 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 # method of center detection
 # centerMethod = 'blob'
-# centerMethod = 'box'
 # centerMethod = 'circle'
 centerMethod = 'all'
 
@@ -71,6 +70,9 @@ blobAreaDerivativeMax = -0.02
 # blobThreshold = 0.09 # try to catch dim edges of planet, works well on jupiter voy1
 # blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
 # blobThreshold = 0.20 # need for later neptune images
+
+blobThreshold = 0.05 # level from 0.0-1.0 at which to take binary threshold for blob detection
+blobAreaCutoff = 100 # area in pixels^2 at which switch from blob detection to hough circle detection
 
 # out at neptune the background levels vary so much you'd be setting this per image, practically.
 # need a better approach.
@@ -90,9 +92,8 @@ rotateImage = True
 
 # debugging image options during centering step
 drawBlob = False # draw bounding box around biggest blob
-drawBoundingBox = False # draw a bounding box around planet
-drawCrosshairs = False # draw crosshairs on image
 drawCircle = False # draw detected hough circle
+drawCrosshairs = False # draw crosshairs on image
 
 
 

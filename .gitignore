@@ -9,3 +9,6 @@ src/experiments/images/out
 @backup_to_dropbox.bat
 old/
 *.pyc
+test/images/centered
+test/images/thresholded
+test/images/edges

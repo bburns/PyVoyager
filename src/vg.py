@@ -7,7 +7,14 @@ import sys
 import os
 import inspect
 
-import vgBuild
+import vgBuildDownload
+import vgBuildUnzip
+import vgBuildImages
+import vgBuildCenters
+import vgBuildComposites
+import vgBuildMosaics
+import vgBuildTargets
+import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
 
@@ -24,33 +31,33 @@ else:
 # call relevant routines in vg_build.py
 if cmd=="download":
     volnum = args.pop(0)
-    vgBuild.buildDownload(volnum)
+    vgBuildDownload.buildDownload(volnum)
     
 elif cmd=="unzip":
     volnum = args.pop(0)
-    vgBuild.buildUnzip(volnum)
+    vgBuildUnzip.buildUnzip(volnum)
     
 elif cmd=="images":
     volnum = args.pop(0)
-    vgBuild.buildImages(volnum)
+    vgBuildImages.buildImages(volnum)
     
 elif cmd=="centers":
     volnum = args.pop(0)
-    vgBuild.buildCenters(volnum)
+    vgBuildCenters.buildCenters(volnum)
     
 elif cmd=="composites":
     volnum = args.pop(0)
-    vgBuild.buildComposites(volnum)
+    vgBuildComposites.buildComposites(volnum)
     
 elif cmd=="targets":
     volnum = args.pop(0)
-    vgBuild.buildTargets(volnum)
+    vgBuildTargets.buildTargets(volnum)
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
     
 elif cmd=="movies":
     targetPath = args.pop(0)
-    vgBuild.buildMovies(targetPath)
+    vgBuildMovies.buildMovies(targetPath)
     
     
 elif cmd=="init":

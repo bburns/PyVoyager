@@ -1,13 +1,17 @@
 fileid,x1,y1,x2,y2
 atedge
 blurred,413,409,455,451
+bright,289,411,547,669
+crescentdim,278,160,502,384
+crescentsharp,250,138,734,622
+crescentsmall
 dim,459,317,705,563
 dim2,324,384,576,636
-faintcrescent
+gap,355,393,609,647
+limb
 okayish,394,472,438,516
-simple,644,410,672,438
-veryfaint,339,455,385,501
-small,386,381,394,390
 point,417,416,421,421
-# tiny
+simple,644,410,672,438
+small,386,381,394,390
+veryfaint,339,455,385,501
 

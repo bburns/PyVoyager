@@ -5,6 +5,7 @@
 
 
 import cv2
+import matplotlib.image as mpim # for imread, imsave
 
 import sys; sys.path.append('../src') # so can import from main src folder
 import config
@@ -13,12 +14,14 @@ import libimg
 
 
 # config.drawBlob = True
-# config.drawCircle = True
+config.drawCircle = True
 config.drawCrosshairs = True
 
 
 testfolder = 'images/'
-outfolder = testfolder + 'centered/'
+centeredfolder = testfolder + 'centered/'
+thresholdedfolder = testfolder + 'thresholded/'
+edgesfolder = testfolder + 'edges/'
 maxerror = 2
 
 # read in small csv file
@@ -31,12 +34,28 @@ fileids.sort()
 for fileid in fileids:
     
     infile = testfolder + fileid + '.png'
-    outfile = outfolder + fileid + '.png'
+    centeredfile = centeredfolder + fileid + '.png'
+    thresholdedfile = thresholdedfolder + fileid + '.png'
+    edgesfile = edgesfolder + fileid + '.png'
     
     # any experimenting should be done in this routine
-    boundingBox = libimg.centerImageFile(infile, outfile, 'all')
+    boundingBox = libimg.centerImageFile(infile, centeredfile, 'all')
     x1,y1,x2,y2 = boundingBox
 
+    # get binarization images (used by blob detector)
+    im = mpim.imread(infile)
+    b = 1*(im>config.blobThreshold)
+    mpim.imsave(thresholdedfile, b)
+    
+    # get canny edge images (used by hough detector)
+    im = mpim.imread(infile)
+    im2 = libimg.mpim2cv2(im)
+    upper = config.cannyUpperThreshold
+    lower = upper/2
+    edges = cv2.Canny(im2, lower, upper)
+    mpim.imsave(edgesfile, edges)
+    
+    
     # get expected results
     result = results[fileid]
     if result.get('x1'):

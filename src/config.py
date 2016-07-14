@@ -71,8 +71,19 @@ blobAreaDerivativeMax = -0.02
 # blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
 # blobThreshold = 0.20 # need for later neptune images
 
-blobThreshold = 0.05 # level from 0.0-1.0 at which to take binary threshold for blob detection
-blobAreaCutoff = 100 # area in pixels^2 at which switch from blob detection to hough circle detection
+# level from 0.0-1.0 at which to take binary threshold for blob detection
+blobThreshold = 0.025 
+# blobThreshold = 0.05
+
+# area in pixels^2 at which switch from blob detection to hough circle detection
+blobAreaCutoff = 100 
+
+# used by hough circle detection - lower threshold is half of this
+# if this is too high then dim circles won't be detected
+# but if it's too low you'd get too many spurious edges in the edge image
+# 200 misses some of the dim images
+# cannyUpperThreshold = 200
+cannyUpperThreshold = 150
 
 # out at neptune the background levels vary so much you'd be setting this per image, practically.
 # need a better approach.

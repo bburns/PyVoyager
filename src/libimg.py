@@ -231,7 +231,9 @@ def findCircle(im):
     # Param 1 will set the sensitivity; how strong the edges of the circles need
     # to be. Too high and it won't detect anything, too low and it will find too
     # much clutter.
-    canny_threshold=200 # 0-255?
+    # 0-255?
+    # canny_threshold=200 
+    canny_threshold=config.cannyUpperThreshold
     
     # Second method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the accumulator threshold for the circle centers at the detection
@@ -255,11 +257,9 @@ def findCircle(im):
     maxRadius=10
     
     circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
+    # if circles: # nowork in python
     if type(circles) != type(None):
-    # if circles:
         circles = circles[0,:] # extract array
-        # circles = np.round(circles).astype('int') # round all values to ints
-        # return circles # array of (x,y,r)
         circle = circles[0]
         circle = np.round(circle).astype('int') # round all values to ints
         if config.drawCircle:

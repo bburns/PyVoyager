@@ -18,10 +18,9 @@ def buildCenters(volumeNum):
     "build centered images for given volume, if they don't exist yet"
     volumeNum = int(volumeNum)
     volumeStr = str(volumeNum)
-    imageTypeInput = 'Calib' # the image type to use to determine the centers
-    imageTypeOutput = 'Calib' # the image type to use for transformations
-    imagespath = config.imagesFolder + '/' + imageTypeInput + '/VGISS_' + volumeStr
-    centerspath = config.centersFolder + '/' + imageTypeOutput + '/VGISS_' + volumeStr
+    imageType = 'Calib'
+    imagespath = config.imagesFolder + '/VGISS_' + volumeStr
+    centerspath = config.centersFolder + '/VGISS_' + volumeStr
     if volumeNum==0: # test volume - turn on image debugging
         # config.drawBlob = True #. not working yet?
         # config.drawBoundingBox = True
@@ -54,7 +53,6 @@ def buildCenters(volumeNum):
                     
                     # libimg.centerImageFile(infile, outfile)
                     boundingBox = libimg.centerImageFile(infile, outfile)
-                    
                     print infile, boundingBox
                     
                     nfile += 1

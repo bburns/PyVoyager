@@ -43,7 +43,7 @@ def buildImages(volumeNum):
                 dirpath = os.path.abspath(dirpath)
                 print 'dir %d/%d: %s' % (i,ndirs,dirpath)
                 for filespec in config.imageFilespecs:
-                    lib.img2png(dirpath, filespec, imagespath, config.img2pngOptions)
+                    libimg.img2png(dirpath, filespec, imagespath, config.img2pngOptions)
                 i += 1
         return True
 

@@ -15,7 +15,7 @@ import config
 
 def readCsv(filename):
     "read a csv file into a dict of dicts. first column is key. use on small files only."
-    # comments or blank lines are allowed
+    # comments or blank lines are skipped
     f = open(filename, 'rt')
     i = 0
     items = {}
@@ -42,25 +42,6 @@ def readCsv(filename):
     return items
 
 
-
-def img2png(src, filespec, dst, options):
-    "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
-    # first convert img's to png's, then move them to the dest dir
-    import os
-    savedir = os.getcwd()
-    os.chdir(src)
-    # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + options
-    # print cmd
-    os.system(cmd)
-    # os.system('dir *.png')
-    # now move the png files to pngpath
-    # src is relative to the python program so need to switch back to that dir
-    os.chdir(savedir)
-    # cmd = "move " + src +"\\*.png " + dst + "/"
-    cmd = "move " + src +"\\*.png " + dst + "/ > nul"
-    # print cmd
-    os.system(cmd)
 
 
 # def splitId(itemId):

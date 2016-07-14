@@ -2,8 +2,8 @@
 # image processing routines
 
 
-import matplotlib.image as mpim # for imread
-import scipy.misc as misc # for imsave
+import matplotlib.image as mpim # for imread, imsave
+# import scipy.misc as misc # for imsave
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 import numpy as np # for zeros, array, copy
 import cv2 # for hough circle detection
@@ -16,6 +16,26 @@ import config
 
 
 
+def img2png(src, filespec, dst, options):
+    "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
+    # first convert img's to png's, then move them to the dest dir
+    import os
+    savedir = os.getcwd()
+    os.chdir(src)
+    # eg "img2png *.img -fnamefilter"
+    cmd = "img2png " + filespec + " " + options
+    # print cmd
+    os.system(cmd)
+    # os.system('dir *.png')
+    # now move the png files to pngpath
+    # src is relative to the python program so need to switch back to that dir
+    os.chdir(savedir)
+    # cmd = "move " + src +"\\*.png " + dst + "/"
+    cmd = "move " + src +"\\*.png " + dst + "/ > nul"
+    # print cmd
+    os.system(cmd)
+
+    
 # def findCenter(filename):
 #     "find center of given file and return as list [x,y]"
 #     im = loadImage(filename)
@@ -35,27 +55,27 @@ def loadImage(filename):
     
 def saveImage(filename, im):
     "save an mpim image"
-    im = misc.imsave(filename, im)
+    # im = misc.imsave(filename, im)
+    im = mpim.imsave(filename, im)
 
 
-#. remove this
 def centerImageFile(infile, outfile):
     "center the given image file on a planet and save it to outfile"
     im = mpim.imread(infile)
     if config.rotateImage:
         im = np.rot90(im, 2) # rotate by 180
     boundingBox = findBoundingBox(im, config.centerMethod) # blob, circle, all
-    #. nowork
+    #. nowork - would like to draw a gren box
     if config.drawBoundingBox:
-        im = mpim2cv2(im)
-        im = gray2rgb(im)
+        # im = mpim2cv2(im)
+        # im = gray2rgb(im)
         im = drawBoundingBox(im, boundingBox)
     imCentered = centerImage(im, boundingBox)
     if config.drawCrosshairs:
         imCentered[399, 0:799] = 0.25
         imCentered[0:799, 399] = 0.25
-    misc.imsave(outfile, imCentered)
-    # return True
+    # misc.imsave(outfile, imCentered)
+    mpim.imsave(outfile, imCentered)
     return boundingBox
     
 
@@ -275,8 +295,8 @@ def findBoundingBox(im, method):
     elif method=='circle':
         boundingBox = findBoundingBoxByCircle(im)
     elif method=='all':
-        # boundingBox = findBoundingBoxByBlobThenCircle(im, config.blobAreaDerivativeMax)
-        boundingBox = findBoundingBoxByHoughThenBlob(im, config.blobAreaDerivativeMax)
+        boundingBox = findBoundingBoxByBlobThenHough(im, config.blobAreaDerivativeMax)
+        # boundingBox = findBoundingBoxByHoughThenBlob(im, config.blobAreaDerivativeMax)
         # boundingBox = findBoundingBoxByHoughAndBlob(im, config.blobAreaDerivativeMax) #eh
     return boundingBox
     
@@ -391,23 +411,26 @@ def findBoundingBoxByHoughThenBlob(im, thdiff):
     return boundingBox
 
 
-def findBoundingBoxByBlobThenCircle(im, thdiff):
+def findBoundingBoxByBlobThenHough(im, thdiff):
     "find center of object using blobs and hough circle detection, and return bounding box"
     # find blob
     boundingBox = findBoundingBoxByBlob2(im, thdiff)
     [x1,y1,x2,y2] = boundingBox
-    if config.drawBlob:
-        # im = drawBoundingBox(im, boundingBox)
-        im = mpim2cv2(im)
-        im = gray2rgb(im)
-        drawBoundingBox(im, boundingBox)
+    # if config.drawBlob:
+    #     # im = drawBoundingBox(im, boundingBox)
+    #     # im = mpim2cv2(im)
+    #     # im = gray2rgb(im)
+    #     drawBoundingBox(im, boundingBox)
     # if box is not ~square, try looking for a circle in it
+    # if box is > some size, try looking for a circle
     width = x2 - x1
     height = y2 - y1
-    if abs(width-height) > 10: #. arbitrary parameter
+    area = width*height
+    # if abs(width-height) > 10: #. arbitrary parameter
+    if area>20: #. arbitrary parameter
+        boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
         # look inside the bounding box? or search whole image
         # sometimes the bounding box might be way off
-        boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
         # imcrop = im[x1:x2,y1:y2]
         # if width!=0 and height!=0:
             # boundingBox = findBoundingBoxByCircle(imcrop) # use hough to find circle
@@ -660,7 +683,7 @@ def findBoundingBoxByBlob(im, blobThreshold):
 #     # circle = findCircle(im)
 #     # print circle
 #     # drawCircle(im, circle)
-#     # misc.imsave('test/test_circle.png', im)
+#     # mpim.imsave('test/test_circle.png', im)
     
 #     # find bounding box around planet
 #     # boundingBox = findBoundingBoxByBlob(im)
@@ -673,7 +696,7 @@ def findBoundingBoxByBlob(im, blobThreshold):
 #     drawBoundingBox(im, boundingBox)
     
 #     # save image
-#     # misc.imsave('test/test_bounding_box.png', im)
+#     # mpim.imsave('test/test_bounding_box.png', im)
 
 #     # center image
 #     im = centerImage(im, boundingBox)
@@ -683,7 +706,7 @@ def findBoundingBoxByBlob(im, blobThreshold):
 #     im[0:799, 399] = 0.25
     
 #     # save image
-#     # misc.imsave('test/test_centered.png', im)
+#     # mpim.imsave('test/test_centered.png', im)
 
 #     # test the center_image_file fn
 #     # centerImageFile(infile, 'test/test_cif.png')

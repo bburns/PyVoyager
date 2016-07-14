@@ -4,26 +4,32 @@
 
 import os.path
 
+import config
 import lib
 
-from vgBuildDownload import buildDownload
+import vgBuildDownload
 
 
-def buildUnzip(volumeNum):
-    "unzip the given volume number, if it doesn't exist yet"
-    if int(volumeNum)==0:
-        print 'test volume is to be created manually'
-        print
+def buildUnzip(volnum):
+    "Unzip the given volume number, if it doesn't exist yet."
+    
+    zipfilepath = config.downloadFolder + 'VGISS_' + str(volnum) + '.tar.gz' # eg  data/step1_downloads/vgiss_5101.tar.gz
+    unzippedfolder = config.unzipFolder + 'VGISS_' + str(volnum) + '/'
+    
+    if os.path.isdir(unzippedfolder):
+        print "Folder exists - skipping unzip step: " + unzippedfolder
     else:
-        zipfilepath = lib.getZipfilepath(volumeNum)
-        unzippedpath = lib.getUnzippedpath(volumeNum)
-        if os.path.isdir(unzippedpath):
-            print "Folder exists: " + unzippedpath
-            return False
+        # download the zip if not already there
+        vgBuildDownload.buildDownload(volnum)
+        print "Unzipping " + zipfilepath
+        print "       to " + unzippedfolder
+        if int(volnum)==0:
+            print "       (nothing to do - test volume 0)"
         else:
-            # download the zip if not already there
-            buildDownload(volumeNum)
-            print "Unzipping " + zipfilepath
-            print "       to " + unzippedpath
-            return lib.unzipFile(zipfilepath, unzippedpath)
+            lib.unzipFile(zipfilepath, unzippedfolder)
 
+
+if __name__ == '__main__':
+    os.chdir('..')
+    buildUnzip(0)
+    print 'done'

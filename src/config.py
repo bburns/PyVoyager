@@ -26,14 +26,14 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # ----------------------------------------
 
 # imagetype to extract using img2png
-# RAW images can have bright backgrounds.
-# CLEANED images just have the riseau marks removed.
+# RAW images can have overly bright backgrounds.
+# CLEANED images have the riseau marks removed.
 # CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageType = 'RAW'
-# imageType = 'CALIB'
 # imageType = 'CLEANED'
-# imageFilespec = "*" + imageType + ".IMG" # eg *RAW.IMG
+imageType = 'CALIB'
+imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespec = "*" # do all image types
 
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
@@ -41,15 +41,14 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # imageTypes = ['CLEANED', 'CALIB']
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
-imageTypes = ['CALIB']
-imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
+# imageTypes = ['CALIB']
+# imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
 # img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel0 - not so much info
-# img2pngOptions = "-fnamefilter -loglevel0" 
-img2pngOptions = "-fnamefilter -loglevel0 > nul" 
+img2pngOptions = "-fnamefilter -loglevel0" 
 
 
 # centers
@@ -84,7 +83,7 @@ blobAreaDerivativeMax = -0.02
 #     ]
 
 # prefix for centered filenames
-centersprefix = 'centered_' 
+centersPrefix = 'centered_' 
 
 # rotate image 180 degrees during centering step
 rotateImage = True
@@ -119,29 +118,30 @@ frameRate = 20 # fps
 # files and folders
 # ----------------------------------------
 
+# all folders should end with /
 
 # folders for data and images
 # use offline folder for large datasets (multi gigabyte)
 onlineFolder  = "data"
 offlineFolder = "data" #. will be f:/...
 
-downloadFolder   = offlineFolder + "/step1_downloads"
-unzipFolder      = offlineFolder + "/step2_unzips"
-imagesFolder     = onlineFolder  + "/step3_images"
-centersFolder    = onlineFolder  + "/step4_centers"
-compositesFolder = onlineFolder  + "/step5_composites"
-mosaicsFolder    = onlineFolder  + "/step6_mosaics"
-targetsFolder    = onlineFolder  + "/step7_targets"
-moviesFolder     = onlineFolder  + "/step8_movies"
+downloadFolder   = offlineFolder + "/step1_downloads/"
+unzipFolder      = offlineFolder + "/step2_unzips/"
+imagesFolder     = onlineFolder  + "/step3_images/"
+centersFolder    = onlineFolder  + "/step4_centers/"
+compositesFolder = onlineFolder  + "/step5_composites/"
+mosaicsFolder    = onlineFolder  + "/step6_mosaics/"
+targetsFolder    = onlineFolder  + "/step7_targets/"
+moviesFolder     = onlineFolder  + "/step8_movies/"
 
 # test images go here
-testFolder    = 'data/step3_images/test'
+testFolder    = 'data/step3_images/test/'
 
 # database folder
-dbFolder = 'db'
+dbFolder = 'db/'
 
 # index folder
-indexFolder = 'db/index'
+indexFolder = 'db/index/'
 
 # useful columns in the index files
 # (see db/index/readme.md)
@@ -175,14 +175,12 @@ indexTranslations = {
     }
 
 
-
 # csv file databases
 filesdb = dbFolder + '/files.csv'
 centersdb = dbFolder + '/centers.csv'
 compositesdb = dbFolder + '/composites.csv'
 mosaicsdb = dbFolder + '/mosaics.csv'
 moviesdb = dbFolder + '/movies.csv'
-
 
 
 # columns in files.csv
@@ -196,7 +194,6 @@ filesColTime = 5
 filesColInstrument = 6
 filesColFilter = 7
 filesColNote = 8
-
 
 
 # # voyager ISS volumes

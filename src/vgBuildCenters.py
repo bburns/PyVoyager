@@ -1,7 +1,6 @@
 
 # build centered images from plain images (pngs)
 
-
 import os
 import os.path
 
@@ -10,58 +9,50 @@ import lib
 import libimg
 import db
     
-from vgBuildImages import buildImages
+import vgBuildImages
 
 
-
-def buildCenters(volumeNum):
+def buildCenters(volnum):
     "build centered images for given volume, if they don't exist yet"
-    volumeNum = int(volumeNum)
-    volumeStr = str(volumeNum)
-    imageType = 'Calib'
-    imagespath = config.imagesFolder + '/VGISS_' + volumeStr
-    centerspath = config.centersFolder + '/VGISS_' + volumeStr
-    if volumeNum==0: # test volume - turn on image debugging
-        # config.drawBlob = True #. not working yet?
+    
+    imagesubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
+    centersubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
+    
+    if int(volnum)==0: # test volume - turn on image debugging
+        config.drawBlob = True
+        config.drawCircle = True
         # config.drawBoundingBox = True
-        # config.drawCircle = True
         config.drawCrosshairs = True
-    if volumeNum!=0 and os.path.isdir(centerspath): # for test (vol=0), can overwrite test folder
-        print "Folder exists: " + centerspath
-        return False
+        
+    if int(volnum)!=0 and os.path.isdir(centersubfolder): # for test (vol=0), can overwrite test folder
+        print "Folder exists: " + centersubfolder
     else:
         # first build the plain images for the volume, if not already there
-        buildImages(volumeNum)
+        vgBuildImages.buildImages(volnum)
+        
         # now center the files
-        lib.mkdir(centerspath)
+        #. this will work better if we're walking over the files.csv, approaches.csv, and thresholds.csv
+        # at the same time, so can pass in more parameters
+        # either that, or read them into a dictionary for the given volume first,
+        # then grab the values when get to a file - less complex code that way
+        lib.mkdir(centersubfolder)
         nfile = 1
-        for root, dirs, files in os.walk(imagespath):
+        for root, dirs, files in os.walk(imagesubfolder):
             nfiles = len(files)
             del dirs[:] # don't recurse
-            for filename in files: # eg C1385455_RAW_CLEAR.png
-                ext = filename[-4:].lower()
+            for pngfilename in files: # eg C1385455_RAW_CLEAR.png
+                ext = pngfilename[-4:]
                 if ext=='.png':
-                    infile = imagespath + '/' + filename
-                    outfile = centerspath + '/' + config.centersprefix + filename
+                    infile = imagesubfolder + pngfilename
+                    outfile = centersubfolder + config.centersPrefix + pngfilename
                     print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    
-                    # blobThreshold = config.blobThreshold
-                    # fileid = filename.split('_')[0] # eg C1385455
-                    # blobThreshold = getBlobThreshold(fileid)
-                    # libimg.centerImageFile(infile, outfile, blobThreshold, config.rotateImage)
-                    # libimg.centerImageFile(infile, outfile, config.rotateImage, config.centerMethod, config.drawBoundingBox, config.drawCrosshairs)
-                    
-                    # libimg.centerImageFile(infile, outfile)
-                    boundingBox = libimg.centerImageFile(infile, outfile)
-                    print infile, boundingBox
-                    
+                    libimg.centerImageFile(infile, outfile, config.centerMethod)
                     nfile += 1
-        return True
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildCenters(5101)
+    buildCenters(0)
     print 'done'
 
 

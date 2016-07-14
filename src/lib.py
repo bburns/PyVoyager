@@ -42,42 +42,6 @@ def readCsv(filename):
     return items
 
 
-
-
-# def splitId(itemId):
-#     "Split an id like 'movie15' into ['movie','15']"
-#     itemType, itemNum = re.findall(r"[^\W\d_]+|\d+", itemId)
-#     return [itemType, itemNum]
-
-
-def copyFilesSequenced(src, dst, filenamePattern):
-    "Copy all files from src to dst folders, numbering sequentially using given pattern"
-    #. make links, not copies
-    # used for staging files for use by ffmpeg
-    # eg pattern = 'img%04d.png'
-    mkdir(dst)
-    # copy files, numbering them sequentially
-    # (wasteful, but necessary as ffmpeg doesn't handle globbing on windows)
-    i = 1
-    for root, dirs, files in os.walk(src):
-        nfiles = len(files)
-        for infile in files:
-            inpath = src + '/' + infile
-            # print inpath
-            # outfile = 'img%04d.png' % i
-            outfile = filenamePattern % i
-            outpath = dst + '/' + outfile
-            # print outpath
-            # print 'copy ' + str(i) + ': ' + inpath
-            cmd = "cp " + inpath + " " + outpath
-            # print cmd
-            os.system(cmd)
-            # print 'copied ' + str(i) + ': ' + outpath
-            print 'copied %d/%d: %s' % (i,nfiles,outpath)
-            i += 1
-    
-
-
 def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
     try:
@@ -127,33 +91,34 @@ def getDownloadUrl(volnumber):
     return url
 
 
-def getVolumeTitle(volnumber):
-    "Get name of Voyager volume associated with the volume number"
-    if int(volnumber)==0:
-        return "test"
-    else:
-        return "VGISS_" + str(volnumber)
+# def getVolumeTitle(volnumber):
+#     "Get name of Voyager volume associated with the volume number"
+#     if int(volnumber)==0:
+#         return "test"
+#     else:
+#         return "VGISS_" + str(volnumber)
 
 
-def getZipfilepath(volnumber):
-    "Get filepath for zipfile corresponding to a volume number"
-    # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
-    sourcefolder = config.downloadFolder
-    url = getDownloadUrl(volnumber)
-    filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-    zipfilepath = sourcefolder + "/" + filetitle
-    return zipfilepath
+# def getZipfilepath(volnumber):
+#     "Get filepath for zipfile corresponding to a volume number"
+#     # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
+#     sourcefolder = config.downloadFolder
+#     url = getDownloadUrl(volnumber)
+#     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
+#     zipfilepath = sourcefolder + "/" + filetitle
+#     return zipfilepath
     
 
-#. remove this
-def getUnzippedpath(volnumber):
-    "Get folder path for unzipped volume"
-    # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
-    unzipfolder = config.unzipFolder
-    # url = getDownloadUrl(volnumber)
-    filetitle = getVolumeTitle(volnumber)
-    unzippedpath = unzipfolder + '/' + filetitle
-    return unzippedpath
+# #. remove this
+# def getUnzippedpath(volnumber):
+#     "Get folder path for unzipped volume"
+#     # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
+#     unzipfolder = config.unzipFolder
+#     # url = getDownloadUrl(volnumber)
+#     # filetitle = getVolumeTitle(volnumber)
+#     filetitle = 'VGISS_' + str(volnumber)
+#     unzippedpath = unzipfolder + '/' + filetitle
+#     return unzippedpath
 
 
 #. remove this

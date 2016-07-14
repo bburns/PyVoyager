@@ -1,9 +1,10 @@
 
 # image processing routines
+# some are generic, some specific to PyVoyager
 
 
+import os
 import matplotlib.image as mpim # for imread, imsave
-# import scipy.misc as misc # for imsave
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 import numpy as np # for zeros, array, copy
 import cv2 # for hough circle detection
@@ -15,68 +16,47 @@ import config
 
 
 
-
-def img2png(src, filespec, dst, options):
-    "Convert all IMG files matching filespec in src dir to PNG files in the dest dir"
+def img2png(srcdir, filespec, destdir, img2pngOptions):
+    "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
+    
     # first convert img's to png's, then move them to the dest dir
-    import os
     savedir = os.getcwd()
-    os.chdir(src)
-    # eg "img2png *.img -fnamefilter"
-    cmd = "img2png " + filespec + " " + options
-    # print cmd
+    os.chdir(srcdir)
+    # eg "img2png *CALIB.img -fnamefilter > nul"
+    cmd = "img2png " + filespec + " " + img2pngOptions + " > nul"
     os.system(cmd)
-    # os.system('dir *.png')
-    # now move the png files to pngpath
-    # src is relative to the python program so need to switch back to that dir
+    
+    # now move the png files to destdir
+    # (srcdir is relative to the python program so need to switch back to that dir)
     os.chdir(savedir)
-    # cmd = "move " + src +"\\*.png " + dst + "/"
-    cmd = "move " + src +"\\*.png " + dst + "/ > nul"
-    # print cmd
+    # cmd = "move " + srcdir +"\\*.png " + destdir + " > nul"
+    cmd = "mv " + srcdir +"*.png " + destdir + " > nul"
     os.system(cmd)
-
     
-# def findCenter(filename):
-#     "find center of given file and return as list [x,y]"
-#     im = loadImage(filename)
-#     if config.rotateImage:
-#         im = np.rot90(im, 2) # rotate by 180
-#     bbox = libimg.findBoundingBox(im, config.centerMethod)
-#     # return center of bbox
-#     x1,y1,x2,y2 = bbox
-#     center = [int(x1+x2)/2, int(y1+y2)/2]
-#     return center
 
-
-def loadImage(filename):
-    "load an mpim image (values range from 0.0-1.0)"
-    im = mpim.imread(filename)
-    return im
+def centerImageFile(infile, outfile, centerMethod):
+    "Center the given image file on a target using the given method and save it to outfile."
     
-def saveImage(filename, im):
-    "save an mpim image"
-    # im = misc.imsave(filename, im)
-    im = mpim.imsave(filename, im)
-
-
-def centerImageFile(infile, outfile):
-    "center the given image file on a planet and save it to outfile"
     im = mpim.imread(infile)
-    if config.rotateImage:
-        im = np.rot90(im, 2) # rotate by 180
-    boundingBox = findBoundingBox(im, config.centerMethod) # blob, circle, all
-    #. nowork - would like to draw a gren box
-    if config.drawBoundingBox:
-        # im = mpim2cv2(im)
-        # im = gray2rgb(im)
-        im = drawBoundingBox(im, boundingBox)
+    
+    # adjust image
+    # could subtract dark current image, remove reseau marks if starting from RAW images
+    # or have that as a separate adjustments step
+    im = np.rot90(im, 2) # rotate by 180
+    
+    # find the bounding box of biggest object
+    #. will want precalculated threshold
+    #. and precalculated targetAngularRadius>cameraFov flag
+    boundingBox = findBoundingBox(im, centerMethod) # blob, circle, all
+    
+    # center the image on the target
     imCentered = centerImage(im, boundingBox)
+    
     if config.drawCrosshairs:
         imCentered[399, 0:799] = 0.25
         imCentered[0:799, 399] = 0.25
-    # misc.imsave(outfile, imCentered)
+        
     mpim.imsave(outfile, imCentered)
-    return boundingBox
     
 
 def show(im2, title='cv2 image - press esc to continue'):
@@ -93,11 +73,10 @@ def showMpim(im, title='mpim image - press esc to continue'):
     
 def combineChannels(channels):
     "combine the given weighted channels and return a single cv2 image"
-    
     # eg channels = {
-    # 'Orange':'composites/orange.png',
-    # 'Green':'composites/green.png',
-    # 'Blue':'composites/blue.png',
+    #   'Orange':'composites/orange.png',
+    #   'Green':'composites/green.png',
+    #   'Blue':'composites/blue.png',
     # }
     # if missing a channel will use a blank/black image for that channel
     
@@ -109,7 +88,7 @@ def combineChannels(channels):
     
     # read images
     # returns None if filename is invalid - doesn't throw an error
-    # note: can't say 'or blank' here as in javascript
+    # (note: can't say 'or blank' here as in javascript)
     red = cv2.imread(redfilename,cv2.IMREAD_GRAYSCALE)
     green = cv2.imread(greenfilename,cv2.IMREAD_GRAYSCALE)
     blue = cv2.imread(bluefilename,cv2.IMREAD_GRAYSCALE)
@@ -134,9 +113,8 @@ def combineChannels(channels):
     return im2
 
 
-
 def mpim2cv2(im):
-    "convert mpim (matplotimage library) image to cv2 (opencv) image"
+    "Convert mpim (matplotimage library) image to cv2 (opencv) image."
     # mpim images are 0.0-1.0, cv2 are 0-255
     im2 = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
     im2 = im2.astype('uint8')
@@ -159,9 +137,8 @@ def mpim2cv2(im):
     # print type(gray[0,0])
     
     
-    
 def drawCircle(im2, circle, color = (0,255,0)):
-    "draw a (green) circle on the image"
+    "Draw a circle on the given cv2 image."
     (x,y,r) = circle
     lineWidth = 1
     cv2.circle(im2, (x,y), r, color, lineWidth)
@@ -195,10 +172,14 @@ def gray2rgb(im2):
 
 
 def findCircle(im):
-    "find best circle in given image/file"
+    "Find best circle in given image, return as (x,y,r)"
     circles = findCircles(im)
-    if type(circles) != type(None):
+    # if type(circles) != type(None):
+    if circles:
         circle = circles[0]
+        #.
+        # if config.drawCircle:
+            # drawCircle(im, circle)
         return circle # (x,y,r)
     else:
         return None
@@ -241,8 +222,8 @@ def findCircles(im):
     method = cv2.cv.CV_HOUGH_GRADIENT
     
     # size of parameter space relative to input image - should affect precision of result
-    # dp = 1 
-    dp = 2 # didn't seem to help with jitters
+    dp = 1 
+    # dp = 2 # didn't seem to help with jitters
     
     # distance between circles
     # minDist = 1 # way too many found
@@ -280,7 +261,8 @@ def findCircles(im):
     maxRadius=10
     
     circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
-    if type(circles) != type(None):
+    # if type(circles) != type(None):
+    if circles:
         circles = circles[0,:] # extract array
         circles = np.round(circles).astype('int') # round all values to ints
         return circles # array of (x,y,r)
@@ -289,8 +271,9 @@ def findCircles(im):
     
 
 def findBoundingBox(im, method):
-    "find bounding box by given method (blob, circle, all)"
+    "find bounding box by given method (blob, circle, all) - returns [x1,y1,x2,y2]"
     if method=='blob':
+        # boundingBox = findBoundingBoxByBlob(im)
         boundingBox = findBoundingBoxByBlob2(im, config.blobAreaDerivativeMax)
     elif method=='circle':
         boundingBox = findBoundingBoxByCircle(im)
@@ -299,7 +282,6 @@ def findBoundingBox(im, method):
         # boundingBox = findBoundingBoxByHoughThenBlob(im, config.blobAreaDerivativeMax)
         # boundingBox = findBoundingBoxByHoughAndBlob(im, config.blobAreaDerivativeMax) #eh
     return boundingBox
-    
 
 
 def centerImage(im, boundingBox):
@@ -330,7 +312,6 @@ def centerImage(im, boundingBox):
 
 
 def drawBoundingBox(im, boundingBox):
-    # "draw a box on image, return new image"
     "draw a box on image"
     
     [x1,y1,x2,y2] = boundingBox
@@ -386,41 +367,19 @@ def findBoundingBoxByHoughAndBlob(im, thdiff):
     return bbox
 
 
-def findBoundingBoxByHoughThenBlob(im, thdiff):
-    "find center of object using blobs and hough circle detection, and return bounding box"
-    # find blob
-    boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-    [x1,y1,x2,y2] = boundingBox
-    if (x1==0) and (x2==799) and (y1==0) and (y2==799):
-        boundingBox = findBoundingBoxByBlob2(im, thdiff)
-        if config.drawBlob:
-            drawBoundingBox(im, boundingBox)
-    # if box is not ~square, try looking for a circle in it
-    # width = x2 - x1
-    # height = y2 - y1
-    # if abs(width-height) > 10: #. arbitrary parameter
-        # look inside the bounding box? or search whole image
-        # sometimes the bounding box might be way off
-        # imcrop = im[x1:x2,y1:y2]
-        # if width!=0 and height!=0:
-            # boundingBox = findBoundingBoxByCircle(imcrop) # use hough to find circle
-            # boundingBox[0] += x1
-            # boundingBox[1] += y1
-            # boundingBox[2] += x1
-            # boundingBox[3] += y1
-    return boundingBox
+# def findBoundingBoxByHoughThenBlob(im, thdiff):
+#     "find center of object using blobs and hough circle detection, and return bounding box"
+#     boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
+#     [x1,y1,x2,y2] = boundingBox
+#     if (x1==0) and (x2==799) and (y1==0) and (y2==799):
+#         boundingBox = findBoundingBoxByBlob2(im, thdiff)
+#     return boundingBox
 
 
 def findBoundingBoxByBlobThenHough(im, thdiff):
     "find center of object using blobs and hough circle detection, and return bounding box"
-    # find blob
     boundingBox = findBoundingBoxByBlob2(im, thdiff)
     [x1,y1,x2,y2] = boundingBox
-    # if config.drawBlob:
-    #     # im = drawBoundingBox(im, boundingBox)
-    #     # im = mpim2cv2(im)
-    #     # im = gray2rgb(im)
-    #     drawBoundingBox(im, boundingBox)
     # if box is not ~square, try looking for a circle in it
     # if box is > some size, try looking for a circle
     width = x2 - x1
@@ -487,6 +446,9 @@ def findBoundingBoxByBlob2(im, thdiff):
             boundingBoxBest = boundingBox
         lastarea = area
     print thbest, areabest
+    #.
+    # if config.drawBlob:
+    #     drawBoundingBox(im, boundingBoxBest)
     return boundingBoxBest
 
 
@@ -529,7 +491,6 @@ def findBoundingBoxByBlob(im, blobThreshold):
     b = 1*(im>blobThreshold)
     
     # find and label blob objects
-    # lbl, nobjs = ndimage.measurements.label(b)
     labels, nobjs = ndimage.measurements.label(b) 
     
     # find position of objects - index is 0-based
@@ -557,11 +518,6 @@ def findBoundingBoxByBlob(im, blobThreshold):
         y1 = 0
         y2 = im.shape[0] - 1
         
-    #. sometimes get > 799 ? 
-    # if x2>=im.shape[0]:
-    #     x2 = im.shape[0] - 1
-    # if y2>=im.shape[1]:
-    #     y2 = im.shape[1] - 1
     boundingBox = [x1,y1,x2,y2]
 
     if config.debugImages:
@@ -574,148 +530,8 @@ def findBoundingBoxByBlob(im, blobThreshold):
     return boundingBox
 
 
-# def getBlobDetector(minThreshold=10, maxThreshold=20, thresholdStep=10):
-#     "get a cv2 simple blob detector"
-#     # this doesn't work as well as the scipy one
-    
-#     # details: http://docs.opencv.org/master/d0/d7a/classcv_1_1SimpleBlobDetector.html#gsc.tab=0
-#     # keypoint params: http://docs.opencv.org/2.4/modules/features2d/doc/common_interfaces_of_feature_detectors.html
-#     # sourcecode: https://github.com/opencv/opencv/blob/1307bb1d033af3baeb55afb63c3989d3d6791c80/modules/features2d/src/blobdetector.cpp
-    
-#     # You should set filterBy* to true/false to turn on/off corresponding filtration. Available filtrations:
-#     # By color. This filter compares the intensity of a binary image at the
-#     # center of a blob to blobColor. If they differ, the blob is filtered out.
-#     # Use blobColor = 0 to extract dark blobs and blobColor = 255 to extract
-#     # light blobs.
-#     # Default values of parameters are tuned to extract dark circular blobs.
-#     # ie it's easier than subtracting entire array from 255
-    
-#     params = cv2.SimpleBlobDetector_Params()
-#     # print params.thresholdStep # default=10.0
-#     # print params.minDistBetweenBlobs # default=10.0
-#     # print params.filterByArea # default=True
-#     # print params.maxArea # default=5000.0
-#     params.minThreshold = minThreshold;
-#     params.maxThreshold = maxThreshold;
-#     params.thresholdStep = thresholdStep;
-#     params.filterByColor = True
-#     params.blobColor = 255 # use 255 to extract light colored blobs
-#     # params.filterByArea = False
-#     params.filterByArea = True
-#     params.minArea = 1
-#     params.maxArea = 1000000 # ? 
-#     ver = (cv2.__version__).split('.')
-#     # print ver # [2,4,3]
-#     if int(ver[0]) < 3 :
-#         detector = cv2.SimpleBlobDetector(params)
-#     else : 
-#         detector = cv2.SimpleBlobDetector_create(params)
-#     return detector
 
-
-
-# # def findBoundingBoxByEdges(im, epsilon=0, N=5):
-# def findBoundingBoxByEdges(im):
-#     "find edges of largest object in image based on the most prominent edges, and return bounding box"
-
-#     # def findEdges1d(a, epsilon = 0):
-#     def findEdges1d(array):
-#         "find edges>epsilon in 1d array from left and right directions, return first,last indexes"
-#         icount = len(array)
-#         istart = 4 #. why skip 4? oh, the running average of N=5 columns
-#         iend = icount # skip 4 here also?
-#         # epsilon is the threshold value over which the smoothed value must cross
-#         epsilon = config.boxEpsilon
-#         # find first value over threshold
-#         ifirst = 0
-#         for i in xrange(istart, iend, 1):
-#             if array[i] > epsilon:
-#                 ifirst = i
-#                 break
-#         # find last value over threshold
-#         ilast = iend-1
-#         for i in xrange(iend-1, istart-1, -1):
-#             if array[i] > epsilon:
-#                 ilast = i
-#                 break
-#         return ifirst,ilast
-
-#     # def findEdges(im, axis, epsilon=0, N=5):
-#     def findEdges(im, axis):
-#         "find the edges for the given axis (0 or 1), return min,max"
-#         sums = np.sum(im, axis=axis)
-#         diff = np.diff(sums)
-#         diffsq = np.square(diff)
-#         diffsqln = np.log(diffsq)
-#         # config.N is the number of rows/columns to average over, for running average
-#         N = config.boxN
-#         if N>0:
-#             smoothed = np.convolve(diffsqln, np.ones((N,))/N, mode='valid')
-#             i1, i2 = findEdges1d(smoothed)
-#         else:
-#             i1, i2 = findEdges1d(diffsqln)
-#         return i1, i2
-
-#     x1, x2 = findEdges(im, 1)
-#     y1, y2 = findEdges(im, 0)
-    
-#     #. now try to make it a square
-    
-#     boundingBox = [x1,y1,x2,y2]
-#     return boundingBox
-
-
-
-# def test():
-#     print 'start'
-    
-#     # infile = 'test/test.png'  # simple view
-#     # infile = 'test/test2.png'  # gap in planet
-#     infile = 'test/test3.png'  # limb at edge of image; center offscreen
-    
-#     # load image
-#     im = mpim.imread(infile)
-
-#     # rotate image
-#     im = np.rot90(im, 2) # rotate by 180
-    
-#     # # find circle
-#     # circle = findCircle(im)
-#     # print circle
-#     # drawCircle(im, circle)
-#     # mpim.imsave('test/test_circle.png', im)
-    
-#     # find bounding box around planet
-#     # boundingBox = findBoundingBoxByBlob(im)
-#     # boundingBox = findBoundingBoxByEdges(im)
-#     boundingBox = findBoundingBoxByCircle(im)
-#     # boundingBox = findBoundingBox(im)
-#     print boundingBox
-
-#     # draw bounding box
-#     drawBoundingBox(im, boundingBox)
-    
-#     # save image
-#     # mpim.imsave('test/test_bounding_box.png', im)
-
-#     # center image
-#     im = centerImage(im, boundingBox)
-    
-#     # draw crosshairs
-#     im[399, 0:799] = 0.25
-#     im[0:799, 399] = 0.25
-    
-#     # save image
-#     # mpim.imsave('test/test_centered.png', im)
-
-#     # test the center_image_file fn
-#     # centerImageFile(infile, 'test/test_cif.png')
-#     # centerImageFile(infile, 'test/test_cif.png', True)
-
-#     print 'done.'
-    
     
 # if __name__ == '__main__':
-#     test()
-
+#     pass
 

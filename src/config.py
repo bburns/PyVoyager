@@ -76,7 +76,8 @@ blobThreshold = 0.025
 # blobThreshold = 0.05
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
-blobAreaCutoff = 100 
+# blobAreaCutoff = 10*10 # missed some small but sharp circles
+blobAreaCutoff = 14*14
 
 # used by hough circle detection - lower threshold is half of this
 # if this is too high then dim circles won't be detected
@@ -103,7 +104,8 @@ rotateImage = True
 
 # debugging image options during centering step
 drawBlob = False # draw bounding box around biggest blob
-drawCircle = False # draw detected hough circle
+drawCircle = False # draw best detected hough circle
+drawCircles = False # draw all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 
 

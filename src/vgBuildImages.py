@@ -5,6 +5,7 @@ import os.path
 
 import config
 import lib
+import libimg
 
 import vgBuildUnzip
 
@@ -33,9 +34,9 @@ def buildImages(volnum):
             for root, dirs, files in os.walk(datadir):
                 ndirs = len(dirs)
                 for subdir in dirs:
-                    subdirabsolute = os.path.join(root, subdir)
-                    subdirabsolute = os.path.abspath(dirpath)
-                    print 'dir %d/%d: %s' % (i,ndirs,dirpath)
+                    subdir = os.path.join(root, subdir)
+                    subdirabsolute = os.path.abspath(subdir)
+                    print 'dir %d/%d: %s' % (i,ndirs,subdirabsolute)
                     # for filespec in config.imageFilespecs: # eg ['*CALIB.IMG']
                         # libimg.img2png(subdirabsolute, filespec, imagesfolder, config.img2pngOptions)
                     libimg.img2png(subdirabsolute, config.imageFilespec, imagesfolder, config.img2pngOptions)

@@ -21,69 +21,49 @@ red = (0,0,255)
 green = (0,255,0)
 
 # get path
-# folder = 'images/'
 folder = '../../test/images/'
-# filepath = folder + 'huge.png' # nowork
-# filepath = folder + 'limb.png' # nowork
-# filepath = folder + 'noise.png' # nowork
-# filepath = folder + 'point.png' # nowork
-# filepath = folder + 'blank.png' # nowork
-# filepath = folder + 'edge.png' # nowork
-# filepath = folder + 'saturn.png' # nearly right
-# filepath = folder + 'small.png' # not quite
-# filepath = folder + 'faint.png' # works!
-# filepath = folder + 'crescent.png' # works with equalizeHist
-# filepath = folder + 'ok.png' # works
-# filepath = folder + 'dimSmall.png' # works
-# filepath = folder + 'limb2.png' # works
-# filepath = folder + 'large.png' # works
-# filepath = folder + 'sharp.png' # works
-# filepath = folder + 'calib.png'
-# filepath = folder + 'calib2.png'
 # filepath = folder + 'blurred.png'
+filepath = folder + 'crescentsmall.png'
 print 'file',filepath
 
 
-# would like it to return None if circle found is too weak
-# so need to boost the accumulator threshold
-# but then normal circles aren't detected
+
+config.drawBlob = True
+config.drawCircle = True
+config.drawCircles = True
+config.drawCrosshairs = True
 
 
 
 # load image
 im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE) # values are 0-255
+# im = mpim.imread(filepath) # values are 0-1
 
 # yuck
 # im = cv2.equalizeHist(im)
 
 # stretch
-# im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-
-# blur image to diminish reseau marks
-# kernelSize = 5 # aperture size - should be odd
-# gaussianSigma = 7
-# im = cv2.GaussianBlur(im, (kernelSize, kernelSize), gaussianSigma)
-# libimg.show(im)
-
+im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
 
 
 # thdiff = -0.025
-thdiff = -0.0125
-bbox = libimg.findBoundingBoxByHoughThenBlob(im, thdiff)
-im = libimg.gray2rgb(im)
-libimg.drawBoundingBox(im, bbox)
+# thdiff = -0.0125
+# bbox = libimg.findBoundingBoxByHoughThenBlob(im, thdiff)
+bbox = libimg.findBoundingBoxByBlobThenHough(im)
+# im = libimg.gray2rgb(im)
+# libimg.drawBoundingBox(im, bbox)
 libimg.show(im)
 
 # # show canny edge detection, which is what hough works with
-# lower = 100
-# upper = 200
-# im2 = cv2.Canny(im, lower, upper)
-# libimg.show(im2)
+upper = 200
+lower = upper/2
+im2 = cv2.Canny(im, lower, upper)
+libimg.show(im2)
 
 
-# # find 'best' circle
+# # find best circle
 # circle = libimg.findCircle(im) # (x,y,r)
-# if circle != None: #. gives warning
+# if type(circle) != type(None): #. gives warning
 #     im = libimg.gray2rgb(im)
 #     libimg.drawCircle(im, circle)
 #     libimg.show(im)

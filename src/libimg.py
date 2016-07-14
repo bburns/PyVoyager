@@ -6,6 +6,7 @@
 import os
 import matplotlib.image as mpim # for imread, imsave
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
+import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 import numpy as np # for zeros, array, copy
 import cv2 # for hough circle detection
 import math # for log
@@ -24,18 +25,20 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     os.chdir(srcdir)
     # eg "img2png *CALIB.img -fnamefilter > nul"
     cmd = "img2png " + filespec + " " + img2pngOptions + " > nul"
+    # print cmd
     os.system(cmd)
     
     # now move the png files to destdir
     # (srcdir is relative to the python program so need to switch back to that dir)
     os.chdir(savedir)
-    # cmd = "move " + srcdir +"\\*.png " + destdir + " > nul"
-    cmd = "mv " + srcdir +"*.png " + destdir + " > nul"
+    # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes in srcdir
+    cmd = "move " + srcdir +"\\*.png " + destdir + " > nul"
+    # print cmd
     os.system(cmd)
     
 
-def centerImageFile(infile, outfile, centerMethod):
-    "Center the given image file on a target using the given method and save it to outfile."
+def centerImageFile(infile, outfile):
+    "Center the given image file on a target and save it to outfile."
     
     im = mpim.imread(infile)
     
@@ -45,9 +48,7 @@ def centerImageFile(infile, outfile, centerMethod):
     im = np.rot90(im, 2) # rotate by 180
     
     # find the bounding box of biggest object
-    #. will want precalculated threshold
-    #. and precalculated targetAngularRadius>cameraFov flag
-    boundingBox = findBoundingBox(im, centerMethod) # blob, circle, all
+    boundingBox = findBoundingBox(im)
     
     # center the image on the target
     imCentered = centerImage(im, boundingBox)
@@ -56,7 +57,12 @@ def centerImageFile(infile, outfile, centerMethod):
         imCentered[399, 0:799] = 0.25
         imCentered[0:799, 399] = 0.25
         
-    mpim.imsave(outfile, imCentered)
+    # this actually saves bw images with a colormap
+    # mpim.imsave(outfile, imCentered)
+    
+    # and this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
+    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
+    misc.imsave(outfile, imCentered)
     
     return boundingBox
     
@@ -146,7 +152,6 @@ def drawCircle(im2, circle, color = (0,255,0)):
     cv2.circle(im2, (x,y), r, color, lineWidth)
 
 
-
 def gray2rgb(im2):
     "convert a gray cv2 image to rgb, return new image"
     im2 = cv2.cvtColor(im2, cv2.COLOR_GRAY2RGB)
@@ -202,7 +207,9 @@ def findCircle(im):
     # im = cv2.dilate(im, kernel, iterations = 1)
     # # im = cv2.dilate(im, 2)
     
-    #.. maybe add a sharpening step? 
+    # maybe add a sharpening step for blurry limbs? 
+    # tested it on a blurry/dim jupiter image but didn't help canny edges at all
+    
     # # blur image to diminish reseau marks
     # #. make this optional by param, or do as separate step
     # kernelSize = 5 # aperture size - should be odd
@@ -210,7 +217,7 @@ def findCircle(im):
     # im = cv2.GaussianBlur(im, (kernelSize, kernelSize), gaussianSigma)
     # if config.debugImages: show(im, 'findcircles - gaussian blurred')
 
-    # hough detection parameters
+    # Hough detection parameters
     
     # only available method now
     method = cv2.cv.CV_HOUGH_GRADIENT 
@@ -232,8 +239,7 @@ def findCircle(im):
     # to be. Too high and it won't detect anything, too low and it will find too
     # much clutter.
     # 0-255?
-    # canny_threshold=200 
-    canny_threshold=config.cannyUpperThreshold
+    canny_threshold=config.cannyUpperThreshold # eg 200
     
     # Second method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the accumulator threshold for the circle centers at the detection
@@ -257,16 +263,18 @@ def findCircle(im):
     maxRadius=10
     
     circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
+    
     # if circles: # nowork in python
     if type(circles) != type(None):
         circles = circles[0,:] # extract array
         circle = circles[0]
         circle = np.round(circle).astype('int') # round all values to ints
-        if config.drawCircle:
-            drawCircle(im, circle)
+        # if config.drawCircle:
+            # im = gray2rgb(im)
+            # drawCircle(im, circle)
+            # show(im)
     else:
         circle = None
-        # circle = (0,0,0)
     return circle
 
     
@@ -307,6 +315,10 @@ def findBoundingBoxByCircle(im):
         x2 = y+r
         y1 = x-r
         y2 = x+r
+        # if config.drawCircle:
+        #     im = gray2rgb(im)
+        #     drawCircle(im, circle)
+        #     show(im)
     else:
         # if no circles just return the whole image
         x1 = 0
@@ -317,104 +329,69 @@ def findBoundingBoxByCircle(im):
     return boundingBox
 
 
-# def findBoundingBoxByHoughAndBlob(im, thdiff):
-#     "find center of object using avg of blob and hough circle detection, and return bounding box"
-#     # find blob
-#     boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-#     boundingBox2 = findBoundingBoxByBlob2(im, thdiff)
-#     x1,y1,x2,y2=boundingBox
-#     x1a,y1a,x2a,y2a=boundingBox2
-#     x1b = (x1+x1a)/2
-#     y1b = (y1+y1a)/2
-#     x2b = (x2+x2a)/2
-#     y2b = (y2+y2a)/2
-#     bbox = [x1b,y1b,x2b,y2b]
-#     if config.drawBlob:
-#         drawBoundingBox(im, bbox)
-#     # if box is not ~square, try looking for a circle in it
-#     # width = x2 - x1
-#     # height = y2 - y1
-#     # if abs(width-height) > 10: #. arbitrary parameter
-#         # look inside the bounding box? or search whole image
-#         # sometimes the bounding box might be way off
-#         # imcrop = im[x1:x2,y1:y2]
-#         # if width!=0 and height!=0:
-#             # boundingBox = findBoundingBoxByCircle(imcrop) # use hough to find circle
-#             # boundingBox[0] += x1
-#             # boundingBox[1] += y1
-#             # boundingBox[2] += x1
-#             # boundingBox[3] += y1
-#     return bbox
+# def findBoundingBoxByBlobThenHough(im):
+#     "find center of object using blob then hough circle detection, and return bounding box"
+#     boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
+#     [x1,y1,x2,y2] = boundingBox
+#     # if box is > some size, try looking for a circle
+#     width = x2 - x1
+#     height = y2 - y1
+#     area = width*height
+#     if area>config.blobAreaCutoff: # eg 10*10 pixels
+#         boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
+#     return boundingBox
 
 
-# def findBoundingBoxByBlobThenHough(im, thdiff):
-def findBoundingBoxByBlobThenHough(im):
-    "find center of object using blob then hough circle detection, and return bounding box"
-    # boundingBox = findBoundingBoxByBlob2(im, thdiff)
-    # th = 0.1
-    boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
-    [x1,y1,x2,y2] = boundingBox
-    # if box is > some size, try looking for a circle
-    width = x2 - x1
-    height = y2 - y1
-    area = width*height
-    # if abs(width-height) > 10: #. arbitrary parameter
-    # if area>20: #. arbitrary parameter
-    if area>config.blobAreaCutoff:
-        boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-    return boundingBox
-
-
-#. clean up, parameterize
-def findBoundingBoxByBlob2(im, thdiff):
-    "find the biggest and best blob, iterating over different threshold values. returns bounding box"
+# #. clean up, parameterize
+# def findBoundingBoxByBlob2(im, thdiff):
+#     "find the biggest and best blob, iterating over different threshold values. returns bounding box"
     
-    # the idea is to look for the place where the slope of area vs threshold starts to level out,
-    # which seemed to be the tipping point of where to find the best threshold value.
+#     # the idea is to look for the place where the slope of area vs threshold starts to level out,
+#     # which seemed to be the tipping point of where to find the best threshold value.
     
-    # calls findBoundingBoxByBlob ~15 times.
-    # but seems able to handle different lighting conditions.
+#     # calls findBoundingBoxByBlob ~15 times.
+#     # but seems able to handle different lighting conditions.
     
-    # stretch histogram
-    im = im.copy()
-    im = cv2.normalize(im, None, 0, 1.0, cv2.NORM_MINMAX)
+#     # stretch histogram
+#     im = im.copy()
+#     im = cv2.normalize(im, None, 0, 1.0, cv2.NORM_MINMAX)
     
-    # iterate over threshold values
-    # th is threshold
-    # thmin = 0.05
-    thmin = 0.02
-    # thmax = 0.20
-    thmax = 0.25
-    thstep = 0.01
-    imax = int((thmax-thmin)/thstep)+1
+#     # iterate over threshold values
+#     # th is threshold
+#     # thmin = 0.05
+#     thmin = 0.02
+#     # thmax = 0.20
+#     thmax = 0.25
+#     thstep = 0.01
+#     imax = int((thmax-thmin)/thstep)+1
 
-    lastarea = 1
-    maxarea = 800*800.0
-    maxderiv = 1/thstep  # ie going from area=1 to area=0 in the delta of thstep
-    # thdiff = -0.05
-    # thdiff = -0.01
-    thbest = 0
-    areabest = 0
-    boundingBoxBest = [0,0,799,799]
-    for i in range(0,imax):
-        th = thmin + i * thstep
-        boundingBox = findBoundingBoxByBlob(im, th)
-        x1,y1,x2,y2 = boundingBox
-        area = (x2-x1)*(y2-y1) / maxarea # area = 1 to 0
-        area = math.log(area) # area = 0 to -infinity
-        deriv = (area - lastarea) / thstep / maxderiv
-        # print th, area, deriv
-        # if deriv>thdiff:
-        if deriv<thdiff:
-            thbest = th
-            areabest = area
-            boundingBoxBest = boundingBox
-        lastarea = area
-    print thbest, areabest
-    #.
-    # if config.drawBlob:
-    #     drawBoundingBox(im, boundingBoxBest)
-    return boundingBoxBest
+#     lastarea = 1
+#     maxarea = 800*800.0
+#     maxderiv = 1/thstep  # ie going from area=1 to area=0 in the delta of thstep
+#     # thdiff = -0.05
+#     # thdiff = -0.01
+#     thbest = 0
+#     areabest = 0
+#     boundingBoxBest = [0,0,799,799]
+#     for i in range(0,imax):
+#         th = thmin + i * thstep
+#         boundingBox = findBoundingBoxByBlob(im, th)
+#         x1,y1,x2,y2 = boundingBox
+#         area = (x2-x1)*(y2-y1) / maxarea # area = 1 to 0
+#         area = math.log(area) # area = 0 to -infinity
+#         deriv = (area - lastarea) / thstep / maxderiv
+#         # print th, area, deriv
+#         # if deriv>thdiff:
+#         if deriv<thdiff:
+#             thbest = th
+#             areabest = area
+#             boundingBoxBest = boundingBox
+#         lastarea = area
+#     print thbest, areabest
+#     #.
+#     # if config.drawBlob:
+#     #     drawBoundingBox(im, boundingBoxBest)
+#     return boundingBoxBest
 
 
 
@@ -461,28 +438,27 @@ def findBoundingBoxByBlob(im, blobThreshold):
     #     drawBoundingBox(b, boundingBox)
     #     show(b, 'findblobs th=' + str(blobThreshold))
     
-    if config.drawBlob:
-        drawBoundingBox(im, boundingBox)
+    # if config.drawBlob:
+        # drawBoundingBox(im, boundingBox)
         
     return boundingBox
 
 
-def findBoundingBox(im, method):
-    "find bounding box by given method (blob, circle, all) - returns [x1,y1,x2,y2]"
-    #. could do a pre-canny step? 
-    # lower = 100
+def findBoundingBox(im):
+    "find bounding box returns [x1,y1,x2,y2]"
+    # looks for a small blob, then a large hough circle
+    #. do a pre-canny step? 
     # upper = 200
+    # lower = 100
     # im = cv2.Canny(im, lower, upper)
-    if method=='blob':
-        # boundingBox = findBoundingBoxByBlob(im)
-        boundingBox = findBoundingBoxByBlob2(im, config.blobAreaDerivativeMax)
-    # elif method=='circle':
-        # boundingBox = findBoundingBoxByCircle(im)
-    elif method=='all':
-        # boundingBox = findBoundingBoxByBlobThenHough(im, config.blobAreaDerivativeMax)
-        boundingBox = findBoundingBoxByBlobThenHough(im)
-        # boundingBox = findBoundingBoxByHoughThenBlob(im, config.blobAreaDerivativeMax)
-        # boundingBox = findBoundingBoxByHoughAndBlob(im, config.blobAreaDerivativeMax) #eh
+    boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
+    [x1,y1,x2,y2] = boundingBox
+    # if box is > some size, try looking for a circle
+    width = x2 - x1
+    height = y2 - y1
+    area = width*height
+    if area>config.blobAreaCutoff: # eg 10*10 pixels
+        boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
     return boundingBox
 
 

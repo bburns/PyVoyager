@@ -15,6 +15,7 @@ import libimg
 
 # config.drawBlob = True
 config.drawCircle = True
+# config.drawCircles = True
 config.drawCrosshairs = True
 
 
@@ -77,7 +78,7 @@ for fileid in fileids:
         else:
             print "[FAILED] %s, (%d, %d, %d, %d) expected (%d, %d, %d, %d)" % (fileid, x1,y1,x2,y2, x1best,y1best,x2best,y2best)
     else:
-        print fileid,boundingBox
+        print "[FAILED] " + fileid + ' ' + str(boundingBox)
         
 print
 print "Accuracy %0.1f%% (%d/%d tests passed)." % (ntestsok/float(ntests)*100, ntestsok, ntests)

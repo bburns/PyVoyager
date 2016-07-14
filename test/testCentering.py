@@ -6,6 +6,7 @@
 
 import cv2
 import matplotlib.image as mpim # for imread, imsave
+import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 
 import sys; sys.path.append('../src') # so can import from main src folder
 import config
@@ -14,7 +15,7 @@ import libimg
 
 
 # config.drawBlob = True
-config.drawCircle = True
+# config.drawCircle = True
 # config.drawCircles = True
 config.drawCrosshairs = True
 
@@ -40,13 +41,13 @@ for fileid in fileids:
     edgesfile = edgesfolder + fileid + '.png'
     
     # any experimenting should be done in this routine
-    boundingBox = libimg.centerImageFile(infile, centeredfile, 'all')
+    boundingBox = libimg.centerImageFile(infile, centeredfile)
     x1,y1,x2,y2 = boundingBox
 
     # get binarization images (used by blob detector)
     im = mpim.imread(infile)
     b = 1*(im>config.blobThreshold)
-    mpim.imsave(thresholdedfile, b)
+    misc.imsave(thresholdedfile, b)
     
     # get canny edge images (used by hough detector)
     im = mpim.imread(infile)
@@ -54,7 +55,7 @@ for fileid in fileids:
     upper = config.cannyUpperThreshold
     lower = upper/2
     edges = cv2.Canny(im2, lower, upper)
-    mpim.imsave(edgesfile, edges)
+    misc.imsave(edgesfile, edges)
     
     
     # get expected results

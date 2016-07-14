@@ -1,4 +1,6 @@
 # when to turn centering off and back on again, around closest approach
 planetCraftTargetCamera,centeringOff,centeringOn
-# eg JupiterVoyager1JupiterWide,C138213,C154883
-
+NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
+NeptuneVoyager2NeptuneWide,C1137509,C1140815
+NeptuneVoyager2TritonNarrow,C1139255,C1140614
+# NeptuneVoyager2TritonWide,--

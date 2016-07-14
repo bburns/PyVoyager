@@ -7,3 +7,5 @@ voyager.org
 test/output
 src/experiments/images/out
 @backup_to_dropbox.bat
+old/
+*.pyc

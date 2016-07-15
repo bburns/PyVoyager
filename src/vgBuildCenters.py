@@ -71,13 +71,10 @@ def buildCenters(volnum):
                     target = row[config.filesColTarget]
                     camera = row[config.filesColInstrument]
                     
-                    # build the key
+                    # get the centering info, if any
+                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
                     planetCraftTargetCamera = system + craft + target + camera
-                    
-                    # get the info, if any
-                    # planetCraftTargetCamera,centeringOff,centeringOn
                     info = centeringInfo.get(planetCraftTargetCamera)
-                    
                     if info:
                         centeringOff = info['centeringOff']
                         centeringOn = info['centeringOn']

@@ -32,9 +32,9 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * 1. Download Voyager datasets from **PDS archives** [1] 
 * 2. Extract the contents of the tar.gz archives
 * 3. Convert Voyager IMG images to PNGs using **img2png** [2]
-* 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6].
+* 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
 * 5. Colorize frames by combining images, where possible, using **OpenCV**
-* 6. [Build mosaics from images, where possible]
+* 6. [Build mosaics from images with hand-annotated information - lots of work though]
 * 7. Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
 * 8. Make movies from previous step [and add titles and music] using **ffmpeg** [7]
 
@@ -85,10 +85,24 @@ Then make b&w or color movies of all the downloaded datasets, organized by plane
     > vg movies bw|color
 
 
+Parameters
+----------------------------------------
+
+All configuration settings are stored in `config.py` - if you run into problems with centering there are some parameters there which you can tweak, notably `blobThreshold`, `blobAreaCutoff`, and `cannyUpperThreshold`. Otherwise you can try modifying the centering algorithm in `vgBuildCenters.py` and `libimg.py`.
+
+The goal is for the same set of parameters to work across all datasets and avoid the need for more specification files, though not sure how possible that will be at this point. 
+
+
+Testing
+----------------------------------------
+
+Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can throw the original into the images folder and add a record to testfiles.csv.
+
+
 How it works
 ----------------------------------------
 
-The data for each step is put into the following folders in the 'data' subfolder: 
+The data for each step is put into the following folders in the `data` subfolder: 
 
     step1_downloads
     step2_unzips
@@ -125,18 +139,16 @@ The small/point-like targets are handled fairly well by the blob detection routi
 
 But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment. 
 
-Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file db/centering.csv is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this - 
+Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file `db/centering.csv` is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this - 
 
     planetCraftTargetCamera,centeringOff,centeringOn
     NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
     NeptuneVoyager2NeptuneWide,C1137509,C1140815
     NeptuneVoyager2TritonNarrow,C1139255,C1140614
 
-This table is also used to tell the movie creation step to slow down the frames at closest approach.
+This table is also used to tell the movie creation step to slow down the frames at closest approach. The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach. 
 
-The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach. 
-
-The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
+The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
 
     volume,fileid,phase,craft,target,time,instrument,filter,note
     5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
@@ -146,7 +158,7 @@ The PDS volumes come with index files for all the images they contain, which hav
 
 though different targets and camera records can be also interleaved with others.
 
-This list of files has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (db/composites.csv) looks like this: 
+This list of files has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this: 
 
     volume,compositeId,centerId,filter
     5104,C1541422,C1541422,Blue
@@ -163,13 +175,13 @@ That's about it!
 Next steps
 ----------------------------------------
 
+* Add titles to each target movie
+* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Improve stabilization/centering routines - handle off-screen centers and crescents
 * Improve color frame detection and rendering routines - could borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, eg orange
-* Add titles to each target movie
 * Combine movie segments into single movie, adding audio
 * Build mosaics with hand-annotated information, include in movies
-* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
-* Host PNG images somewhere for download
+* Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
 * Option to make b&w movies using one filter, to reduce flickering
 
@@ -180,6 +192,7 @@ Version 0.3
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
 - Fix bug in `vg init composites` command which threw some color frames off
 
+Made incrementally better movies for Neptune flyby, both b&w and color. 
 
 
 Version 0.2 (2016-07-12)

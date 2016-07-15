@@ -14,7 +14,6 @@ debugImages = False
 
 
 
-
 # downloads
 # ----------------------------------------
 
@@ -45,6 +44,7 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
+#. add multiplication level
 # img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel0 - not so much info
@@ -55,10 +55,12 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # ----------------------------------------
 
 # method of center detection
+#. ditch - just handle through code
 # centerMethod = 'blob'
 # centerMethod = 'circle'
 centerMethod = 'all'
 
+#. ditch
 # blobAreaDerivativeMax = -0.02
 
 
@@ -68,7 +70,7 @@ centerMethod = 'all'
 # blobThreshold = 0.05
 # blobThreshold = 0.025 
 # blobThreshold = 0.015
-blobThreshold = 0.012 # (* 255 0.012) 3 # better hope those darks are really dark... and they are
+blobThreshold = 0.012 # (* 255 0.012)=3 # better hope those darks are really dark... and they are
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles
@@ -118,6 +120,7 @@ movieFrameRate = 15 # fps
 # movieFrameRate = 20 # fps
 # movieFrameRate = 30 # fps
 
+# number of duplicate frames to include for slow parts of movie
 moviesFramesForSlowParts = 5
 
 

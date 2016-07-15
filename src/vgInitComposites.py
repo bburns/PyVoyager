@@ -1,22 +1,41 @@
 
 # build composites.csv, which will attempt to describe how to combine image channels
-# based on image number (~time), filter, target, camera, NOTE field
+# based on time, filter, target, camera, NOTE field
 # (right now just filter, target, camera fields)
 
+
+# the best way to understand this algorithm is to look at some sample data and
+# understand that it's grouping records together by looking for repeating patterns.
+# or at the moment, just repeated filters for the same target/camera.
 # eg
 # from files.csv
 # volume,fileid,phase,craft,target,time,instrument,filter,note
-# 5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,UV,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# 5101,C1471040,Jupiter,Voyager1,Jupiter,1979-01-09T00:51:49,Narrow,BLUE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# 5101,C1471042,Jupiter,Voyager1,Jupiter,1979-01-09T00:55:01,Narrow,GREEN,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# 5101,C1471044,Jupiter,Voyager1,Jupiter,1979-01-09T00:58:13,Narrow,ORANGE,ROUTINE MULTISPECTRAL LONGITUDE COVERAGE; 1 OF 4 NA
-# ->
+# 5101,C1471038,Jupiter,Voyager1,Jupiter,1979-01-09T00:48:40,Narrow,Uv
+# 5101,C1471040,Jupiter,Voyager1,Jupiter,1979-01-09T00:51:49,Narrow,Blue
+# 5101,C1471042,Jupiter,Voyager1,Jupiter,1979-01-09T00:55:01,Narrow,Green
+# 5101,C1471044,Jupiter,Voyager1,Jupiter,1979-01-09T00:58:13,Narrow,Orange
+# 5101,C1471307,Jupiter,Voyager1,Jupiter,1979-01-09T00:59:55,Narrow,Uv
+# 5101,C1471309,Jupiter,Voyager1,Jupiter,1979-01-09T01:03:04,Narrow,Blue
+# 5101,C1471311,Jupiter,Voyager1,Jupiter,1979-01-09T01:06:16,Narrow,Green
+# 5101,C1471313,Jupiter,Voyager1,Jupiter,1979-01-09T01:45:54,Narrow,Orange
+# =>
 # composites.csv
 # volume,compositeId,centerId,filter
-# 5101,C1471038,C1471038,UV
-# 5101,C1471038,C1471040,BLUE
-# 5101,C1471038,C1471042,GREEN
-# 5101,C1471038,C1471044,ORANGE
+# 5101,C1471038,C1471038,Uv
+# 5101,C1471038,C1471040,Blue
+# 5101,C1471038,C1471042,Green
+# 5101,C1471038,C1471044,Orange
+# 5101,C1471307,C1471307,Uv
+# 5101,C1471307,C1471309,Blue
+# 5101,C1471307,C1471311,Green
+# 5101,C1471307,C1471313,Orange
+
+# ie when it catches the repeated Uv filter, it writes out the intervening records as a group - a composite record.
+# different targets and cameras can be interleaved because it keeps different circular buffers for each target/camera combination. 
+
+#.. also need to look at the time to make sure they're all within a certain range -
+# eg the last orange filter is 40 mins after the last green one,
+# so belongs in a different group
 
 
 import os
@@ -27,8 +46,12 @@ import config
 import lib
 
 
+#. in config - 
+#. max number of records in a group
+# 7
+#. max time delta between all records in a group
+# tdeltamax = 7*5mins?
 
-# tdeltamax = 5mins
 # debug = True
 debug = False
 
@@ -69,7 +92,7 @@ def initComposites():
             # print volume, fileid, phase, craft, target, instrument, filter
             if debug: print 'row',row[:-1] # skip note
 
-            # which circular buffer to look in
+            # get correct circular buffer
             bufferKey = target+instrument # eg TritonNarrow
             if debug: print 'bufferkey', bufferKey
             buffer = circbuffers.get(bufferKey)
@@ -77,16 +100,16 @@ def initComposites():
                 buffer = [[],[],[],[],[],[],[]]
                 circbuffers[bufferKey] = buffer
             
-            # now iterate over circular buffer, checking for matches
-            # (skip last item in buffer though to avoid single cycle groups)
-            # if found, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
+            # now iterate over rows in circular buffer, checking for matches
+            # (skip last item in buffer though to avoid single cycle groups?)
+            # if found a match, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
             # so write them out together, and reset the buffer
             for bufferRow in reversed(buffer):
             # for bufferRow in reversed(buffer[:-1]):
                 if bufferRow==[]:
                     pass
                 else:
-                    if debug: print 'bufferrow',bufferRow
+                    if debug: print 'bufferrow',bufferRow[:-1]
                     # we know the target and instrument are the same, so can skip them
                     bufferVolume = bufferRow[config.filesColVolume] # eg 5101
                     bufferFileid = bufferRow[config.filesColFileId] # eg C1385455
@@ -129,7 +152,7 @@ def initComposites():
             buffer.pop(0) # remove from front of list
             buffer.append(row) # append item to end of list
             # buffer.append(row[:-1]) # append item to end of list
-            if debug: print buffer
+            # if debug: print buffer
 
         # write row
         # row = [volume, fileid, phase, craft, target, instrument, filter, note] # keep in sync with fields, above

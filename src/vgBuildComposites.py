@@ -81,7 +81,7 @@ def processChannels(channelRows):
     #   [5101,C434823,C434825,Blue]
     #   [5101,C434823,C434827,Green]
     #   ]
-    print channelRows
+    # print channelRows
     channels = {}
     volume = ''
     compositeId = ''

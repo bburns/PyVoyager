@@ -2,6 +2,7 @@ fileid,x1,y1,x2,y2
 
 blurred,413,409,455,451
 bright,289,411,547,669
+brightsmall,384,380,394,391
 crescentdim,278,160,502,384
 crescentsharp,250,138,734,622
 crescentsmall,369,351,439,421
@@ -9,6 +10,7 @@ dim,459,317,705,563
 dim2,324,384,576,636
 dimjupiter,455,183,721,449
 dimneptune,339,455,385,501
+dimdimneptune
 edge1
 edge2
 gap,355,393,609,647

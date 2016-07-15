@@ -33,7 +33,7 @@ def buildCenters(volnum):
         # now center the files
         lib.mkdir(centersubfolder)
         
-        config.drawCrosshairs = True
+        # config.drawCrosshairs = True
         
         # nfile = 1
         # for root, dirs, files in os.walk(imagesubfolder):

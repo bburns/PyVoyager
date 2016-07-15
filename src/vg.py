@@ -56,8 +56,13 @@ elif cmd=="targets":
     # vgBuild.buildTargets(targetPath)
     
 elif cmd=="movies":
-    targetPath = args.pop(0)
-    vgBuildMovies.buildMovies(targetPath)
+    # targetPath = args.pop(0)
+    # vgBuildMovies.buildMovies(targetPath)
+    bwOrColor = args.pop(0)
+    if bwOrColor=='bw' or bwOrColor=='color':
+        vgBuildMovies.buildMovies(bwOrColor)
+    else:
+        cmd="help"
     
     
 elif cmd=="init":
@@ -89,7 +94,8 @@ if cmd=="help":
     print "  vg mosaics <volnumber>"
     print "  vg targets <volnumber>"
     print
-    print "  vg movies <system>/<spacecraft>/<target>/<camera>"
+    # print "  vg movies <system>/<spacecraft>/<target>/<camera>"
+    print "  vg movies bw/color"
     print
     # print "  vg center <centerId>"
     # print "  vg composite <compositeId>"

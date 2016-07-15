@@ -63,20 +63,15 @@ centerMethod = 'all'
 
 
 # blob detection
-# binary threshold
-#. could make a table of values for different volumes, or change it at different image numbers
-# blobThreshold = 0.05 # way too broad
-# blobThreshold = 0.1 # misses some dim edges of planet
-# blobThreshold = 0.09 # try to catch dim edges of planet, works well on jupiter voy1
-# blobThreshold = 0.15 # works better on the failed ones which had brighter backgrounds, eg neptune
-# blobThreshold = 0.20 # need for later neptune images
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
-# blobThreshold = 0.025 
-blobThreshold = 0.015 # eg (* 255 0.2) 51
 # blobThreshold = 0.05
+# blobThreshold = 0.025 
+# blobThreshold = 0.015
+blobThreshold = 0.012 # (* 255 0.012) 3 # better hope those darks are really dark... and they are
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
+# blob detection works best for small sources - hough for bigger circles
 # blobAreaCutoff = 10*10 # missed some small but sharp circles
 blobAreaCutoff = 14*14
 
@@ -85,17 +80,11 @@ blobAreaCutoff = 14*14
 # but if it's too low you'd get too many spurious edges in the edge image
 # 200 misses some of the dim images
 # cannyUpperThreshold = 200
-cannyUpperThreshold = 150
-
-# out at neptune the background levels vary so much you'd be setting this per image, practically.
-# need a better approach.
-# blobThresholds = [
-#     ['C0000000',0.10], # arbitrary start
-#     ['C0896631',0.15], # neptune bright bg
-#     ['C0903826',0.15], # moon, dark
-#     ['C0936002',0.16], # neptune brighter bg
-#     ['C1385455',0.09], # jupiter voy1
-#     ]
+# the CALIB images are usually very dim
+# trying to get it to recognize dim jupiters at the edges
+cannyUpperThreshold = 100
+# cannyUpperThreshold = 60
+# no dice - the canny edges start proliferating too much, and still the jupiter edge cases aren't picked up
 
 # prefix for centered filenames
 centersPrefix = 'centered_' 
@@ -123,10 +112,14 @@ compositesPrefix = 'composite_'
 
 # use slow frame rate for first dataset
 # switch to higher rate at frame 242 of set 5103
+frameRate = 5 # fps
 # frameRate = 10 # fps
 # frameRate = 15 # fps
-frameRate = 20 # fps
+# frameRate = 20 # fps
 # frameRate = 30 # fps
+
+movieFilespec = 'img%05d.png'
+
 
 
 

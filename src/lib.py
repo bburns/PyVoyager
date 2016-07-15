@@ -165,17 +165,18 @@ def unzipFile(zipfile, destfolder):
 
     
 def test():
-    print getDownloadUrl(5101)
-    print getZipfilepath(5101)
-    print getUnzippedpath(5101)
-    print getImagespath(5101)
-    print getImagespath(0)
-    print getCenterspath(5101)
+    # print getDownloadUrl(5101)
+    # print getZipfilepath(5101)
+    # print getUnzippedpath(5101)
+    # print getImagespath(5101)
+    # print getImagespath(0)
+    # print getCenterspath(5101)
     
     #. test this with a tar.gz
     # print 'unzipping test file...'
     # unzipFile('test/unzip_test.tar', 'test/unzip_test')
     # print 'All done.'
+    pass
     
 if __name__ == '__main__':
     test()

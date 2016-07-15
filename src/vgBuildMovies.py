@@ -35,7 +35,6 @@ def makeMovies():
             os.chdir(savedir)
 
 
-    
 def makeLink(targetfolder, sourcepath, nfile, ncopies):
     "make ncopies of symbolic link from the source to the target file, starting with number nfile"
     for i in range(ncopies):

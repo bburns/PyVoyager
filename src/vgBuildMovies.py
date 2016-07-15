@@ -35,38 +35,15 @@ def makeMovies():
             os.chdir(savedir)
 
 
-def renameFilesSequentially():
-    "rename all files in the movie folders so they are numbered sequentially for ffmpeg to use"
-    # eg img00001.png, img00002.png, etc
     
-    print 'rename files sequentially'
-    
-    # for each subdir in datadir, cd subdir, run img2png on all img files in it
-    folder = config.moviesFolder
-    for root, dirs, files in os.walk(folder):
-        # print root, dirs
-        if dirs==[]: # reached the leaf level
-            print root
-            i = 1
-            for filename in files:
-                dest = config.movieFilespec % i  # eg 'img00001.png'
-                filepath = root + '\\' + filename
-                destpath = root + '\\' + dest
-                cmd = 'mv ' + filepath + ' ' + destpath + ' > nul'
-                os.system(cmd)
-                i += 1
-            
-    
-#. could speed up if you kept track of nfiles per target folder, in a dictionary
-# ie skip the renaming step
-def makeLink(targetpath, sourcepath, ncopies):
-    "make ncopies of symbolic link from the source to the target file"
+def makeLink(targetfolder, sourcepath, nfile, ncopies):
+    "make ncopies of symbolic link from the source to the target file, starting with number nfile"
     for i in range(ncopies):
-        targetpath2 = targetpath[:-4] + str(i) + targetpath[-4:]
-        # eg mklink data\step8_movies\Neptune\Voyager2\Neptune\Narrow\centered_C1159959_CALIB_Clear0.png ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
+        n = nfile + i
+        targetpath2 = targetfolder + config.movieFilespec % n # eg 'img00001.png'
+        # eg mklink data\step8_movies\Neptune\Voyager2\Neptune\Narrow\img00001.png ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
         cmd = 'mklink ' + targetpath2 + ' ' + sourcepath + ' > nul'
         cmd = cmd.replace('/','\\')
-        # print cmd
         os.system(cmd)
 
 
@@ -77,7 +54,7 @@ def makeLinks(bwOrColor):
     
     centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
     
-    # nfilesInTargetDir = {}
+    nfilesInTargetDir = {}
     
     # iterate through all available images
     f = open(config.filesdb, 'rt')
@@ -108,7 +85,7 @@ def makeLinks(bwOrColor):
                 pngfilename = config.compositesPrefix + fileId + '.png' 
             pngpath = pngSubfolder + pngfilename
 
-            # if file exists, create subfolder and copy/link image
+            # if file exists, create subfolder and link image
             if os.path.isfile(pngpath):
 
                 system = row[config.filesColPhase]
@@ -125,24 +102,30 @@ def makeLinks(bwOrColor):
                     centeringOff = info['centeringOff']
                     centeringOn = info['centeringOn']
                     goSlow = fileId>=centeringOff and fileId<centeringOn
-                ncopies = 1 if goSlow==False else config.moviesFramesForSlowParts
+                ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
 
-                # get subfolder and target file
-                # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/centered_C1327321_RAW_Orange.png
+                # get subfolder and make sure it exists
+                # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
                 targetfolder = config.moviesFolder + subfolder
-                targetpath = targetfolder + pngfilename
-
-                # make sure subfolder exists
                 lib.mkdir_p(targetfolder)
 
-                # nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
+                # get current file number in that folder
+                nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
+                if nfile:
+                    pass
+                else:
+                    nfile = 0
                 
                 # link to file
                 # note: mklink requires admin privileges, so must run this script in an admin console
                 # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir
-                makeLink(targetpath, pngpathrelative, ncopies)
+                makeLink(targetfolder, pngpathrelative, nfile, ncopies)
+                
+                # increment the file number for the target folder
+                nfile += ncopies
+                nfilesInTargetDir[planetCraftTargetCamera] = nfile
 
         i += 1
 
@@ -166,7 +149,7 @@ def buildMovies(bwOrColor):
     #. need to remove any existing folders
 
     makeLinks(bwOrColor)
-    renameFilesSequentially()
+    # renameFilesSequentially()
     makeMovies()
     
 

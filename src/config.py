@@ -121,7 +121,7 @@ movieFrameRate = 15 # fps
 # movieFrameRate = 30 # fps
 
 # number of duplicate frames to include for slow parts of movie
-moviesFramesForSlowParts = 5
+movieFramesForSlowParts = 5
 
 
 # files and folders

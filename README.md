@@ -90,7 +90,7 @@ Parameters
 
 All configuration settings are stored in `config.py` - if you run into problems with centering there are some parameters there which you can tweak, notably `blobThreshold`, `blobAreaCutoff`, and `cannyUpperThreshold`. Otherwise you can try modifying the centering algorithm in `vgBuildCenters.py` and `libimg.py`.
 
-The goal is for the same set of parameters to work across all datasets and avoid the need for more specification files, though not sure how possible that will be at this point. 
+The goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though I'm not sure how possible that will be at this point - I've only tested the routines with Neptune and some of Jupiter so far. 
 
 
 Testing
@@ -172,16 +172,22 @@ The movies are generated with the `vg movies bw|color` command, which links all 
 That's about it!
 
 
+Issues
+----------------------------------------
+
+There's a Trello board to track issues and progress here - https://trello.com/b/kEkGDMYR/voyager
+
+
 Next steps
 ----------------------------------------
 
 * Add titles to each target movie
 * Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Improve stabilization/centering routines - handle off-screen centers and crescents
-* Improve color frame detection and rendering routines - could borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, eg orange
+* Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, colorize target consistently, eg with a large reference view (eg nice blue neptune globe)
 * Combine movie segments into single movie, adding audio
-* Build mosaics with hand-annotated information, include in movies
 * Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
+* Build mosaics with hand-annotated information, include in movies
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
 * Option to make b&w movies using one filter, to reduce flickering
 
@@ -190,7 +196,6 @@ Version 0.3
 ----------------------------------------
 - Better small/point-like detection with blob detector below 12x12 pixels, before Hough circle detector used
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
-- Fix bug in `vg init composites` command which threw some color frames off
 
 Made incrementally better movies for Neptune flyby, both b&w and color. 
 

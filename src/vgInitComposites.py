@@ -101,11 +101,9 @@ def initComposites():
                 circbuffers[bufferKey] = buffer
             
             # now iterate over rows in circular buffer, checking for matches
-            # (skip last item in buffer though to avoid single cycle groups?)
             # if found a match, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
             # so write them out together, and reset the buffer
             for bufferRow in reversed(buffer):
-            # for bufferRow in reversed(buffer[:-1]):
                 if bufferRow==[]:
                     pass
                 else:
@@ -127,23 +125,21 @@ def initComposites():
                             # pprint.pprint(buffer)
                             # print [row[config.filesColFilter] for row in buffer]
                             # print buffer.join('\n')
-                            # nonemptyRows = [rowx for rowx in buffer if rowx != []]
-                            nonemptyRows = [row for row in buffer if row != []]
-                            if len(nonemptyRows) > 1:
-                                outCompositeId = None
-                                for anotherRow in buffer:
-                                    if anotherRow==[]:
-                                        pass
-                                    else:
-                                        # volume,compositeId,centerId,filter
-                                        outVolume = anotherRow[config.filesColVolume]
-                                        if outCompositeId == None:
-                                            outCompositeId = anotherRow[config.filesColFileId]
-                                        outCenterId = anotherRow[config.filesColFileId]
-                                        outFilter = anotherRow[config.filesColFilter].title()
-                                        outRow = [outVolume, outCompositeId, outCenterId, outFilter]
-                                        if debug: print 'outrow',outRow
-                                        writer.writerow(outRow)
+                            nonemptyRows = [rowx for rowx in buffer if rowx != []] # bug - had used 'row' for this variable, but it's not local! overwrote existing row variable
+                            outCompositeId = None
+                            for nonemptyRow in nonemptyRows:
+                                # volume,compositeId,centerId,filter
+                                outVolume = nonemptyRow[config.filesColVolume]
+                                if outCompositeId == None:
+                                    outCompositeId = nonemptyRow[config.filesColFileId]
+                                outCenterId = nonemptyRow[config.filesColFileId]
+                                outFilter = nonemptyRow[config.filesColFilter]
+                                # if just a single row, write it out as a clear image so shows up as b&w
+                                if len(nonemptyRows) == 1:
+                                    outFilter = 'Clear'
+                                outRow = [outVolume, outCompositeId, outCenterId, outFilter]
+                                if debug: print 'outrow',outRow
+                                writer.writerow(outRow)
                             buffer = [[],[],[],[],[],[],[]]
                             circbuffers[bufferKey] = buffer
                             

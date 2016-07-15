@@ -163,10 +163,10 @@ def buildMovies(bwOrColor):
     # pathSystem, pathCraft, pathTarget, pathCamera = parts
     # pathSystem, pathCraft, pathTarget, pathCamera = [None,None,None,None]
     
-    #. need to remove any existing folders here
+    #. need to remove any existing folders
 
-    # makeLinks(bwOrColor)
-    # renameFilesSequentially()
+    makeLinks(bwOrColor)
+    renameFilesSequentially()
     makeMovies()
     
 

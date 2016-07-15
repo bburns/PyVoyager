@@ -27,7 +27,7 @@ edgesfolder = testfolder + 'edges/'
 maxerror = 2
 
 # read in small csv file
-results = lib.readCsv(testfolder + '_testfiles.csv')
+results = lib.readCsv('testfiles.csv')
 
 ntestsok = 0
 ntests = len(results)

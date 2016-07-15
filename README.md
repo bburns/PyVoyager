@@ -6,7 +6,7 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per tar volume, with 87 volumes in total, so there is a lot to explore! 
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per tar volume, with 87 volumes in total, so there is a lot to explore. 
 
 
 Example Movies
@@ -80,9 +80,9 @@ Colorize the images
 
     > vg composites 5101
 
-Then make movies of all the downloaded datasets, organized by planet/spacecraft/target/camera
+Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera
 
-    > vg movies
+    > vg movies bw|color
 
 
 How it works
@@ -101,11 +101,42 @@ The data for each step is put into the following folders in the 'data' subfolder
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
 
-Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED. RAW images are just that, and are 800x800 pixels, and include the reseau marks (the grid of dots) used for calibration. CLEANED images have had the reseau marks removed, but leave noticeable artifacts that look like volcanoes on the limbs of planets. CALIB images have had dark images subtracted from the CLEANED images, and GEOMED are the CALIB images geometrically corrected and projected to 1000x1000 pixels. Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used. 
+Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
-After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on a Hough circle detection algorithm. This works for most cases, but there is still noticeable jitter and frames where it doesn't work very well, so this has room for improvement.
+- RAW images are the least processed images available - they're 800x800 pixels, and include the reseau marks (the grid of dots) used for calibration.
+- CLEANED images have had the reseau marks removed, but leave noticeable artifacts that look like volcanoes on the limbs of planets.
+- CALIB images have had dark images subtracted from the CLEANED images, and
+- GEOMED are the CALIB images geometrically corrected and projected to 1000x1000 pixels.
 
-The volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
+Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
+
+After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on blob detection and Hough circle detection. This works for most cases, but there is still some jitter on frames where it doesn't work very well, so this has room for improvement.
+
+There are several cases that need to be handled:
+
+1. small/point-like targets
+2. 'normal' full-circle targets
+3. targets with gaps
+4. targets with centers outside of the image
+5. crescents
+6. targets larger than the field of view
+
+The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 12x12 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
+
+But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment. 
+
+Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file db/centering.csv is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this - 
+
+    planetCraftTargetCamera,centeringOff,centeringOn
+    NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
+    NeptuneVoyager2NeptuneWide,C1137509,C1140815
+    NeptuneVoyager2TritonNarrow,C1139255,C1140614
+
+This table is also used to tell the movie creation step to slow down the frames at closest approach.
+
+The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach. 
+
+The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (db/files.csv) looks like this:
 
     volume,fileid,phase,craft,target,time,instrument,filter,note
     5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
@@ -124,7 +155,7 @@ This list of files has been compiled into a list of composite frames to build us
 
 This file is used by the `vg composites <volume>` command to generate the color frames. 
 
-The movies are generated with the `vg movies <targets>` command, which links all the images (either B&W or composites, currently set in code) into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
+The movies are generated with the `vg movies bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
 
 That's about it!
 
@@ -132,23 +163,23 @@ That's about it!
 Next steps
 ----------------------------------------
 
-* Improve stabilization/centering routines - use blob detection for small circles (and crescents?), Hough otherwise
-* Improve color frame detection and rendering routines - could borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, eg orange, other ideas? 
-* Detect full-frame views and don't try to center them - might need to provide manual annotation for this, or base it on closest approach times
-* Slow down the movie at closest approach - base on closest approach times
+* Improve stabilization/centering routines - handle off-screen centers and crescents
+* Improve color frame detection and rendering routines - could borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, eg orange
 * Add titles to each target movie
 * Combine movie segments into single movie, adding audio
-* Option to make b&w movies using one filter, to reduce flickering
 * Build mosaics with hand-annotated information, include in movies
-* Split centering step into two phases - detect center and offset, and apply offset to possibly different image type
-* Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
 * Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Host PNG images somewhere for download
+* Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
+* Option to make b&w movies using one filter, to reduce flickering
 
 
 Version 0.3
 ----------------------------------------
-- Include default centering information in centers<volume>.csv files
+- Better small/point-like detection with blob detector below 12x12 pixels, before Hough circle detector used
+- Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
+- Fix bug in `vg init composites` command which threw some color frames off
+
 
 
 Version 0.2 (2016-07-12)

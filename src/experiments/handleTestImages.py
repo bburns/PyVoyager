@@ -1,10 +1,9 @@
 
+# copy badly centered images to a folder somewhere (desktop/foo)
 
-# copy badly centered images to a folder somewhere
 # then run grabTestImages to gather the original images and add them to the test folder
 # then clear the foo folder
-# then move well-centered images to foo folder
-# then run removeTestImages to remove the corresponding images from the test folder
+
 
 import os
 import csv
@@ -13,14 +12,15 @@ import sys; sys.path.append('..') # so can import from main src folder
 import config
 
 
-os.chdir('../..')
-
 tempFolder = 'c:/users/bburns/desktop/foo'
 testfolder = config.testFolder
+
+os.chdir('../..')
 
 
 def getVolume(fileId):
     "get volume associated with the given file id"
+    # slow linear search but ok for this task
     f = open(config.filesdb,'rt')
     reader = csv.reader(f)
     i = 0
@@ -30,7 +30,7 @@ def getVolume(fileId):
             fields = row
         else:
             if fileId==row[config.filesColFileId]:
-                vol = row[config.filesColVolume]
+                vol = row[config.filesColVolume] # eg 5101
                 break
         i+=1
     f.close()            
@@ -46,19 +46,19 @@ def grabTestImages():
         for filename in files:
             # print filename
             ext = filename[-4:]
-            if ext=='.PNG' or ext=='.png':
-                # print filename # eg centered_C1164724_RAW_CLEAR.PNG
-                origname = filename[9:]
-                print origname
+            if ext=='.png':
+                # print filename # eg centered_C1164724_RAW_Clear.png
+                origname = filename[9:] # eg C1164724_RAW_Clear.png
+                # print origname
                 # now what volume did it come from?
                 # need to look it up in files.csv
-                fileId = origname[:8]
-                print fileId
-                vol = getVolume(fileId)
-                print vol
+                fileId = origname[:8] # eg C1164724
+                # print fileId
+                vol = getVolume(fileId) # eg 5101
+                # print vol
                 origfolder = config.imagesFolder
-                origpath = origfolder + '/' + vol + '/' + origname
-                print origpath
+                origpath = origfolder + 'VGISS_' + vol + '/' + origname
+                # print origpath
 
                 cmd = "cp " + origpath + " " + testfolder
                 print cmd

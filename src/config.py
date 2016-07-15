@@ -141,7 +141,8 @@ targetsFolder    = onlineFolder  + "/step7_targets/"
 moviesFolder     = onlineFolder  + "/step8_movies/"
 
 # test images go here
-testFolder    = 'data/step3_images/test/'
+# testFolder    = 'data/step3_images/test/'
+testFolder    = 'test/images/'
 
 # database folder
 dbFolder = 'db/'

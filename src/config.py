@@ -110,17 +110,15 @@ compositesPrefix = 'composite_'
 # movies
 # ----------------------------------------
 
-# use slow frame rate for first dataset
-# switch to higher rate at frame 242 of set 5103
-frameRate = 5 # fps
-# frameRate = 10 # fps
-# frameRate = 15 # fps
-# frameRate = 20 # fps
-# frameRate = 30 # fps
-
 movieFilespec = 'img%05d.png'
 
+# movieFrameRate = 5 # nowork - gets stuck after a bit
+# movieFrameRate = 10 # fps
+movieFrameRate = 15 # fps
+# movieFrameRate = 20 # fps
+# movieFrameRate = 30 # fps
 
+moviesFramesForSlowParts = 5
 
 
 # files and folders

@@ -65,7 +65,8 @@ def pngsToMp4(folder, filenamePattern, outputFilename, frameRate):
     os.chdir(folder)
     # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
     # cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
-    cmd = 'ffmpeg -y -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
+    # cmd = 'ffmpeg -y -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
+    cmd = 'ffmpeg -y -v 0 -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
     print cmd
     os.system(cmd)
 

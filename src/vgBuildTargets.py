@@ -9,7 +9,7 @@ import csv
 import config
 import lib
 
-from vgBuildCenters import buildCenters
+import vgBuildCenters
 
 
 # def buildTargets(targetPath):
@@ -29,10 +29,12 @@ def buildTargets(volnum):
     # if target path matches row,
     # copy that image to target subfolder
     
-    volid = lib.getVolumeTitle(volnum) # eg VGISS_5101
+    # volid = lib.getVolumeTitle(volnum) # eg VGISS_5101
+    
+    volnum = str(volnum)
     
     # center the volume, if not already there
-    buildCenters(volnum)
+    vgBuildCenters.buildCenters(volnum)
     
     f = open(config.filesdb, 'rt')
     i = 0
@@ -42,18 +44,19 @@ def buildTargets(volnum):
             fields = row
         else:
             volume = row[config.filesColVolume]
-            if volume==volid:
+            # if volume==volid:
+            if volume==volnum:
                 fileid = row[config.filesColFileId]
                 filter = row[config.filesColFilter]
 
                 # get subfolder, eg data/step3_centers/VGISS_5101
-                centersSubfolder = config.centersFolder + '/' + volume
+                centersSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
 
                 # get source filename and path
-                # eg centered_C1327321_RAW_ORANGE.PNG
-                # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.PNG' 
-                centeredpath = centersSubfolder + '/' + centeredfilename
+                # eg centered_C1327321_RAW_Orange.png
+                # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.png' 
+                centeredpath = centersSubfolder + centeredfilename
                 
                 # if file exists, create subfolder and copy/link image
                 if os.path.isfile(centeredpath):
@@ -63,11 +66,11 @@ def buildTargets(volnum):
                     craft = row[config.filesColCraft]
                     target = row[config.filesColTarget]
                     instrument = row[config.filesColInstrument]
-                    subfolder = phase +'/' + craft + '/' + target +'/' + instrument 
+                    subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
                     # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetfolder = config.targetsFolder + '/' + subfolder
-                    targetpath = targetfolder + '/' + centeredfilename
+                    targetfolder = config.targetsFolder + subfolder + '/'
+                    targetpath = targetfolder + centeredfilename
 
                     # skip if file already exists (to save time on copying)
                     if True:
@@ -95,4 +98,10 @@ def buildTargets(volnum):
         i += 1
 
     f.close()
+
+
+if __name__ == '__main__':
+    os.chdir('..')
+    buildTargets(8201)
+    print 'done'
     

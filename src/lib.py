@@ -13,6 +13,44 @@ import csv
 import config
 
 
+
+def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
+    ""
+    
+    font = ImageFont.truetype(config.titleFont, config.titleFontsize)
+
+    imgsize = (800,800)
+    bgcolor = (0,0,0)
+    fgcolor = (200,200,200)
+    pos = (200,300)
+
+    img = Image.new("RGBA", imgsize, bgcolor)
+    draw = ImageDraw.Draw(img)
+
+    s = title
+    draw.text(pos, s, fgcolor, font=font)
+    w,h = font.getsize(s)
+    # print w,h # 207,53
+
+    pos = (pos[0],pos[1]+h*1.5)
+    s = subtitle
+    fgcolor = (120,120,120)
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = (pos[0],pos[1]+h)
+    s = subtitle2
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = (pos[0],pos[1]+h)
+    s = subtitle3
+    draw.text(pos, s, fgcolor, font=font)
+
+    draw = ImageDraw.Draw(img)
+    # img.save("a_test.png")
+    return img
+
+    
+
 def readCsv(filename):
     "read a csv file into a dict of dicts. first column is key. use on small files only."
     # comments or blank lines are skipped

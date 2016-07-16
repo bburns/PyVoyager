@@ -101,12 +101,19 @@ drawCircles = False # draw all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 
 
-
 # composites
 # ----------------------------------------
 
 # prefix for composite filenames
 compositesPrefix = 'composite_'
+
+
+# titles
+# ----------------------------------------
+
+titleFont = "c:/windows/fonts/!futura-light.ttf"
+titleFontsize = 48
+
 
 
 # movies

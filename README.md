@@ -16,6 +16,10 @@ Example Movies
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks). 
 
+
+https://www.youtube.com/watch?v=kcJB9rNzCH4  
+Voyager 2 Triton flyby v0.32
+
 https://www.youtube.com/watch?v=VF3UCo2P-4Y  
 Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
 
@@ -38,13 +42,15 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Colorize frames by combining images, where possible, using **OpenCV**
 * [Build mosaics from images with hand-annotated information - lots of work though]
 * Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
-* Make movies from previous step [and add titles and music] using **ffmpeg** [7] and **Pillow** [8]
+* Make movies from previous step and add titles [and music] using **ffmpeg** [7] and **Pillow** [8]
 
 
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], and **ffmpeg** [7]. 
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], and **ffmpeg** [7]. 
+
+I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**.
 
 
 Compatibility
@@ -242,7 +248,7 @@ Version 0.32 (2016-07-16)
 - Handle relabelling of multitarget images, eg a file may be labelled Titan but it gets centered on Neptune
 - Add titles for each movie segment
 
-Made better Triton flyby movie
+Made Triton flyby movie
 
 Version 0.31 (2016-07-16)
 ----------------------------------------
@@ -293,3 +299,4 @@ This software is released under the MIT license - see LICENSE.md.
 [6]: http://matplotlib.org/
 [7]: https://ffmpeg.org/
 [8]: https://python-pillow.org/
+[9]: https://www.continuum.io/downloads

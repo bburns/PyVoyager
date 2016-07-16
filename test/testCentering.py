@@ -14,16 +14,18 @@ import lib
 import libimg
 
 
-# config.drawBlob = True
-# config.drawCircle = True
-# config.drawCircles = True
+config.drawBinaryImage = True
+config.drawBoundingBox = True
+config.drawEdges = True
+config.drawCircles = True
+config.drawCircle = True
 config.drawCrosshairs = True
-
 
 testfolder = 'images/'
 centeredfolder = testfolder + 'centered/'
 thresholdedfolder = testfolder + 'thresholded/'
 edgesfolder = testfolder + 'edges/'
+debugfolder = testfolder + 'debug/'
 maxerror = 2
 
 # read in small csv file
@@ -41,7 +43,8 @@ for fileid in fileids:
     edgesfile = edgesfolder + fileid + '.png'
     
     # any experimenting should be done in this routine
-    boundingBox = libimg.adjustImageFile(infile, centeredfile)
+    debugtitle = debugfolder + fileid
+    boundingBox = libimg.adjustImageFile(infile, centeredfile, True, debugtitle)
     x1,y1,x2,y2 = boundingBox
 
     # get binarization images (used by blob detector)

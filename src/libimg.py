@@ -38,7 +38,8 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     
 
 # def centerImageFile(infile, outfile):
-def adjustImageFile(infile, outfile, docenter=True):
+# def adjustImageFile(infile, outfile, docenter=True):
+def adjustImageFile(infile, outfile, docenter=True, debugtitle=None):
     "Adjust and optionally center the given image file on a target and save it to outfile."
     # if docenter True, do everything but the centering step
     
@@ -53,7 +54,8 @@ def adjustImageFile(infile, outfile, docenter=True):
     
     if docenter:
         # find the bounding box of biggest object
-        boundingBox = findBoundingBox(im)
+        # boundingBox = findBoundingBox(im)
+        boundingBox = findBoundingBox(im, debugtitle)
 
         # center the image on the target
         im = centerImage(im, boundingBox)
@@ -165,9 +167,15 @@ def drawBoundingBox(im, boundingBox):
     "draw a box on image"
     
     [x1,y1,x2,y2] = boundingBox
-    # imBox = np.copy(im)
-    # cv2.rectangle(imBox, (y1,x1), (y2,x2), (0,255,0), 2)
-    cv2.rectangle(im, (y1,x1), (y2,x2), (0,255,0), 2)
+    imbox = np.copy(im)
+    imbox = cv2.cvtColor(imbox, cv2.COLOR_GRAY2RGB)
+    cv2.rectangle(imbox, (y1,x1), (y2,x2), (255,0,0), 2)
+    return imbox
+
+    # cv2.rectangle(im, (y1,x1), (y2,x2), (0,255,0), 2)
+    
+    # im = im.copy() # rect gives error otherwise
+    # cv2.rectangle(im, (y1,x1), (y2,x2), 1)
     
     # c = 0.5
     # imBox[x1:x2,y1] = c
@@ -187,7 +195,8 @@ def drawBoundingBox(im, boundingBox):
     # return imBox
 
     
-def findCircle(im):
+# def findCircle(im):
+def findCircle(im, debugtitle=None):
     "Find best circle in given image, return as (x,y,r)"
 
     # internally the HoughCircles function calls the Canny edge detector
@@ -266,16 +275,24 @@ def findCircle(im):
     maxRadius=10
     
     circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
+
+    if config.drawEdges:
+        upper = config.cannyUpperThreshold
+        lower = upper / 2
+        imedges = cv2.Canny(im, lower, upper)
+        cv2.imwrite(debugtitle + '_cannyedges.png', imedges)
     
     # if circles: # nowork in python
     if type(circles) != type(None):
         circles = circles[0,:] # extract array
         circle = circles[0]
         circle = np.round(circle).astype('int') # round all values to ints
-        # if config.drawCircle:
-            # im = gray2rgb(im)
-            # drawCircle(im, circle)
+        if config.drawCircle:
+            im = gray2rgb(im)
+            drawCircle(im, circle)
             # show(im)
+            # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+            cv2.imwrite(debugtitle + '_circles.png', im)
     else:
         circle = None
     return circle
@@ -308,9 +325,11 @@ def centerImage(im, boundingBox):
     return imcrop
 
 
-def findBoundingBoxByCircle(im):
+# def findBoundingBoxByCircle(im):
+def findBoundingBoxByCircle(im, debugtitle=None):
     "Find the bounding box enclosing the best circle in image and return it."
-    circle = findCircle(im)
+    # circle = findCircle(im)
+    circle = findCircle(im, debugtitle)
     if type(circle) != type(None):
         # note: x and y are reversed (rows given first)
         (x,y,r) = circle        
@@ -332,7 +351,8 @@ def findBoundingBoxByCircle(im):
     return boundingBox
 
 
-def findBoundingBoxByBlob(im, blobThreshold):
+# def findBoundingBoxByBlob(im, blobThreshold):
+def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
     
     # threshold to binary image
@@ -341,30 +361,37 @@ def findBoundingBoxByBlob(im, blobThreshold):
     # find and label blob objects
     labels, nobjs = ndimage.measurements.label(b) 
     
+    if config.drawBinaryImage:
+        b = cv2.normalize(b, None, 0, 255, cv2.NORM_MINMAX)
+        cv2.imwrite(debugtitle + '_binaryimage.png', b)
+        
     # find position of objects - index is 0-based
     blobs = ndimage.find_objects(labels)
+    
+    # by default, if no blobs just return the whole image
+    x1 = 0
+    x2 = im.shape[1] - 1
+    y1 = 0
+    y2 = im.shape[0] - 1
     
     # find largest object, if any
     if len(blobs)>0:
         areamax = 0
+        largestblob = None
         for blob in blobs:
             width = blob[0].stop - blob[0].start
             height = blob[1].stop - blob[1].start
             area = width * height
-            if area > areamax:
+            # check for min width and height so don't pick up edge artifacts
+            if area>areamax and width>1 and height>1:
                 areamax = area
                 largestblob = blob
         # get bounding box
-        x1 = largestblob[0].start
-        x2 = largestblob[0].stop
-        y1 = largestblob[1].start
-        y2 = largestblob[1].stop
-    else:
-        # if no blobs just return the whole image
-        x1 = 0
-        x2 = im.shape[1] - 1
-        y1 = 0
-        y2 = im.shape[0] - 1
+        if largestblob:
+            x1 = largestblob[0].start
+            x2 = largestblob[0].stop
+            y1 = largestblob[1].start
+            y2 = largestblob[1].stop
         
     boundingBox = [x1,y1,x2,y2]
 
@@ -375,27 +402,37 @@ def findBoundingBoxByBlob(im, blobThreshold):
     #     drawBoundingBox(b, boundingBox)
     #     show(b, 'findblobs th=' + str(blobThreshold))
     
-    # if config.drawBlob:
+    if config.drawBoundingBox:
         # drawBoundingBox(im, boundingBox)
+        imbox = drawBoundingBox(im, boundingBox)
+        imbox = cv2.normalize(imbox, None, 0, 255, cv2.NORM_MINMAX)
+        cv2.imwrite(debugtitle + '_blobboundingbox.png', imbox)
+        # show(imbox)
+        
         
     return boundingBox
 
 
-def findBoundingBox(im):
+# def findBoundingBox(im):
+def findBoundingBox(im, debugtitle=None):
     "find bounding box returns [x1,y1,x2,y2]"
+    # if debugtitle: print 'find bounding box for', debugtitle
     # looks for a small blob, then a large hough circle
     #. do a pre-canny step? 
     # upper = 200
     # lower = 100
     # im = cv2.Canny(im, lower, upper)
-    boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
+    # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
+    boundingBox = findBoundingBoxByBlob(im, config.blobThreshold, debugtitle)
     [x1,y1,x2,y2] = boundingBox
     # if box is > some size, try looking for a circle
     width = x2 - x1
     height = y2 - y1
     area = width*height
+    # if debugtitle: print 'area',area
     if area>config.blobAreaCutoff: # eg 10*10 pixels
-        boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
+        # boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
+        boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
     return boundingBox
 
 

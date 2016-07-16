@@ -69,13 +69,16 @@ centerMethod = 'all'
 # level from 0.0-1.0 at which to take binary threshold for blob detection
 # blobThreshold = 0.05
 # blobThreshold = 0.025 
-# blobThreshold = 0.015
-blobThreshold = 0.012 # (* 255 0.012)=3 # better hope those darks are really dark... and they are
+blobThreshold = 0.015
+# blobThreshold = 0.012 # (* 255 0.012)=3 # works for most, but small triton, which has light corners
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles
 # blobAreaCutoff = 10*10 # missed some small but sharp circles
-blobAreaCutoff = 14*14
+# blobAreaCutoff = 14*14 # missed triton small but clear
+# blobAreaCutoff = 20*20
+# blobAreaCutoff = 24*24
+blobAreaCutoff = 30*30
 
 # used by hough circle detection - lower threshold is half of this
 # if this is too high then dim circles won't be detected
@@ -84,8 +87,8 @@ blobAreaCutoff = 14*14
 # cannyUpperThreshold = 200
 # the CALIB images are usually very dim
 # trying to get it to recognize dim jupiters at the edges
-cannyUpperThreshold = 100
-# cannyUpperThreshold = 60
+# cannyUpperThreshold = 100
+cannyUpperThreshold = 60
 # no dice - the canny edges start proliferating too much, and still the jupiter edge cases aren't picked up
 
 # prefix for centered filenames
@@ -95,7 +98,9 @@ centersPrefix = 'centered_'
 rotateImage = True
 
 # debugging image options during centering step
-drawBlob = False # draw bounding box around biggest blob
+drawBinaryImage = False # save thresholded image
+drawBoundingBox = False # draw bounding box around biggest blob
+drawEdges = False # save canny edges image ~ used by hough circle detector
 drawCircle = False # draw best detected hough circle
 drawCircles = False # draw all detected hough circles
 drawCrosshairs = False # draw crosshairs on image

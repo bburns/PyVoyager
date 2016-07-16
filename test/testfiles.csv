@@ -4,30 +4,31 @@ blurred,413,409,455,451
 bright,289,411,547,669
 brightsmall,384,380,394,391
 crescentdim,278,160,502,384
-crescentfat
+crescentfat,255, 345, 353, 443
 crescentsharp,250,138,734,622
 crescentsmall,369,351,439,421
-crescentthin
+crescentthin,182, 206, 678, 702
 dim,459,317,705,563
 dim2,324,384,576,636
+dimdimneptune
 dimjupiter,455,183,721,449
 dimneptune,339,455,385,501
 dimneptune2
-dimdimneptune
 edge1
 edge2
 gap,355,393,609,647
 giant,-51,-61,799,789
-largeclear
+largeclear,87, -3, 705, 615
 limb
-oblong
+oblong,354,28,394,68
 okayish,394,472,438,516
 point,417,416,421,421
 simple,644,410,672,438
 smallfaint,386,381,394,390
 smallsharp,512,358,525,371
 triton
-triton2
-triton3
+triton2,107, 375, 145, 413
+triton3,267, 167, 485, 385
+tritonsmall,519,71,533,84
 veryfaint,339,455,385,501
 

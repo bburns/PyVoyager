@@ -134,6 +134,7 @@ There are several cases that need to be handled:
 4. targets with centers outside of the image
 5. crescents
 6. targets larger than the field of view
+7. edge defects which the blob detector picks up need to be ignored
 
 The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 12x12 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
 
@@ -196,8 +197,9 @@ Version 0.3
 ----------------------------------------
 - Better small/point-like detection with blob detector below 12x12 pixels, before Hough circle detector used
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
+- Faster movie creation
 
-Made incrementally better movies for Neptune flyby, both b&w and color. 
+Made slightly better movies for Neptune flyby, both b&w and color, incl Triton. 
 
 
 Version 0.2 (2016-07-12)

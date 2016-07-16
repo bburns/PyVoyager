@@ -12,3 +12,4 @@ old/
 test/images/centered
 test/images/thresholded
 test/images/edges
+test/images/debug/

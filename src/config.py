@@ -124,39 +124,47 @@ titleFontsize = 48
 # movies
 # ----------------------------------------
 
+# filename used for movie frames
 movieFilespec = 'img%05d.png'
 
+# frame rate - frames per second
+#. need to set this per target
 # movieFrameRate = 5 # nowork - gets stuck after a bit
-movieFrameRate = 12 # fps
-# movieFrameRate = 15 # fps
-# movieFrameRate = 20 # fps
-# movieFrameRate = 30 # fps
+movieFrameRate = 12 # good for triton flyby
+# movieFrameRate = 15
+# movieFrameRate = 20
+# movieFrameRate = 30
 
 # number of duplicate frames to include for slow parts of movie
-movieFramesForSlowParts = 5
+# movieFramesForSlowParts = 5
+movieFramesForSlowParts = 8
+
+# number of frames for title page
+movieFramesForTitles = movieFrameRate * 5
+
 
 
 # files and folders
 # ----------------------------------------
 
-# all folders should end with /
+# convention: all folders should end with /
 
 # folders for data and images
 # use offline folder for large datasets (multi gigabyte)
-onlineFolder  = "data"
-offlineFolder = "data" #. will be f:/...
+onlineFolder  = "data/"
+offlineFolder = "data/" # e.g. could be f:/...
 
-downloadFolder   = offlineFolder + "/step1_downloads/"
-unzipFolder      = offlineFolder + "/step2_unzips/"
-imagesFolder     = onlineFolder  + "/step3_images/"
-centersFolder    = onlineFolder  + "/step4_centers/"
-compositesFolder = onlineFolder  + "/step5_composites/"
-mosaicsFolder    = onlineFolder  + "/step6_mosaics/"
-targetsFolder    = onlineFolder  + "/step7_targets/"
-moviesFolder     = onlineFolder  + "/step8_movies/"
+downloadFolder   = offlineFolder + "step1_downloads/"
+unzipFolder      = offlineFolder + "step2_unzips/"
+imagesFolder     = onlineFolder  + "step3_images/"
+centersFolder    = onlineFolder  + "step4_centers/"
+compositesFolder = onlineFolder  + "step5_composites/"
+mosaicsFolder    = onlineFolder  + "step6_mosaics/"
+targetsFolder    = onlineFolder  + "step7_targets/"
+titlesFolder    = onlineFolder  + "step8_titles/"
+moviesFolder     = onlineFolder  + "step9_movies/"
 
 # test images go here
-# testFolder    = 'data/step3_images/test/'
 testFolder    = 'test/images/'
 
 # database folder

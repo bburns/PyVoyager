@@ -2,7 +2,7 @@
 # build movies associated with target subfolders,
 # eg Jupiter/Voyager1/Io/Narrow
 
-# this must be run in an admin console
+# this must be run in an admin console because mklink requires elevated priveleges
 
 
 #. see also, which remove
@@ -15,6 +15,9 @@ import os.path
 
 import config
 import lib
+
+import vgBuildTitles
+
 
 
 def makeMovies():
@@ -52,11 +55,18 @@ def makeLinks(bwOrColor, pathparts):
     
     print 'making links from source files'
     
+    # what does the user want to focus on?
     pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     
+    # read some small dbs into memory
     centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
+    multitargetInfo = lib.readCsv('db/multitargetImages.csv') # get dictionary of dictionaries
     
+    # keep track of number of files in each target subfolder, so can number files appropriately
     nfilesInTargetDir = {}
+    
+    # keep track of which targetpaths we've seen, so know to add titles
+    targetpathsSeen = {}
     
     # iterate through all available images
     f = open(config.filesdb, 'rt')
@@ -95,13 +105,21 @@ def makeLinks(bwOrColor, pathparts):
                 target = row[config.filesColTarget]
                 camera = row[config.filesColInstrument]
                 
+                # relabel target field if necessary - see db/multitargetImages.csv for more info
+                targetInfo = multitargetInfo.get(fileId)
+                if targetInfo:
+                    # make sure old target matches what we have
+                    if targetInfo['oldTarget']==target:
+                        target = targetInfo['newTarget']
+                
+                # is this an image the user wants to see?
                 do = True
                 if (pathSystem and pathSystem!=system): do = False
                 if (pathCraft and pathCraft!=craft): do = False
                 if (pathTarget and pathTarget!=target): do = False
                 if (pathCamera and pathCamera!=camera): do = False
-                
                 if do:
+                    
                     # get the centering info, if any, to see if we should slow down here.
                     # info includes planetCraftTargetCamera,centeringOff,centeringOn
                     planetCraftTargetCamera = system + craft + target + camera
@@ -110,7 +128,9 @@ def makeLinks(bwOrColor, pathparts):
                     if info:
                         centeringOff = info['centeringOff']
                         centeringOn = info['centeringOn']
-                        goSlow = fileId>=centeringOff and fileId<centeringOn
+                        goSlow = (fileId>=centeringOff) and (fileId<centeringOn)
+
+                    # number of copies of this file to link
                     ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
 
                     # get subfolder and make sure it exists
@@ -121,13 +141,23 @@ def makeLinks(bwOrColor, pathparts):
 
                     # get current file number in that folder, or start at 0
                     nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
-                    if not nfile:
-                        nfile = 0
+                    if not nfile: nfile = 0
 
+                    # if we haven't seen this subfolder before, add the titlepage image a few times.
+                    # titlepages are created in the previous step, vgBuildTitles.
+                    seen = targetpathsSeen.get(planetCraftTargetCamera)
+                    if not seen:
+                        targetpathsSeen[planetCraftTargetCamera] = True
+                        titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
+                        titleimagepathrelative = '../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
+                        ncopies = config.movieFramesForTitles
+                        makeLink(targetfolder, titleimagepathrelative, nfile, ncopies)
+                        nfile += ncopies
+                    
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
                     # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                    pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir
+                    pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
                     makeLink(targetfolder, pngpathrelative, nfile, ncopies)
 
                     # increment the file number for the target folder
@@ -137,33 +167,30 @@ def makeLinks(bwOrColor, pathparts):
         i += 1
 
     f.close()
-    # print
 
 
+    
 def buildMovies(bwOrColor, targetPath=None):
     "build bw or color movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
     # eg buildMovies("Jupiter")
-
-    #. for now say they're all on
-    pathparts = targetPath.split('/')
-    while len(pathparts)<4:
-        pathparts.append('')
-    # trim,convert blanks to None
-    pathparts = [pathpart.strip() for pathpart in pathparts]
-    pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
-    print pathparts
-    pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     
-    #. need to remove any existing folders first
-
+    # make sure we have some titles
+    vgBuildTitles.buildTitles(targetPath)
+    
+    # pathparts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    pathparts = lib.parseTargetPath(targetPath)
+    
+    #.. need to remove any existing folders first
+    
     makeLinks(bwOrColor, pathparts)
     makeMovies()
     
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildMovies('bw', 'Jupiter/Voyager1/Io/Narrow')
-    buildMovies('bw', '//Triton')
+    print lib.parseTargetPath('')
+    # buildMovies('bw', 'Jupiter/Voyager1/Io/Narrow')
+    # buildMovies('bw', '//Triton')
     # buildMovies("Neptune")
     # makeLinks()
     print 'done'

@@ -1,0 +1,47 @@
+
+# handle multitarget images here - 
+# can remap old target to new target, eg
+# if the TARGET field says Io but Jupiter is what the frame gets centered on, can say
+# 5101,C72222,Io,Jupiter,0,0
+# and in future should be able to add a record to include the frame in the Io movie as well,
+# with appropriate x,y offsets to center the image on it
+# 5101,C72222a,Io,Io,245,89
+# and add more records if there are more targets in the image
+
+# note that oldTarget is not strictly necessary for retargeting info, 
+# but it's here for context - it's double checked on generating a movie.
+
+# x,y are not used yet
+
+imageId,oldTarget,newTarget,x,y
+C0903842,Triton,Neptune
+C0905525,Triton,Neptune
+C0906319,Triton,Neptune
+C0908647,Triton,Neptune
+C0910445,Triton,Neptune
+C0920723,Triton,Neptune
+C0922714,Triton,Neptune
+C0923624,Triton,Neptune
+C0925305,Triton,Neptune
+C0928425,Triton,Neptune
+C0930229,Triton,Neptune
+C0938610,Triton,Neptune
+C0939608,Triton,Neptune
+C0941719,Triton,Neptune
+C0943518,Triton,Neptune
+C0944547,Triton,Neptune
+C0946304,Triton,Neptune
+C0958709,Triton,Neptune
+C0960454,Triton,Neptune
+C0962718,Triton,Neptune
+C0976259,Triton,Neptune
+C0977113,Triton,Neptune
+C0978338,Triton,Neptune
+C0979806,Triton,Neptune
+C0981456,Triton,Neptune
+C0995322,Triton,Neptune
+C0998625,Triton,Neptune
+C1013202,Triton,Neptune
+C1014631,Triton,Neptune
+C1034200,Triton,Neptune
+

@@ -2,11 +2,13 @@
 PyVoyager
 ========================================
 
+Version 0.32
+
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment.
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per tar volume, with 87 volumes in total, so there is a lot to explore. 
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per uncompressed volume, with 87 volumes in total, so there is a lot to explore. 
 
 
 Example Movies
@@ -80,9 +82,20 @@ Colorize the images
 
     > vg composites 5101
 
-Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera
+Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses mklink to make symbolic links, which require elevated privileges)
 
-    > vg movies bw|color
+    > vg movies bw|color [targetpath]
+
+e.g.
+
+    > vg movies bw //Triton
+
+to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
+
+    > vg movies color
+
+to generate all available color movies.
+
 
 Entering `vg` will show the available commands:
 
@@ -96,7 +109,7 @@ Entering `vg` will show the available commands:
       vg mosaics <volnumber>
       vg targets <volnumber>
       
-      vg movies bw|color <targetpath>
+      vg movies bw|color [<targetpath>]
 
     where
 
@@ -201,7 +214,7 @@ That's about it!
 Testing
 ----------------------------------------
 
-Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can throw the original into the images folder and add a record to testfiles.csv.
+Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can put the original image into the images folder and add a record to testfiles.csv.
 
 
 Issues
@@ -224,12 +237,18 @@ Next steps
 * Option to make b&w movies using one filter, to reduce flickering
 
 
+Version 0.32 (2016-07-16)
+----------------------------------------
+- Handle relabelling of multitarget images, eg a file may be labelled Titan but it gets centered on Neptune
+- Add titles for each movie segment
+
+Made better Triton flyby movie
+
 Version 0.31 (2016-07-16)
 ----------------------------------------
 - Improved Triton approach centering - blob detection was focusing on pixel-wide edge discrepancy.
-* Handle movie targets like `Neptune/Voyager2/Triton`, or just `//Triton`
+- Handle movie targets like `Neptune/Voyager2/Triton`, or just `//Triton`
 - Passing 25/31 (80%) of edge case tests
-
 
 Version 0.3 (2016-07-15)
 ----------------------------------------
@@ -238,7 +257,6 @@ Version 0.3 (2016-07-15)
 - Faster movie creation
 
 Made slightly better movies for Neptune flyby, both b&w and color, incl Triton. 
-
 
 Version 0.2 (2016-07-12)
 ----------------------------------------
@@ -249,7 +267,6 @@ Version 0.2 (2016-07-12)
 - Preliminary handling of automatic colorization of frames and movies
 
 Made rough movies for Neptune flyby from volumes 8201-8210, both b&w and color.
-
 
 Version 0.1 (2016-07-04)
 ----------------------------------------

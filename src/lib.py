@@ -9,9 +9,30 @@ import errno
 import re # for findall
 import csv
 
+# for makeTitlePage
+import PIL
+from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+
+
 #.. should pass any constants into functions!
 import config
 
+
+def parseTargetPath(targetPath):
+    "parse a target path, like 'Jupiter/Voyager1' into parts and return as an array [system,craft,target,camera], with None for unspecified parts."
+    # can take apart result with something like - 
+    # pathSystem, pathCraft, pathTarget, pathCamera = pathparts
+    pathparts = targetPath.split('/')
+    # make sure we have 4 parts, even if blank
+    while len(pathparts)<4:
+        pathparts.append('')
+    # trim,convert blanks to None
+    pathparts = [pathpart.strip() for pathpart in pathparts]
+    pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
+    # print pathparts
+    return pathparts
 
 
 def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
@@ -33,7 +54,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
     # print w,h # 207,53
 
     pos = (pos[0],pos[1]+h*1.5)
-    s = subtitle
+    s = subtitle1
     fgcolor = (120,120,120)
     draw.text(pos, s, fgcolor, font=font)
 

@@ -18,12 +18,11 @@ import vgBuildCenters
     # ie just copy ALL images available
     # [system, craft, target, camera] = targetPath.split('/')
     
-def buildTargets(volnum):
-    "copy/link images in volume to target subfolders"
+def buildTargets(volnum, targetPath=None):
+    "copy images in volume to target subfolders"
     
-    # if we make these links then will automatically update when recenter images/tweak composite colors etc
-    # same with movie frames, so would just need to do vg movie to generate corrected movie
-    # (but wouldn't work with image viewer)
+    # if we made these links they would automatically update when recenter images/tweak composite colors etc.
+    # (but links don't work with my image viewer)
     
     # iterate down files.txt
     # if target path matches row,
@@ -55,7 +54,7 @@ def buildTargets(volnum):
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
                 # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                centeredfilename = config.centersprefix + fileid + '_' + config.imageType + '_' + filter + '.png' 
+                centeredfilename = config.centersPrefix + fileid + '_' + config.imageType + '_' + filter + '.png' 
                 centeredpath = centersSubfolder + centeredfilename
                 
                 # if file exists, create subfolder and copy/link image
@@ -69,7 +68,7 @@ def buildTargets(volnum):
                     subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
                     # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetfolder = config.targetsFolder + subfolder + '/'
+                    targetfolder = config.targetsFolder + subfolder
                     targetpath = targetfolder + centeredfilename
 
                     # skip if file already exists (to save time on copying)

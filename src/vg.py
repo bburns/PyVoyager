@@ -56,14 +56,14 @@ elif cmd=="targets":
     # vgBuild.buildTargets(targetPath)
     
 elif cmd=="movies":
-    # targetPath = args.pop(0)
-    # vgBuildMovies.buildMovies(targetPath)
-    if nargs==2:
+    bwOrColor = None
+    target = None
+    if nargs>=2:
         bwOrColor = args.pop(0)
-        if bwOrColor=='bw' or bwOrColor=='color':
-            vgBuildMovies.buildMovies(bwOrColor)
-        else:
-            cmd="help"
+    if nargs==3:
+        targetpath = args.pop(0)
+    if bwOrColor=='bw' or bwOrColor=='color':
+        vgBuildMovies.buildMovies(bwOrColor, targetpath)
     else:
         cmd="help"
     
@@ -98,20 +98,37 @@ if cmd=="help":
     print "  vg targets <volnumber>"
     print
     # print "  vg movies <system>/<spacecraft>/<target>/<camera>"
-    print "  vg movies bw|color"
+    print "  vg movies bw|color [targetpath]"
     print
     # print "  vg center <centerId>"
     # print "  vg composite <compositeId>"
     # print "  vg mosaic <mosaicId>"
     # print "  vg movie <movieId>"
     # print
-    print "  vg init files"
+    # print "  vg init files"
     # print "  vg init images"
     # print "  vg init centers"
     # print "  vg init composites"
     # print "  vg init mosaics"
     # print "  vg init movies"
+    # print
+    print "where"
     print
+    print "  <volnumber>  = 5101..5120 Voyager 1 Jupiter"
+    print "                 6101..6121 Voyager 1 Saturn"
+    print "                 5201..5214 Voyager 2 Jupiter"
+    print "                 6201..6215 Voyager 2 Saturn"
+    print "                 7201..7207 Voyager 2 Uranus"
+    print "                 8201..8210 Voyager 2 Neptune"
+    print
+    print "  [targetpath] = [[system]/[spacecraft]/[target]/[camera]]"
+    print 
+    print "  [system]     = Jupiter|Saturn|Uranus|Neptune"
+    print "  [spacecraft] = Voyager1|Voyager2"
+    print "  [target]     = Jupiter|Io|Europa|, etc."
+    print "  [camera]     = Narrow|Wide"
+    print
+    
     
 
 # if __name__ == '__main__':

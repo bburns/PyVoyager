@@ -29,14 +29,14 @@ Pipeline
 
 Voyager consists of a command line interface to a pipeline of Python programs with the following steps: 
 
-* 1. Download Voyager datasets from **PDS archives** [1] 
-* 2. Extract the contents of the tar.gz archives
-* 3. Convert Voyager IMG images to PNGs using **img2png** [2]
-* 4. Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
-* 5. Colorize frames by combining images, where possible, using **OpenCV**
-* 6. [Build mosaics from images with hand-annotated information - lots of work though]
-* 7. Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
-* 8. Make movies from previous step [and add titles and music] using **ffmpeg** [7]
+* Download Voyager datasets from **PDS archives** [1] 
+* Extract the contents of the tar.gz archives
+* Convert Voyager IMG images to PNGs using **img2png** [2]
+* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
+* Colorize frames by combining images, where possible, using **OpenCV**
+* [Build mosaics from images with hand-annotated information - lots of work though]
+* Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
+* Make movies from previous step [and add titles and music] using **ffmpeg** [7] and **Pillow** [8]
 
 
 Installation
@@ -84,6 +84,37 @@ Then make b&w or color movies of all the downloaded datasets, organized by plane
 
     > vg movies bw|color
 
+Entering `vg` will show the available commands:
+
+    Voyager commands
+
+      vg download <volnumber>
+      vg unzip <volnumber>
+      vg images <volnumber>
+      vg centers <volnumber>
+      vg composites <volnumber>
+      vg mosaics <volnumber>
+      vg targets <volnumber>
+      
+      vg movies bw|color <targetpath>
+
+    where
+
+      <volnumber>  = 5101..5120 Voyager 1 Jupiter
+                     6101..6121 Voyager 1 Saturn
+                     5201..5214 Voyager 2 Jupiter
+                     6201..6215 Voyager 2 Saturn
+                     7201..7207 Voyager 2 Uranus
+                     8201..8210 Voyager 2 Neptune
+
+      <targetpath> = [system]/[spacecraft]/[target]/[camera]
+
+      [system]     = Jupiter|Saturn|Uranus|Neptune
+      [spacecraft] = Voyager1|Voyager2
+      [target]     = Jupiter|Io|Europa|, etc.
+      [camera]     = Narrow|Wide
+
+
 
 Parameters
 ----------------------------------------
@@ -91,12 +122,6 @@ Parameters
 All configuration settings are stored in `config.py` - if you run into problems with centering there are some parameters there which you can tweak, notably `blobThreshold`, `blobAreaCutoff`, and `cannyUpperThreshold`. Otherwise you can try modifying the centering algorithm in `vgBuildCenters.py` and `libimg.py`.
 
 The goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though I'm not sure how possible that will be at this point - I've only tested the routines with Neptune and some of Jupiter so far. 
-
-
-Testing
-----------------------------------------
-
-Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can throw the original into the images folder and add a record to testfiles.csv.
 
 
 How it works
@@ -173,6 +198,12 @@ The movies are generated with the `vg movies bw|color` command, which links all 
 That's about it!
 
 
+Testing
+----------------------------------------
+
+Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can throw the original into the images folder and add a record to testfiles.csv.
+
+
 Issues
 ----------------------------------------
 
@@ -185,7 +216,7 @@ Next steps
 * Add titles to each target movie
 * Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Improve stabilization/centering routines - handle off-screen centers and crescents
-* Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than just rgb, colorize target consistently, eg with a large reference view (eg nice blue neptune globe)
+* Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe)
 * Combine movie segments into single movie, adding audio
 * Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
 * Build mosaics with hand-annotated information, include in movies
@@ -193,7 +224,14 @@ Next steps
 * Option to make b&w movies using one filter, to reduce flickering
 
 
-Version 0.3
+Version 0.31 (2016-07-16)
+----------------------------------------
+- Improved Triton approach centering - blob detection was focusing on pixel-wide edge discrepancy.
+* Handle movie targets like `Neptune/Voyager2/Triton`, or just `//Triton`
+- Passing 25/31 (80%) of edge case tests
+
+
+Version 0.3 (2016-07-15)
 ----------------------------------------
 - Better small/point-like detection with blob detector below 12x12 pixels, before Hough circle detector used
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
@@ -223,6 +261,13 @@ Version 0.1 (2016-07-04)
 Made b&w movie for Jupiter approach from volumes 5104-5105. 
 
 
+License
+----------------------------------------
+
+This software is released under the MIT license - see LICENSE.md.
+
+
+
 [1]: http://pds-rings.seti.org/archives/
 [2]: http://www.mmedia.is/bjj/utils/img2png/
 [3]: https://www.scipy.org/
@@ -230,4 +275,4 @@ Made b&w movie for Jupiter approach from volumes 5104-5105.
 [5]: http://www.numpy.org/
 [6]: http://matplotlib.org/
 [7]: https://ffmpeg.org/
-
+[8]: https://python-pillow.org/

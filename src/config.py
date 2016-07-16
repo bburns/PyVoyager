@@ -127,8 +127,8 @@ titleFontsize = 48
 movieFilespec = 'img%05d.png'
 
 # movieFrameRate = 5 # nowork - gets stuck after a bit
-# movieFrameRate = 10 # fps
-movieFrameRate = 15 # fps
+movieFrameRate = 12 # fps
+# movieFrameRate = 15 # fps
 # movieFrameRate = 20 # fps
 # movieFrameRate = 30 # fps
 

@@ -37,6 +37,7 @@ def makeMovies():
 
 def makeLink(targetfolder, sourcepath, nfile, ncopies):
     "make ncopies of symbolic link from the source to the target file, starting with number nfile"
+    # this requires running vg from an admin console
     for i in range(ncopies):
         n = nfile + i
         targetpath2 = targetfolder + config.movieFilespec % n # eg 'img00001.png'
@@ -46,10 +47,12 @@ def makeLink(targetfolder, sourcepath, nfile, ncopies):
         os.system(cmd)
 
 
-def makeLinks(bwOrColor):
-    "make links from source files (centers or composites or mosaics) to movies folders"
+def makeLinks(bwOrColor, pathparts):
+    "make links from source files (centers or composites) to movies folders"
     
     print 'making links from source files'
+    
+    pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     
     centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
     
@@ -70,10 +73,6 @@ def makeLinks(bwOrColor):
             fileId = row[config.filesColFileId]
             filter = row[config.filesColFilter]
 
-            if volume!=lastVolume:
-                print 'volume', volume
-                lastVolume = volume
-                
             # get sourcepath
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
             if bwOrColor=='bw':
@@ -87,44 +86,53 @@ def makeLinks(bwOrColor):
             # if file exists, create subfolder and link image
             if os.path.isfile(pngpath):
 
+                if volume!=lastVolume:
+                    print 'volume', volume
+                    lastVolume = volume
+
                 system = row[config.filesColPhase]
                 craft = row[config.filesColCraft]
                 target = row[config.filesColTarget]
                 camera = row[config.filesColInstrument]
                 
-                # get the centering info, if any, to see if we should slow down here.
-                # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                planetCraftTargetCamera = system + craft + target + camera
-                info = centeringInfo.get(planetCraftTargetCamera)
-                goSlow = False
-                if info:
-                    centeringOff = info['centeringOff']
-                    centeringOn = info['centeringOn']
-                    goSlow = fileId>=centeringOff and fileId<centeringOn
-                ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
-
-                # get subfolder and make sure it exists
-                # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
-                subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
-                targetfolder = config.moviesFolder + subfolder
-                lib.mkdir_p(targetfolder)
-
-                # get current file number in that folder
-                nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
-                if nfile:
-                    pass
-                else:
-                    nfile = 0
+                do = True
+                if (pathSystem and pathSystem!=system): do = False
+                if (pathCraft and pathCraft!=craft): do = False
+                if (pathTarget and pathTarget!=target): do = False
+                if (pathCamera and pathCamera!=camera): do = False
                 
-                # link to file
-                # note: mklink requires admin privileges, so must run this script in an admin console
-                # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir
-                makeLink(targetfolder, pngpathrelative, nfile, ncopies)
-                
-                # increment the file number for the target folder
-                nfile += ncopies
-                nfilesInTargetDir[planetCraftTargetCamera] = nfile
+                if do:
+                    # get the centering info, if any, to see if we should slow down here.
+                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
+                    planetCraftTargetCamera = system + craft + target + camera
+                    info = centeringInfo.get(planetCraftTargetCamera)
+                    goSlow = False
+                    if info:
+                        centeringOff = info['centeringOff']
+                        centeringOn = info['centeringOn']
+                        goSlow = fileId>=centeringOff and fileId<centeringOn
+                    ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
+
+                    # get subfolder and make sure it exists
+                    # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
+                    subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
+                    targetfolder = config.moviesFolder + subfolder
+                    lib.mkdir_p(targetfolder)
+
+                    # get current file number in that folder, or start at 0
+                    nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
+                    if not nfile:
+                        nfile = 0
+
+                    # link to file
+                    # note: mklink requires admin privileges, so must run this script in an admin console
+                    # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                    pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir
+                    makeLink(targetfolder, pngpathrelative, nfile, ncopies)
+
+                    # increment the file number for the target folder
+                    nfile += ncopies
+                    nfilesInTargetDir[planetCraftTargetCamera] = nfile
 
         i += 1
 
@@ -132,32 +140,32 @@ def makeLinks(bwOrColor):
     # print
 
 
-# def buildMovies(targetPath):
-def buildMovies(bwOrColor):
-    "build movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
+def buildMovies(bwOrColor, targetPath=None):
+    "build bw or color movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
     # eg buildMovies("Jupiter")
 
     #. for now say they're all on
-    # parts = targetPath.split('/')
-    # while len(parts)<4:
-        # parts.append(None)
-    # print parts
-    # pathSystem, pathCraft, pathTarget, pathCamera = parts
-    # pathSystem, pathCraft, pathTarget, pathCamera = [None,None,None,None]
+    pathparts = targetPath.split('/')
+    while len(pathparts)<4:
+        pathparts.append('')
+    # trim,convert blanks to None
+    pathparts = [pathpart.strip() for pathpart in pathparts]
+    pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
+    print pathparts
+    pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     
-    #. need to remove any existing folders
+    #. need to remove any existing folders first
 
-    makeLinks(bwOrColor)
-    # renameFilesSequentially()
+    makeLinks(bwOrColor, pathparts)
     makeMovies()
     
 
 if __name__ == '__main__':
     os.chdir('..')
+    buildMovies('bw', 'Jupiter/Voyager1/Io/Narrow')
+    buildMovies('bw', '//Triton')
     # buildMovies("Neptune")
     # makeLinks()
-    # renameFilesSequentially()
-    makeMovies('bw')
     print 'done'
 
     

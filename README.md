@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.32
+Version 0.33
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment.
 
@@ -14,7 +14,7 @@ There are a total of 70k+ images in the Voyager archives - the datasets are rath
 Example Movies
 ----------------------------------------
 
-These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks). 
+These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
 
 
 https://www.youtube.com/watch?v=kcJB9rNzCH4  
@@ -33,9 +33,9 @@ Voyager 1 Jupiter approach v0.1 - (raw images with reseau marks)
 Pipeline
 ----------------------------------------
 
-Voyager consists of a command line interface to a pipeline of Python programs with the following steps: 
+Voyager consists of a command line interface to a pipeline of Python programs with the following steps:
 
-* Download Voyager datasets from **PDS archives** [1] 
+* Download Voyager datasets from **PDS archives** [1]
 * Extract the contents of the tar.gz archives
 * Convert Voyager IMG images to PNGs using **img2png** [2]
 * Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
@@ -48,7 +48,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7]. 
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7].
 
 I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**.
 
@@ -58,7 +58,7 @@ Compatibility
 
 The main limitation is **img2png**, which is only available on Windows - this is what converts the PDS IMG files to PNGs, so it's an important step.
 
-In the future, the PNG images could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use. 
+In the future, the PNG images could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use.
 
 
 Usage
@@ -67,7 +67,7 @@ Usage
 Download a tarfile volume, e.g. volume 5101 - the first dataset, Jupiter approach
 
     > vg download 5101
-    
+
 Unzip the tarfile
 
     > vg unzip 5101
@@ -90,8 +90,8 @@ or do all of these steps automatically (performs missing steps)
 
 or to download and composite all Uranus images,
 
-    > vg composites 7* 
-    
+    > vg composites 7*
+
 Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
     > vg movies bw|color [targetpath]
@@ -201,16 +201,16 @@ There are several cases that need to be handled:
 
 The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 15x15 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
 
-But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment. 
+But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment.
 
-Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file `db/centering.csv` is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this - 
+Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file `db/centering.csv` is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this -
 
     planetCraftTargetCamera,centeringOff,centeringOn
     NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
     NeptuneVoyager2NeptuneWide,C1137509,C1140815
     NeptuneVoyager2TritonNarrow,C1139255,C1140614
 
-This table is also used to tell the movie creation step to slow down the frames at closest approach. The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach. 
+This table is also used to tell the movie creation step to slow down the frames at closest approach. The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach.
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
 
@@ -222,18 +222,18 @@ The PDS volumes come with index files for all the images they contain, which hav
 
 though different targets and camera records can be also interleaved with others.
 
-One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie. 
+One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie.
 
-The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this: 
+The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this:
 
     volume,compositeId,centerId,filter
     5104,C1541422,C1541422,Blue
     5104,C1541422,C1541424,Orange
     5104,C1541422,C1541426,Green
 
-This file is used by the `vg composites <volume>` command to generate the color frames. 
+This file is used by the `vg composites <volume>` command to generate the color frames.
 
-The movies are generated with the `vg movies bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
+The movies are generated with the `vg movies bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder.
 
 That's about it!
 
@@ -262,11 +262,13 @@ Next steps
 * Option to make b&w movies using one filter, to reduce flickering
 
 
-Version 0.40 (2016-07-)
+Version 0.33 (2016-07-17)
 ----------------------------------------
 - Handle wildcards and ranges in commands, eg `vg images 5101-5120`, `vg images 51*`
 - Add `vg list` command to show status of volumes
 - Add -y option to overwrite existing data for a step
+
+Made Uranus bw and color flyby movies
 
 Version 0.32 (2016-07-16)
 ----------------------------------------
@@ -287,7 +289,7 @@ Version 0.30 (2016-07-15)
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
 - Faster movie creation
 
-Made slightly better movies for Neptune flyby, both b&w and color, incl Triton. 
+Made slightly better movies for Neptune flyby, both b&w and color, incl Triton.
 
 Version 0.20 (2016-07-12)
 ----------------------------------------
@@ -306,7 +308,7 @@ Version 0.10 (2016-07-04)
 - Uses Blob detection and Hough circle detection for centering
 - Uses RAW images, which worked alright for some of the Jupiter images, but not Neptune, which has brighter backgrounds
 
-Made b&w movie for Jupiter approach from volumes 5104-5105. 
+Made b&w movie for Jupiter approach from volumes 5104-5105.
 
 
 License

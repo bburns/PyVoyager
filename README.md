@@ -56,7 +56,7 @@ I started with an installation of **Anaconda** [9], a Python distribution with l
 Compatibility
 ----------------------------------------
 
-The main limitation is **img2png**, which is only available on Windows - this is what converts the PDS IMG files to PNGs, so it's an important step.
+The main limitation is **img2png**, which is only available on Windows - this is what converts the PDS IMG files to PNGs, so it's a crucial step.
 
 In the future, the PNG images could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use. 
 
@@ -80,15 +80,15 @@ Center the images on the main body in the images
 
     > vg centers 5101
 
+or do all of these steps automatically (performs missing steps)
+
+    > vg centers 5101
+
 Colorize the images
 
     > vg composites 5101
 
-or do all of these steps automatically (performs missing steps)
-
-    > vg composites 5101
-
-Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
+Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses mklink to make symbolic links, which require elevated privileges)
 
     > vg movies bw|color [targetpath]
 
@@ -102,27 +102,28 @@ to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
 
 to generate all available color movies.
 
+
 Entering `vg` will show the available commands:
 
     Voyager commands
 
-      vg download <volnums>             - download volume(s)
-      vg unzip <volnums>                - unzip volume(s)
-      vg images <volnums>               - convert IMGs to PNGs
-      vg centers <volnums>              - center images
-      vg composites <volnums>           - create color images
-      vg targets <volnums>              - copy images into target subfolders
-      vg movies bw|color [<targetpath>] - create bw or color movies
+      vg download <volnumber>
+      vg unzip <volnumber>
+      vg images <volnumber>
+      vg centers <volnumber>
+      vg composites <volnumber>
+      vg targets <volnumber>
+      
+      vg movies bw|color [<targetpath>]
 
     where
 
-      <volnums> = 5101..5120 Voyager 1 Jupiter
-                  6101..6121 Voyager 1 Saturn
-                  5201..5214 Voyager 2 Jupiter
-                  6201..6215 Voyager 2 Saturn
-                  7201..7207 Voyager 2 Uranus
-                  8201..8210 Voyager 2 Neptune
-                  (ranges and wildcards like 5101-5104 or 51* are ok)
+      <volnumber>  = 5101..5120 Voyager 1 Jupiter
+                     6101..6121 Voyager 1 Saturn
+                     5201..5214 Voyager 2 Jupiter
+                     6201..6215 Voyager 2 Saturn
+                     7201..7207 Voyager 2 Uranus
+                     8201..8210 Voyager 2 Neptune
 
       <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
 
@@ -133,8 +134,8 @@ Entering `vg` will show the available commands:
 
     e.g. `vg movies bw //Triton`
 
-    You can also add `-y` to a command to have it overwrite any existing data.
-
+    You can also add -y to a command to have it overwrite any existing data.
+    
 
 Parameters
 ----------------------------------------
@@ -157,7 +158,7 @@ The data for each step is put into the following folders in the `data` subfolder
     step6_mosaics
     step7_targets
     step8_titles
-    step9_movies
+    step8_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
 
@@ -182,7 +183,7 @@ There are several cases that need to be handled:
 6. targets larger than the field of view
 7. edge defects which the blob detector picks up need to be ignored
 
-The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 15x15 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
+The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 12x12 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
 
 But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment. 
 
@@ -236,7 +237,8 @@ There's a Trello board to track issues and progress here - https://trello.com/b/
 Next steps
 ----------------------------------------
 
-* Improve stabilization/centering routines - handle off-screen centers and crescents, use feature detection and alignment to add more stabilization
+* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
+* Improve stabilization/centering routines - handle off-screen centers and crescents
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe)
 * Combine movie segments into single movie, adding audio
 * Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
@@ -247,7 +249,6 @@ Next steps
 
 Version 0.40 (2016-07-)
 ----------------------------------------
-* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 - Add -y option to overwrite existing data for a step
 
 

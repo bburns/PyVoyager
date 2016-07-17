@@ -225,7 +225,7 @@ The PDS volumes come with index files for all the images they contain, which hav
 
 though different targets and camera records can be also interleaved with others.
 
-One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie.
+One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie. One retargeting that is performed in advance is from rings to their planet - otherwise the rings would show up in separate movies.
 
 The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this:
 
@@ -270,6 +270,7 @@ Version 0.33 (2016-07-17)
 - Handle wildcards and ranges in commands, eg `vg images 5101-5120`, `vg images 51*`
 - Add `vg list` command to show status of volumes
 - Add -y option to overwrite existing data for a step
+- Retarget rings to the main planet so they're included with the appropriate movie
 
 Made Uranus bw and color flyby movies
 

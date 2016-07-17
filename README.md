@@ -48,7 +48,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], and **ffmpeg** [7]. 
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7]. 
 
 I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**.
 
@@ -243,7 +243,7 @@ Next steps
 * Combine movie segments into single movie, adding audio
 * Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
 * Build mosaics with hand-annotated information, include in movies
-* Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
+* Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
 
@@ -309,3 +309,4 @@ This software is released under the MIT license - see LICENSE.md.
 [7]: https://ffmpeg.org/
 [8]: https://python-pillow.org/
 [9]: https://www.continuum.io/downloads
+[10]: https://pypi.python.org/pypi/tabulate

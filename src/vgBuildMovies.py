@@ -98,6 +98,7 @@ def makeLinks(bwOrColor, pathparts):
 
                 if volume!=lastVolume:
                     print 'volume', volume
+                    # print 'volume %s\r' % volume
                     lastVolume = volume
 
                 system = row[config.filesColPhase]

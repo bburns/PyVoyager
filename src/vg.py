@@ -6,7 +6,10 @@
 import sys
 import os
 import inspect
+import tabulate
+import re
 
+import config
 import vgBuildDownload
 import vgBuildUnzip
 import vgBuildImages
@@ -35,7 +38,6 @@ for option in options:
     if option=='-y':
         overwrite = True
 
-
 if cmd=="download":
     volnum = args.pop(0)
     vgBuildDownload.buildDownload(volnum, overwrite)
@@ -61,6 +63,18 @@ elif cmd=="targets":
     vgBuildTargets.buildTargets(volnum)
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
+    
+# elif cmd=="list":
+#     # build a dictionary of {5101: {'Downloads':True,'Unzips':False,...}, }
+#     # then convert to an array of arrays
+#     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
+#     headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Centers', 'Composites']
+#     rows = []
+#     for vol in config.volumes:
+#         # only include a row if it has some data
+#         row = [vol]
+#         rows.append(row)
+#     print tabulate.tabulate(rows, headers)
     
 elif cmd=="movies":
     bwOrColor = None
@@ -93,37 +107,29 @@ if cmd=="help":
     print
     print "Voyager commands"
     print
-    print "  vg download <volnumber>"
-    print "  vg unzip <volnumber>"
-    print "  vg images <volnumber>"
-    print "  vg centers <volnumber>"
-    print "  vg composites <volnumber>"
-    # print "  vg mosaics <volnumber>"
-    print "  vg targets <volnumber>"
+    print "  vg download <volnums>             - download volume(s)"
+    print "  vg unzip <volnums>                - unzip volume(s)"
+    print "  vg images <volnums>               - convert IMGs to PNGs"
+    print "  vg centers <volnums>              - center images"
+    print "  vg composites <volnums>           - create color images"
+    # print "  vg mosaics <volnums>              - create mosaic images"
+    print "  vg targets <volnums>              - copy images into target subfolders"
+    # print "  vg list - show listing of datasets available for each step"
+    print "  vg movies bw|color [<targetpath>] - create bw or color movies"
     print
-    # print "  vg movies <system>/<spacecraft>/<target>/<camera>"
-    print "  vg movies bw|color [<targetpath>]"
-    print
-    # print "  vg center <centerId>"
-    # print "  vg composite <compositeId>"
-    # print "  vg mosaic <mosaicId>"
-    # print "  vg movie <movieId>"
-    # print
     # print "  vg init files"
-    # print "  vg init images"
-    # print "  vg init centers"
     # print "  vg init composites"
     # print "  vg init mosaics"
-    # print "  vg init movies"
     # print
     print "where"
     print
-    print "  <volnumber>  = 5101..5120 Voyager 1 Jupiter"
-    print "                 6101..6121 Voyager 1 Saturn"
-    print "                 5201..5214 Voyager 2 Jupiter"
-    print "                 6201..6215 Voyager 2 Saturn"
-    print "                 7201..7207 Voyager 2 Uranus"
-    print "                 8201..8210 Voyager 2 Neptune"
+    print "  <volnums> = 5101..5120 Voyager 1 Jupiter"
+    print "              6101..6121 Voyager 1 Saturn"
+    print "              5201..5214 Voyager 2 Jupiter"
+    print "              6201..6215 Voyager 2 Saturn"
+    print "              7201..7207 Voyager 2 Uranus"
+    print "              8201..8210 Voyager 2 Neptune"
+    print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
     print
     print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
     print 
@@ -136,4 +142,36 @@ if cmd=="help":
     print
     print "You can also add `-y` to a command to have it overwrite any existing data."    
     print
+
+
+def getVolumeNumbers(s):
+    "parse a string like 5101-5108 or 5104 or 51* to an array of volnum strings"
+    # eg getVolumeNumber('5201-5203') => [5201,5202,5203]
+    
+    # handle ranges, eg 8201-8204
+    vols = s.split('-')
+    if len(vols)==2:
+        vols = [int(vol) for vol in vols]
+        volrange = range(vols[0],vols[1]+1)
+        return volrange # eg [8201,8202,8203,8204]
+
+    # handle invidual volumes or wildcards
+    sregex = s.replace('*','.*') # eg '52.*'
+    regex = re.compile(sregex)
+    vols = []
+    svolumes = [str(vol) for vol in config.volumes] # all available volumes
+    for svolume in svolumes:
+        if re.match(regex, svolume):
+            vols.append(int(svolume))
+    return vols
+
+
+# if __name__ == '__main__':
+#     os.chdir('..')
+#     print getVolumeNumbers('5104')
+#     print getVolumeNumbers('5104-5108')
+#     print getVolumeNumbers('51*')
+#     print getVolumeNumbers('5*')
+#     print getVolumeNumbers('*')
+#     print 'done'
 

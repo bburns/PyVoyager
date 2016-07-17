@@ -1,5 +1,5 @@
 
-# build centered images from plain images (pngs)
+# build centered images from plain png images
 
 import csv
 import os
@@ -25,10 +25,11 @@ def buildCenters(volnum, overwrite=False):
         config.drawCrosshairs = True
         
     if int(volnum)!=0 and os.path.isdir(centersubfolder) and overwrite==False: # for test (vol=0), can overwrite test folder
-        print "Folder exists: " + centersubfolder
+        print "Folder exists - skipping vg images step: " + centersubfolder
     else:
         vgBuildImages.buildImages(volnum) # build the plain images for the volume, if not already there
-        
+
+        # make new folder
         lib.rmdir(centersubfolder)
         lib.mkdir(centersubfolder)
 
@@ -71,7 +72,8 @@ def buildCenters(volnum, overwrite=False):
                     infile = imagesubfolder + pngfilename
                     outfile = centersubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    print 'centering %d: %s' %(nfile,infile)
+                    # print 'centering %d: %s' %(nfile,infile)
+                    print 'centering %d: %s\r' %(nfile,infile)
                     libimg.adjustImageFile(infile, outfile, docenter)
                         
                     nfile += 1

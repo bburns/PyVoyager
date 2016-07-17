@@ -45,11 +45,13 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 
 # img2png options
 # -fnamefilter - append filter name, eg _ORANGE
-# -loglevel0 - not so much info
-# -s10 - scale image values by this amount - otherwise can be too dark
+# -loglevel<level> - debug info
+# -s<level> - scale image values by this amount - otherwise can be too dark
+# note: -s10 works for uranus but blows out jupiter images - would need per-flyby and lots of experimenting,
+# so just keep using the dim CALIB images and histogram stretching, which works well. 
 # img2pngOptions = "-fnamefilter"
-# img2pngOptions = "-fnamefilter -loglevel0" 
-img2pngOptions = "-fnamefilter -loglevel0 -s10" 
+img2pngOptions = "-fnamefilter -loglevel0" 
+# img2pngOptions = "-fnamefilter -loglevel0 -s10" 
 
 
 # centers
@@ -71,8 +73,8 @@ centerMethod = 'all'
 # blobThreshold = 0.05
 # blobThreshold = 0.025 
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-# blobThreshold = 0.015 # works for most neptune system images
-blobThreshold = 0.15 # try for -s10 option with caelus
+blobThreshold = 0.015 # works for most neptune system images
+# blobThreshold = 0.15 # try for -s10 option with uranus - worked
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles
@@ -238,15 +240,18 @@ compositesColWeight = 4
     
 
 
-# # voyager ISS volumes
-# voyager1jupiter = range(5101,5120)
-# voyager1saturn  = range(6101,6121)
-# voyager2jupiter = range(5201,5214)
-# voyager2saturn  = range(6201,6215)
-# voyager2uranus  = range(7201,7207)
-# voyager2neptune = range(8201,8210)
+# voyager PDS volumes - 87 total
+voyager1jupiter = range(5101,5120+1)
+voyager1saturn  = range(6101,6121+1)
+voyager2jupiter = range(5201,5214+1)
+voyager2saturn  = range(6201,6215+1)
+voyager2uranus  = range(7201,7207+1)
+voyager2neptune = range(8201,8210+1)
 
-# flights = {
+# list of all volumes
+volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + voyager2uranus + voyager2neptune
+
+# flybys = {
 #     # 51: voyager1jupiter,
 #     51: [5104,5105],
 #     61: voyager1saturn,
@@ -255,11 +260,5 @@ compositesColWeight = 4
 #     72: voyager2uranus,
 #     82: voyager2neptune,
 #     }
-
-
-# # list of all volumes
-# volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + voyager2uranus + voyager2neptune
-# # volumes = [5102]
-
-# # flights = [voyager1jupiter, voyager1saturn, voyager2jupiter, voyager2saturn, voyager2uranus, voyager2neptune]
+# # flybys = [voyager1jupiter, voyager1saturn, voyager2jupiter, voyager2saturn, voyager2uranus, voyager2neptune]
 

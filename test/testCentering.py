@@ -23,8 +23,8 @@ config.drawCrosshairs = True
 
 testfolder = 'images/'
 centeredfolder = testfolder + 'centered/'
-thresholdedfolder = testfolder + 'thresholded/'
-edgesfolder = testfolder + 'edges/'
+# thresholdedfolder = testfolder + 'thresholded/'
+# edgesfolder = testfolder + 'edges/'
 debugfolder = testfolder + 'debug/'
 maxerror = 2
 
@@ -48,18 +48,17 @@ for fileid in fileids:
     x1,y1,x2,y2 = boundingBox
 
     # get binarization images (used by blob detector)
-    im = mpim.imread(infile)
-    b = 1*(im>config.blobThreshold)
-    misc.imsave(thresholdedfile, b)
+    # im = mpim.imread(infile)
+    # b = 1*(im>config.blobThreshold)
+    # misc.imsave(thresholdedfile, b)
     
     # get canny edge images (used by hough detector)
-    im = mpim.imread(infile)
-    im2 = libimg.mpim2cv2(im)
-    upper = config.cannyUpperThreshold
-    lower = upper/2
-    edges = cv2.Canny(im2, lower, upper)
-    misc.imsave(edgesfile, edges)
-    
+    # im = mpim.imread(infile)
+    # im2 = libimg.mpim2cv2(im)
+    # upper = config.cannyUpperThreshold
+    # lower = upper/2
+    # edges = cv2.Canny(im2, lower, upper)
+    # misc.imsave(edgesfile, edges)
     
     # get expected results
     result = results[fileid]

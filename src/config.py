@@ -158,8 +158,8 @@ movieFramesForTitles = movieFrameRate * 5
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 
-downloadFolder   = offlineFolder + "step1_downloads/"
-unzipFolder      = offlineFolder + "step2_unzips/"
+downloadsFolder   = offlineFolder + "step1_downloads/"
+unzipsFolder      = offlineFolder + "step2_unzips/"
 imagesFolder     = onlineFolder  + "step3_images/"
 centersFolder    = onlineFolder  + "step4_centers/"
 compositesFolder = onlineFolder  + "step5_composites/"

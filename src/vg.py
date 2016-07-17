@@ -64,17 +64,65 @@ elif cmd=="targets":
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
     
-# elif cmd=="list":
-#     # build a dictionary of {5101: {'Downloads':True,'Unzips':False,...}, }
-#     # then convert to an array of arrays
-#     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
-#     headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Centers', 'Composites']
-#     rows = []
-#     for vol in config.volumes:
-#         # only include a row if it has some data
-#         row = [vol]
-#         rows.append(row)
-#     print tabulate.tabulate(rows, headers)
+elif cmd=="list":
+    # build a dictionary of {5101: {'Downloads':True,'Unzips':False,...}, }
+    # then convert to an array of arrays
+    
+    grid = {}
+    # rows = []
+    for root, dirnames, filenames in os.walk(config.downloadsFolder):
+        for filename in filenames: # eg VGISS_5101.tar.gz
+            if filename[-6:]=='tar.gz':
+                volnum = filename[6:10] # eg 5101
+                # row = [volnum, 'x']
+                # rows.append(row)
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Downloads'] = 'x'
+        del dirnames[:] # don't recurse
+    
+    for root, dirnames, filenames in os.walk(config.unzipsFolder):
+        for dirname in dirnames: # eg VGISS_5101
+            if dirname[:6]=='VGISS_':
+                volnum = dirname[6:10] # eg 5101
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Unzips'] = 'x'
+        del dirnames[:] # don't recurse
+    
+    for root, dirnames, filenames in os.walk(config.imagesFolder):
+        for dirname in dirnames: # eg VGISS_5101
+            if dirname[:6]=='VGISS_':
+                volnum = dirname[6:10] # eg 5101
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Images'] = 'x'
+        del dirnames[:] # don't recurse
+    
+    for root, dirnames, filenames in os.walk(config.centersFolder):
+        for dirname in dirnames: # eg VGISS_5101
+            if dirname[:6]=='VGISS_':
+                volnum = dirname[6:10] # eg 5101
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Centers'] = 'x'
+        del dirnames[:] # don't recurse
+    
+    for root, dirnames, filenames in os.walk(config.compositesFolder):
+        for dirname in dirnames: # eg VGISS_5101
+            if dirname[:6]=='VGISS_':
+                volnum = dirname[6:10] # eg 5101
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Composites'] = 'x'
+        del dirnames[:] # don't recurse
+    
+    # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
+    headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Centers', 'Composites']
+    rows = []
+    for vol in config.volumes:
+        # only include a row if it has some data
+        svol = str(vol)
+        gridrow = grid.get(svol)
+        if gridrow:
+            row = [svol, gridrow.get('Downloads'), gridrow.get('Unzips'), gridrow.get('Images'), gridrow.get('Centers'), gridrow.get('Composites')]
+            rows.append(row)
+    print tabulate.tabulate(rows, headers)
     
 elif cmd=="movies":
     bwOrColor = None

@@ -10,6 +10,7 @@ import tabulate
 import re
 
 import config
+import lib
 import vgBuildDownload
 import vgBuildUnzip
 import vgBuildImages
@@ -31,7 +32,7 @@ if nargs==0:
 else:
     cmd = args.pop(0) # first item
 
-# pick out options
+# pick out options from argument list
 overwrite = False
 options = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
@@ -40,28 +41,40 @@ for option in options:
         overwrite = True
 
 if cmd=="download":
-    volnum = args.pop(0)
-    vgBuildDownload.buildDownload(volnum, overwrite)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildDownload.buildDownload(volnum, overwrite)
     
 elif cmd=="unzip":
-    volnum = args.pop(0)
-    vgBuildUnzip.buildUnzip(volnum, overwrite)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildUnzip.buildUnzip(volnum, overwrite)
     
 elif cmd=="images":
-    volnum = args.pop(0)
-    vgBuildImages.buildImages(volnum, overwrite)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildImages.buildImages(volnum, overwrite)
     
 elif cmd=="centers":
-    volnum = args.pop(0)
-    vgBuildCenters.buildCenters(volnum, overwrite)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildCenters.buildCenters(volnum, overwrite)
     
 elif cmd=="composites":
-    volnum = args.pop(0)
-    vgBuildComposites.buildComposites(volnum, overwrite)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildComposites.buildComposites(volnum, overwrite)
     
 elif cmd=="targets":
-    volnum = args.pop(0)
-    vgBuildTargets.buildTargets(volnum)
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildTargets.buildTargets(volnum)
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
     
@@ -135,35 +148,4 @@ if cmd=="help":
     print "You can also add `-y` to a command to have it overwrite any existing data."    
     print
 
-
-def getVolumeNumbers(s):
-    "parse a string like 5101-5108 or 5104 or 51* to an array of volnum strings"
-    # eg getVolumeNumber('5201-5203') => [5201,5202,5203]
-    
-    # handle ranges, eg 8201-8204
-    vols = s.split('-')
-    if len(vols)==2:
-        vols = [int(vol) for vol in vols]
-        volrange = range(vols[0],vols[1]+1)
-        return volrange # eg [8201,8202,8203,8204]
-
-    # handle invidual volumes or wildcards
-    sregex = s.replace('*','.*') # eg '52.*'
-    regex = re.compile(sregex)
-    vols = []
-    svolumes = [str(vol) for vol in config.volumes] # all available volumes
-    for svolume in svolumes:
-        if re.match(regex, svolume):
-            vols.append(int(svolume))
-    return vols
-
-
-# if __name__ == '__main__':
-#     os.chdir('..')
-#     print getVolumeNumbers('5104')
-#     print getVolumeNumbers('5104-5108')
-#     print getVolumeNumbers('51*')
-#     print getVolumeNumbers('5*')
-#     print getVolumeNumbers('*')
-#     print 'done'
 

@@ -102,7 +102,7 @@ to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
 
 to generate all available color movies.
 
-To keep track of what stages the different volumes are at you can use the `vg list` command:
+Use the `vg list` command to keep track of what stages different volumes are at:
 
       Volume    Downloads  Unzips    Images    Centers    Composites
     --------  -----------  --------  --------  ---------  ------------
@@ -263,7 +263,8 @@ Next steps
 
 Version 0.40 (2016-07-)
 ----------------------------------------
-* Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
+- Handle wildcards and ranges in commands, eg `vg images 5101-5120`, `vg images 51*`
+- Add `vg list` command to show status of volumes
 - Add -y option to overwrite existing data for a step
 
 Version 0.32 (2016-07-16)

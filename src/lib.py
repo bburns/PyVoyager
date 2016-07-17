@@ -22,6 +22,29 @@ import config
 
 
 
+
+def getVolumeNumbers(s):
+    "parse a string like 5101-5108 or 5104 or 51* to an array of volnum integers"
+    # eg getVolumeNumber('5201-5203') => [5201,5202,5203]
+    
+    # handle ranges, eg 8201-8204
+    vols = s.split('-')
+    if len(vols)==2:
+        vols = [int(vol) for vol in vols]
+        volrange = range(vols[0],vols[1]+1)
+        return volrange # eg [8201,8202,8203,8204]
+
+    # handle invidual volumes or wildcards
+    sregex = s.replace('*','.*') # eg '52.*'
+    regex = re.compile(sregex)
+    vols = []
+    svolumes = [str(vol) for vol in config.volumes] # all available volumes
+    for svolume in svolumes:
+        if re.match(regex, svolume):
+            vols.append(int(svolume))
+    return vols
+
+
 def rm(filepath):
     "remove a file, ignore error (eg if doesn't exist)"
     try:
@@ -213,22 +236,14 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         return True
 
     
-def test():
-    # print getDownloadUrl(5101)
-    # print getZipfilepath(5101)
-    # print getUnzippedpath(5101)
-    # print getImagespath(5101)
-    # print getImagespath(0)
-    # print getCenterspath(5101)
-    
-    #. test this with a tar.gz
-    # print 'unzipping test file...'
-    # unzipFile('test/unzip_test.tar', 'test/unzip_test')
-    # print 'All done.'
-    pass
     
 if __name__ == '__main__':
-    test()
-
-
+    os.chdir('..')
+    print getDownloadUrl(5101)
+    print getVolumeNumbers('5104')
+    print getVolumeNumbers('5104-5108')
+    print getVolumeNumbers('51*')
+    print getVolumeNumbers('5*')
+    print getVolumeNumbers('*')
+    print 'done'
 

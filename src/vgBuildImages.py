@@ -13,7 +13,7 @@ import vgBuildUnzip
 def buildImages(volnum, overwrite=False):
     "Convert IMG files to PNG files for the given volume, if png folder doesn't exist yet."
     
-    unzippedfolder = config.unzipFolder + 'VGISS_' + str(volnum) + '/'
+    unzippedfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
     imagesfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
     
     if int(volnum)!=0 and os.path.isdir(imagesfolder) and overwrite==False:

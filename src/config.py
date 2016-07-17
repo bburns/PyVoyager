@@ -44,11 +44,12 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
-#. add multiplication level
-# img2pngOptions = "-fnamefilter" # append filter name, eg _ORANGE
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel0 - not so much info
-img2pngOptions = "-fnamefilter -loglevel0" 
+# -s10 - scale image values by this amount - otherwise can be too dark
+# img2pngOptions = "-fnamefilter"
+# img2pngOptions = "-fnamefilter -loglevel0" 
+img2pngOptions = "-fnamefilter -loglevel0 -s10" 
 
 
 # centers
@@ -69,8 +70,9 @@ centerMethod = 'all'
 # level from 0.0-1.0 at which to take binary threshold for blob detection
 # blobThreshold = 0.05
 # blobThreshold = 0.025 
-blobThreshold = 0.015
-# blobThreshold = 0.012 # (* 255 0.012)=3 # works for most, but small triton, which has light corners
+# blobThreshold = 0.012 # works for most, but small triton, which has light corners
+# blobThreshold = 0.015 # works for most neptune system images
+blobThreshold = 0.15 # try for -s10 option with caelus
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles

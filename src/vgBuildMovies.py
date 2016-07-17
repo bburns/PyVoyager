@@ -150,9 +150,9 @@ def makeLinks(bwOrColor, pathparts):
                         targetpathsSeen[planetCraftTargetCamera] = True
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
                         titleimagepathrelative = '../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
-                        ncopies = config.movieFramesForTitles
-                        makeLink(targetfolder, titleimagepathrelative, nfile, ncopies)
-                        nfile += ncopies
+                        ntitlecopies = config.movieFramesForTitles
+                        makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
+                        nfile += ntitlecopies
                     
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console

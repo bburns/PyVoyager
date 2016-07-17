@@ -42,7 +42,7 @@ for fileid in fileids:
     thresholdedfile = thresholdedfolder + fileid + '.png'
     edgesfile = edgesfolder + fileid + '.png'
     
-    # any experimenting should be done in this routine
+    # any experimenting should be done in adjustImageFile or config settings
     debugtitle = debugfolder + fileid
     boundingBox = libimg.adjustImageFile(infile, centeredfile, True, debugtitle)
     x1,y1,x2,y2 = boundingBox

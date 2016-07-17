@@ -4,6 +4,7 @@
 
 import os # for system, mkdir, mkdirs
 import os.path # for isfile
+import shutil # for rmtree
 from setuptools import archive_util # for unpack_archive
 import errno
 import re # for findall
@@ -20,9 +21,27 @@ from PIL import ImageDraw
 import config
 
 
+
+def rm(filepath):
+    "remove a file, ignore error (eg if doesn't exist)"
+    try:
+        os.remove(filepath)
+    except:
+        pass
+
+
+def rmdir(folder):
+    "remove a folder and its contents, ignoring errors (eg if it doesn't exist)"
+    try:
+        shutil.rmtree(folder)
+    except:
+        pass
+    
+
 def parseTargetPath(targetPath):
     "parse a target path, like 'Jupiter/Voyager1' into parts and return as an array [system,craft,target,camera], with None for unspecified parts."
-    # can take apart result with something like - 
+    # then can take apart result with something like - 
+    # pathparts = parseTargetPath(targetPath)
     # pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     pathparts = targetPath.split('/')
     # make sure we have 4 parts, even if blank
@@ -31,12 +50,11 @@ def parseTargetPath(targetPath):
     # trim,convert blanks to None
     pathparts = [pathpart.strip() for pathpart in pathparts]
     pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
-    # print pathparts
     return pathparts
 
 
 def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
-    ""
+    "draw a title page, return a PIL image"
     
     font = ImageFont.truetype(config.titleFont, config.titleFontsize)
 
@@ -151,71 +169,43 @@ def getDownloadUrl(volnumber):
     return url
 
 
-# def getVolumeTitle(volnumber):
-#     "Get name of Voyager volume associated with the volume number"
-#     if int(volnumber)==0:
-#         return "test"
-#     else:
-#         return "VGISS_" + str(volnumber)
-
-
-# def getZipfilepath(volnumber):
-#     "Get filepath for zipfile corresponding to a volume number"
-#     # eg c:/users/bburns/desktop/voyager/step0_downloads/VGISS_5101.tar.gz
-#     sourcefolder = config.downloadFolder
-#     url = getDownloadUrl(volnumber)
-#     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-#     zipfilepath = sourcefolder + "/" + filetitle
-#     return zipfilepath
-    
 
 # #. remove this
-# def getUnzippedpath(volnumber):
-#     "Get folder path for unzipped volume"
-#     # eg c:/users/bburns/desktop/voyager/step1_unzips/VGISS_5101
-#     unzipfolder = config.unzipFolder
-#     # url = getDownloadUrl(volnumber)
-#     # filetitle = getVolumeTitle(volnumber)
-#     filetitle = 'VGISS_' + str(volnumber)
-#     unzippedpath = unzipfolder + '/' + filetitle
-#     return unzippedpath
+# def getImagespath(volnumber):
+#     "get folder path for png images"
+#     # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
+#     imagesfolder = config.imagesFolder
+#     filetitle = getVolumeTitle(volnumber)
+#     imagespath = imagesfolder + '/' + filetitle
+#     return imagespath
 
 
-#. remove this
-def getImagespath(volnumber):
-    "get folder path for png images"
-    # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
-    imagesfolder = config.imagesFolder
-    filetitle = getVolumeTitle(volnumber)
-    imagespath = imagesfolder + '/' + filetitle
-    return imagespath
+# #. remove this
+# def getCenterspath(volnumber):
+#     "get folder path for centered images"
+#     # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
+#     centersfolder = config.centersFolder
+#     filetitle = getVolumeTitle(volnumber)
+#     centerspath = centersfolder + '/' + filetitle
+#     return centerspath
 
 
-#. remove this
-def getCenterspath(volnumber):
-    "get folder path for centered images"
-    # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
-    centersfolder = config.centersFolder
-    filetitle = getVolumeTitle(volnumber)
-    centerspath = centersfolder + '/' + filetitle
-    return centerspath
-
-
-def unzipFile(zipfile, destfolder):
+def unzipFile(zipfile, destfolder, overwrite=False):
     "Unzip a file to a destination folder."
+    # eg unzipFile('test/unzip_test.tar', 'test/unzip_test/')
     
     # assumes zip file is a .tar or .tar.gz file.
-    # doesn't unzip file if destination folder already exists.
-    # eg unzipFile('test/unzip_test.tar', 'test/unzip_test')
+    # by default doesn't unzip file if destination folder already exists.
     
     #. but note - tar file can have a top-level folder, or not -
-    # this is assuming that it does, which is why we extract the tarfile
+    # this is assuming that it does, which is why we actually extract the tarfile
     # to the parent folder of destfolder.
     
-    if os.path.isdir(destfolder):
+    if os.path.isdir(destfolder) and overwrite==False:
         print "Folder " + destfolder + " already exists - not unzipping"
         return False
     else:
+        rmdir(destfolder)
         # tried just building a commandline tar cmd but had issues with windows paths etc
         # this is just as fast anyway
         parentfolder = destfolder + "/.."

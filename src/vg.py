@@ -27,27 +27,34 @@ if nargs==0:
 else:
     cmd = args.pop(0) # first item
 
- 
-# call relevant routines in vg_build.py
+# pick out options
+overwrite = False
+options = [arg for arg in args if arg[0]=='-']
+args = [arg for arg in args if arg[0]!='-']
+for option in options:
+    if option=='-y':
+        overwrite = True
+
+
 if cmd=="download":
     volnum = args.pop(0)
-    vgBuildDownload.buildDownload(volnum)
+    vgBuildDownload.buildDownload(volnum, overwrite)
     
 elif cmd=="unzip":
     volnum = args.pop(0)
-    vgBuildUnzip.buildUnzip(volnum)
+    vgBuildUnzip.buildUnzip(volnum, overwrite)
     
 elif cmd=="images":
     volnum = args.pop(0)
-    vgBuildImages.buildImages(volnum)
+    vgBuildImages.buildImages(volnum, overwrite)
     
 elif cmd=="centers":
     volnum = args.pop(0)
-    vgBuildCenters.buildCenters(volnum)
+    vgBuildCenters.buildCenters(volnum, overwrite)
     
 elif cmd=="composites":
     volnum = args.pop(0)
-    vgBuildComposites.buildComposites(volnum)
+    vgBuildComposites.buildComposites(volnum, overwrite)
     
 elif cmd=="targets":
     volnum = args.pop(0)
@@ -67,17 +74,12 @@ elif cmd=="movies":
     else:
         cmd="help"
     
-    
 elif cmd=="init":
-    noun = args.pop(0)
-    if noun=='files':
+    subject = args.pop(0)
+    if subject=='files':
         vgInitFiles.initFiles()
-    elif noun=='composites':
+    elif subject=='composites':
         vgInitComposites.initComposites()
-    
-# elif cmd=="center":
-#     centernum = args.pop(0)
-#     vgBuild.buildCenter(centernum)
 
 elif cmd=="help":
     pass
@@ -85,6 +87,8 @@ else:
     print
     print "Command not recognized."
     cmd = 'help'
+
+
 if cmd=="help":
     print
     print "Voyager commands"
@@ -94,11 +98,11 @@ if cmd=="help":
     print "  vg images <volnumber>"
     print "  vg centers <volnumber>"
     print "  vg composites <volnumber>"
-    print "  vg mosaics <volnumber>"
+    # print "  vg mosaics <volnumber>"
     print "  vg targets <volnumber>"
     print
     # print "  vg movies <system>/<spacecraft>/<target>/<camera>"
-    print "  vg movies bw|color [targetpath]"
+    print "  vg movies bw|color [<targetpath>]"
     print
     # print "  vg center <centerId>"
     # print "  vg composite <compositeId>"
@@ -121,21 +125,15 @@ if cmd=="help":
     print "                 7201..7207 Voyager 2 Uranus"
     print "                 8201..8210 Voyager 2 Neptune"
     print
-    print "  [targetpath] = [[system]/[spacecraft]/[target]/[camera]]"
+    print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
     print 
-    print "  [system]     = Jupiter|Saturn|Uranus|Neptune"
-    print "  [spacecraft] = Voyager1|Voyager2"
-    print "  [target]     = Jupiter|Io|Europa|, etc."
-    print "  [camera]     = Narrow|Wide"
+    print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
+    print "  <spacecraft> = Voyager1|Voyager2"
+    print "  <target>     = Jupiter|Io|Europa|, etc."
+    print "  <camera>     = Narrow|Wide"
     print
-    
-    
-
-# if __name__ == '__main__':
-#     main()
-
-
-# get the absolute path of this file
-# see http://stackoverflow.com/questions/50499/how-do-i-get-the-path-and-name-of-the-file-that-is-currently-executing
-# thispath = os.path.dirname(os.path.abspath(inspect.stack()[0][1]))
+    print "e.g. `vg movies bw //Triton`"
+    print
+    print "You can also add `-y` to a command to have it overwrite any existing data."    
+    print
 

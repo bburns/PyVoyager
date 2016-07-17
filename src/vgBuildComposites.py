@@ -16,7 +16,7 @@ import vgBuildCenters
 
 
 
-def buildComposites(volnum):
+def buildComposites(volnum, overwrite=False):
     "build composite images by combining channel images"
     
     # walks over records in composites.csv, merges channel images, writes to composites folder
@@ -34,12 +34,12 @@ def buildComposites(volnum):
     centersubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
     compositessubfolder = config.compositesFolder + 'VGISS_' + str(volnum) + '/'
 
-    if os.path.isdir(compositessubfolder): # for test (vol=0), can overwrite test folder
+    if os.path.isdir(compositessubfolder) and overwrite==False: # for test (vol=0), can overwrite test folder
         print "Composites folder exists: " + compositessubfolder
     else:
-        # first build the centered images for the volume, if not already there
-        vgBuildCenters.buildCenters(volnum)
+        vgBuildCenters.buildCenters(volnum) # build the centered images for the volume, if not already there
     
+        lib.rmdir(compositessubfolder)
         lib.mkdir(compositessubfolder)
     
         # iterate over composites.csv records

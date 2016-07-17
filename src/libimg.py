@@ -41,13 +41,14 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
 # def adjustImageFile(infile, outfile, docenter=True):
 def adjustImageFile(infile, outfile, docenter=True, debugtitle=None):
     "Adjust and optionally center the given image file on a target and save it to outfile."
-    # if docenter True, do everything but the centering step
+    # if docenter False, do everything but the centering step
+    
+    #. could subtract dark current image, remove reseau marks if starting from RAW images
+    # or have that as a separate adjustments step
     
     im = mpim.imread(infile)
     
     # adjust image
-    # could subtract dark current image, remove reseau marks if starting from RAW images
-    # or have that as a separate adjustments step
     im = np.rot90(im, 2) # rotate by 180
     
     boundingBox = [0,0,799,799]

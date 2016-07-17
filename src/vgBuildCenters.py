@@ -13,40 +13,24 @@ import db
 import vgBuildImages
 
 
-def buildCenters(volnum):
+def buildCenters(volnum, overwrite=False):
     "build centered images for given volume, if they don't exist yet"
     
     imagesubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
     centersubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
     
     if int(volnum)==0: # test volume - turn on image debugging
-        config.drawBlob = True
+        config.drawBoundingBox = True
         config.drawCircle = True
         config.drawCrosshairs = True
         
-    if int(volnum)!=0 and os.path.isdir(centersubfolder): # for test (vol=0), can overwrite test folder
+    if int(volnum)!=0 and os.path.isdir(centersubfolder) and overwrite==False: # for test (vol=0), can overwrite test folder
         print "Folder exists: " + centersubfolder
     else:
-        # first build the plain images for the volume, if not already there
-        vgBuildImages.buildImages(volnum)
+        vgBuildImages.buildImages(volnum) # build the plain images for the volume, if not already there
         
-        # now center the files
+        lib.rmdir(centersubfolder)
         lib.mkdir(centersubfolder)
-        
-        # config.drawCrosshairs = True
-        
-        # nfile = 1
-        # for root, dirs, files in os.walk(imagesubfolder):
-        #     nfiles = len(files)
-        #     del dirs[:] # don't recurse
-        #     for pngfilename in files: # eg C1385455_RAW_CLEAR.png
-        #         ext = pngfilename[-4:]
-        #         if ext=='.png':
-        #             infile = imagesubfolder + pngfilename
-        #             outfile = centersubfolder + config.centersPrefix + pngfilename
-        #             print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-        #             libimg.centerImageFile(infile, outfile)
-        #             nfile += 1
 
         centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
         
@@ -79,14 +63,11 @@ def buildCenters(volnum):
                         centeringOff = info['centeringOff']
                         centeringOn = info['centeringOn']
                         docenter = fileId<centeringOff or fileId>centeringOn
-                    else: # if no info don't center things
-                        docenter = False
+                    else: # if no info for this target just center it
+                        docenter = True
 
                     # center the file
                     pngfilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                    # for pngfilename in files: # eg C1385455_RAW_CLEAR.png
-                        # ext = pngfilename[-4:]
-                        # if ext=='.png':
                     infile = imagesubfolder + pngfilename
                     outfile = centersubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)

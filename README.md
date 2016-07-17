@@ -112,7 +112,6 @@ Entering `vg` will show the available commands:
       vg images <volnumber>
       vg centers <volnumber>
       vg composites <volnumber>
-      vg mosaics <volnumber>
       vg targets <volnumber>
       
       vg movies bw|color [<targetpath>]
@@ -126,14 +125,17 @@ Entering `vg` will show the available commands:
                      7201..7207 Voyager 2 Uranus
                      8201..8210 Voyager 2 Neptune
 
-      <targetpath> = [system]/[spacecraft]/[target]/[camera]
+      <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
 
-      [system]     = Jupiter|Saturn|Uranus|Neptune
-      [spacecraft] = Voyager1|Voyager2
-      [target]     = Jupiter|Io|Europa|, etc.
-      [camera]     = Narrow|Wide
+      <system>     = Jupiter|Saturn|Uranus|Neptune
+      <spacecraft> = Voyager1|Voyager2
+      <target>     = Jupiter|Io|Europa|, etc.
+      <camera>     = Narrow|Wide
 
+    e.g. `vg movies bw //Triton`
 
+    You can also add -y to a command to have it overwrite any existing data.
+    
 
 Parameters
 ----------------------------------------
@@ -155,6 +157,7 @@ The data for each step is put into the following folders in the `data` subfolder
     step5_composites
     step6_mosaics
     step7_targets
+    step8_titles
     step8_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
@@ -203,7 +206,9 @@ The PDS volumes come with index files for all the images they contain, which hav
 
 though different targets and camera records can be also interleaved with others.
 
-This list of files has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this: 
+One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie. 
+
+The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this: 
 
     volume,compositeId,centerId,filter
     5104,C1541422,C1541422,Blue
@@ -212,7 +217,7 @@ This list of files has been compiled into a list of composite frames to build us
 
 This file is used by the `vg composites <volume>` command to generate the color frames. 
 
-The movies are generated with the `vg movies bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
+The movies are generated with the `vg movies bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder. 
 
 That's about it!
 
@@ -232,7 +237,6 @@ There's a Trello board to track issues and progress here - https://trello.com/b/
 Next steps
 ----------------------------------------
 
-* Add titles to each target movie
 * Handle wildcards and ranges, eg `vg images 5101-5120`, `vg images 51*`
 * Improve stabilization/centering routines - handle off-screen centers and crescents
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe)
@@ -241,6 +245,11 @@ Next steps
 * Build mosaics with hand-annotated information, include in movies
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, optimize contrast(?)
 * Option to make b&w movies using one filter, to reduce flickering
+
+
+Version 0.40 (2016-07-)
+----------------------------------------
+- Add -y option to overwrite existing data for a step
 
 
 Version 0.32 (2016-07-16)
@@ -256,7 +265,7 @@ Version 0.31 (2016-07-16)
 - Handle movie targets like `Neptune/Voyager2/Triton`, or just `//Triton`
 - Passing 25/31 (80%) of edge case tests
 
-Version 0.3 (2016-07-15)
+Version 0.30 (2016-07-15)
 ----------------------------------------
 - Better small/point-like detection with blob detector below 12x12 pixels, before Hough circle detector used
 - Use db/centers.csv file to turn off centering at closest approach and slow down movie (currently only Neptune data available)
@@ -264,7 +273,7 @@ Version 0.3 (2016-07-15)
 
 Made slightly better movies for Neptune flyby, both b&w and color, incl Triton. 
 
-Version 0.2 (2016-07-12)
+Version 0.20 (2016-07-12)
 ----------------------------------------
 - Added command line interface
 - Added target discrimination - sorts images and movies into folders based on planet, spacecraft, image target, and camera
@@ -274,7 +283,7 @@ Version 0.2 (2016-07-12)
 
 Made rough movies for Neptune flyby from volumes 8201-8210, both b&w and color.
 
-Version 0.1 (2016-07-04)
+Version 0.10 (2016-07-04)
 ----------------------------------------
 - No command line interface
 - Able to piece together a movie from complete volumes, but no target discrimination

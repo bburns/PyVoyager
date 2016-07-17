@@ -39,6 +39,8 @@ def buildComposites(volnum, overwrite=False):
     else:
         vgBuildCenters.buildCenters(volnum) # build the centered images for the volume, if not already there
     
+        print 'building composites for', compositesdubfolder
+        
         lib.rmdir(compositessubfolder)
         lib.mkdir(compositessubfolder)
     

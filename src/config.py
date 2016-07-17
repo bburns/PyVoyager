@@ -48,10 +48,10 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # -loglevel<level> - debug info
 # -s<level> - scale image values by this amount - otherwise can be too dark
 # note: -s10 works for uranus but blows out jupiter images - would need per-flyby and lots of experimenting,
-# so just keep using the dim CALIB images and histogram stretching, which works well. 
+# so just keep using the dim CALIB images and histogram stretching, which works well.
 # img2pngOptions = "-fnamefilter"
-img2pngOptions = "-fnamefilter -loglevel0" 
-# img2pngOptions = "-fnamefilter -loglevel0 -s10" 
+img2pngOptions = "-fnamefilter -loglevel0"
+# img2pngOptions = "-fnamefilter -loglevel0 -s10"
 
 
 # centers
@@ -71,7 +71,7 @@ centerMethod = 'all'
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
 # blobThreshold = 0.05
-# blobThreshold = 0.025 
+# blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
 blobThreshold = 0.015 # works for most neptune system images
 # blobThreshold = 0.15 # try for -s10 option with uranus - worked
@@ -96,7 +96,7 @@ cannyUpperThreshold = 60
 # no dice - the canny edges start proliferating too much, and still the jupiter edge cases aren't picked up
 
 # prefix for centered filenames
-centersPrefix = 'centered_' 
+centersPrefix = 'centered_'
 
 # rotate image 180 degrees during centering step
 rotateImage = True
@@ -167,6 +167,7 @@ mosaicsFolder    = onlineFolder  + "step6_mosaics/"
 targetsFolder    = onlineFolder  + "step7_targets/"
 titlesFolder    = onlineFolder  + "step8_titles/"
 moviesFolder     = onlineFolder  + "step9_movies/"
+moviestageFolder = moviesFolder + 'stage/'
 
 # test images go here
 testFolder    = 'test/images/'
@@ -237,7 +238,7 @@ compositesColCompositeId = 1
 compositesColCenterId = 2
 compositesColFilter = 3
 compositesColWeight = 4
-    
+
 
 
 # voyager PDS volumes - 87 total

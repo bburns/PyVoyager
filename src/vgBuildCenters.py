@@ -73,7 +73,7 @@ def buildCenters(volnum, overwrite=False):
                     outfile = centersubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'centering %d: %s' %(nfile,infile)
-                    print 'centering %d: %s\r' %(nfile,infile)
+                    print '\rcentering %d: %s' %(nfile,infile),
                     libimg.adjustImageFile(infile, outfile, docenter)
                         
                     nfile += 1

@@ -119,7 +119,7 @@ if cmd=="help":
     print "  vg composites <volnums>           - create color images"
     # print "  vg mosaics <volnums>              - create mosaic images"
     print "  vg targets <volnums>              - copy images into target subfolders"
-    # print "  vg list - show listing of datasets available for each step"
+    print "  vg list                           - show status of local datasets"
     print "  vg movies bw|color [<targetpath>] - create bw or color movies"
     print
     # print "  vg init files"

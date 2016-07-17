@@ -20,10 +20,11 @@ import vgBuildTitles
 
 
 
-def makeMovies():
+def makeMovieFiles():
     "build mp4 movies using ffmpeg on sequentially numbered image files"
     print 'make mp4 movies using ffmpeg'
-    folder = config.moviesFolder
+    # folder = config.moviesFolder
+    folder = config.moviestageFolder
     # print folder
     for root, dirs, files in os.walk(folder):
         # print root, dirs
@@ -51,7 +52,7 @@ def makeLink(targetfolder, sourcepath, nfile, ncopies):
 
 
 def makeLinks(bwOrColor, pathparts):
-    "make links from source files (centers or composites) to movies folders"
+    "make links from source files (centers or composites) to movie stage folders"
     
     print 'making links from source files'
     
@@ -96,6 +97,7 @@ def makeLinks(bwOrColor, pathparts):
             # if file exists, create subfolder and link image
             if os.path.isfile(pngpath):
 
+                # show progress
                 if volume!=lastVolume:
                     print 'volume', volume
                     # print 'volume %s\r' % volume
@@ -134,10 +136,11 @@ def makeLinks(bwOrColor, pathparts):
                     # number of copies of this file to link
                     ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
 
-                    # get subfolder and make sure it exists
+                    # get staging subfolder and make sure it exists
                     # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
                     subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
-                    targetfolder = config.moviesFolder + subfolder
+                    # targetfolder = config.moviesFolder + subfolder
+                    targetfolder = config.moviestageFolder + subfolder
                     lib.mkdir_p(targetfolder)
 
                     # get current file number in that folder, or start at 0
@@ -150,7 +153,7 @@ def makeLinks(bwOrColor, pathparts):
                     if not seen:
                         targetpathsSeen[planetCraftTargetCamera] = True
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
-                        titleimagepathrelative = '../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
+                        titleimagepathrelative = '../../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
                         ntitlecopies = config.movieFramesForTitles
                         makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
                         nfile += ntitlecopies
@@ -158,7 +161,7 @@ def makeLinks(bwOrColor, pathparts):
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
                     # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                    pngpathrelative = '../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
+                    pngpathrelative = '../../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
                     makeLink(targetfolder, pngpathrelative, nfile, ncopies)
 
                     # increment the file number for the target folder
@@ -173,18 +176,19 @@ def makeLinks(bwOrColor, pathparts):
     
 def buildMovies(bwOrColor, targetPath=None):
     "build bw or color movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
-    # eg buildMovies("Jupiter")
+    # eg buildMovies('bw', 'Jupiter/Voyager1')
     
     # make sure we have some titles
     vgBuildTitles.buildTitles(targetPath)
     
-    # pathparts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    # note: pathparts = [pathSystem, pathCraft, pathTarget, pathCamera]
     pathparts = lib.parseTargetPath(targetPath)
     
-    #.. need to remove any existing folders first
+    # remove any existing staged images first
+    lib.rmdir(config.moviestageFolder)
     
     makeLinks(bwOrColor, pathparts)
-    makeMovies()
+    makeMovieFiles()
     
 
 if __name__ == '__main__':

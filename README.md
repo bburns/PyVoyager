@@ -88,6 +88,10 @@ or do all of these steps automatically (performs missing steps)
 
     > vg composites 5101
 
+or to download and composite all Uranus images,
+
+    > vg composites 7* 
+    
 Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
     > vg movies bw|color [targetpath]
@@ -104,19 +108,15 @@ to generate all available color movies.
 
 Use the `vg list` command to keep track of what stages different volumes are at:
 
-      Volume    Downloads  Unzips    Images    Centers    Composites
+      Volume  Downloads    Unzips    Images    Centers    Composites
     --------  -----------  --------  --------  ---------  ------------
-        5101               x         x
-        5102               x         x
-        5103               x         x
-        5104               x         x
-        5105               x         x
-        5108               x
-        5201               x         x         x          x
-        6201               x
-        7201               x
-        7202               x
-        7203               x
+        5101  x            x         x
+        5102  x            x         x
+        5103  x            x         x
+        5201  x            x         x         x          x
+        6201  x            x
+        7201  x            x
+        7202  x            x
 
 And entering `vg` will show the available commands:
 
@@ -128,6 +128,7 @@ And entering `vg` will show the available commands:
       vg centers <volnums>              - center images
       vg composites <volnums>           - create color images
       vg targets <volnums>              - copy images into target subfolders
+      vg list                           - show status of local datasets
       vg movies bw|color [<targetpath>] - create bw or color movies
 
     where

@@ -52,6 +52,15 @@ def initFiles():
                     craft = config.indexTranslations[craft] # eg Voyager1
                     instrument = config.indexTranslations[instrument] # eg Narrow
                     target = target.title().replace(' ','_') # eg N_Rings
+
+                    # handle rings specially - don't want them to become separate movies - include them with the planet
+                    if target[2:]=='Rings':
+                        planetLetter = target[:1]
+                        if planetLetter=='J': target='Jupiter'
+                        elif planetLetter=='S': target='Saturn'
+                        elif planetLetter=='U': target='Uranus'
+                        elif planetLetter=='N': target='Neptune'
+
                     filter = filter.title() # eg Orange
 
                     # write row

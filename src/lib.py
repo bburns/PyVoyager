@@ -160,15 +160,18 @@ def mkdir_p(path):
             raise
 
 
-def pngsToMp4(folder, filenamePattern, outputFilename, frameRate):
+def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
     "Convert a sequentially numbered set of pngs to an mp4 movie"
-    os.chdir(folder)
+    # stageFolder is the folder containing the sequentially numbered files
+    savedir = os.getcwd()
+    os.chdir(stageFolder)
     # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
     # cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg -y -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
     cmd = 'ffmpeg -y -v 0 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) #. try the -v 0 for less verbosity, else keep using > nul
     # print cmd
     os.system(cmd)
+    os.chdir(savedir)
 
 
 def downloadFile(url, filepath):

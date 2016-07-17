@@ -8,7 +8,10 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per uncompressed volume, with 87 volumes in total, so there is a lot to explore. 
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per uncompressed volume, with 87 volumes in total, so there is a lot to explore.
+
+You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
+
 
 
 Example Movies
@@ -40,7 +43,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Convert Voyager IMG images to PNGs using **img2png** [2]
 * Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
 * Colorize frames by combining images, where possible, using **OpenCV**
-* [Build mosaics from images with hand-annotated information - lots of work though]
+* [Build mosaics from images with hand-annotated information - maybe someday]
 * Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
 * Make movies from previous step and add titles [and music] using **ffmpeg** [7] and **Pillow** [8]
 
@@ -88,7 +91,7 @@ or do all of these steps automatically (performs missing steps)
 
     > vg composites 5101
 
-or to download and composite all Uranus images,
+or e.g. to download and composite all Uranus images (might take a while),
 
     > vg composites 7*
 
@@ -158,13 +161,13 @@ Parameters
 
 All configuration settings are stored in `config.py` - if you run into problems with centering there are some parameters there which you can tweak, notably `blobThreshold`, `blobAreaCutoff`, and `cannyUpperThreshold`. Otherwise you can try modifying the centering algorithm in `vgBuildCenters.py` and `libimg.py`.
 
-The goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though I'm not sure how possible that will be at this point - I've only tested the routines with Neptune and some of Jupiter so far. 
+The goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though I'm not sure how possible that will be at this point - I've only tested the routines with Neptune and some of Jupiter so far.
 
 
 How it works
 ----------------------------------------
 
-The data for each step is put into the following folders in the `data` subfolder: 
+The data for each step is put into the following folders in the `data` subfolder:
 
     step1_downloads
     step2_unzips
@@ -176,7 +179,7 @@ The data for each step is put into the following folders in the `data` subfolder
     step8_titles
     step9_movies
 
-There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html. 
+There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 
 Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 

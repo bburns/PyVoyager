@@ -194,6 +194,7 @@ indexFileColFilter = 16 # eg ORANGE
 indexFileColNote = 19 # eg 3 COLOR ROTATION MOVIE
 
 # index field value translations
+# see vgInitFiles.py
 indexTranslations = {
     'VOYAGER 1': 'Voyager1',
     'VOYAGER 2': 'Voyager2',
@@ -206,7 +207,7 @@ indexTranslations = {
     'CALIBRATED_IMAGE': 'Calibrated',
     'CLEANED_IMAGE': 'Cleaned',
     'DECOMPRESSED_RAW_IMAGE': 'Raw',
-    'GEOMETRICALLY_CORRECTED_IMAGE': 'Geomed',
+    'GEOMETRICALLY_CORRECTED_IMAGE': 'Geomed'
     }
 
 

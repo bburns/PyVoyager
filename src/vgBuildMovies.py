@@ -28,15 +28,21 @@ def makeMovieFiles():
     # print folder
     for root, dirs, files in os.walk(folder):
         # print root, dirs
-        # os.chdir(folder)
         if dirs==[]: # reached the leaf level
-            print 'directory', root
-            savedir = os.getcwd()
-            moviefolder = os.path.abspath(root)
-            # print moviefolder
-            movieName = '_movie.mp4'
-            lib.pngsToMp4(moviefolder, config.movieFilespec, movieName, config.movieFrameRate)
-            os.chdir(savedir)
+            print 'directory', root # eg Neptune/Voyager2/Triton/Narrow
+            stageFolder = os.path.abspath(root)
+            print stageFolder
+
+            # get target file path relative to staging folder, eg ../../Neptune-Voyager-Triton-Narrow.mp4
+            targetPath = root.split('/') # eg ['Neptune','Voyager2',...]
+            movieTitle = '-'.join(targetPath) # eg 'Neptune-Voyager2-Triton-Narrow'
+            movieTitle = movieTitle + '.mp4'
+            moviePath = '../../../../' + moviePath
+            print moviePath
+
+            # movieName = '_movie.mp4'
+            # lib.pngsToMp4(stageFolder, config.movieFilespec, movieName, config.movieFrameRate)
+            lib.pngsToMp4(stageFolder, config.movieFilespec, moviePath, config.movieFrameRate)
 
 
 def makeLink(targetfolder, sourcepath, nfile, ncopies):

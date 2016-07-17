@@ -47,7 +47,7 @@ def combineFlight(flightnum):
     print cmd
     os.system(cmd)
 
-    
+
 def main():
     combineFlight(51)
     # combineFlight(61)
@@ -55,7 +55,7 @@ def main():
     # combineFlight(62)
     # combineFlight(72)
     # combineFlight(82)
-                
+
 if __name__ == '__main__':
     main()
     # pass

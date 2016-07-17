@@ -45,31 +45,31 @@ if cmd=="download":
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildDownload.buildDownload(volnum, overwrite)
-    
+
 elif cmd=="unzip":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildUnzip.buildUnzip(volnum, overwrite)
-    
+
 elif cmd=="images":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildImages.buildImages(volnum, overwrite)
-    
+
 elif cmd=="centers":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildCenters.buildCenters(volnum, overwrite)
-    
+
 elif cmd=="composites":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildComposites.buildComposites(volnum, overwrite)
-    
+
 elif cmd=="targets":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
@@ -77,10 +77,10 @@ elif cmd=="targets":
         vgBuildTargets.buildTargets(volnum)
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
-    
+
 elif cmd=="list":
-    vgBuildList.buildList()    
-    
+    vgBuildList.buildList()
+
 elif cmd=="movies":
     bwOrColor = None
     target = None
@@ -92,7 +92,7 @@ elif cmd=="movies":
         vgBuildMovies.buildMovies(bwOrColor, targetpath)
     else:
         cmd="help"
-    
+
 elif cmd=="init":
     subject = args.pop(0)
     if subject=='files':
@@ -137,7 +137,7 @@ if cmd=="help":
     print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
     print
     print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
-    print 
+    print
     print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
     print "  <spacecraft> = Voyager1|Voyager2"
     print "  <target>     = Jupiter|Io|Europa|, etc."
@@ -145,7 +145,7 @@ if cmd=="help":
     print
     print "e.g. `vg movies bw //Triton`"
     print
-    print "You can also add `-y` to a command to have it overwrite any existing data."    
+    print "You can also add `-y` to a command to have it overwrite any existing data."
     print
 
 

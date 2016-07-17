@@ -12,16 +12,16 @@ import vgBuildUnzip
 
 def buildImages(volnum, overwrite=False):
     "Convert IMG files to PNG files for the given volume, if png folder doesn't exist yet."
-    
+
     unzippedfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
     imagesfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
-    
+
     if int(volnum)!=0 and os.path.isdir(imagesfolder) and overwrite==False:
         print "Images folder exists: " + imagesfolder
     else:
         # unzip the download, if not already there
         vgBuildUnzip.buildUnzip(volnum)
-        
+
         # now convert the images
         lib.rmdir(imagesfolder)
         datadir = unzippedfolder + 'DATA/'
@@ -44,7 +44,7 @@ def buildImages(volnum, overwrite=False):
                     libimg.img2png(subdirabsolute, config.imageFilespec, imagesfolder, config.img2pngOptions)
                     i += 1
 
-    
+
 if __name__ == '__main__':
     os.chdir('..')
     buildImages(0)

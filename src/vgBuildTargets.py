@@ -17,24 +17,24 @@ import vgBuildCenters
     # assume these are all None for now
     # ie just copy ALL images available
     # [system, craft, target, camera] = targetPath.split('/')
-    
+
 def buildTargets(volnum, targetPath=None):
     "copy images in volume to target subfolders"
-    
+
     # if we made these links they would automatically update when recenter images/tweak composite colors etc.
     # (but links don't work with my image viewer)
-    
+
     # iterate down files.txt
     # if target path matches row,
     # copy that image to target subfolder
-    
+
     # volid = lib.getVolumeTitle(volnum) # eg VGISS_5101
-    
+
     volnum = str(volnum)
-    
+
     # center the volume, if not already there
     vgBuildCenters.buildCenters(volnum)
-    
+
     f = open(config.filesdb, 'rt')
     i = 0
     reader = csv.reader(f)
@@ -54,12 +54,12 @@ def buildTargets(volnum, targetPath=None):
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
                 # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                centeredfilename = config.centersPrefix + fileid + '_' + config.imageType + '_' + filter + '.png' 
+                centeredfilename = config.centersPrefix + fileid + '_' + config.imageType + '_' + filter + '.png'
                 centeredpath = centersSubfolder + centeredfilename
-                
+
                 # if file exists, create subfolder and copy/link image
                 if os.path.isfile(centeredpath):
-                    
+
                     # get subfolder, eg Jupiter/Voyager1/Io/Narrow
                     phase = row[config.filesColPhase]
                     craft = row[config.filesColCraft]
@@ -103,4 +103,4 @@ if __name__ == '__main__':
     os.chdir('..')
     buildTargets(8201)
     print 'done'
-    
+

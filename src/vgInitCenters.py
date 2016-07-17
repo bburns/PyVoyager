@@ -14,26 +14,26 @@ import libimg
 
 def calcCenters(volumeNum):
     "calculate centers for images in the given volume and write to db/centers<volnum>.csv"
-    
+
     volumeStr = str(volumeNum)
-    
+
     #. image type to read will default to CALIB, but can override to use files from different subfolder
     imageType = 'Calib'
-    
+
     # imagespath = lib.getImagespath(volumeNum)
     imagesfolder = config.imagesFolder + '/' + imageType + '/VGISS_' + str(volumeNum)
-    
+
     # open the centers<vol>.csv file for writing
     filename = 'centers' + volumeStr + '.csv'
     fileout = open(filename, 'wb')
     fields = 'fileId,x,y'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
     writer.writerow(fields)
-    
+
     # open the files.csv file for reading
     filein = open(config.filesdb, 'rt')
     reader = csv.reader(filein)
-    
+
     # iterate over all available files
     i = 0
     for row in reader:
@@ -53,7 +53,7 @@ def calcCenters(volumeNum):
                 # target = row[config.filesColTarget] # eg Io
                 # instrument = row[config.filesColInstrument] # eg Narrow
                 # filter = row[config.filesColFilter] # eg Orange
-                # note = row[config.filesColNote] 
+                # note = row[config.filesColNote]
                 # print volume, fileId, phase, craft, target, instrument, filter
                 # if debug: print 'row',row[:-1] # skip note
 
@@ -74,7 +74,7 @@ def calcCenters(volumeNum):
 
     filein.close()
     fileout.close()
-    
+
     #.
     # blobThreshold = config.blobThreshold
     # fileid = filename.split('_')[0] # eg C1385455
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     os.chdir('..')
     calcCenters(5101)
     print 'done'
-    
+

@@ -26,7 +26,7 @@ import config
 def getVolumeNumbers(s):
     "parse a string like 5101-5108 or 5104 or 51* to an array of volnum integers"
     # eg getVolumeNumber('5201-5203') => [5201,5202,5203]
-    
+
     # handle ranges, eg 8201-8204
     vols = s.split('-')
     if len(vols)==2:
@@ -59,11 +59,11 @@ def rmdir(folder):
         shutil.rmtree(folder)
     except:
         pass
-    
+
 
 def parseTargetPath(targetPath):
     "parse a target path, like 'Jupiter/Voyager1' into parts and return as an array [system,craft,target,camera], with None for unspecified parts."
-    # then can take apart result with something like - 
+    # then can take apart result with something like -
     # pathparts = parseTargetPath(targetPath)
     # pathSystem, pathCraft, pathTarget, pathCamera = pathparts
     pathparts = targetPath.split('/')
@@ -78,7 +78,7 @@ def parseTargetPath(targetPath):
 
 def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
     "draw a title page, return a PIL image"
-    
+
     font = ImageFont.truetype(config.titleFont, config.titleFontsize)
 
     imgsize = (800,800)
@@ -111,7 +111,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
     # img.save("a_test.png")
     return img
 
-    
+
 
 def readCsv(filename):
     "read a csv file into a dict of dicts. first column is key. use on small files only."
@@ -145,7 +145,7 @@ def readCsv(filename):
 def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
     try:
-        os.mkdir(path) 
+        os.mkdir(path)
     except:
         pass
 
@@ -159,7 +159,7 @@ def mkdir_p(path):
         else:
             raise
 
-        
+
 def pngsToMp4(folder, filenamePattern, outputFilename, frameRate):
     "Convert a sequentially numbered set of pngs to an mp4 movie"
     os.chdir(folder)
@@ -216,14 +216,14 @@ def getDownloadUrl(volnumber):
 def unzipFile(zipfile, destfolder, overwrite=False):
     "Unzip a file to a destination folder."
     # eg unzipFile('test/unzip_test.tar', 'test/unzip_test/')
-    
+
     # assumes zip file is a .tar or .tar.gz file.
     # by default doesn't unzip file if destination folder already exists.
-    
+
     #. but note - tar file can have a top-level folder, or not -
     # this is assuming that it does, which is why we actually extract the tarfile
     # to the parent folder of destfolder.
-    
+
     if os.path.isdir(destfolder) and overwrite==False:
         print "Folder " + destfolder + " already exists - not unzipping"
         return False
@@ -235,8 +235,8 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         archive_util.unpack_archive(zipfile, parentfolder)
         return True
 
-    
-    
+
+
 if __name__ == '__main__':
     os.chdir('..')
     print getDownloadUrl(5101)

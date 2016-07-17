@@ -12,10 +12,10 @@ import vgBuildDownload
 
 def buildUnzip(volnum, overwrite=False):
     "Unzip the given volume number, if it doesn't exist yet."
-    
+
     zipfilepath = config.downloadsFolder + 'VGISS_' + str(volnum) + '.tar.gz' # eg  data/step1_downloads/vgiss_5101.tar.gz
     unzippedfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
-    
+
     if os.path.isdir(unzippedfolder) and overwrite==False:
         print "Folder exists - skipping unzip step: " + unzippedfolder
     else:

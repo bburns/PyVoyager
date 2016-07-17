@@ -31,7 +31,7 @@
 # 5101,C1471307,C1471313,Orange
 
 # ie when it catches the repeated Uv filter, it writes out the intervening records as a group - a composite record.
-# different targets and cameras can be interleaved because it keeps different circular buffers for each target/camera combination. 
+# different targets and cameras can be interleaved because it keeps different circular buffers for each target/camera combination.
 
 #.. also need to look at the time to make sure they're all within a certain range -
 # eg the last orange filter is 40 mins after the last green one,
@@ -46,7 +46,7 @@ import config
 import lib
 
 
-#. in config - 
+#. in config -
 #. max number of records in a group
 # 7
 #. max time delta between all records in a group
@@ -58,20 +58,20 @@ debug = False
 
 def initComposites():
     "build the composites.csv file from likely looking images in files.csv"
-    
+
     # open the composites.csv file
     fileout = open(config.compositesdb, 'wb')
     fields = 'volume,compositeId,centerId,filter'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
     writer.writerow(fields)
-    
+
     # iterate over all image files
     filein = open(config.filesdb, 'rt')
     reader = csv.reader(filein)
-    
+
     # this will store circular buffers with 7 empty lists - the maximum number of filters in a group we're checking for
     circbuffers = {}
-    
+
     i = 0
     for row in reader:
         if row==[] or row[0][0]=="#": # skip blanks and comments
@@ -88,7 +88,7 @@ def initComposites():
             target = row[config.filesColTarget] # eg Io
             instrument = row[config.filesColInstrument] # eg Narrow
             filter = row[config.filesColFilter] # eg Orange
-            # note = row[config.filesColNote] 
+            # note = row[config.filesColNote]
             # print volume, fileid, phase, craft, target, instrument, filter
             if debug: print 'row',row[:-1] # skip note
 
@@ -99,7 +99,7 @@ def initComposites():
             if buffer==None:
                 buffer = [[],[],[],[],[],[],[]]
                 circbuffers[bufferKey] = buffer
-            
+
             # now iterate over rows in circular buffer, checking for matches
             # if found a match, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
             # so write them out together, and reset the buffer
@@ -114,7 +114,7 @@ def initComposites():
                     bufferPhase = bufferRow[config.filesColPhase] # eg Jupiter
                     bufferCraft = bufferRow[config.filesColCraft] # eg Voyager1
                     bufferFilter = bufferRow[config.filesColFilter] # eg Orange
-                    # bufferNote = bufferRow[config.filesColNote] 
+                    # bufferNote = bufferRow[config.filesColNote]
                     if filter==bufferFilter:
                         if debug: print 'filters match - check other values'
                         # if phase==bufferPhase and craft==bufferCraft and target==bufferTarget and instrument==bufferInstrument:
@@ -142,8 +142,8 @@ def initComposites():
                                 writer.writerow(outRow)
                             buffer = [[],[],[],[],[],[],[]]
                             circbuffers[bufferKey] = buffer
-                            
-        
+
+
             # add row to buffer
             buffer.pop(0) # remove from front of list
             buffer.append(row) # append item to end of list
@@ -159,11 +159,11 @@ def initComposites():
 
     filein.close()
     fileout.close()
-    
+
 
 if __name__ == '__main__':
     os.chdir('..')
     initComposites()
     print 'done'
-    
+
 

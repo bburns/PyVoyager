@@ -53,22 +53,22 @@ def makeLink(targetfolder, sourcepath, nfile, ncopies):
 
 def makeLinks(bwOrColor, pathparts):
     "make links from source files (centers or composites) to movie stage folders"
-    
+
     print 'making links from source files'
-    
+
     # what does the user want to focus on?
     pathSystem, pathCraft, pathTarget, pathCamera = pathparts
-    
+
     # read some small dbs into memory
     centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
     multitargetInfo = lib.readCsv('db/multitargetImages.csv') # get dictionary of dictionaries
-    
+
     # keep track of number of files in each target subfolder, so can number files appropriately
     nfilesInTargetDir = {}
-    
+
     # keep track of which targetpaths we've seen, so know to add titles
     targetpathsSeen = {}
-    
+
     # iterate through all available images
     f = open(config.filesdb, 'rt')
     i = 0
@@ -88,10 +88,10 @@ def makeLinks(bwOrColor, pathparts):
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
             if bwOrColor=='bw':
                 pngSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
-                pngfilename = config.centersPrefix + fileId + '_' + config.imageType + '_' + filter + '.png' 
+                pngfilename = config.centersPrefix + fileId + '_' + config.imageType + '_' + filter + '.png'
             else:
                 pngSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
-                pngfilename = config.compositesPrefix + fileId + '.png' 
+                pngfilename = config.compositesPrefix + fileId + '.png'
             pngpath = pngSubfolder + pngfilename
 
             # if file exists, create subfolder and link image
@@ -107,14 +107,14 @@ def makeLinks(bwOrColor, pathparts):
                 craft = row[config.filesColCraft]
                 target = row[config.filesColTarget]
                 camera = row[config.filesColInstrument]
-                
+
                 # relabel target field if necessary - see db/multitargetImages.csv for more info
                 targetInfo = multitargetInfo.get(fileId)
                 if targetInfo:
                     # make sure old target matches what we have
                     if targetInfo['oldTarget']==target:
                         target = targetInfo['newTarget']
-                
+
                 # is this an image the user wants to see?
                 do = True
                 if (pathSystem and pathSystem!=system): do = False
@@ -122,7 +122,7 @@ def makeLinks(bwOrColor, pathparts):
                 if (pathTarget and pathTarget!=target): do = False
                 if (pathCamera and pathCamera!=camera): do = False
                 if do:
-                    
+
                     # get the centering info, if any, to see if we should slow down here.
                     # info includes planetCraftTargetCamera,centeringOff,centeringOn
                     planetCraftTargetCamera = system + craft + target + camera
@@ -157,7 +157,7 @@ def makeLinks(bwOrColor, pathparts):
                         ntitlecopies = config.movieFramesForTitles
                         makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
                         nfile += ntitlecopies
-                    
+
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
                     # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
@@ -173,23 +173,23 @@ def makeLinks(bwOrColor, pathparts):
     f.close()
 
 
-    
+
 def buildMovies(bwOrColor, targetPath=None):
     "build bw or color movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
     # eg buildMovies('bw', 'Jupiter/Voyager1')
-    
+
     # make sure we have some titles
     vgBuildTitles.buildTitles(targetPath)
-    
+
     # note: pathparts = [pathSystem, pathCraft, pathTarget, pathCamera]
     pathparts = lib.parseTargetPath(targetPath)
-    
+
     # remove any existing staged images first
     lib.rmdir(config.moviestageFolder)
-    
+
     makeLinks(bwOrColor, pathparts)
     makeMovieFiles()
-    
+
 
 if __name__ == '__main__':
     os.chdir('..')
@@ -200,4 +200,4 @@ if __name__ == '__main__':
     # makeLinks()
     print 'done'
 
-    
+

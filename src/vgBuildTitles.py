@@ -11,15 +11,15 @@ import lib
 
 def buildTitles(targetPath=None):
     "make titles for specified targetpaths"
-    
+
     # what does the user want to focus on?
     pathparts = lib.parseTargetPath(targetPath)
     pathSystem, pathCraft, pathTarget, pathCamera = pathparts
-    
+
     print 'making titles for', pathparts
-    
+
     targetpathsSeen = {}
-    
+
     # iterate through all available images
     f = open(config.filesdb, 'rt')
     i = 0
@@ -58,14 +58,14 @@ def buildTitles(targetPath=None):
                     lib.mkdir_p(targetfolder)
 
                     print subfolder
-                    
+
                     # make title image
                     title = target + " Flyby" # eg Triton Flyby
                     subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
                     subtitle2 = system + " System" # eg Neptune System
                     subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
                     img = lib.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
-                    
+
                     # save it
                     titlefilepath = targetfolder + 'title.png'
                     img.save(titlefilepath)
@@ -80,11 +80,11 @@ def buildTitles(targetPath=None):
 
 
 if __name__ == '__main__':
-    
+
     os.chdir('..')
 
     buildTitles('//Triton')
-    
+
     # import os
     # os.system(filename)
 

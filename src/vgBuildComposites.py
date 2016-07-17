@@ -18,10 +18,10 @@ import vgBuildCenters
 
 def buildComposites(volnum, overwrite=False):
     "build composite images by combining channel images"
-    
+
     # walks over records in composites.csv, merges channel images, writes to composites folder
     # eg
-    # composites: 
+    # composites:
     # volume,compositeId,centerId,filter,weight
     # VGISS_5103,C1537728,C1537728,Blue
     # VGISS_5103,C1537728,C1537730,Orange
@@ -38,12 +38,12 @@ def buildComposites(volnum, overwrite=False):
         print "Composites folder exists: " + compositessubfolder
     else:
         vgBuildCenters.buildCenters(volnum) # build the centered images for the volume, if not already there
-    
+
         print 'building composites for', compositesdubfolder
-        
+
         lib.rmdir(compositessubfolder)
         lib.mkdir(compositessubfolder)
-    
+
         # iterate over composites.csv records
         filein = open(config.compositesdb,'rt')
         reader = csv.reader(filein)
@@ -73,7 +73,7 @@ def buildComposites(volnum, overwrite=False):
         processChannels(channelRows)
         print 'done'
 
-    
+
 def processChannels(channelRows):
     "channels is an array of rows corresponding to rows in the composites.csv file"
     # we combine them and write them to a file in the composites folder, step5_composites
@@ -101,7 +101,7 @@ def processChannels(channelRows):
     outfilename = compositessubfolder + config.compositesPrefix + compositeId + '.png'
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)
-    
+
 
 if __name__ == '__main__':
     os.chdir('..')

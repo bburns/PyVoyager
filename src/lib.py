@@ -168,7 +168,8 @@ def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
     # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
     # cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg -y -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
-    cmd = 'ffmpeg -y -v 0 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) #. try the -v 0 for less verbosity, else keep using > nul
+    # cmd = 'ffmpeg -y -v 0 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) # try the -v 0 for less verbosity, else keep using > nul
+    cmd = 'ffmpeg -y -v 1 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) #. try v1
     # print cmd
     os.system(cmd)
     os.chdir(savedir)

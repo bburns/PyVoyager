@@ -279,7 +279,7 @@ Version 0.32 (2016-07-16)
 - Handle relabelling of multitarget images, eg a file may be labelled Titan but it gets centered on Neptune
 - Add titles for each movie segment
 
-Made Triton flyby movie
+Made Triton flyby movie bw
 
 Version 0.31 (2016-07-16)
 ----------------------------------------
@@ -303,7 +303,7 @@ Version 0.20 (2016-07-12)
 - Uses CALIB images, which have more contrast and darker backgrounds, which helps with circle detection in Neptune images
 - Preliminary handling of automatic colorization of frames and movies
 
-Made rough movies for Neptune flyby from volumes 8201-8210, both b&w and color.
+Made rough movies for Neptune flyby from volumes 8201-8210, both b&w and color
 
 Version 0.10 (2016-07-04)
 ----------------------------------------
@@ -312,7 +312,7 @@ Version 0.10 (2016-07-04)
 - Uses Blob detection and Hough circle detection for centering
 - Uses RAW images, which worked alright for some of the Jupiter images, but not Neptune, which has brighter backgrounds
 
-Made b&w movie for Jupiter approach from volumes 5104-5105.
+Made b&w movie for Jupiter approach from volumes 5104-5105
 
 
 License

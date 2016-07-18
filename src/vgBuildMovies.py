@@ -29,7 +29,7 @@ def makeMovieFiles():
     for root, dirs, files in os.walk(folder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
-            print 'directory', root # eg data/step9_movies/stage/Neptune\Voyager2\Triton\Narrow
+            print 'directory', root # eg data/step9_movies/stage/Neptune\Voyager2\Triton\Narrow\Bw
             stageFolder = os.path.abspath(root)
             # print stageFolder
 
@@ -38,9 +38,9 @@ def makeMovieFiles():
             # print targetFolder
             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
             # print targetPath
-            movieTitle = '-'.join(targetPath) # eg 'Neptune-Voyager2-Triton-Narrow'
+            movieTitle = '-'.join(targetPath) # eg 'Neptune-Voyager2-Triton-Narrow-Bw'
             movieTitle = movieTitle + '.mp4'
-            moviePath = '../../../../../' + movieTitle
+            moviePath = '../../../../../../' + movieTitle
             # print moviePath
 
             # movieName = '_movie.mp4'
@@ -48,25 +48,25 @@ def makeMovieFiles():
             lib.pngsToMp4(stageFolder, config.movieFilespec, moviePath, config.movieFrameRate)
 
 
-def makeLink(targetfolder, sourcepath, nfile, ncopies):
+def makeLink(targetFolder, sourcePath, nfile, ncopies):
     "make ncopies of symbolic link from the source to the target file, starting with number nfile"
     # this requires running vg from an admin console
     for i in range(ncopies):
         n = nfile + i
-        targetpath2 = targetfolder + config.movieFilespec % n # eg 'img00001.png'
+        targetPath2 = targetFolder + config.movieFilespec % n # eg 'img00001.png'
         # eg mklink data\step8_movies\Neptune\Voyager2\Neptune\Narrow\img00001.png ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
-        cmd = 'mklink ' + targetpath2 + ' ' + sourcepath + ' > nul'
+        cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
         os.system(cmd)
 
 
-def makeLinks(bwOrColor, pathparts):
+def makeLinks(bwOrColor, targetPathParts):
     "make links from source files (centers or composites) to movie stage folders"
 
     print 'making links from source files'
 
     # what does the user want to focus on?
-    pathSystem, pathCraft, pathTarget, pathCamera = pathparts
+    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
     centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
@@ -146,10 +146,12 @@ def makeLinks(bwOrColor, pathparts):
                     ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
 
                     # get staging subfolder and make sure it exists
-                    # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
+                    # eg data/step9_movies/stage/Jupiter/Voyager1/Io/Narrow/Bw/
+                    # subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
                     subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
+                    subfolderPlusColor = subfolder + bwOrColor.title() + '/'
                     # targetfolder = config.moviesFolder + subfolder
-                    targetfolder = config.moviestageFolder + subfolder
+                    targetfolder = config.moviestageFolder + subfolderPlusColor
                     lib.mkdir_p(targetfolder)
 
                     # get current file number in that folder, or start at 0
@@ -162,7 +164,7 @@ def makeLinks(bwOrColor, pathparts):
                     if not seen:
                         targetpathsSeen[planetCraftTargetCamera] = True
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
-                        titleimagepathrelative = '../../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
+                        titleimagepathrelative = '../../../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
                         ntitlecopies = config.movieFramesForTitles
                         makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
                         nfile += ntitlecopies
@@ -170,7 +172,7 @@ def makeLinks(bwOrColor, pathparts):
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
                     # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                    pngpathrelative = '../../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
+                    pngpathrelative = '../../../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
                     makeLink(targetfolder, pngpathrelative, nfile, ncopies)
 
                     # increment the file number for the target folder
@@ -190,13 +192,14 @@ def buildMovies(bwOrColor, targetPath=None):
     # make sure we have some titles
     vgBuildTitles.buildTitles(targetPath)
 
-    # note: pathparts = [pathSystem, pathCraft, pathTarget, pathCamera]
-    pathparts = lib.parseTargetPath(targetPath)
+    # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    targetPathParts = lib.parseTargetPath(targetPath)
 
-    # remove any existing staged images first
+    # stage images
     lib.rmdir(config.moviestageFolder)
+    makeLinks(bwOrColor, targetPathParts)
 
-    makeLinks(bwOrColor, pathparts)
+    # build mp4 files from all staged images
     makeMovieFiles()
 
 

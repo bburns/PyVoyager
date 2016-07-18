@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.33
+Version 0.34
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -143,13 +143,12 @@ And entering `vg` will show the available commands:
                   (ranges and wildcards like 5101-5104 or 51* are ok)
 
       <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
-
       <system>     = Jupiter|Saturn|Uranus|Neptune
       <spacecraft> = Voyager1|Voyager2
       <target>     = Jupiter|Io|Europa|, etc.
       <camera>     = Narrow|Wide
 
-    e.g. `vg movies bw //Triton`
+    e.g. vg movies bw //Triton
 
     You can also add `-y` to a command to have it overwrite any existing data.
 
@@ -262,6 +261,10 @@ Next steps
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
+
+Version 0.34 (2016-07-)
+----------------------------------------
+- Control movie speed with `db/framerates.csv` file
 
 Version 0.33 (2016-07-17)
 ----------------------------------------

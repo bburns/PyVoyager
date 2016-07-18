@@ -60,7 +60,6 @@ def makeLinks(bwOrColor, targetPathParts):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    # centeringInfo = lib.readCsv('db/centering.csv') # when to turn centering off/on
     multitargetInfo = lib.readCsv('db/multitargetImages.csv') # remapping listed targets
     framerateInfo = lib.readCsv('db/framerates.csv') # change framerates
 

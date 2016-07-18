@@ -1,37 +1,65 @@
 
+# slowdown/speed up movies
+
 # nframesPerImage is the number of frames to repeat each image -
 # the default is 1, anything higher slows the movie down that amount.
 # must be an integer.
 # each segment starts with default of 1 frame per image
 
+# frame rate is set in config.py - movieFrameRate
+
+# these values are all based on a frame rate of 20fps
+
 fileId,planetCraftTargetCamera,nframesPerImage
 
 # Uranus
+C2672949,Uranus-Voyager2-Uranus-Narrow,10
+C2673007,Uranus-Voyager2-Uranus-Narrow,1
+
+# cool moon sequences
+C2577621,Uranus-Voyager2-Uranus-Wide,2
+C2600321,Uranus-Voyager2-Uranus-Wide,1
+C2604520,Uranus-Voyager2-Uranus-Wide,2
+C2604942,Uranus-Voyager2-Uranus-Wide,1
+
+# rings - some need to be shifted
+C2672831,Uranus-Voyager2-Uranus-Wide,4
+C2672901,Uranus-Voyager2-Uranus-Wide,1
+C2679143,Uranus-Voyager2-Uranus-Wide,4
+C2679443,Uranus-Voyager2-Uranus-Wide,1
+C2682426,Uranus-Voyager2-Uranus-Wide,10
+C2682617,Uranus-Voyager2-Uranus-Wide,1
+C2684450,Uranus-Voyager2-Uranus-Wide,4
+C2684726,Uranus-Voyager2-Uranus-Wide,1
+C2685214,Uranus-Voyager2-Uranus-Wide,10
+C2686212,Uranus-Voyager2-Uranus-Wide,1
 
 # ariel
 # first record is first frame of ariel movie
-# C2531132,Uranus-Voyager2-Ariel-Narrow,1
-# C2681743,Uranus-Voyager2-Ariel-Narrow,10
-C2684338,Uranus-Voyager2-Ariel-Narrow,10
-C2690305,Uranus-Voyager2-Ariel-Narrow,2
+C2531132,Uranus-Voyager2-Ariel-Narrow,3
+C2684338,Uranus-Voyager2-Ariel-Narrow,25
+C2690305,Uranus-Voyager2-Ariel-Narrow,5
 
 # miranda
 C2564729,Uranus-Voyager2-Miranda-Narrow,3
-C2684409,Uranus-Voyager2-Miranda-Narrow,10
+C2684409,Uranus-Voyager2-Miranda-Narrow,25
+C2690737,Uranus-Voyager2-Miranda-Narrow,3
 
 # oberon
-C2465854,Uranus-Voyager2-Oberon-Narrow,6
+C2465854,Uranus-Voyager2-Oberon-Narrow,3
 C2683623,Uranus-Voyager2-Oberon-Narrow,10
 
-# puck is only one frame - show 2 secs
+# puck is only one frame - show for a while
 C2683716,Uranus-Voyager2-Puck-Narrow,40
 
 # titania
 C2465905,Uranus-Voyager2-Titania-Narrow,3
-C2683039,Uranus-Voyager2-Titania-Narrow,10
+C2683039,Uranus-Voyager2-Titania-Narrow,20
+C2690508,Uranus-Voyager2-Titania-Narrow,3
 
 # umbriel
-C2684004,Uranus-Voyager2-Umbriel-Narrow,10
-
+C2465918,Uranus-Voyager2-Umbriel-Narrow,3
+C2684004,Uranus-Voyager2-Umbriel-Narrow,20
+C2690340,Uranus-Voyager2-Umbriel-Narrow,3
 
 

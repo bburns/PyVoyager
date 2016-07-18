@@ -51,7 +51,7 @@ def retarget(oldTarget, newTarget):
                 print '%s,%s,%s' % (fileId, oldTarget, newTarget)
 
 
-retarget('Uranus', 'SomeMoon')
+# retarget('Uranus', 'SomeMoon')
 
 
 
@@ -83,7 +83,7 @@ def grabTestImages():
                 print cmd
                 os.system(cmd)
 
-# grabTestImages()
+grabTestImages()
 
 
 def removeTestImages():

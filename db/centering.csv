@@ -3,14 +3,14 @@
 #. so why not make it a py file?
 #. are these inclusive/exclusive?
 planetCraftTargetCamera,centeringOff,centeringOn
-UranusVoyager2UranusNarrow,C2666727,C2707400
-UranusVoyager2UranusWide
-UranusVoyager2ArialNarrow,C2684338,C2690305
-UranusVoyager2MirandaNarrow,C2684608,C2727259
-UranusVoyager2OberonNarrow
-UranusVoyager2TitaniaNarrow
-UranusVoyager2UmbrielNarrow,C2690340,C2728806
-NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
-NeptuneVoyager2NeptuneWide,C1137509,C1141753
-NeptuneVoyager2TritonNarrow,C1134823,C1146313
-# NeptuneVoyager2TritonWide,not necessary
+Uranus-Voyager2-Uranus-Narrow,C2666727,C2707400
+Uranus-Voyager2-Uranus-Wide,C2682933,C2688432
+Uranus-Voyager2-Ariel-Narrow,C2684338,C2690305
+Uranus-Voyager2-Miranda-Narrow,C2684608,C2727259
+Uranus-Voyager2-Oberon-Narrow
+Uranus-Voyager2-Titania-Narrow
+Uranus-Voyager2-Umbriel-Narrow,C2690340,C2728806
+Neptune-Voyager2-Neptune-Narrow,C1127459,C1152407
+Neptune-Voyager2-Neptune-Wide,C1137509,C1141753
+Neptune-Voyager2-Triton-Narrow,C1134823,C1146313
+# Neptune-Voyager2-Triton-Wide,not necessary

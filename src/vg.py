@@ -24,6 +24,10 @@ import vgInitFiles
 import vgInitComposites
 
 
+def beep():
+    os.system('beep')
+
+
 # get command and arguments
 args = sys.argv[1:] # remove command 'vg'
 nargs = len(args)
@@ -45,30 +49,35 @@ if cmd=="download":
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildDownload.buildDownload(volnum, overwrite)
+    beep()
 
 elif cmd=="unzip":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildUnzip.buildUnzip(volnum, overwrite)
+    beep()
 
 elif cmd=="images":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildImages.buildImages(volnum, overwrite)
+    beep()
 
 elif cmd=="centers":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildCenters.buildCenters(volnum, overwrite)
+    beep()
 
 elif cmd=="composites":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgBuildComposites.buildComposites(volnum, overwrite)
+    beep()
 
 elif cmd=="targets":
     vols = args.pop(0)
@@ -77,6 +86,7 @@ elif cmd=="targets":
         vgBuildTargets.buildTargets(volnum)
     # targetPath = args.pop(0)
     # vgBuild.buildTargets(targetPath)
+    beep()
 
 elif cmd=="list":
     vgBuildList.buildList()
@@ -92,6 +102,7 @@ elif cmd=="movies":
         vgBuildMovies.buildMovies(bwOrColor, targetpath)
     else:
         cmd="help"
+    beep()
 
 elif cmd=="init":
     subject = args.pop(0)
@@ -99,6 +110,7 @@ elif cmd=="init":
         vgInitFiles.initFiles()
     elif subject=='composites':
         vgInitComposites.initComposites()
+    beep()
 
 elif cmd=="help":
     pass
@@ -137,13 +149,12 @@ if cmd=="help":
     print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
     print
     print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
-    print
     print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
     print "  <spacecraft> = Voyager1|Voyager2"
     print "  <target>     = Jupiter|Io|Europa|, etc."
     print "  <camera>     = Narrow|Wide"
     print
-    print "e.g. `vg movies bw //Triton`"
+    print "e.g. vg movies bw //Triton"
     print
     print "You can also add `-y` to a command to have it overwrite any existing data."
     print

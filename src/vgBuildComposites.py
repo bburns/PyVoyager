@@ -39,7 +39,7 @@ def buildComposites(volnum, overwrite=False):
     else:
         vgBuildCenters.buildCenters(volnum) # build the centered images for the volume, if not already there
 
-        print 'Building composites for', compositessubfolder
+        # print 'Building composites for', compositessubfolder
 
         lib.rmdir(compositessubfolder)
         lib.mkdir(compositessubfolder)
@@ -50,7 +50,6 @@ def buildComposites(volnum, overwrite=False):
         i = 0
         startId = ''
         channelRows = []
-        # volume = lib.getVolumeTitle(volnum)
         volnum = str(volnum)
         for row in reader:
             if row==[] or row[0][0]=="#":
@@ -69,9 +68,11 @@ def buildComposites(volnum, overwrite=False):
                             processChannels(channelRows)
                         startId = compositeId
                         channelRows = [row]
+                    # print 'compositing %d: %s/%s\r' %(i,volnum,compositeId),
+                    print 'compositing %s/%s\r' %(volnum,compositeId),
             i += 1
         processChannels(channelRows)
-        print 'done'
+        print
 
 
 def processChannels(channelRows):

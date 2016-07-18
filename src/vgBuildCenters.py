@@ -58,11 +58,12 @@ def buildCenters(volnum, overwrite=False):
 
                     # get the centering info, if any
                     # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    planetCraftTargetCamera = system + craft + target + camera
-                    info = centeringInfo.get(planetCraftTargetCamera)
-                    if info:
-                        centeringOff = info['centeringOff']
-                        centeringOn = info['centeringOn']
+                    # planetCraftTargetCamera = system + craft + target + camera
+                    planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
+                    centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                    if centeringInfoRecord:
+                        centeringOff = centeringInfoRecord['centeringOff']
+                        centeringOn = centeringInfoRecord['centeringOn']
                         docenter = fileId<centeringOff or fileId>centeringOn
                     else: # if no info for this target just center it
                         docenter = True
@@ -73,7 +74,8 @@ def buildCenters(volnum, overwrite=False):
                     outfile = centersubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'centering %d: %s' %(nfile,infile)
-                    print '\rcentering %d: %s' %(nfile,infile),
+                    # print '\rcentering %d: %s' %(nfile,infile),
+                    print 'centering %d: %s\r' %(nfile,infile),
                     libimg.adjustImageFile(infile, outfile, docenter)
 
                     nfile += 1
@@ -82,6 +84,7 @@ def buildCenters(volnum, overwrite=False):
 
         f.close()
 
+        print
 
 if __name__ == '__main__':
     os.chdir('..')

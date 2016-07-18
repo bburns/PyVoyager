@@ -116,11 +116,12 @@ movieFilespec = 'img%05d.png'
 # frame rate - frames per second
 #. need to set this per target
 # movieFrameRate = 5 # nowork - gets stuck after a bit - why?
-movieFrameRate = 8 # nice for ariel flyby
+# movieFrameRate = 8 # nice for ariel flyby
 # movieFrameRate = 10
 # movieFrameRate = 12 # good for triton flyby
 # movieFrameRate = 15
-# movieFrameRate = 20
+movieFrameRate = 20
+# movieFrameRate = 25
 # movieFrameRate = 30
 
 # number of duplicate frames to include for slow parts of movie
@@ -141,7 +142,8 @@ movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 sec
 movieFfmpegOptions = "-y -loglevel warning"
 # movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 # movieFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
-movieFfmpegOutputOptions = "-c:v libx264 -crf 23"
+# movieFfmpegOutputOptions = "-c:v libx264 -crf 23"
+movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 
 
 # files and folders

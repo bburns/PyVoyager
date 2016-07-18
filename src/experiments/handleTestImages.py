@@ -17,7 +17,7 @@ testfolder = config.testFolder
 
 os.chdir('../..')
 
-
+#. make getFileInfo(fileId) - return dict of info
 def getVolume(fileId):
     "get volume associated with the given file id"
     # slow linear search but ok for this task
@@ -35,6 +35,25 @@ def getVolume(fileId):
         i+=1
     f.close()            
     return vol
+
+
+def retarget(oldTarget, newTarget):
+    ""
+    print 'imageId,oldTarget,newTarget,x,y'
+    for root, dirs, files in os.walk(tempFolder):
+        nfiles = len(files)
+        for filename in files:
+            ext = filename[-4:]
+            if ext=='.png':
+                origname = filename[9:] # eg C1164724_RAW_Clear.png
+                fileId = origname[:8] # eg C1164724
+                # C0903842,Triton,Neptune
+                print '%s,%s,%s' % (fileId, oldTarget, newTarget)
+
+
+retarget('Uranus', 'SomeMoon')
+
+
 
 
 
@@ -64,6 +83,8 @@ def grabTestImages():
                 print cmd
                 os.system(cmd)
 
+# grabTestImages()
+
 
 def removeTestImages():
     "walk through foo folder and for each centered file there, remove the corresponding one from the test folder"
@@ -82,7 +103,6 @@ def removeTestImages():
                 os.system(cmd)
                 
 
-grabTestImages()
 # removeTestImages()
 
 

@@ -2,16 +2,6 @@
 # voyager config options
 #--------------------------------------------------------------------------------
 
-# use like the following:
-# import config
-# print config.volumes
-
-
-# debugging
-# ----------------------------------------
-
-debugImages = False
-
 
 
 # downloads
@@ -26,11 +16,10 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 # imagetype to extract using img2png
 # RAW images can have overly bright backgrounds.
-# CLEANED images have the riseau marks removed.
+# CLEANED images have the riseau marks removed, but not very well.
 # CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageType = 'RAW'
-# imageType = 'CLEANED'
 imageType = 'CALIB'
 imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespec = "*" # do all image types
@@ -47,25 +36,15 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel<level> - debug info
 # -s<level> - scale image values by this amount - otherwise can be too dark
-# note: -s10 works for uranus but blows out jupiter images - would need per-flyby and lots of experimenting,
+# note: -s10 works for uranus but blows out jupiter images -
+# would need per-flyby and lots of experimenting,
 # so just keep using the dim CALIB images and histogram stretching, which works well.
-# img2pngOptions = "-fnamefilter"
-img2pngOptions = "-fnamefilter -loglevel0"
 # img2pngOptions = "-fnamefilter -loglevel0 -s10"
+img2pngOptions = "-fnamefilter -loglevel0"
 
 
 # centers
 # ----------------------------------------
-
-# method of center detection
-#. ditch - just handle through code
-# centerMethod = 'blob'
-# centerMethod = 'circle'
-centerMethod = 'all'
-
-#. ditch
-# blobAreaDerivativeMax = -0.02
-
 
 # blob detection
 
@@ -84,6 +63,7 @@ blobThreshold = 0.015 # works for most neptune system images
 # blobAreaCutoff = 24*24
 blobAreaCutoff = 30*30
 
+# canny edge detection threshold
 # used by hough circle detection - lower threshold is half of this
 # if this is too high then dim circles won't be detected
 # but if it's too low you'd get too many spurious edges in the edge image
@@ -102,11 +82,13 @@ centersPrefix = 'centered_'
 rotateImage = True
 
 # debugging image options during centering step
+# used by test/testCentering.py - don't use for normal processing!
+#. just make one flag
 drawBinaryImage = False # save thresholded image
-drawBoundingBox = False # draw bounding box around biggest blob
+drawBoundingBox = False # save image with bounding box around biggest blob
 drawEdges = False # save canny edges image ~ used by hough circle detector
-drawCircle = False # draw best detected hough circle
-drawCircles = False # draw all detected hough circles
+drawCircle = False # save image with best detected hough circle
+drawCircles = False # save image with all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 
 
@@ -133,8 +115,10 @@ movieFilespec = 'img%05d.png'
 
 # frame rate - frames per second
 #. need to set this per target
-# movieFrameRate = 5 # nowork - gets stuck after a bit
-movieFrameRate = 12 # good for triton flyby
+# movieFrameRate = 5 # nowork - gets stuck after a bit - why?
+movieFrameRate = 8 # nice for ariel flyby
+# movieFrameRate = 10
+# movieFrameRate = 12 # good for triton flyby
 # movieFrameRate = 15
 # movieFrameRate = 20
 # movieFrameRate = 30
@@ -144,8 +128,20 @@ movieFrameRate = 12 # good for triton flyby
 movieFramesForSlowParts = 8
 
 # number of frames for title page
-movieFramesForTitles = movieFrameRate * 5
+movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 secs according to this
 
+# ffmpeg options
+# -y forces overwriting existing file
+# -c:v specifies
+# -crf specifies constant rate factor
+#      see https://trac.ffmpeg.org/wiki/Encode/H.264#crf
+#      0 is completely lossless, 18 is very lossless, 23 is default, 51 is worst
+# Use -pix_fmt yuv420p for compatibility with outdated media players (including Windows Media Player and Quicktime)
+# seehttp://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
+movieFfmpegOptions = "-y -loglevel warning"
+# movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+# movieFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
+movieFfmpegOutputOptions = "-c:v libx264 -crf 23"
 
 
 # files and folders

@@ -166,11 +166,11 @@ def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
     savedir = os.getcwd()
     os.chdir(stageFolder)
     # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
-    # cmd = 'ffmpeg -y -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename)
-    # cmd = 'ffmpeg -y -i %s -r %d %s > nul' % (filenamePattern, frameRate, outputFilename)
-    # cmd = 'ffmpeg -y -v 0 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) # try the -v 0 for less verbosity, else keep using > nul
-    cmd = 'ffmpeg -y -v 1 -i %s -r %d %s' % (filenamePattern, frameRate, outputFilename) #. try v1
-    # print cmd
+    # cmd = 'ffmpeg -y %s -r 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
+    # cmd = 'ffmpeg -y %s -framerate %d -i %s -r %d %s' % (config.movieFfmpegOptions, frameRate, filenamePattern, frameRate, outputFilename)
+    # cmd = 'ffmpeg %s -framerate 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
+    cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % (config.movieFfmpegOptions, frameRate, filenamePattern, config.movieFfmpegOutputOptions, outputFilename)
+    print cmd
     os.system(cmd)
     os.chdir(savedir)
 

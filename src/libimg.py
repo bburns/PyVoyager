@@ -228,7 +228,6 @@ def findCircle(im, debugtitle=None):
     # kernelSize = 5 # aperture size - should be odd
     # gaussianSigma = 7
     # im = cv2.GaussianBlur(im, (kernelSize, kernelSize), gaussianSigma)
-    # if config.debugImages: show(im, 'findcircles - gaussian blurred')
 
     # Hough detection parameters
 
@@ -261,7 +260,7 @@ def findCircle(im, debugtitle=None):
     # Param 2 will set how many edge points it needs to find to
     # declare that it's found a circle. Again, too high will detect nothing, too
     # low will declare anything to be a circle. The ideal value of param 2 will
-    # be related to the circumference of the circles.
+    # be related to the circumference of the circles. [?]
     # acc_threshold=50
     # acc_threshold=200
     acc_threshold=250
@@ -396,20 +395,12 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
 
     boundingBox = [x1,y1,x2,y2]
 
-    # if config.debugImages:
-    #     # b *= 255
-    #     b = mpim2cv2(b)
-    #     b = gray2rgb(b)
-    #     drawBoundingBox(b, boundingBox)
-    #     show(b, 'findblobs th=' + str(blobThreshold))
-
     if config.drawBoundingBox:
         # drawBoundingBox(im, boundingBox)
         imbox = drawBoundingBox(im, boundingBox)
         imbox = cv2.normalize(imbox, None, 0, 255, cv2.NORM_MINMAX)
         cv2.imwrite(debugtitle + '_blobboundingbox.png', imbox)
         # show(imbox)
-
 
     return boundingBox
 

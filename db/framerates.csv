@@ -1,6 +1,34 @@
-planetCraftTargetCamera,framerate
-UranusVoyager2MirandaNarrow
-NeptuneVoyager2TritonNarrow,12
-NeptuneVoyager2TritonWide,12
+
+# nframesPerImage is the number of frames to repeat each image -
+# the default is 1, anything higher slows the movie down that amount.
+# must be an integer.
+
+fileId,planetCraftTargetCamera,nframesPerImage
+
+# Uranus
+
+# ariel
+# first record is first frame of ariel movie
+C2531132,Uranus-Voyager2-Arial-Narrow,3
+C2681743,Uranus-Voyager2-Arial-Narrow,10
+
+# miranda
+C2564729,Uranus-Voyager2-Miranda-Narrow,3
+C2684409,Uranus-Voyager2-Miranda-Narrow,10
+
+# oberon
+C2465854,Uranus-Voyager2-Oberon-Narrow,6
+C2683623,Uranus-Voyager2-Oberon-Narrow,10
+
+# puck is only one frame - show 2 secs
+C2683716,Uranus-Voyager2-Puck-Narrow,40
+
+# titania
+C2465905,Uranus-Voyager2-Titania-Narrow,3
+C2683039,Uranus-Voyager2-Titania-Narrow,10
+
+# umbriel
+C2684004,Uranus-Voyager2-Umbriel-Narrow,10
+
 
 

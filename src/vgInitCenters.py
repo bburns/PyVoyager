@@ -80,7 +80,6 @@ def calcCenters(volumeNum):
     # fileid = filename.split('_')[0] # eg C1385455
     # blobThreshold = getBlobThreshold(fileid)
     # libimg.centerImageFile(infile, outfile, blobThreshold, config.rotateImage)
-    # libimg.centerImageFile(infile, outfile, config.rotateImage, config.centerMethod, config.drawBoundingBox, config.drawCrosshairs)
     # libimg.centerImageFile(infile, outfile)
 
 

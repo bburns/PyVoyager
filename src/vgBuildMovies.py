@@ -54,7 +54,7 @@ def makeLink(targetFolder, sourcePath, nfile, ncopies):
     for i in range(ncopies):
         n = nfile + i
         targetPath2 = targetFolder + config.movieFilespec % n # eg 'img00001.png'
-        # eg mklink data\step8_movies\Neptune\Voyager2\Neptune\Narrow\img00001.png ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
+        # eg mklink data\step9_movies\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
         cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
         os.system(cmd)
@@ -69,14 +69,18 @@ def makeLinks(bwOrColor, targetPathParts):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    centeringInfo = lib.readCsv('db/centering.csv') # get dictionary of dictionaries
-    multitargetInfo = lib.readCsv('db/multitargetImages.csv') # get dictionary of dictionaries
+    # centeringInfo = lib.readCsv('db/centering.csv') # when to turn centering off/on
+    multitargetInfo = lib.readCsv('db/multitargetImages.csv') # remapping listed targets
+    framerateInfo = lib.readCsv('db/framerates.csv') # change framerates
 
-    # keep track of number of files in each target subfolder, so can number files appropriately
+    # keep track of number of files in each target subfolder,
+    # so can number files appropriately and know when to add titles
     nfilesInTargetDir = {}
 
-    # keep track of which targetpaths we've seen, so know to add titles
-    targetpathsSeen = {}
+    # keep track of current framerate
+    # nframesPerImage = {}
+
+    # nframesPerImage = 1 # default
 
     # iterate through all available images
     f = open(config.filesdb, 'rt')
@@ -89,11 +93,12 @@ def makeLinks(bwOrColor, targetPathParts):
         elif i==0:
             fields = row
         else:
+            # read file info
             volume = row[config.filesColVolume]
             fileId = row[config.filesColFileId]
             filter = row[config.filesColFilter]
 
-            # get sourcepath
+            # get image source path
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
             if bwOrColor=='bw':
                 pngSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
@@ -103,7 +108,7 @@ def makeLinks(bwOrColor, targetPathParts):
                 pngfilename = config.compositesPrefix + fileId + '.png'
             pngpath = pngSubfolder + pngfilename
 
-            # if file exists, create subfolder and link image
+            # if image file exists, create subfolder and link image
             if os.path.isfile(pngpath):
 
                 # show progress
@@ -124,33 +129,32 @@ def makeLinks(bwOrColor, targetPathParts):
                     if targetInfo['oldTarget']==target:
                         target = targetInfo['newTarget']
 
-                # is this an image the user wants to see?
-                do = True
-                if (pathSystem and pathSystem!=system): do = False
-                if (pathCraft and pathCraft!=craft): do = False
-                if (pathTarget and pathTarget!=target): do = False
-                if (pathCamera and pathCamera!=camera): do = False
-                if do:
+                # does this image match the target path the user specified on the cmdline?
+                addImage = True
+                if (pathSystem and pathSystem!=system): addImage = False
+                if (pathCraft and pathCraft!=craft): addImage = False
+                if (pathTarget and pathTarget!=target): addImage = False
+                if (pathCamera and pathCamera!=camera): addImage = False
+                if addImage:
 
-                    # get the centering info, if any, to see if we should slow down here.
-                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
+                    # # get the centering info, if any, to see if we should slow down here.
+                    # # info includes planetCraftTargetCamera,centeringOff,centeringOn
                     planetCraftTargetCamera = system + craft + target + camera
-                    info = centeringInfo.get(planetCraftTargetCamera)
-                    goSlow = False
-                    if info:
-                        centeringOff = info['centeringOff']
-                        centeringOn = info['centeringOn']
-                        goSlow = (fileId>=centeringOff) and (fileId<centeringOn)
+                    # info = centeringInfo.get(planetCraftTargetCamera)
+                    # goSlow = False
+                    # if info:
+                    #     centeringOff = info['centeringOff']
+                    #     centeringOn = info['centeringOn']
+                    #     goSlow = (fileId>=centeringOff) and (fileId<centeringOn)
 
-                    # number of copies of this file to link
-                    ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
+                    # # number of copies of this file to link
+                    # ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
+                    ncopies = 1
 
                     # get staging subfolder and make sure it exists
                     # eg data/step9_movies/stage/Jupiter/Voyager1/Io/Narrow/Bw/
-                    # subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
-                    subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
+                    subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
                     subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                    # targetfolder = config.moviesFolder + subfolder
                     targetfolder = config.moviestageFolder + subfolderPlusColor
                     lib.mkdir_p(targetfolder)
 
@@ -160,9 +164,7 @@ def makeLinks(bwOrColor, targetPathParts):
 
                     # if we haven't seen this subfolder before, add the titlepage image a few times.
                     # titlepages are created in the previous step, vgBuildTitles.
-                    seen = targetpathsSeen.get(planetCraftTargetCamera)
-                    if not seen:
-                        targetpathsSeen[planetCraftTargetCamera] = True
+                    if nfile==0:
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
                         titleimagepathrelative = '../../../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
                         ntitlecopies = config.movieFramesForTitles
@@ -189,11 +191,11 @@ def buildMovies(bwOrColor, targetPath=None):
     "build bw or color movies associated with the given target path (eg Jupiter/Voyager1/Io/Narrow)"
     # eg buildMovies('bw', 'Jupiter/Voyager1')
 
-    # make sure we have some titles
-    vgBuildTitles.buildTitles(targetPath)
-
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
+
+    # make sure we have some titles
+    vgBuildTitles.buildTitles(targetPath)
 
     # stage images
     lib.rmdir(config.moviestageFolder)

@@ -4,7 +4,7 @@ PyVoyager
 
 Version 0.33
 
-PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment.
+PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
@@ -13,12 +13,10 @@ There are a total of 70k+ images in the Voyager archives - the datasets are rath
 You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
 
 
-
 Example Movies
 ----------------------------------------
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
-
 
 https://www.youtube.com/watch?v=kcJB9rNzCH4  
 Voyager 2 Triton flyby v0.32

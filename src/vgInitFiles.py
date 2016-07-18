@@ -27,7 +27,7 @@ def initFiles():
     for root, dirs, files in os.walk(config.indexFolder):
         for filename in files:
             if filename[:10]=='RAWIMAGES_' and filename[-3:]=='TAB':
-                filepath = config.indexFolder + '/' + filename
+                filepath = config.indexFolder + filename
                 print 'reading', filepath
                 filein = open(filepath, 'rt')
                 reader = csv.reader(filein)
@@ -53,8 +53,10 @@ def initFiles():
                     instrument = config.indexTranslations[instrument] # eg Narrow
                     target = target.title().replace(' ','_') # eg N_Rings
 
-                    # handle rings specially - don't want them to become separate movies - include them with the planet
-                    if target[2:]=='Rings':
+                    # handle rings specially - don't want them to become separate movies -
+                    # include them with the planet
+                    #. maybe just include for the wide-angle camera? otherwise too many
+                    if target[2:]=='Rings' and instrument=='Wide':
                         planetLetter = target[:1]
                         if planetLetter=='J': target='Jupiter'
                         elif planetLetter=='S': target='Saturn'

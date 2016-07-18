@@ -39,8 +39,8 @@ for fileid in fileids:
     
     infile = testfolder + fileid + '.png'
     centeredfile = centeredfolder + fileid + '.png'
-    thresholdedfile = thresholdedfolder + fileid + '.png'
-    edgesfile = edgesfolder + fileid + '.png'
+    # thresholdedfile = thresholdedfolder + fileid + '.png'
+    # edgesfile = edgesfolder + fileid + '.png'
     
     # any experimenting should be done in adjustImageFile or config settings
     debugtitle = debugfolder + fileid

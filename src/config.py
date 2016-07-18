@@ -73,7 +73,8 @@ centerMethod = 'all'
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-blobThreshold = 0.015 # works for most neptune system images
+# blobThreshold = 0.015 # works for most neptune system images. but not early triton
+blobThreshold = 0.013 #. try to fix triton
 # blobThreshold = 0.15 # try for -s10 option with uranus - worked
 
 # area in pixels^2 at which switch from blob detection to hough circle detection

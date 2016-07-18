@@ -31,20 +31,11 @@ def makeMovieFiles():
         if dirs==[]: # reached the leaf level
             print 'directory', root # eg data/step9_movies/stage/Neptune\Voyager2\Triton\Narrow\Bw
             stageFolder = os.path.abspath(root)
-            # print stageFolder
-
-            # get target file path relative to staging folder, eg ../../Neptune-Voyager-Triton-Narrow.mp4
-            targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow
-            # print targetFolder
+            # get target file path relative to staging folder, eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+            targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-            # print targetPath
-            movieTitle = '-'.join(targetPath) # eg 'Neptune-Voyager2-Triton-Narrow-Bw'
-            movieTitle = movieTitle + '.mp4'
+            movieTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
             moviePath = '../../../../../../' + movieTitle
-            # print moviePath
-
-            # movieName = '_movie.mp4'
-            # lib.pngsToMp4(stageFolder, config.movieFilespec, movieName, config.movieFrameRate)
             lib.pngsToMp4(stageFolder, config.movieFilespec, moviePath, config.movieFrameRate)
 
 
@@ -74,13 +65,12 @@ def makeLinks(bwOrColor, targetPathParts):
     framerateInfo = lib.readCsv('db/framerates.csv') # change framerates
 
     # keep track of number of files in each target subfolder,
-    # so can number files appropriately and know when to add titles
+    # so we can number files appropriately and know when to add titles
     nfilesInTargetDir = {}
 
-    # keep track of current framerate
-    # nframesPerImage = {}
-
-    # nframesPerImage = 1 # default
+    # how many times should we duplicate the images?
+    ncopiesPerImage = 1 # default
+    ncopiesPerImageMemory = {} # keyed on planet-spacecraft-target-camera
 
     # iterate through all available images
     f = open(config.filesdb, 'rt')
@@ -137,19 +127,19 @@ def makeLinks(bwOrColor, targetPathParts):
                 if (pathCamera and pathCamera!=camera): addImage = False
                 if addImage:
 
-                    # # get the centering info, if any, to see if we should slow down here.
-                    # # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    planetCraftTargetCamera = system + craft + target + camera
-                    # info = centeringInfo.get(planetCraftTargetCamera)
-                    # goSlow = False
-                    # if info:
-                    #     centeringOff = info['centeringOff']
-                    #     centeringOn = info['centeringOn']
-                    #     goSlow = (fileId>=centeringOff) and (fileId<centeringOn)
+                    # build a key
+                    planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
 
-                    # # number of copies of this file to link
-                    # ncopies = 1 if goSlow==False else config.movieFramesForSlowParts
-                    ncopies = 1
+                    # how many copies of this file should we stage?
+                    framerateInfoRecord = framerateInfo.get(fileId) # a record from the framerates.csv file
+                    if framerateInfoRecord:
+                        ncopiesPerImage = int(framerateInfoRecord['nframesPerImage']) # eg 3 = 3x slowdown
+                        # remember it for future also
+                        key = framerateInfoRecord['planetCraftTargetCamera'] # eg Uranus-Voyager2-Arial-Narrow
+                        ncopiesPerImageMemory[key] = ncopiesPerImage
+                    else:
+                        # lookup where we left off for this target, or 1x speed if not seen before
+                        ncopiesPerImage = ncopiesPerImageMemory.get(planetCraftTargetCamera) or 1
 
                     # get staging subfolder and make sure it exists
                     # eg data/step9_movies/stage/Jupiter/Voyager1/Io/Narrow/Bw/
@@ -166,7 +156,8 @@ def makeLinks(bwOrColor, targetPathParts):
                     # titlepages are created in the previous step, vgBuildTitles.
                     if nfile==0:
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
-                        titleimagepathrelative = '../../../../../../../../' + titleimagefilepath # need to get out of the target dir - we're always this deep
+                        # need to get out of the target dir - we're always this deep
+                        titleimagepathrelative = '../../../../../../../../' + titleimagefilepath
                         ntitlecopies = config.movieFramesForTitles
                         makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
                         nfile += ntitlecopies
@@ -174,17 +165,16 @@ def makeLinks(bwOrColor, targetPathParts):
                     # link to file
                     # note: mklink requires admin privileges, so must run this script in an admin console
                     # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                    pngpathrelative = '../../../../../../../../' + pngpath # need to get out of the target dir - we're always this deep
-                    makeLink(targetfolder, pngpathrelative, nfile, ncopies)
+                    pngpathrelative = '../../../../../../../../' + pngpath # need to get out of the target dir
+                    makeLink(targetfolder, pngpathrelative, nfile, ncopiesPerImage)
 
                     # increment the file number for the target folder
-                    nfile += ncopies
+                    nfile += ncopiesPerImage
                     nfilesInTargetDir[planetCraftTargetCamera] = nfile
 
         i += 1
 
     f.close()
-
 
 
 def buildMovies(bwOrColor, targetPath=None):

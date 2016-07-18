@@ -1,7 +1,7 @@
 # when to turn centering off and back on again, around closest approach
 # this entire file is read into memory
 #. so why not make it a py file?
-#. are this inclusive/exclusive?
+#. are these inclusive/exclusive?
 planetCraftTargetCamera,centeringOff,centeringOn
 UranusVoyager2UranusNarrow,C2666727,C2707400
 UranusVoyager2UranusWide

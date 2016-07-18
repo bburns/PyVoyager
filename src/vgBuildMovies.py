@@ -24,21 +24,24 @@ def makeMovieFiles():
     "build mp4 movies using ffmpeg on sequentially numbered image files"
     print 'make mp4 movies using ffmpeg'
     # folder = config.moviesFolder
-    folder = config.moviestageFolder
+    folder = config.moviestageFolder # eg data/step9_movies/stage/
     # print folder
     for root, dirs, files in os.walk(folder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
-            print 'directory', root # eg Neptune/Voyager2/Triton/Narrow
+            print 'directory', root # eg data/step9_movies/stage/Neptune\Voyager2\Triton\Narrow
             stageFolder = os.path.abspath(root)
-            print stageFolder
+            # print stageFolder
 
             # get target file path relative to staging folder, eg ../../Neptune-Voyager-Triton-Narrow.mp4
-            targetPath = root.split('/') # eg ['Neptune','Voyager2',...]
+            targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow
+            # print targetFolder
+            targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+            # print targetPath
             movieTitle = '-'.join(targetPath) # eg 'Neptune-Voyager2-Triton-Narrow'
             movieTitle = movieTitle + '.mp4'
-            moviePath = '../../../../' + moviePath
-            print moviePath
+            moviePath = '../../../../../' + movieTitle
+            # print moviePath
 
             # movieName = '_movie.mp4'
             # lib.pngsToMp4(stageFolder, config.movieFilespec, movieName, config.movieFrameRate)
@@ -199,11 +202,12 @@ def buildMovies(bwOrColor, targetPath=None):
 
 if __name__ == '__main__':
     os.chdir('..')
-    print lib.parseTargetPath('')
+    # print lib.parseTargetPath('')
     # buildMovies('bw', 'Jupiter/Voyager1/Io/Narrow')
     # buildMovies('bw', '//Triton')
     # buildMovies("Neptune")
     # makeLinks()
+    makeMovieFiles()
     print 'done'
 
 

@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.34
+Version 0.35
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -255,14 +255,21 @@ Next steps
 
 * Improve stabilization/centering routines - handle off-screen centers and crescents, use feature detection and alignment to add more stabilization
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
-* Combine movie segments into single movie, adding audio
+* Add audio
 * Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
+* Host mp4s on a server for better quality (YouTube downgrades some to 360p)
 * Build mosaics with hand-annotated information, include in movies
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
 
-Version 0.34 (2016-07-)
+Version 0.35 (2016-07-19)
+----------------------------------------
+- Combine clips into single movies (eg for Neptune), then a movie combining all movies
+
+Made Uranus system movie (bw)
+
+Version 0.34 (2016-07-18)
 ----------------------------------------
 - Control movie speed with `db/framerates.csv` file
 

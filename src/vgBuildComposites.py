@@ -1,4 +1,5 @@
 
+# vg composites command
 # build composite images from centered images,
 # based on records in composites.csv.
 # see also vgInitComposites.py, which builds initial pass at composites.csv.
@@ -49,7 +50,7 @@ def buildComposites(volnum, overwrite=False):
         channelRows = []
         volnum = str(volnum)
         for row in reader:
-            if row==[] or row[0][0]=="#": continue # skip blanks and comments
+            if row==[] or row[0][0]=="#": continue # skip blank lines and comments
             if i==0: fields = row
             else:
                 vol = row[config.compositesColVolume]

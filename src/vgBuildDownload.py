@@ -1,4 +1,5 @@
 
+# vg downloads command
 # download tar.gz archives from pds rings site at seti.org
 
 import os

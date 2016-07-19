@@ -1,9 +1,12 @@
 
+# vg list command
+# show listing of volumes and what stagethey're at
+
+
 import os
 import tabulate
 
 import config
-
 
 
 def buildList():

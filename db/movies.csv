@@ -1,5 +1,37 @@
 
-# store movie build info here
+# store movie info here
+# movies are built in order, with the given clips where available
+# filenames are just the id's with .mp4 appended
 
-movieId
+movieId,clipId
 
+Jupiter-Voyager1,Jupiter-Voyager1-Title
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide-Color
+
+Uranus-Voyager2,Uranus-Voyager2-Title
+Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow-Color
+Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Color
+
+Neptune-Voyager2,Neptune-Voyager2-Title
+Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow-Color
+Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow-Color
+Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide-Color
+
+All,All-Title
+All,Jupiter-Voyager1
+All,Saturn-Voyager1
+All,Jupiter-Voyager2
+All,Saturn-Voyager2
+All,Uranus-Voyager2
+All,Neptune-Voyager2
+All,All-Epilogue

@@ -1,8 +1,12 @@
 
+# vg clips command
 # build clips associated with target subfolders,
 # eg Jupiter/Voyager1/Io/Narrow
 
 # this must be run in an admin console because mklink requires elevated privileges
+
+#. need to build clips for planet/system titles and all.mp4 titlepage
+#. and postscript titlepages
 
 
 import csv

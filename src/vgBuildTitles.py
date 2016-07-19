@@ -1,5 +1,12 @@
 
+# vg titles command
 # build title pages for different targets
+# called by vg clips command
+
+
+#. need to build titles for planets/systems and all.mp4 also
+
+
 
 import os
 import csv
@@ -25,8 +32,8 @@ def buildTitles(targetPath=None):
     i = 0
     reader = csv.reader(f)
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # ignore blanks and comments
-        elif i==0: fields = row
+        if row==[] or row[0][0]=="#": continue # ignore blank lines and comments
+        if i==0: fields = row
         else:
             volume = row[config.filesColVolume]
             fileId = row[config.filesColFileId]

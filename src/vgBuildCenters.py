@@ -1,4 +1,5 @@
 
+# vg centers command
 # build centered images from plain png images
 
 import csv
@@ -45,7 +46,7 @@ def buildCenters(volnum, overwrite=False):
         volnum = str(volnum) # eg '5101'
         nfile = 1
         for row in reader:
-            if row==[] or row[0][0]=="#": continue # skip blanks and comments
+            if row==[] or row[0][0]=="#": continue # skip blank lines and comments
             if i==0: fields = row
             else:
                 volume = row[config.filesColVolume]

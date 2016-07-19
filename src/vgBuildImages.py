@@ -1,4 +1,5 @@
 
+# vg images command
 # convert Voyager IMG files to PNG files using img2png
 
 import os.path

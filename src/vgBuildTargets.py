@@ -1,4 +1,5 @@
 
+# vg targets command
 # build target subfolders like Jupiter/Voyager1/Io/Narrow
 # and copy images to them from a specified volume
 
@@ -29,7 +30,7 @@ def buildTargets(volnum, targetPath=None):
     i = 0
     reader = csv.reader(f)
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # ignore blanks and comments
+        if row==[] or row[0][0]=="#": continue # ignore blank lines and comments
         if i==0: fields = row
         else:
             volume = row[config.filesColVolume]

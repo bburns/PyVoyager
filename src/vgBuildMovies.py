@@ -16,58 +16,35 @@ import libimg
 
 def handleMovie(movieId, clipIds):
     ""
+    print 'generating movie', movieId
     print movieId, clipIds
     movieFilepath = config.moviesFolder + movieId + '.mp4'
     movieContentsFilepath = config.moviesFolder + movieId + '.txt'
-    makeContentsFile(movieContentsFilepath, clipIds)
-    # now make the movie
-    # os.chdir(config.moviesFolder)
-    # flightname = "VGISS_" + str(flightnum)
-    # flightVolumeList = flightname + '.txt'
-    # outfile = flightname + ".mp4"
-    # eg "ffmpeg -f concat -i VGISS_51.txt -c copy VGISS_51.mp4"
-    # eg "ffmpeg -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
-    cmd = "ffmpeg -f concat -i %s -c copy %s" % (movieContentsFilepath, movieFilepath)
-    print cmd
-    os.system(cmd)
+    if clipIds != []:
+        makeContentsFile(movieContentsFilepath, clipIds)
+        # now make the movie
+        # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
+        cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, movieFilepath)
+        print cmd
+        os.system(cmd)
 
 
 def makeContentsFile(movieContentsFilepath, clipIds):
     "make a text file containing a list of mp4 clips that will be merged by ffmpeg"
     f = open(movieContentsFilepath, 'w')
     for clipId in clipIds:
+        print clipId
         clipFilepath = config.clipsFolder + clipId + '.mp4'
         movieFilepath = config.moviesFolder + clipId + '.mp4'
         # if file avail, add it
         if os.path.isfile(clipFilepath):
-            line = "file '" + clipFilepath + "'"
+            line = "file '../../" + clipFilepath + "'"
             print >> f, line
         # check in moviesFolder also, so can recurse
         elif os.path.isfile(movieFilepath):
-            line = "file '" + movieFilepath + "'"
+            line = "file '../../" + movieFilepath + "'"
             print >> f, line
     f.close()
-
-
-# def makeFlightVolumeList(flightnum):
-#     "build a file containing a list of all the movie files for the given flyby"
-#     # this is used by ffmpeg to combine the movies into one movie
-#     flights = config.flights
-#     vols = flights[flightnum]
-#     combinedName = 'VGISS_' + str(flightnum)
-#     moviePathFile = config.movieFolder + '/' + combinedName + '.txt'
-#     print moviePathFile
-#     f = open(moviePathFile, 'w')
-#     for vol in vols:
-#         voltitle = lib.getVolumeTitle(vol)
-#         s = config.movieFolder
-#         movieName = '_' + voltitle + '.mp4' # prepend _ so will sort at beginning of file list
-#         moviePath = s + '/' + voltitle + '/' + movieName
-#         # eg file 'C:\Users\bburns\Desktop\DeskDrawer\@voyager\@voyager\data\step4_movies\VGISS_5101\_VGISS_5101.mp4'
-#         line = "file '" + moviePath + "'"
-#         print line
-#         print >> f, line
-#     f.close()
 
 
 def buildMovies():
@@ -111,18 +88,8 @@ def buildMovies():
 
     handleMovie(lastMovieId, clipIds)
 
-
     #. then would want to add music, either to each clip, or to all.mp4
     # specify in music.csv
-
-    # os.chdir(config.moviesFolder)
-    # flightname = "VGISS_" + str(flightnum)
-    # flightVolumeList = flightname + '.txt'
-    # outfile = flightname + ".mp4"
-    # eg "ffmpeg -f concat -i VGISS_51.txt -c copy VGISS_51.mp4"
-    # cmd = "ffmpeg -f concat -i %s -c copy %s" % (flightVolumeList, outfile)
-    # print cmd
-    # os.system(cmd)
 
 
 if __name__ == '__main__':

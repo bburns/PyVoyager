@@ -20,7 +20,7 @@ import vgBuildMosaics
 import vgBuildTargets
 import vgBuildList
 import vgBuildClips
-# import vgBuildMovies
+import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
 
@@ -106,7 +106,7 @@ elif cmd=="clips":
     beep()
 
 elif cmd=="movies":
-    pass
+    vgBuildMovies.buildMovies()
 
 elif cmd=="init":
     subject = args.pop(0)

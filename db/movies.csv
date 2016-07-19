@@ -5,6 +5,9 @@
 
 movieId,clipId
 
+
+# Voyager 1
+# --------------------------------------------------------------------------------
 Jupiter-Voyager1,Jupiter-Voyager1-Title
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
 Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
@@ -13,20 +16,30 @@ Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow-Color
 Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow-Color
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide-Color
 
+
+# Voyager 2
+# --------------------------------------------------------------------------------
+
+# switch to color when looks better
 Uranus-Voyager2,Uranus-Voyager2-Title
-Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow-Color
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow-Color
+Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Bw
 Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow-Bw
 Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow-Bw
+Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow-Bw
 Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow-Bw
 Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow-Bw
 Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Color
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Color
 
 Neptune-Voyager2,Neptune-Voyager2-Title
 Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow-Color
 Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow-Color
 Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide-Color
 
+
+# All together
+# --------------------------------------------------------------------------------
 All,All-Title
 All,Jupiter-Voyager1
 All,Saturn-Voyager1

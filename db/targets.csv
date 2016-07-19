@@ -1,8 +1,6 @@
 
 # handle multitarget images here
 
-#. at the moment this is all read into memory for simplicity
-
 # can remap old target to new target, eg
 # if the TARGET field says Io but Jupiter is what the frame gets centered on, can say
 # 5101,C72222,Io,Jupiter,0,0
@@ -14,12 +12,15 @@
 # note that oldTarget is not strictly necessary for retargeting info, 
 # but it's here for context - it's double checked on generating a movie.
 
+#. at the moment this is all read into memory for simplicity
+# but will get too big
+
 # x,y are not used yet
 
 imageId,oldTarget,newTarget,x,y
 
-
 # Uranus
+# ----------------------------------------
 
 C2618901,Uranus,SomeMoon
 C2618907,Uranus,SomeMoon
@@ -146,7 +147,6 @@ C2649639,Uranus,SomeMoon
 C2649645,Uranus,SomeMoon
 C2649651,Uranus,SomeMoon
 
-
 C2457902,Ariel,Uranus
 C2468426,Ariel,Uranus
 C2479251,Ariel,Uranus
@@ -187,7 +187,9 @@ C2473029,Umbriel,Uranus
 C2520811,Umbriel,Uranus
 C2583656,Umbriel,Uranus
 
+
 # Neptune
+# ----------------------------------------
 
 C0903842,Triton,Neptune
 C0905525,Triton,Neptune

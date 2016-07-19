@@ -58,7 +58,7 @@ def makeLinks(bwOrColor, targetPathParts):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    multitargetInfo = lib.readCsv('db/multitargetImages.csv') # remapping listed targets
+    targetInfo = lib.readCsv('db/targets.csv') # remapping listed targets
     framerateInfo = lib.readCsv('db/framerates.csv') # change framerates
 
     # keep track of number of files in each target subfolder,

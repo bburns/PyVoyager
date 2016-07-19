@@ -46,6 +46,9 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # centers
 # ----------------------------------------
 
+# if you try changing these values, make sure to run `vg test`
+# to see how they affect the test images
+
 # blob detection
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
@@ -114,7 +117,6 @@ titleFontsize = 48
 movieFilespec = 'img%05d.png'
 
 # frame rate - frames per second
-#. need to set this per target
 # movieFrameRate = 5 # nowork - gets stuck after a bit - why?
 # movieFrameRate = 8 # nice for ariel flyby
 # movieFrameRate = 10
@@ -123,10 +125,6 @@ movieFilespec = 'img%05d.png'
 movieFrameRate = 20
 # movieFrameRate = 25
 # movieFrameRate = 30
-
-# number of duplicate frames to include for slow parts of movie
-# movieFramesForSlowParts = 5
-movieFramesForSlowParts = 8
 
 # number of frames for title page
 movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 secs according to this
@@ -137,8 +135,9 @@ movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 sec
 # -crf specifies constant rate factor
 #      see https://trac.ffmpeg.org/wiki/Encode/H.264#crf
 #      0 is completely lossless, 18 is very lossless, 23 is default, 51 is worst
-# Use -pix_fmt yuv420p for compatibility with outdated media players (including Windows Media Player and Quicktime)
-# seehttp://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
+# Use -pix_fmt yuv420p for compatibility with outdated media players
+#   (including Windows Media Player and Quicktime)
+# see http://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
 movieFfmpegOptions = "-y -loglevel warning"
 # movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 # movieFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
@@ -178,8 +177,7 @@ indexFolder = 'db/index/'
 
 # useful columns in the index files
 # (see db/index/readme.md)
-# indexfile     = '../data/catalog/cumindex.tab'
-# indexfile     = '../data/catalog/rawimages.tab'
+# indexfile     = 'data/index/rawimages.tab'
 indexFileColVolume = 0 # eg VGISS_5101
 indexFileColFilename = 2 # eg C1389407_GEOMED.IMG
 indexFileColFiletype = 3 # eg CALIBRATED_IMAGE
@@ -215,6 +213,7 @@ centersdb = dbFolder + '/centers.csv'
 compositesdb = dbFolder + '/composites.csv'
 mosaicsdb = dbFolder + '/mosaics.csv'
 moviesdb = dbFolder + '/movies.csv'
+targetsdb = dbFolder + '/targets.csv'
 
 
 # columns in files.csv
@@ -240,7 +239,7 @@ compositesColWeight = 4
 
 
 
-# voyager PDS volumes - 87 total
+# Voyager PDS volumes - 87 total
 voyager1jupiter = range(5101,5120+1)
 voyager1saturn  = range(6101,6121+1)
 voyager2jupiter = range(5201,5214+1)

@@ -6,7 +6,7 @@
 # must be an integer.
 # each segment starts with default of 1 frame per image
 
-# frame rate is set in config.py - movieFrameRate
+# main frame rate is set in config.py - movieFrameRate
 
 # these values are all based on a frame rate of 20fps
 
@@ -63,3 +63,6 @@ C2684004,Uranus-Voyager2-Umbriel-Narrow,20
 C2690340,Uranus-Voyager2-Umbriel-Narrow,3
 
 
+# Neptune
+
+# triton

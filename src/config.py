@@ -110,24 +110,24 @@ titleFontsize = 48
 
 
 
-# movies
+# clips
 # ----------------------------------------
 
-# filename used for movie frames
-movieFilespec = 'img%05d.png'
+# filename used for clip frames
+clipFilespec = 'img%05d.png'
 
 # frame rate - frames per second
-# movieFrameRate = 5 # nowork - gets stuck after a bit - why?
-# movieFrameRate = 8 # nice for ariel flyby
-# movieFrameRate = 10
-# movieFrameRate = 12 # good for triton flyby
-# movieFrameRate = 15
-movieFrameRate = 20
-# movieFrameRate = 25
-# movieFrameRate = 30
+# clipFrameRate = 5 # nowork - gets stuck after a bit - why?
+# clipFrameRate = 8 # nice for ariel flyby
+# clipFrameRate = 10
+# clipFrameRate = 12 # good for triton flyby
+# clipFrameRate = 15
+clipFrameRate = 20
+# clipFrameRate = 25
+# clipFrameRate = 30
 
 # number of frames for title page
-movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 secs according to this
+clipFramesForTitles = clipFrameRate * 5 #. not working right - should be 5 secs according to this
 
 # ffmpeg options
 # -y forces overwriting existing file
@@ -138,11 +138,19 @@ movieFramesForTitles = movieFrameRate * 5 #. not working right - should be 5 sec
 # Use -pix_fmt yuv420p for compatibility with outdated media players
 #   (including Windows Media Player and Quicktime)
 # see http://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
-movieFfmpegOptions = "-y -loglevel warning"
-# movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
-# movieFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
-# movieFfmpegOutputOptions = "-c:v libx264 -crf 23"
-movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+clipFfmpegOptions = "-y -loglevel warning"
+# clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+# clipFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
+# clipFfmpegOutputOptions = "-c:v libx264 -crf 23"
+clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+
+
+# movies
+# ----------------------------------------
+
+
+
+
 
 
 # files and folders
@@ -155,16 +163,17 @@ movieFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 
-downloadsFolder   = offlineFolder + "step1_downloads/"
-unzipsFolder      = offlineFolder + "step2_unzips/"
-imagesFolder     = onlineFolder  + "step3_images/"
-centersFolder    = onlineFolder  + "step4_centers/"
-compositesFolder = onlineFolder  + "step5_composites/"
-mosaicsFolder    = onlineFolder  + "step6_mosaics/"
-targetsFolder    = onlineFolder  + "step7_targets/"
-titlesFolder    = onlineFolder  + "step8_titles/"
-moviesFolder     = onlineFolder  + "step9_movies/"
-moviestageFolder = moviesFolder + 'stage/'
+downloadsFolder  = offlineFolder + "step01_downloads/"
+unzipsFolder     = offlineFolder + "step02_unzips/"
+imagesFolder     = onlineFolder  + "step03_images/"
+centersFolder    = onlineFolder  + "step04_centers/"
+compositesFolder = onlineFolder  + "step05_composites/"
+mosaicsFolder    = onlineFolder  + "step06_mosaics/"
+targetsFolder    = onlineFolder  + "step07_targets/"
+titlesFolder     = onlineFolder  + "step08_titles/"
+clipsFolder      = onlineFolder  + "step09_clips/"
+clipsStageFolder = clipsFolder + 'stage/'
+moviesFolder     = onlineFolder  + "step10_movies/"
 
 # test images go here
 testFolder    = 'test/images/'

@@ -1,5 +1,5 @@
 
-# build movies associated with target subfolders,
+# build clips associated with target subfolders,
 # eg Jupiter/Voyager1/Io/Narrow
 
 # this must be run in an admin console because mklink requires elevated privileges
@@ -16,24 +16,24 @@ import vgBuildTitles
 
 
 
-def makeMovieFiles():
-    "build mp4 movies using ffmpeg on sequentially numbered image files"
-    print 'make mp4 movies using ffmpeg'
-    # folder = config.moviesFolder
-    folder = config.moviestageFolder # eg data/step9_movies/stage/
+def makeClipFiles():
+    "build mp4 clips using ffmpeg on sequentially numbered image files"
+    print 'make mp4 clips using ffmpeg'
+    # folder = config.clipsFolder
+    folder = config.clipsStageFolder # eg data/step09_clips/stage/
     # print folder
     for root, dirs, files in os.walk(folder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
-            print 'directory', root # eg data/step9_movies/stage/Neptune\Voyager2\Triton\Narrow\Bw
+            print 'directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
             stageFolder = os.path.abspath(root)
             # get target file path relative to staging folder,
             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
             targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-            movieTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-            moviePath = '../../../../../../' + movieTitle
-            lib.pngsToMp4(stageFolder, config.movieFilespec, moviePath, config.movieFrameRate)
+            clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+            clipPath = '../../../../../../' + clipTitle
+            lib.pngsToMp4(stageFolder, config.clipFilespec, clipPath, config.clipFrameRate)
 
 
 def makeLink(targetFolder, sourcePath, nfile, ncopies):
@@ -41,16 +41,16 @@ def makeLink(targetFolder, sourcePath, nfile, ncopies):
     # this requires running vg from an admin console
     for i in range(ncopies):
         n = nfile + i
-        targetPath2 = targetFolder + config.movieFilespec % n # eg 'img00001.png'
-        # eg mklink data\step9_movies\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png
-        #   ..\..\..\..\..\..\data\step4_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
+        targetPath2 = targetFolder + config.clipFilespec % n # eg 'img00001.png'
+        # eg mklink data\step09_clips\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png
+        #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
         cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
         os.system(cmd)
 
 
 def makeLinks(bwOrColor, targetPathParts):
-    "make links from source files (centers or composites) to movie stage folders"
+    "make links from source files (centers or composites) to clip stage folders"
 
     print 'making links from source files'
 
@@ -75,8 +75,8 @@ def makeLinks(bwOrColor, targetPathParts):
     lastVolume=''
     reader = csv.reader(f)
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # ignore blanks and comments
-        elif i==0: fields = row
+        if row==[] or row[0][0]=="#": continue # ignore blank lines and comments
+        if i==0: fields = row
         else:
             # read file info
             volume = row[config.filesColVolume]
@@ -140,10 +140,10 @@ def makeLinks(bwOrColor, targetPathParts):
                         ncopiesPerImage = ncopiesPerImageMemory.get(planetCraftTargetCamera) or 1
 
                     # get staging subfolder and make sure it exists
-                    # eg data/step9_movies/stage/Jupiter/Voyager1/Io/Narrow/Bw/
+                    # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
                     subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
                     subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                    targetfolder = config.moviestageFolder + subfolderPlusColor
+                    targetfolder = config.clipstageFolder + subfolderPlusColor
                     lib.mkdir_p(targetfolder)
 
                     # get current file number in that folder, or start at 0
@@ -156,7 +156,7 @@ def makeLinks(bwOrColor, targetPathParts):
                         titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
                         # need to get out of the target dir - we're always this deep
                         titleimagepathrelative = '../../../../../../../../' + titleimagefilepath
-                        ntitlecopies = config.movieFramesForTitles
+                        ntitlecopies = config.clipFramesForTitles
                         makeLink(targetfolder, titleimagepathrelative, nfile, ntitlecopies)
                         nfile += ntitlecopies
 
@@ -177,9 +177,9 @@ def makeLinks(bwOrColor, targetPathParts):
     f.close()
 
 
-def buildMovies(bwOrColor, targetPath=None):
-    "build bw or color movies associated with the given target path (eg //Io)"
-    # eg buildMovies('bw', 'Jupiter/Voyager1')
+def buildClips(bwOrColor, targetPath=None):
+    "build bw or color clips associated with the given target path (eg //Io)"
+    # eg buildClips('bw', 'Jupiter/Voyager1')
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
@@ -188,21 +188,21 @@ def buildMovies(bwOrColor, targetPath=None):
     vgBuildTitles.buildTitles(targetPath)
 
     # stage images
-    lib.rmdir(config.moviestageFolder)
+    lib.rmdir(config.clipsStageFolder)
     makeLinks(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images
-    makeMovieFiles()
+    makeClipFiles()
 
 
 if __name__ == '__main__':
     os.chdir('..')
     # print lib.parseTargetPath('')
-    # buildMovies('bw', 'Jupiter/Voyager1/Io/Narrow')
-    # buildMovies('bw', '//Triton')
-    # buildMovies("Neptune")
+    # buildClips('bw', 'Jupiter/Voyager1/Io/Narrow')
+    # buildClips('bw', '//Triton')
+    # buildClips("Neptune")
     # makeLinks()
-    makeMovieFiles()
+    makeClipFiles()
     print 'done'
 
 

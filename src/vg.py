@@ -19,7 +19,8 @@ import vgBuildComposites
 import vgBuildMosaics
 import vgBuildTargets
 import vgBuildList
-import vgBuildMovies
+import vgBuildClips
+# import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
 
@@ -91,7 +92,7 @@ elif cmd=="targets":
 elif cmd=="list":
     vgBuildList.buildList()
 
-elif cmd=="movies":
+elif cmd=="clips":
     bwOrColor = None
     target = None
     if nargs>=2:
@@ -99,10 +100,13 @@ elif cmd=="movies":
     if nargs==3:
         targetpath = args.pop(0)
     if bwOrColor=='bw' or bwOrColor=='color':
-        vgBuildMovies.buildMovies(bwOrColor, targetpath)
+        vgBuildClips.buildClips(bwOrColor, targetpath)
     else:
         cmd="help"
     beep()
+
+elif cmd=="movies":
+    pass
 
 elif cmd=="init":
     subject = args.pop(0)
@@ -132,7 +136,8 @@ if cmd=="help":
     # print "  vg mosaics <volnums>              - create mosaic images"
     print "  vg targets <volnums>              - copy images into target subfolders"
     print "  vg list                           - show status of local datasets"
-    print "  vg movies bw|color [<targetpath>] - create bw or color movies"
+    print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
+    print "  vg movies                         - create movies from clips"
     print
     # print "  vg init files"
     # print "  vg init composites"
@@ -154,7 +159,7 @@ if cmd=="help":
     print "  <target>     = Jupiter|Io|Europa|, etc."
     print "  <camera>     = Narrow|Wide"
     print
-    print "e.g. vg movies bw //Triton"
+    print "e.g. vg clips bw //Triton"
     print
     print "You can also add `-y` to a command to have it overwrite any existing data."
     print

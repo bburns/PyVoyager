@@ -17,7 +17,8 @@ def calcCenters(volumeNum):
 
     volumeStr = str(volumeNum)
 
-    #. image type to read will default to CALIB, but can override to use files from different subfolder
+    #. image type to read will default to CALIB,
+    # but can override to use files from different subfolder
     imageType = 'Calib'
 
     # imagespath = lib.getImagespath(volumeNum)

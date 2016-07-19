@@ -12,23 +12,13 @@ import lib
 import vgBuildCenters
 
 
-# def buildTargets(targetPath):
-    # "copy/link images to target subfolders (eg Jupiter/Voyager1/Io/Narrow)"
-    # assume these are all None for now
-    # ie just copy ALL images available
-    # [system, craft, target, camera] = targetPath.split('/')
-
+#. handle targetPath
 def buildTargets(volnum, targetPath=None):
-    "copy images in volume to target subfolders"
-
-    # if we made these links they would automatically update when recenter images/tweak composite colors etc.
-    # (but links don't work with my image viewer)
+    "copy images in given volume to target subfolders"
 
     # iterate down files.txt
     # if target path matches row,
     # copy that image to target subfolder
-
-    # volid = lib.getVolumeTitle(volnum) # eg VGISS_5101
 
     volnum = str(volnum)
 
@@ -39,8 +29,8 @@ def buildTargets(volnum, targetPath=None):
     i = 0
     reader = csv.reader(f)
     for row in reader:
-        if i==0:
-            fields = row
+        if row==[] or row[0][0]=="#": continue # ignore blanks and comments
+        if i==0: fields = row
         else:
             volume = row[config.filesColVolume]
             # if volume==volid:
@@ -54,7 +44,8 @@ def buildTargets(volnum, targetPath=None):
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
                 # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                centeredfilename = config.centersPrefix + fileid + '_' + config.imageType + '_' + filter + '.png'
+                centeredfilename = config.centersPrefix + fileid + '_' + \
+                                   config.imageType + '_' + filter + '.png'
                 centeredpath = centersSubfolder + centeredfilename
 
                 # if file exists, create subfolder and copy/link image
@@ -78,15 +69,19 @@ def buildTargets(volnum, targetPath=None):
                         # create subfolder
                         lib.mkdir_p(targetfolder)
 
+                        # links work, but then can't browse folders with image viewer...
+                        # so just copy them
+
                         # copy file
-                        # cp -s, --symbolic-link - make symbolic links instead of copying [but ignored on windows]
+                        # cp -s, --symbolic-link - make symbolic links instead of copying
+                        # [but -s is ignored on windows]
                         cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                        print cmd
+                        print cmd + '        \r',
                         os.system(cmd)
 
-                        # links work, but then can't browse folders with image viewer... so back to copying
                         # # link to file
-                        # # note: mklink requires admin privileges, so must run this script in an admin console
+                        # # note: mklink requires admin privileges,
+                        # # so must run this script in an admin console
                         # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
                         # src2 = '../../../../../' + src # need to get out of the target dir
                         # cmd = 'mklink ' + targetpath + ' ' + src2

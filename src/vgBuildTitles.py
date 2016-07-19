@@ -23,10 +23,9 @@ def buildTitles(targetPath=None):
     # iterate through all available images
     f = open(config.filesdb, 'rt')
     i = 0
-    # lastVolume=''
     reader = csv.reader(f)
     for row in reader:
-        if row==[] or row[0][0]=="#": pass
+        if row==[] or row[0][0]=="#": continue # ignore blanks and comments
         elif i==0: fields = row
         else:
             volume = row[config.filesColVolume]
@@ -57,7 +56,7 @@ def buildTitles(targetPath=None):
                     targetfolder = config.titlesFolder + subfolder
                     lib.mkdir_p(targetfolder)
 
-                    print subfolder
+                    print subfolder + '                  \r',
 
                     # make title image
                     title = target + " Flyby" # eg Triton Flyby

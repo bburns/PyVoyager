@@ -11,7 +11,8 @@ import lib
 def buildDownload(volnum, overwrite=False):
     "Download the given volume number, if it doesn't exist yet."
 
-    url = lib.getDownloadUrl(volnum) # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
+    # url eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
+    url = lib.getDownloadUrl(volnum)
     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
     filepath = config.downloadsFolder + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
 

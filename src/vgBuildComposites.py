@@ -15,7 +15,6 @@ import libimg
 import vgBuildCenters
 
 
-
 def buildComposites(volnum, overwrite=False):
     "build composite images by combining channel images"
 
@@ -26,18 +25,16 @@ def buildComposites(volnum, overwrite=False):
     # VGISS_5103,C1537728,C1537728,Blue
     # VGISS_5103,C1537728,C1537730,Orange
     # VGISS_5103,C1537728,C1537732,Green
-    # with files:
-    # VGISS_5103,C1537728,Jupiter,Voyager1,Jupiter,Narrow,BLUE,3 COLOR ROTATION MOVIE
-    # VGISS_5103,C1537730,Jupiter,Voyager1,Jupiter,Narrow,ORANGE,3 COLOR ROTATION MOVIE
-    # VGISS_5103,C1537732,Jupiter,Voyager1,Jupiter,Narrow,GREEN,3 COLOR ROTATION MOVIE
 
     centersubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
     compositessubfolder = config.compositesFolder + 'VGISS_' + str(volnum) + '/'
 
-    if os.path.isdir(compositessubfolder) and overwrite==False: # for test (vol=0), can overwrite test folder
+    # for test (vol=0), can overwrite test folder
+    if os.path.isdir(compositessubfolder) and overwrite==False:
         print "Composites folder exists: " + compositessubfolder
     else:
-        vgBuildCenters.buildCenters(volnum) # build the centered images for the volume, if not already there
+        # build the centered images for the volume, if not already there
+        vgBuildCenters.buildCenters(volnum)
 
         # print 'Building composites for', compositessubfolder
 
@@ -52,10 +49,8 @@ def buildComposites(volnum, overwrite=False):
         channelRows = []
         volnum = str(volnum)
         for row in reader:
-            if row==[] or row[0][0]=="#":
-                continue
-            if i==0:
-                fields = row
+            if row==[] or row[0][0]=="#": continue # skip blanks and comments
+            if i==0: fields = row
             else:
                 vol = row[config.compositesColVolume]
                 if volnum==vol:
@@ -69,7 +64,7 @@ def buildComposites(volnum, overwrite=False):
                         startId = compositeId
                         channelRows = [row]
                     # print 'compositing %d: %s/%s\r' %(i,volnum,compositeId),
-                    print 'compositing %s/%s\r' %(volnum,compositeId),
+                    print 'compositing VGISS_%s/%s.png        \r' %(volnum,compositeId),
             i += 1
         processChannels(channelRows)
         print
@@ -77,13 +72,14 @@ def buildComposites(volnum, overwrite=False):
 
 def processChannels(channelRows):
     "channels is an array of rows corresponding to rows in the composites.csv file"
-    # we combine them and write them to a file in the composites folder, step5_composites
-    # volnum,compositeId,centerId,filter,weight
+    # arrays should have [volnum,compositeId,centerId,filter,weight]
     # eg [
     #   [5101,C434823,C434823,Orange]
     #   [5101,C434823,C434825,Blue]
     #   [5101,C434823,C434827,Green]
     #   ]
+    # we combine them and write them to a file in the composites folder, step5_composites
+
     # print channelRows
     channels = {}
     volume = ''

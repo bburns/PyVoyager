@@ -20,6 +20,8 @@ def buildList():
                 grid[volnum]['Downloads'] = 'x'
         del dirnames[:] # don't recurse
 
+    #. make a fn for these
+
     for root, dirnames, filenames in os.walk(config.unzipsFolder):
         for dirname in dirnames: # eg VGISS_5101
             if dirname[:6]=='VGISS_':
@@ -52,7 +54,13 @@ def buildList():
                 grid[volnum]['Composites'] = 'x'
         del dirnames[:] # don't recurse
 
+    # tabulate lib works like this -
     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
+    # Name      Age
+    # ------  -----
+    # Alice      24
+    # Bob        19
+
     headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Centers', 'Composites']
     rows = []
     for vol in config.volumes:
@@ -60,7 +68,8 @@ def buildList():
         svol = str(vol)
         gridrow = grid.get(svol)
         if gridrow:
-            row = [svol, gridrow.get('Downloads'), gridrow.get('Unzips'), gridrow.get('Images'), gridrow.get('Centers'), gridrow.get('Composites')]
+            row = [svol, gridrow.get('Downloads'), gridrow.get('Unzips'),
+                   gridrow.get('Images'), gridrow.get('Centers'), gridrow.get('Composites')]
             rows.append(row)
 
     print

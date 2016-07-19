@@ -37,11 +37,12 @@ def buildImages(volnum, overwrite=False):
                 for subdir in dirs:
                     subdir = os.path.join(root, subdir)
                     subdirabsolute = os.path.abspath(subdir)
-                    # print 'dir %d/%d: %s' % (i,ndirs,subdirabsolute)
-                    print 'dir %d/%d: %s\r' % (i,ndirs,subdirabsolute)
+                    print 'dir %d/%d: %s          \r' % (i,ndirs,subdirabsolute),
                     # for filespec in config.imageFilespecs: # eg ['*CALIB.IMG']
-                        # libimg.img2png(subdirabsolute, filespec, imagesfolder, config.img2pngOptions)
-                    libimg.img2png(subdirabsolute, config.imageFilespec, imagesfolder, config.img2pngOptions)
+                        # libimg.img2png(subdirabsolute, filespec, imagesfolder,
+                                       # config.img2pngOptions)
+                    libimg.img2png(subdirabsolute, config.imageFilespec,
+                                   imagesfolder, config.img2pngOptions)
                     i += 1
 
 

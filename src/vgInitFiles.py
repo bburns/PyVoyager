@@ -19,7 +19,8 @@ def initFiles():
     # write to files.csv
 
     fileout = open(config.filesdb, 'wb')
-    fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',') # keep in synch with row, below, and config.filesCol*
+    # IMPORTANT: keep fields in synch with row, below, and config.filesCol*
+    fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',')
     writer = csv.writer(fileout)
     writer.writerow(fields)
 
@@ -66,7 +67,8 @@ def initFiles():
                     filter = filter.title() # eg Orange
 
                     # write row
-                    row = [volume, fileid, phase, craft, target, time, instrument, filter, note] # keep in sync with fields, above
+                    # IMPORTANT: keep row in sync with fields, above
+                    row = [volume, fileid, phase, craft, target, time, instrument, filter, note]
                     # print row # too slow
                     writer.writerow(row)
 

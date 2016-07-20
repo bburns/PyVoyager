@@ -25,6 +25,11 @@ import vgInitFiles
 import vgInitComposites
 
 
+#. nowork - why?
+# import sys; sys.path.append('../test')
+# import testCentering
+
+
 def beep():
     os.system('beep')
 
@@ -107,6 +112,9 @@ elif cmd=="clips":
 
 elif cmd=="movies":
     vgBuildMovies.buildMovies()
+
+elif cmd=="test":
+    testCentering.testCentering()
 
 elif cmd=="init":
     subject = args.pop(0)

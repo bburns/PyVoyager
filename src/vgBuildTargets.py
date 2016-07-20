@@ -15,7 +15,7 @@ import vgBuildCenters
 
 #. handle targetPath
 def buildTargets(volnum, targetPath=None):
-    "copy images in given volume to target subfolders"
+    "Copy images in given volume to target subfolders"
 
     # iterate down files.txt
     # if target path matches row,

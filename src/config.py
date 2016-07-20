@@ -217,12 +217,13 @@ indexTranslations = {
 
 
 # csv file databases
-filesdb = dbFolder + '/files.csv'
-centersdb = dbFolder + '/centers.csv'
-compositesdb = dbFolder + '/composites.csv'
-mosaicsdb = dbFolder + '/mosaics.csv'
-moviesdb = dbFolder + '/movies.csv'
-targetsdb = dbFolder + '/targets.csv'
+filesdb = dbFolder + 'files.csv'
+centeringdb = dbFolder + 'centering.csv'
+# centersdb = dbFolder + 'centers.csv'
+compositesdb = dbFolder + 'composites.csv'
+mosaicsdb = dbFolder + 'mosaics.csv'
+moviesdb = dbFolder + 'movies.csv'
+targetsdb = dbFolder + 'targets.csv'
 
 
 # columns in files.csv

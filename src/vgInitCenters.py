@@ -13,7 +13,7 @@ import libimg
 
 
 def calcCenters(volumeNum):
-    "calculate centers for images in the given volume and write to db/centers<volnum>.csv"
+    "Calculate centers for images in the given volume and write to db/centers<volnum>.csv"
 
     volumeStr = str(volumeNum)
 

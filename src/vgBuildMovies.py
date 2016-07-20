@@ -14,9 +14,10 @@ import lib
 import libimg
 
 
-def handleMovie(movieId, clipIds):
-    ""
-    print 'generating movie', movieId
+def concatenateClips(movieId, clipIds):
+    "Concatenate the given mp4 clips into an mp4 movie"
+
+    print 'Generating movie', movieId
     print movieId, clipIds
     movieFilepath = config.moviesFolder + movieId + '.mp4'
     movieContentsFilepath = config.moviesFolder + movieId + '.txt'
@@ -30,7 +31,8 @@ def handleMovie(movieId, clipIds):
 
 
 def makeContentsFile(movieContentsFilepath, clipIds):
-    "make a text file containing a list of mp4 clips that will be merged by ffmpeg"
+    "Make a text file containing a list of mp4 clips that will be merged by ffmpeg"
+
     f = open(movieContentsFilepath, 'w')
     for clipId in clipIds:
         print clipId
@@ -48,7 +50,7 @@ def makeContentsFile(movieContentsFilepath, clipIds):
 
 
 def buildMovies():
-    "combine individual clips into movies based on db/movies.csv"
+    "Combine individual clips into movies based on db/movies.csv"
     # makeClipList()
 
     # walk over db/movies.csv file, eg
@@ -79,14 +81,14 @@ def buildMovies():
             movieId = row[0] # eg Neptune-Voyager2
             clipId = row[1] # eg Neptune-Voyager2-Triton-Narrow
             if movieId != lastMovieId and lastMovieId != '':
-                handleMovie(lastMovieId, clipIds)
+                concatenateClips(lastMovieId, clipIds)
                 clipIds = []
 
             clipIds.append(clipId)
             lastMovieId = movieId
         i += 1
 
-    handleMovie(lastMovieId, clipIds)
+    concatenateClips(lastMovieId, clipIds)
 
     #. then would want to add music, either to each clip, or to all.mp4
     # specify in music.csv

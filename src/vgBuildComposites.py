@@ -32,7 +32,8 @@ def buildComposites(volnum, overwrite=False):
 
     # for test (vol=0), can overwrite test folder
     if os.path.isdir(compositessubfolder) and overwrite==False:
-        print "Composites folder exists: " + compositessubfolder
+        # print "Composites folder exists: " + compositessubfolder
+        pass
     else:
         # build the centered images for the volume, if not already there
         vgBuildCenters.buildCenters(volnum)
@@ -49,6 +50,7 @@ def buildComposites(volnum, overwrite=False):
         startId = ''
         channelRows = []
         volnum = str(volnum)
+        nfile = 1
         for row in reader:
             if row==[] or row[0][0]=="#": continue # skip blank lines and comments
             if i==0: fields = row
@@ -65,7 +67,9 @@ def buildComposites(volnum, overwrite=False):
                         startId = compositeId
                         channelRows = [row]
                     # print 'compositing %d: %s/%s\r' %(i,volnum,compositeId),
-                    print 'compositing VGISS_%s/%s.png        \r' %(volnum,compositeId),
+                    # print 'compositing VGISS_%s/%s.png        \r' %(volnum,compositeId),
+                    print 'Compositing %d: VGISS_%s/%s.png        \r' %(nfile,volnum,compositeId),
+                    nfile += 1
             i += 1
         processChannels(channelRows)
         print

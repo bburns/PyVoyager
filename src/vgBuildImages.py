@@ -18,7 +18,8 @@ def buildImages(volnum, overwrite=False):
     imagesfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
 
     if int(volnum)!=0 and os.path.isdir(imagesfolder) and overwrite==False:
-        print "Images folder exists: " + imagesfolder
+        # print "Images folder exists: " + imagesfolder
+        pass
     else:
         # unzip the download, if not already there
         vgBuildUnzip.buildUnzip(volnum)
@@ -38,7 +39,7 @@ def buildImages(volnum, overwrite=False):
                 for subdir in dirs:
                     subdir = os.path.join(root, subdir)
                     subdirabsolute = os.path.abspath(subdir)
-                    print 'dir %d/%d: %s          \r' % (i,ndirs,subdirabsolute),
+                    print 'Directory %d/%d: %s          \r' % (i,ndirs,subdirabsolute),
                     # for filespec in config.imageFilespecs: # eg ['*CALIB.IMG']
                         # libimg.img2png(subdirabsolute, filespec, imagesfolder,
                                        # config.img2pngOptions)

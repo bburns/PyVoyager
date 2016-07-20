@@ -1,4 +1,5 @@
 
+# vg init files command
 # build the files.csv table from the VGISS index files
 # files.csv lists ALL available voyager images
 
@@ -12,7 +13,7 @@ import lib
 
 
 def initFiles():
-    "build the files table (files.csv) from the VGISS index files (rawimages_*.tab)"
+    "Build the files table (files.csv) from the VGISS index files (rawimages_*.tab)"
 
     # iterate down the giant csv files
     # get the fileid, craft, flyby, target, camera

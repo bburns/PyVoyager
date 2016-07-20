@@ -19,7 +19,8 @@ def buildUnzip(volnum, overwrite=False):
     unzippedfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
 
     if os.path.isdir(unzippedfolder) and overwrite==False:
-        print "Folder exists - skipping unzip step: " + unzippedfolder
+        # print "Folder exists - skipping unzip step: " + unzippedfolder
+        pass
     else:
         vgBuildDownload.buildDownload(volnum) # download the zip if not already there
         print "Unzipping " + zipfilepath

@@ -17,13 +17,13 @@ import lib
 
 
 def buildTitles(targetPath=None):
-    "make titles for specified targetpaths"
+    "Make titles for specified targetpaths"
 
     # what does the user want to focus on?
     pathparts = lib.parseTargetPath(targetPath)
     pathSystem, pathCraft, pathTarget, pathCamera = pathparts
 
-    print 'making titles for', pathparts
+    print 'Making titles for', pathparts
 
     targetpathsSeen = {}
 

@@ -95,17 +95,21 @@ or e.g. to download and composite all Uranus images (might take a while),
 
 Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
-    > vg movies bw|color [targetpath]
+    > vg clips bw|color [targetpath]
 
 e.g.
 
-    > vg movies bw //Triton
+    > vg clips bw //Triton
 
 to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
 
-    > vg movies color
+    > vg clips color
 
 to generate all available color movies.
+
+Then these clips can be assembled into movies (one per system and then one overall movie) with
+
+    > vg movies
 
 Use the `vg list` command to keep track of what stages different volumes are at:
 
@@ -130,7 +134,8 @@ And entering `vg` will show the available commands:
       vg composites <volnums>           - create color images
       vg targets <volnums>              - copy images into target subfolders
       vg list                           - show status of local datasets
-      vg movies bw|color [<targetpath>] - create bw or color movies
+      vg clips bw|color [<targetpath>]  - create bw or color movies of flybys
+      vg movies                         - combine clips into movies
 
     where
 
@@ -166,15 +171,16 @@ How it works
 
 The data for each step is put into the following folders in the `data` subfolder:
 
-    step1_downloads
-    step2_unzips
-    step3_images
-    step4_centers
-    step5_composites
-    step6_mosaics
-    step7_targets
-    step8_titles
-    step9_movies
+    step01_downloads
+    step02_unzips
+    step03_images
+    step04_centers
+    step05_composites
+    step06_mosaics
+    step07_targets
+    step08_titles
+    step09_clips
+    step10_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 

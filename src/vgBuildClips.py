@@ -21,15 +21,16 @@ import vgBuildTitles
 
 
 def makeClipFiles():
-    "build mp4 clips using ffmpeg on sequentially numbered image files"
-    print 'make mp4 clips using ffmpeg'
+    "Build mp4 clips using ffmpeg on sequentially numbered image files"
+    
+    print 'Making mp4 clips using ffmpeg'
     # folder = config.clipsFolder
     folder = config.clipsStageFolder # eg data/step09_clips/stage/
     # print folder
     for root, dirs, files in os.walk(folder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
-            print 'directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+            print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
             stageFolder = os.path.abspath(root)
             # get target file path relative to staging folder,
             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
@@ -41,7 +42,7 @@ def makeClipFiles():
 
 
 def makeLink(targetFolder, sourcePath, nfile, ncopies):
-    "make ncopies of symbolic link from the source to the target file, starting with number nfile"
+    "Make ncopies of symbolic link from the source to the target file, starting with number nfile"
     # this requires running vg from an admin console
     for i in range(ncopies):
         n = nfile + i
@@ -54,9 +55,9 @@ def makeLink(targetFolder, sourcePath, nfile, ncopies):
 
 
 def makeLinks(bwOrColor, targetPathParts):
-    "make links from source files (centers or composites) to clip stage folders"
+    "Make links from source files (centers or composites) to clip stage folders"
 
-    print 'making links from source files'
+    print 'Making links from source files'
 
     # what does the user want to focus on?
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
@@ -113,11 +114,11 @@ def makeLinks(bwOrColor, targetPathParts):
                 camera = row[config.filesColInstrument]
 
                 # relabel target field if necessary - see db/multitargetImages.csv for more info
-                targetInfo = multitargetInfo.get(fileId)
-                if targetInfo:
+                targetInfoRecord = targetInfo.get(fileId)
+                if targetInfoRecord:
                     # make sure old target matches what we have
-                    if targetInfo['oldTarget']==target:
-                        target = targetInfo['newTarget']
+                    if targetInfoRecord['oldTarget']==target:
+                        target = targetInfoRecord['newTarget']
 
                 # does this image match the target path the user specified on the cmdline?
                 addImage = True
@@ -147,7 +148,7 @@ def makeLinks(bwOrColor, targetPathParts):
                     # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
                     subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
                     subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                    targetfolder = config.clipstageFolder + subfolderPlusColor
+                    targetfolder = config.clipsStageFolder + subfolderPlusColor
                     lib.mkdir_p(targetfolder)
 
                     # get current file number in that folder, or start at 0
@@ -182,18 +183,18 @@ def makeLinks(bwOrColor, targetPathParts):
 
 
 def buildClips(bwOrColor, targetPath=None):
-    "build bw or color clips associated with the given target path (eg //Io)"
+    "Build bw or color clips associated with the given target path (eg //Io)"
     # eg buildClips('bw', 'Jupiter/Voyager1')
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
 
-    # make sure we have some titles
-    vgBuildTitles.buildTitles(targetPath)
+    # # make sure we have some titles
+    # vgBuildTitles.buildTitles(targetPath)
 
-    # stage images
-    lib.rmdir(config.clipsStageFolder)
-    makeLinks(bwOrColor, targetPathParts)
+    # # stage images
+    # lib.rmdir(config.clipsStageFolder)
+    # makeLinks(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images
     makeClipFiles()

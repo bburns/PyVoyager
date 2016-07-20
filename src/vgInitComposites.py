@@ -7,6 +7,8 @@
 # the best way to understand this algorithm is to look at some sample data and
 # understand that it's grouping records together by looking for repeating patterns.
 # or at the moment, just repeated filters for the same target/camera.
+#. could extend it to try to look for more specific repeating patterns,
+# but it seems to work fairly well like this.
 # eg
 # from files.csv
 # volume,fileid,phase,craft,target,time,instrument,filter,note
@@ -18,7 +20,8 @@
 # 5101,C1471309,Jupiter,Voyager1,Jupiter,1979-01-09T01:03:04,Narrow,Blue
 # 5101,C1471311,Jupiter,Voyager1,Jupiter,1979-01-09T01:06:16,Narrow,Green
 # 5101,C1471313,Jupiter,Voyager1,Jupiter,1979-01-09T01:45:54,Narrow,Orange
-# =>
+#
+# you want to make some records like this -
 # composites.csv
 # volume,compositeId,centerId,filter
 # 5101,C1471038,C1471038,Uv
@@ -30,8 +33,11 @@
 # 5101,C1471307,C1471311,Green
 # 5101,C1471307,C1471313,Orange
 
-# ie when it catches the repeated Uv filter, it writes out the intervening records as a group - a composite record.
-# different targets and cameras can be interleaved because it keeps different circular buffers for each target/camera combination.
+# ie when it catches the repeated Uv filter, it writes out the intervening records as a group -
+# a composite record.
+# different targets and cameras are sometimes interleaved in files.csv,
+# but it can disentangle them because it keeps different circular buffers
+# for each target/camera combination.
 
 #.. also need to look at the time to make sure they're all within a certain range -
 # eg the last orange filter is 40 mins after the last green one,
@@ -46,7 +52,7 @@ import config
 import lib
 
 
-#. in config -
+#. put in config -
 #. max number of records in a group
 # 7
 #. max time delta between all records in a group
@@ -57,7 +63,7 @@ debug = False
 
 
 def initComposites():
-    "build the composites.csv file from likely looking images in files.csv"
+    "Build the composites.csv file from likely looking groups of images in files.csv"
 
     # open the composites.csv file
     fileout = open(config.compositesdb, 'wb')
@@ -69,15 +75,14 @@ def initComposites():
     filein = open(config.filesdb, 'rt')
     reader = csv.reader(filein)
 
-    # this will store circular buffers with 7 empty lists - the maximum number of filters in a group we're checking for
+    # this will store circular buffers with 7 empty lists -
+    # the maximum number of filters in a group we're checking for
     circbuffers = {}
 
     i = 0
     for row in reader:
-        if row==[] or row[0][0]=="#": # skip blanks and comments
-            continue
-        if i==0: # get column headers
-            fields = row
+        if row==[] or row[0][0]=="#": continue # skip blank lines and comments
+        if i==0: fields = row # get column headers
         else:
             # get field values
             # volume,fileid,phase,craft,target,time,instrument,filter,note
@@ -101,7 +106,8 @@ def initComposites():
                 circbuffers[bufferKey] = buffer
 
             # now iterate over rows in circular buffer, checking for matches
-            # if found a match, assume it indicates the end of a cycle, and that the intervening similar records are part of a group
+            # if found a match, assume it indicates the end of a cycle,
+            # and that the intervening similar records are part of a group
             # so write them out together, and reset the buffer
             for bufferRow in reversed(buffer):
                 if bufferRow==[]:
@@ -117,15 +123,19 @@ def initComposites():
                     # bufferNote = bufferRow[config.filesColNote]
                     if filter==bufferFilter:
                         if debug: print 'filters match - check other values'
-                        # if phase==bufferPhase and craft==bufferCraft and target==bufferTarget and instrument==bufferInstrument:
+                        # if phase==bufferPhase and craft==bufferCraft and
+                        #    target==bufferTarget and instrument==bufferInstrument:
                         # if True:
                         if volume==bufferVolume: # actually had some cases of this failing
-                            # print 'values match - assume we have a cycle, so dump non-empty buffer rows into composites.csv, clear buffer'
+                            # print "values match - assume we have a cycle, \
+                            # so dump non-empty buffer rows into composites.csv, clear buffer"
                             # print buffer
                             # pprint.pprint(buffer)
                             # print [row[config.filesColFilter] for row in buffer]
                             # print buffer.join('\n')
-                            nonemptyRows = [rowx for rowx in buffer if rowx != []] # bug - had used 'row' for this variable, but it's not local! overwrote existing row variable
+                            # bug - had used 'row' for this variable,
+                            # but it's not local! overwrote existing row variable
+                            nonemptyRows = [rowx for rowx in buffer if rowx != []]
                             outCompositeId = None
                             for nonemptyRow in nonemptyRows:
                                 # volume,compositeId,centerId,filter
@@ -134,7 +144,8 @@ def initComposites():
                                     outCompositeId = nonemptyRow[config.filesColFileId]
                                 outCenterId = nonemptyRow[config.filesColFileId]
                                 outFilter = nonemptyRow[config.filesColFilter]
-                                # if just a single row, write it out as a clear image so shows up as b&w
+                                # if just a single row, write it out as a clear image
+                                # so shows up as b&w
                                 if len(nonemptyRows) == 1:
                                     outFilter = 'Clear'
                                 outRow = [outVolume, outCompositeId, outCenterId, outFilter]
@@ -151,7 +162,8 @@ def initComposites():
             # if debug: print buffer
 
         # write row
-        # row = [volume, fileid, phase, craft, target, instrument, filter, note] # keep in sync with fields, above
+        # keep in sync with fields, above
+        # row = [volume, fileid, phase, craft, target, instrument, filter, note]
         # print row # too slow
         # writer.writerow(row)
         i += 1

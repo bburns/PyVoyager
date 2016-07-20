@@ -169,7 +169,7 @@ def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
     # cmd = 'ffmpeg -y %s -r 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg -y %s -framerate %d -i %s -r %d %s' % (config.movieFfmpegOptions, frameRate, filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg %s -framerate 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
-    cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % (config.movieFfmpegOptions, frameRate, filenamePattern, config.movieFfmpegOutputOptions, outputFilename)
+    cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % (config.clipFfmpegOptions, frameRate, filenamePattern, config.clipFfmpegOutputOptions, outputFilename)
     print cmd
     os.system(cmd)
     os.chdir(savedir)

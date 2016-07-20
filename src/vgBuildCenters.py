@@ -27,7 +27,8 @@ def buildCenters(volnum, overwrite=False):
 
     # for test (vol=0), can overwrite test folder
     if int(volnum)!=0 and os.path.isdir(centersubfolder) and overwrite==False:
-        print "Folder exists - skipping vg images step: " + centersubfolder
+        # print "Folder exists - skipping vg images step: " + centersubfolder
+        pass
     else:
         # build the plain images for the volume, if not already there
         vgBuildImages.buildImages(volnum)
@@ -36,8 +37,12 @@ def buildCenters(volnum, overwrite=False):
         lib.rmdir(centersubfolder)
         lib.mkdir(centersubfolder)
 
+        # get number of files to process
+        root, dirs, files = os.walk(imagesubfolder)
+        nfiles = len(files)
+
         # read small db into memory - tells when to turn centering on/off
-        centeringInfo = lib.readCsv('db/centering.csv')
+        centeringInfo = lib.readCsv(config.centeringdb)
 
         # iterate through all available images, filter on desired volume
         f = open(config.filesdb, 'rt')
@@ -75,7 +80,8 @@ def buildCenters(volnum, overwrite=False):
                     infile = imagesubfolder + pngfilename
                     outfile = centersubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    print 'centering %d: %s     \r' %(nfile,infile),
+                    # print 'centering %d: %s     \r' %(nfile,infile),
+                    print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
                     if os.path.isfile(infile):
                         libimg.adjustImageFile(infile, outfile, docenter)
                     else:

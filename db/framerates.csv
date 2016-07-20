@@ -10,7 +10,17 @@
 
 # these values are all based on a frame rate of 20fps
 
+#. should be possible to ditch the second column, yes? just have the code find it?
+
 fileId,planetCraftTargetCamera,nframesPerImage
+#--------------------------------------------------------------------------------
+
+# Jupiter
+C1636826,Jupiter-Voyager1-Io-Narrow,10
+# C1637732,coolmoonlet,20
+# C1638131,diffmoonlet?,20
+C1639944,Jupiter-Voyager1-Callisto-Narrow,20
+
 
 # Uranus
 C2672949,Uranus-Voyager2-Uranus-Narrow,10

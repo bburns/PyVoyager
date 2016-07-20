@@ -1,12 +1,22 @@
 
-# when to turn centering off and back on again, around closest approach
+# centering.csv
+# this file describes when to turn centering off and back on again,
+# around closest approach.
+
+# centering is turned off for the image in the centeringOff column,
+# and turned back on for the centeringOn image.
+
 # this entire file is read into memory
 #. make it a py file?
 
-# centering is turned off for the centeringOff file,
-# and turned back on for the centeringOn file
-
 planetCraftTargetCamera,centeringOff,centeringOn
+
+# haven't gotten to the end of jupiter yet
+Jupiter-Voyager1-Jupiter-Narrow,C1590049,C9999999
+Jupiter-Voyager1-Io-Narrow,C1637528,C9999999
+Jupiter-Voyager1-Io-Wide,C1639129,C9999999
+
+
 Uranus-Voyager2-Uranus-Narrow,C2666727,C2707400
 Uranus-Voyager2-Uranus-Wide,C2682933,C2688432
 Uranus-Voyager2-Ariel-Narrow,C2684338,C2690305
@@ -14,6 +24,7 @@ Uranus-Voyager2-Miranda-Narrow,C2684608,C2727259
 Uranus-Voyager2-Oberon-Narrow
 Uranus-Voyager2-Titania-Narrow
 Uranus-Voyager2-Umbriel-Narrow,C2690340,C2728806
+
 Neptune-Voyager2-Neptune-Narrow,C1127459,C1152407
 Neptune-Voyager2-Neptune-Wide,C1137509,C1141753
 Neptune-Voyager2-Triton-Narrow,C1134823,C1146313

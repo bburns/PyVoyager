@@ -21,6 +21,7 @@ import vgBuildMosaics
 import vgBuildTargets
 import vgBuildList
 import vgBuildClips
+import vgBuildSegments
 import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
@@ -122,8 +123,14 @@ elif cmd=="clips":
         cmd="help"
     beep()
 
+elif cmd=="segments":
+    targetpath = args.pop(0)
+    vgBuildSegments.buildSegments(targetpath)
+    beep()
+
 elif cmd=="movies":
     vgBuildMovies.buildMovies()
+    beep()
 
 elif cmd=="list":
     vgBuildList.buildList()

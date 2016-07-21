@@ -62,7 +62,8 @@ adjustmentsPrefix = 'adjusted_'
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-blobThreshold = 0.015 # works for most neptune system images
+# blobThreshold = 0.015 # works for most neptune system images
+blobThreshold = 255 * 0.015 # works for most neptune system images
 # blobThreshold = 0.15 # try for -s10 option with uranus - worked
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
@@ -170,18 +171,20 @@ clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 
-downloadsFolder   = offlineFolder + "step01_downloads/"
-unzipsFolder      = offlineFolder + "step02_unzips/"
-imagesFolder      = onlineFolder  + "step03_images/"
-adjustmentsFolder = onlineFolder  + "step04_adjustments/"
-centersFolder     = onlineFolder  + "step05_centers/"
-compositesFolder  = onlineFolder  + "step06_composites/"
-mosaicsFolder     = onlineFolder  + "step07_mosaics/"
-targetsFolder     = onlineFolder  + "step08_targets/"
-titlesFolder      = onlineFolder  + "step09_titles/"
-clipsFolder       = onlineFolder  + "step10_clips/"
-clipsStageFolder  = clipsFolder + 'stage/'
-moviesFolder      = onlineFolder  + "step11_movies/"
+downloadsFolder     = offlineFolder + "step01_downloads/"
+unzipsFolder        = offlineFolder + "step02_unzips/"
+imagesFolder        = onlineFolder  + "step03_images/"
+adjustmentsFolder   = onlineFolder  + "step04_adjustments/"
+centersFolder       = onlineFolder  + "step05_centers/"
+compositesFolder    = onlineFolder  + "step06_composites/"
+mosaicsFolder       = onlineFolder  + "step07_mosaics/"
+targetsFolder       = onlineFolder  + "step08_targets/"
+titlesFolder        = onlineFolder  + "step09_titles/"
+clipsFolder         = onlineFolder  + "step10_clips/"
+clipsStageFolder    = clipsFolder + 'stage/'
+segmentsFolder      = onlineFolder  + "step11_segments/"
+segmentsStageFolder = segmentsFolder + 'stage/'
+moviesFolder        = onlineFolder  + "step12_movies/"
 
 # test images go here
 testFolder    = 'test/images/'
@@ -233,6 +236,7 @@ mosaicsdb = dbFolder + 'mosaics.csv'
 moviesdb = dbFolder + 'movies.csv'
 targetsdb = dbFolder + 'targets.csv'
 frameratesdb = dbFolder + 'framerates.csv'
+segmentsdb = dbFolder + 'segments.csv'
 
 
 # columns in files.csv

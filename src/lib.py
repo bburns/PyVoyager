@@ -22,6 +22,18 @@ import config
 
 
 
+def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
+    "Make ncopies of symbolic link from the source to the target file, starting with number nfile"
+    # this requires running vg from an admin console
+    for i in range(ncopies):
+        n = nfile + i
+        targetPath2 = targetFolder + config.clipFilespec % n # eg 'img00001.png'
+        # eg mklink data\step09_clips\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png
+        #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
+        cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
+        cmd = cmd.replace('/','\\')
+        os.system(cmd)
+
 
 def getVolumeNumbers(s):
     "parse a string like 5101-5108 or 5104 or 51* to an array of volnum integers"

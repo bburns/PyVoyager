@@ -1,12 +1,10 @@
 
-# vg clips command
-# build clips associated with target subfolders,
-# eg Jupiter/Voyager1/Io/Narrow
+# vg segments command
+# build segments, which can combine narrow/wide angle, bw/color,
+# have variable frame rates, and annotations.
+# eg Jupiter-Voyager1-Io.mp4
 
 # this must be run in an admin console because mklink requires elevated privileges
-
-#. need to build clips for planet/system titles and all.mp4 titlepage
-#. and postscript titlepages
 
 
 import csv
@@ -16,38 +14,37 @@ import os.path
 import config
 import lib
 
-import vgBuildTitles
-
-
+# import vgBuildTitles
 
 # includeTitles = True
-includeTitles = False
+# includeTitles = False
 
 
-#. parameterize, move to lib
-def makeClipFiles():
-    "Build mp4 clips using ffmpeg on sequentially numbered image files"
-    
-    print 'Making mp4 clips using ffmpeg'
-    # folder = config.clipsFolder
-    folder = config.clipsStageFolder # eg data/step09_clips/stage/
-    # print folder
-    for root, dirs, files in os.walk(folder):
-        # print root, dirs
-        if dirs==[]: # reached the leaf level
-            print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
-            stageFolder = os.path.abspath(root)
-            # get target file path relative to staging folder,
-            # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
-            targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
-            targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-            clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-            clipPath = '../../../../../../' + clipTitle
-            lib.pngsToMp4(stageFolder, config.clipFilespec, clipPath, config.clipFrameRate)
+# def makeClipFiles():
+#     "Build mp4 clips using ffmpeg on sequentially numbered image files"
+
+#     print 'Making mp4 clips using ffmpeg'
+#     # folder = config.clipsFolder
+#     folder = config.clipsStageFolder # eg data/step09_clips/stage/
+#     # print folder
+#     for root, dirs, files in os.walk(folder):
+#         # print root, dirs
+#         if dirs==[]: # reached the leaf level
+#             print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+#             stageFolder = os.path.abspath(root)
+#             # get target file path relative to staging folder,
+#             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+#             targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+#             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+#             clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+#             clipPath = '../../../../../../' + clipTitle
+#             lib.pngsToMp4(stageFolder, config.clipFilespec, clipPath, config.clipFrameRate)
 
 
-def makeLinks(bwOrColor, targetPathParts):
-    "Make links from source files (centers or composites) to clip stage folders"
+
+
+def makeLinks(targetPathParts):
+    "Make links from source files to segment stage folders"
 
     print 'Making links from source files'
 
@@ -55,9 +52,10 @@ def makeLinks(bwOrColor, targetPathParts):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    targetInfo = lib.readCsv(config.targetsdb) # remapping listed targets
-    framerateInfo = lib.readCsv(config.frameratesdb) # change framerates
-    centeringInfo = lib.readCsv(config.centeringdb) # turn centering on/off
+    # targetInfo = lib.readCsv(config.targetsdb) # remapping listed targets
+    # framerateInfo = lib.readCsv(config.frameratesdb) # change framerates
+    # centeringInfo = lib.readCsv(config.centeringdb) # turn centering on/off
+    # segmentInfo = lib.readCsv(config.segmentsdb)
 
     # keep track of number of files in each target subfolder,
     # so we can number files appropriately and know when to add titles
@@ -65,10 +63,11 @@ def makeLinks(bwOrColor, targetPathParts):
 
     # how many times should we duplicate the images?
     ncopiesPerImage = 1 # default
-    ncopiesPerImageMemory = {} # keyed on planet-spacecraft-target-camera
+    ncopiesPerImageMemory = {} # keyed on planet-spacecraft-target
 
     # iterate through all available images
-    f = open(config.filesdb, 'rt')
+    # f = open(config.filesdb, 'rt')
+    f = open(config.segmentsdb, 'rt')
     i = 0
     lastVolume=''
     reader = csv.reader(f)
@@ -80,7 +79,7 @@ def makeLinks(bwOrColor, targetPathParts):
             volume = row[config.filesColVolume]
             fileId = row[config.filesColFileId]
             filter = row[config.filesColFilter]
-            
+
             # show progress
             if volume!=lastVolume:
                 print 'Volume %s    \r' % volume,
@@ -109,30 +108,30 @@ def makeLinks(bwOrColor, targetPathParts):
                 # build a key
                 planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
 
-                # how many copies of this file should we stage?
-                framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
-                if framerateInfoRecord:
-                    # eg ncopies = 3 = 3x slowdown
-                    ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
-                    # remember it for future also
-                    # eg key Uranus-Voyager2-Arial-Narrow
-                    key = framerateInfoRecord['planetCraftTargetCamera']
-                    ncopiesPerImageMemory[key] = ncopiesPerImage
-                else:
-                    # lookup where we left off for this target, or 1x speed if not seen before
-                    ncopiesPerImage = ncopiesPerImageMemory.get(planetCraftTargetCamera) or 1
+                # # how many copies of this file should we stage?
+                # framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
+                # if framerateInfoRecord:
+                #     # eg ncopies = 3 = 3x slowdown
+                #     ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
+                #     # remember it for future also
+                #     # eg key Uranus-Voyager2-Arial-Narrow
+                #     key = framerateInfoRecord['planetCraftTargetCamera']
+                #     ncopiesPerImageMemory[key] = ncopiesPerImage
+                # else:
+                #     # lookup where we left off for this target, or 1x speed if not seen before
+                #     ncopiesPerImage = ncopiesPerImageMemory.get(planetCraftTargetCamera) or 1
 
-                # get image source path
-                # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                #. make this a fn - duplicated elsewhere
-                centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
-                if centeringInfoRecord:
-                    centeringOff = centeringInfoRecord['centeringOff']
-                    centeringOn = centeringInfoRecord['centeringOn']
-                    docenter = fileId<centeringOff or fileId>centeringOn
-                else: # if no info for this target just center it
-                    docenter = True
-                    
+                # # get image source path
+                # # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                # #. make this a fn - duplicated elsewhere
+                # centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                # if centeringInfoRecord:
+                #     centeringOff = centeringInfoRecord['centeringOff']
+                #     centeringOn = centeringInfoRecord['centeringOn']
+                #     docenter = fileId<centeringOff or fileId>centeringOn
+                # else: # if no info for this target just center it
+                #     docenter = True
+
                 # if centering for this image is turned off, let's assume for now that
                 # that means we don't want the color image, since it'd be misaligned anyway.
                 if docenter==False:
@@ -192,18 +191,18 @@ def makeLinks(bwOrColor, targetPathParts):
     print
 
 
-def buildClips(bwOrColor, targetPath=None):
-    "Build bw or color clips associated with the given target path (eg //Io)"
-    # eg buildClips('bw', 'Jupiter/Voyager1')
+def buildSegments(targetPath=None):
+    "Build segments associated with the given target path (eg //Io)"
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    # but we can ignore the camera part
     targetPathParts = lib.parseTargetPath(targetPath)
 
     # make sure we have some titles
-    vgBuildTitles.buildTitles(targetPath)
+    # vgBuildTitles.buildTitles(targetPath)
 
     # stage images
-    lib.rmdir(config.clipsStageFolder)
+    lib.rmdir(config.segmentsStageFolder)
     makeLinks(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images

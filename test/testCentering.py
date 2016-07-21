@@ -25,8 +25,6 @@ def testCentering():
 
     testfolder = 'images/'
     centeredfolder = testfolder + 'centered/'
-    # thresholdedfolder = testfolder + 'thresholded/'
-    # edgesfolder = testfolder + 'edges/'
     debugfolder = testfolder + 'debug/'
     maxerror = 2
 
@@ -41,26 +39,11 @@ def testCentering():
 
         infile = testfolder + fileid + '.png'
         centeredfile = centeredfolder + fileid + '.png'
-        # thresholdedfile = thresholdedfolder + fileid + '.png'
-        # edgesfile = edgesfolder + fileid + '.png'
 
-        # any experimenting should be done in adjustImageFile or config settings
+        # any experimenting should be done in centerImageFile or config settings
         debugtitle = debugfolder + fileid
-        boundingBox = libimg.adjustImageFile(infile, centeredfile, True, debugtitle)
+        boundingBox = libimg.centerImageFile(infile, centeredfile, debugtitle)
         x1,y1,x2,y2 = boundingBox
-
-        # get binarization images (used by blob detector)
-        # im = mpim.imread(infile)
-        # b = 1*(im>config.blobThreshold)
-        # misc.imsave(thresholdedfile, b)
-
-        # get canny edge images (used by hough detector)
-        # im = mpim.imread(infile)
-        # im2 = libimg.mpim2cv2(im)
-        # upper = config.cannyUpperThreshold
-        # lower = upper/2
-        # edges = cv2.Canny(im2, lower, upper)
-        # misc.imsave(edgesfile, edges)
 
         # get expected results
         result = results[fileid]

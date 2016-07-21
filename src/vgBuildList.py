@@ -1,6 +1,6 @@
 
 # vg list command
-# show listing of volumes and what stagethey're at
+# show listing of volumes and what stage they're at
 
 
 import os
@@ -10,7 +10,7 @@ import config
 
 
 def buildList():
-    "get a listing of volumes and what stages they are at"
+    "Get a listing of volumes and what stages they are at"
 
     # build a dictionary like {5101: {'Downloads':True,'Unzips':False,...}, }
     # then convert to an array of arrays and display
@@ -41,6 +41,14 @@ def buildList():
                 grid[volnum]['Images'] = 'x'
         del dirnames[:] # don't recurse
 
+    for root, dirnames, filenames in os.walk(config.adjustmentsFolder):
+        for dirname in dirnames: # eg VGISS_5101
+            if dirname[:6]=='VGISS_':
+                volnum = dirname[6:10] # eg 5101
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Adjustments'] = 'x'
+        del dirnames[:] # don't recurse
+
     for root, dirnames, filenames in os.walk(config.centersFolder):
         for dirname in dirnames: # eg VGISS_5101
             if dirname[:6]=='VGISS_':
@@ -64,7 +72,7 @@ def buildList():
     # Alice      24
     # Bob        19
 
-    headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Centers', 'Composites']
+    headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments', 'Centers', 'Composites']
     rows = []
     for vol in config.volumes:
         # only include a row if it has some data
@@ -72,7 +80,8 @@ def buildList():
         gridrow = grid.get(svol)
         if gridrow:
             row = [svol, gridrow.get('Downloads'), gridrow.get('Unzips'),
-                   gridrow.get('Images'), gridrow.get('Centers'), gridrow.get('Composites')]
+                   gridrow.get('Images'), gridrow.get('Adjustments'),
+                   gridrow.get('Centers'), gridrow.get('Composites')]
             rows.append(row)
 
     print

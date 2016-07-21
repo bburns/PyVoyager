@@ -7,15 +7,32 @@
 # and turned back on for the centeringOn image.
 
 # this entire file is read into memory
-#. make it a py file?
+#. make it a py file? but this requires less syntax
 
 planetCraftTargetCamera,centeringOff,centeringOn
 
-# haven't gotten to the end of jupiter yet
-Jupiter-Voyager1-Jupiter-Narrow,C1590049,C9999999
-Jupiter-Voyager1-Io-Narrow,C1637528,C9999999
-Jupiter-Voyager1-Io-Wide,C1639129,C9999999
+# Jupiter
+# ----------------------------------------
 
+Jupiter-Voyager1-Jupiter-Narrow,C1590049,C1698303
+
+# adrastea must be invisible...
+Jupiter-Voyager1-Adrastea-Narrow,C0,C9
+
+# callisto has lots of black frames at the end
+Jupiter-Voyager1-Callisto-Narrow,C1641754,C1648814
+
+# ganymede - ditto
+Jupiter-Voyager1-Ganymede-Narrow,C1640132,C9
+
+# io
+Jupiter-Voyager1-Io-Narrow,C1637528,C9
+Jupiter-Voyager1-Io-Wide,C1639129,C9
+
+
+
+# Uranus
+# ----------------------------------------
 
 Uranus-Voyager2-Uranus-Narrow,C2666727,C2707400
 Uranus-Voyager2-Uranus-Wide,C2682933,C2688432
@@ -25,7 +42,11 @@ Uranus-Voyager2-Oberon-Narrow
 Uranus-Voyager2-Titania-Narrow
 Uranus-Voyager2-Umbriel-Narrow,C2690340,C2728806
 
+# Neptune
+# ----------------------------------------
+
 Neptune-Voyager2-Neptune-Narrow,C1127459,C1152407
 Neptune-Voyager2-Neptune-Wide,C1137509,C1141753
 Neptune-Voyager2-Triton-Narrow,C1134823,C1146313
 # Neptune-Voyager2-Triton-Wide,not necessary
+

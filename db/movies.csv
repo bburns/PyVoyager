@@ -1,6 +1,6 @@
 
 # store movie info here
-# movies are built in order, with the given clips where available
+# movies are built by concatenating available clips
 # filenames are just the id's with .mp4 appended
 
 movieId,clipId

@@ -46,6 +46,7 @@ def buildImages(volnum, overwrite=False):
                     libimg.img2png(subdirabsolute, config.imageFilespec,
                                    imagesfolder, config.img2pngOptions)
                     i += 1
+            print
 
 
 if __name__ == '__main__':

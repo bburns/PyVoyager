@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.35
+Version 0.36
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -212,11 +212,11 @@ But the Hough detector doesn't handle targets with centers outside of the image,
 Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file `db/centering.csv` is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this -
 
     planetCraftTargetCamera,centeringOff,centeringOn
-    NeptuneVoyager2NeptuneNarrow,C1127459,C1152407
-    NeptuneVoyager2NeptuneWide,C1137509,C1140815
-    NeptuneVoyager2TritonNarrow,C1139255,C1140614
+    Neptune-Voyager2-Neptune-Narrow,C1127459,C1152407
+    Neptune-Voyager2-Neptune-Wide,C1137509,C1140815
+    Neptune-Voyager2-Triton-Narrow,C1139255,C1140614
 
-This table is also used to tell the movie creation step to slow down the frames at closest approach. The alternative would be to base these steps more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for more gradual slow-down and speed up around closest approach.
+The alternative would be to base this more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for a gradual slow-down and speed up around closest approach.
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
 
@@ -228,7 +228,7 @@ The PDS volumes come with index files for all the images they contain, which hav
 
 though different targets and camera records can be also interleaved with others.
 
-One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/multitargetImages.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie. One retargeting that is performed in advance is from rings to their planet - otherwise the rings would show up in separate movies.
+One issue is that some images have more than one target in them (e.g. Jupiter with Io) - in the PDS index these images are listed with just one target. For now, you can change which target the image gets sorted under by editing the `db/targets.csv` file - in the future it could be enhanced to also split the image into two records so each target can be included in the appropriate movie. One retargeting that is performed in advance is from rings to their planet - otherwise the rings would show up in separate movies.
 
 The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this:
 
@@ -239,7 +239,9 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
 
 This file is used by the `vg composites <volume>` command to generate the color frames.
 
-The movies are generated with the `vg movies bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 movie in each folder.
+The clips are generated with the `vg clips bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
+
+The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
 That's about it!
 
@@ -268,6 +270,10 @@ Next steps
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
+
+Version 0.36 (2016-07-19)
+----------------------------------------
+- Add `vg retarget` command to print out new retargeting records
 
 Version 0.35 (2016-07-19)
 ----------------------------------------

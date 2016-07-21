@@ -1,6 +1,6 @@
 
 # vg centers command
-# build centered images from plain png images
+# build centered images from adjusted images
 
 import csv
 import os
@@ -11,14 +11,14 @@ import lib
 import libimg
 import db
 
-import vgBuildImages
+import vgBuildAdjustments
 
 
 def buildCenters(volnum, overwrite=False):
     "Build centered images for given volume, if they don't exist yet"
 
-    imagesubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
-    centersubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
+    adjustmentsSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
+    centersSubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
 
     if int(volnum)==0: # test volume - turn on image debugging
         config.drawBoundingBox = True
@@ -26,20 +26,20 @@ def buildCenters(volnum, overwrite=False):
         config.drawCrosshairs = True
 
     # for test (vol=0), can overwrite test folder
-    if int(volnum)!=0 and os.path.isdir(centersubfolder) and overwrite==False:
-        # print "Folder exists - skipping vg images step: " + centersubfolder
+    if int(volnum)!=0 and os.path.isdir(centersSubfolder) and overwrite==False:
+        # print "Folder exists - skipping vg centers step: " + centersSubfolder
         pass
     else:
-        # build the plain images for the volume, if not already there
-        vgBuildImages.buildImages(volnum)
+        # build the adjusted images for the volume, if not already there
+        vgBuildAdjustments.buildAdjustments(volnum)
 
         # make new folder
-        lib.rmdir(centersubfolder)
-        lib.mkdir(centersubfolder)
+        lib.rmdir(centersSubfolder)
+        lib.mkdir(centersSubfolder)
 
         # get number of files to process
-        root, dirs, files = os.walk(imagesubfolder)
-        nfiles = len(files)
+        # root, dirs, files = os.walk(adjustmentsSubfolder)
+        # nfiles = len(files)
 
         # read small db into memory - tells when to turn centering on/off
         centeringInfo = lib.readCsv(config.centeringdb)
@@ -76,14 +76,15 @@ def buildCenters(volnum, overwrite=False):
                         docenter = True
 
                     # center the file
-                    pngfilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                    infile = imagesubfolder + pngfilename
-                    outfile = centersubfolder + config.centersPrefix + pngfilename
+                    pngfilename = config.adjustmentsPrefix + fileId + '_' + \
+                                  config.imageType + '_' + filter + '.png'
+                    infile = adjustmentsSubfolder + pngfilename
+                    outfile = centersSubfolder + config.centersPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    # print 'centering %d: %s     \r' %(nfile,infile),
-                    print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
+                    print 'Centering %d: %s     \r' %(nfile,infile),
+                    # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
                     if os.path.isfile(infile):
-                        libimg.adjustImageFile(infile, outfile, docenter)
+                        libimg.centerImageFile(infile, outfile)
                     else:
                         print 'Warning: missing image file', infile
 

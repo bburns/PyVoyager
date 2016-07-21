@@ -37,42 +37,53 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     os.system(cmd)
 
 
-# def centerImageFile(infile, outfile):
-# def adjustImageFile(infile, outfile, docenter=True):
-def adjustImageFile(infile, outfile, docenter=True, debugtitle=None):
-    "Adjust and optionally center the given image file on a target and save it to outfile."
-    # if docenter False, do everything but the centering step
-
-    #. could subtract dark current image, remove reseau marks if starting from RAW images
-    # or have that as a separate adjustments step
+def adjustImageFile(infile, outfile, debugtitle=None):
+    "Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg."
+    #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
     im = mpim.imread(infile)
 
     # adjust image
     im = np.rot90(im, 2) # rotate by 180
 
+    # this actually saves bw images with a colormap
+    # mpim.imsave(outfile, im)
+
+    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
+    # the CALIB images are really dark, and this result looks nice
+    misc.imsave(outfile, im)
+
+
+def centerImageFile(infile, outfile, debugtitle=None):
+    "Center the given image file on a target and save it to outfile."
+
+    im = mpim.imread(infile)
+
     boundingBox = [0,0,799,799]
 
-    if docenter:
-        # find the bounding box of biggest object
-        # boundingBox = findBoundingBox(im)
-        boundingBox = findBoundingBox(im, debugtitle)
+    # find the bounding box of biggest object
+    # boundingBox = findBoundingBox(im)
+    boundingBox = findBoundingBox(im, debugtitle)
 
-        # center the image on the target
-        im = centerImage(im, boundingBox)
+    # center the image on the target
+    im = centerImage(im, boundingBox)
 
-        if config.drawCrosshairs:
-            im[399, 0:799] = 0.25
-            im[0:799, 399] = 0.25
+    if config.drawCrosshairs:
+        im[399, 0:799] = 0.25
+        im[0:799, 399] = 0.25
 
     # this actually saves bw images with a colormap
     # mpim.imsave(outfile, im)
 
-    # and this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
+    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
     misc.imsave(outfile, im)
 
     return boundingBox
+
+
+
+
 
 
 def show(im2, title='cv2 image - press esc to continue'):

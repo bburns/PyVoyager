@@ -16,13 +16,44 @@ fileId,planetCraftTargetCamera,nframesPerImage
 #--------------------------------------------------------------------------------
 
 # Jupiter
-C1636826,Jupiter-Voyager1-Io-Narrow,10
+# ----------------------------------------
+
 # C1637732,coolmoonlet,20
 # C1638131,diffmoonlet?,20
+
+# amalthea
+C1637732,Jupiter-Voyager1-Amalthea-Narrow,8
+C1638149,Jupiter-Voyager1-Amalthea-Narrow,20
+
+# callisto
+# lots of black frames at the end
 C1639944,Jupiter-Voyager1-Callisto-Narrow,20
+C1642626,Jupiter-Voyager1-Callisto-Narrow,1
+C1642141,Jupiter-Voyager1-Callisto-Wide,20
+
+# europa
+#. can't use C0! must be unique key
+C0,Jupiter-Voyager1-Europa-Narrow,2
+C1635212,Jupiter-Voyager1-Europa-Narrow,8
+
+# ganymede
+C1460413,Jupiter-Voyager1-Ganymede-Narrow,2
+C1633443,Jupiter-Voyager1-Ganymede-Narrow,6
+C1640132,Jupiter-Voyager1-Ganymede-Narrow,10
+C1640741,Jupiter-Voyager1-Ganymede-Narrow,1
+
+C1627348,Jupiter-Voyager1-Ganymede-Wide,4
+C1640315,Jupiter-Voyager1-Ganymede-Wide,8
+
+
+
+# io
+C1636826,Jupiter-Voyager1-Io-Narrow,10
+
 
 
 # Uranus
+# ----------------------------------------
 C2672949,Uranus-Voyager2-Uranus-Narrow,10
 C2673007,Uranus-Voyager2-Uranus-Narrow,1
 
@@ -74,5 +105,6 @@ C2690340,Uranus-Voyager2-Umbriel-Narrow,3
 
 
 # Neptune
+# ----------------------------------------
 
 # triton

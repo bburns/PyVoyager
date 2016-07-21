@@ -14,6 +14,7 @@ import lib
 import vgBuildDownload
 import vgBuildUnzip
 import vgBuildImages
+import vgBuildAdjustments
 import vgBuildCenters
 import vgBuildComposites
 import vgBuildMosaics
@@ -23,6 +24,8 @@ import vgBuildClips
 import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
+import vgRetarget
+import vgUpdateCenters
 
 
 #. nowork - why?
@@ -71,6 +74,13 @@ elif cmd=="images":
         vgBuildImages.buildImages(volnum, overwrite)
     beep()
 
+elif cmd=="adjustments":
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgBuildAdjustments.buildAdjustments(volnum, overwrite)
+    beep()
+
 elif cmd=="centers":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
@@ -94,8 +104,10 @@ elif cmd=="targets":
     # vgBuild.buildTargets(targetPath)
     beep()
 
-elif cmd=="list":
-    vgBuildList.buildList()
+elif cmd=="retarget":
+    oldTarget = args.pop(0)
+    newTarget = args.pop(0)
+    vgRetarget.retarget(oldTarget, newTarget)
 
 elif cmd=="clips":
     bwOrColor = None
@@ -113,8 +125,20 @@ elif cmd=="clips":
 elif cmd=="movies":
     vgBuildMovies.buildMovies()
 
+elif cmd=="list":
+    vgBuildList.buildList()
+
 elif cmd=="test":
     testCentering.testCentering()
+
+elif cmd=="update":
+    subject = args.pop(0)
+    if subject=='centers':
+        vols = args.pop(0)
+        volnums = lib.getVolumeNumbers(vols)
+        for volnum in volnums:
+            vgUpdateCenters.updateCenters(volnum)
+        beep()
 
 elif cmd=="init":
     subject = args.pop(0)

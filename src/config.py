@@ -43,6 +43,13 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 img2pngOptions = "-fnamefilter -loglevel0"
 
 
+
+# adjustments
+# ----------------------------------------
+
+adjustmentsPrefix = 'adjusted_'
+
+
 # centers
 # ----------------------------------------
 
@@ -163,17 +170,18 @@ clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 
-downloadsFolder  = offlineFolder + "step01_downloads/"
-unzipsFolder     = offlineFolder + "step02_unzips/"
-imagesFolder     = onlineFolder  + "step03_images/"
-centersFolder    = onlineFolder  + "step04_centers/"
-compositesFolder = onlineFolder  + "step05_composites/"
-mosaicsFolder    = onlineFolder  + "step06_mosaics/"
-targetsFolder    = onlineFolder  + "step07_targets/"
-titlesFolder     = onlineFolder  + "step08_titles/"
-clipsFolder      = onlineFolder  + "step09_clips/"
-clipsStageFolder = clipsFolder + 'stage/'
-moviesFolder     = onlineFolder  + "step10_movies/"
+downloadsFolder   = offlineFolder + "step01_downloads/"
+unzipsFolder      = offlineFolder + "step02_unzips/"
+imagesFolder      = onlineFolder  + "step03_images/"
+adjustmentsFolder = onlineFolder  + "step04_adjustments/"
+centersFolder     = onlineFolder  + "step05_centers/"
+compositesFolder  = onlineFolder  + "step06_composites/"
+mosaicsFolder     = onlineFolder  + "step07_mosaics/"
+targetsFolder     = onlineFolder  + "step08_targets/"
+titlesFolder      = onlineFolder  + "step09_titles/"
+clipsFolder       = onlineFolder  + "step10_clips/"
+clipsStageFolder  = clipsFolder + 'stage/'
+moviesFolder      = onlineFolder  + "step11_movies/"
 
 # test images go here
 testFolder    = 'test/images/'
@@ -224,6 +232,7 @@ compositesdb = dbFolder + 'composites.csv'
 mosaicsdb = dbFolder + 'mosaics.csv'
 moviesdb = dbFolder + 'movies.csv'
 targetsdb = dbFolder + 'targets.csv'
+frameratesdb = dbFolder + 'framerates.csv'
 
 
 # columns in files.csv

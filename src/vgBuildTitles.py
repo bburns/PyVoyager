@@ -82,6 +82,7 @@ def buildTitles(targetPath=None):
         i += 1
 
     f.close()
+    print
 
 
 

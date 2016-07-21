@@ -57,7 +57,7 @@ def initFiles():
 
                     # handle rings specially - don't want them to become separate movies -
                     # include them with the planet
-                    #. maybe just include for the wide-angle camera? otherwise too many
+                    # but just include for the wide-angle camera - otherwise too many
                     if target[2:]=='Rings' and instrument=='Wide':
                         planetLetter = target[:1]
                         if planetLetter=='J': target='Jupiter'

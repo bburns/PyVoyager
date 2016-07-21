@@ -37,23 +37,6 @@ def getVolume(fileId):
     return vol
 
 
-def retarget(oldTarget, newTarget):
-    ""
-    print 'imageId,oldTarget,newTarget,x,y'
-    for root, dirs, files in os.walk(tempFolder):
-        nfiles = len(files)
-        for filename in files:
-            ext = filename[-4:]
-            if ext=='.png':
-                origname = filename[9:] # eg C1164724_RAW_Clear.png
-                fileId = origname[:8] # eg C1164724
-                # C0903842,Triton,Neptune
-                print '%s,%s,%s' % (fileId, oldTarget, newTarget)
-
-
-# retarget('Uranus', 'SomeMoon')
-
-
 
 
 

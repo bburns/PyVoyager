@@ -3,7 +3,7 @@
 
 # can remap old target to new target, eg
 # if the TARGET field says Io but Jupiter is what the frame gets centered on, can say
-# 5101,C72222,Io,Jupiter,0,0
+# 5101,C72222,Io,Jupiter
 
 # and in future should be able to add a record to include the frame in the Io movie as well,
 # with appropriate x,y offsets to center the image on it
@@ -13,15 +13,44 @@
 # but it's here for context - it's double checked on generating a movie.
 
 #. at the moment this is all read into memory for simplicity
-# but will get too big
+# hopefully won't get too big
+# if it does, might want to read it in, sort it, keep it as a list to walk down simultaneous to files.csv
 
 # x,y are not used yet
 
 imageId,oldTarget,newTarget,x,y
+# --------------------------------------------------------------------------------
+
+# Jupiter
+# ----------------------------------------
+
+# amalthea
+# narrow
+C1607923,Amalthea,Jupiter
+C1607925,Amalthea,Jupiter
+C1607927,Amalthea,Jupiter
+C1615351,Amalthea,Jupiter
+C1615355,Amalthea,Jupiter
+# wide
+C1550829,Amalthea,Jupiter
+C1610357,Amalthea,Jupiter
+C1610403,Amalthea,Jupiter
+C1613711,Amalthea,Jupiter
+C1613717,Amalthea,Jupiter
+C1630316,Amalthea,Jupiter
+
+# callisto
+# narrow
+# has lots of black frames at the end - may want to retarget those also
+C1615559,Callisto,Jupiter
+C1615601,Callisto,Jupiter
+# wide
+
 
 # Uranus
 # ----------------------------------------
 
+# unknown moon
 C2618901,Uranus,SomeMoon
 C2618907,Uranus,SomeMoon
 C2618937,Uranus,SomeMoon

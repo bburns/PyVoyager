@@ -17,14 +17,15 @@ import vgBuildCenters
 def buildTargets(volnum, targetPath=None):
     "Copy images in given volume to target subfolders"
 
-    # iterate down files.txt
-    # if target path matches row,
-    # copy that image to target subfolder
+    # iterate down files.csv
+    # if target path matches row, copy that image to target subfolder
 
     volnum = str(volnum)
 
     # center the volume, if not already there
     vgBuildCenters.buildCenters(volnum)
+
+    targetInfo = lib.readCsv('db/targets.csv') # remapping listed targets
 
     f = open(config.filesdb, 'rt')
     i = 0
@@ -34,23 +35,27 @@ def buildTargets(volnum, targetPath=None):
         if i==0: fields = row
         else:
             volume = row[config.filesColVolume]
-            # if volume==volid:
             if volume==volnum:
-                fileid = row[config.filesColFileId]
+                fileId = row[config.filesColFileId]
                 filter = row[config.filesColFilter]
 
-                # get subfolder, eg data/step3_centers/VGISS_5101
-                centersSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
+                # get subfolder, eg data/step04_centers/VGISS_5101
+                # centersSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
+                sourceFolder = config.imagesFolder + 'VGISS_' + volume + '/'
 
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
-                # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                centeredfilename = config.centersPrefix + fileid + '_' + \
-                                   config.imageType + '_' + filter + '.png'
-                centeredpath = centersSubfolder + centeredfilename
+                # eg data/step04_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                # centeredfilename = config.centersPrefix + fileId + '_' + \
+                                   # config.imageType + '_' + filter + '.png'
+                sourceFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
+                # centeredpath = centersSubfolder + centeredfilename
+                # centeredpath = sourceFolder + centeredfilename
+                sourceFilepath = sourceFolder + sourceFilename
 
                 # if file exists, create subfolder and copy/link image
-                if os.path.isfile(centeredpath):
+                # if os.path.isfile(centeredpath):
+                if os.path.isfile(sourceFilepath):
 
                     # get subfolder, eg Jupiter/Voyager1/Io/Narrow
                     phase = row[config.filesColPhase]
@@ -59,16 +64,24 @@ def buildTargets(volnum, targetPath=None):
                     instrument = row[config.filesColInstrument]
                     subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
+                    # translate target
+                    # relabel target field if necessary - see db/targets.csv for more info
+                    targetInfoRecord = targetInfo.get(fileId)
+                    if targetInfoRecord:
+                        # make sure old target matches what we have
+                        if targetInfoRecord['oldTarget']==target:
+                            target = targetInfoRecord['newTarget']
+
                     # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetfolder = config.targetsFolder + subfolder
-                    targetpath = targetfolder + centeredfilename
+                    targetFolder = config.targetsFolder + subfolder
+                    targetFilepath = targetFolder + sourceFilename
 
                     # skip if file already exists (to save time on copying)
                     if True:
-                    # if not os.path.isfile(targetpath):
+                    # if not os.path.isfile(targetFilepath):
 
                         # create subfolder
-                        lib.mkdir_p(targetfolder)
+                        lib.mkdir_p(targetFolder)
 
                         # links work, but then can't browse folders with image viewer...
                         # so just copy them
@@ -76,8 +89,9 @@ def buildTargets(volnum, targetPath=None):
                         # copy file
                         # cp -s, --symbolic-link - make symbolic links instead of copying
                         # [but -s is ignored on windows]
-                        cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                        print cmd + '        \r',
+                        # cmd = 'cp ' + centeredpath + ' ' + targetfolder
+                        cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
+                        print cmd + '      \r',
                         os.system(cmd)
 
                         # # link to file
@@ -93,6 +107,7 @@ def buildTargets(volnum, targetPath=None):
         i += 1
 
     f.close()
+    print
 
 
 if __name__ == '__main__':

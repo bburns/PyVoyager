@@ -59,7 +59,7 @@ def buildTitles(targetPath=None):
 
                     # get subfolder and make sure it exists
                     # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
-                    subfolder = system +'/' + craft + '/' + target +'/' + camera + '/'
+                    subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
                     targetfolder = config.titlesFolder + subfolder
                     lib.mkdir_p(targetfolder)
 

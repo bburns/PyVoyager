@@ -237,7 +237,7 @@ centeringdb = dbFolder + 'centering.csv'
 compositesdb = dbFolder + 'composites.csv'
 mosaicsdb = dbFolder + 'mosaics.csv'
 moviesdb = dbFolder + 'movies.csv'
-targetsdb = dbFolder + 'targets.csv'
+retargetingdb = dbFolder + 'retargeting.csv'
 frameratesdb = dbFolder + 'framerates.csv'
 segmentsdb = dbFolder + 'segments.csv'
 

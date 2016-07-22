@@ -73,7 +73,7 @@ def stageFiles(bwOrColor, targetPathParts):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    targetInfo = lib.readCsv(config.targetsdb) # remapping listed targets
+    targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
     framerateInfo = lib.readCsv(config.frameratesdb) # change framerates
     centeringInfo = lib.readCsv(config.centeringdb) # turn centering on/off
 

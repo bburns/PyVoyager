@@ -2,15 +2,19 @@
 # segments.csv
 # this file defines segments, which can combine color, bw, narrow and wide angle,
 # specify nframes, annotations, etc.
-# they are generally made for a specific target,like Jupiter-Voyager1-Ganymede
+# they are made for a specific target, like Jupiter-Voyager1-Ganymede
 
-segmentId,fileIds,source,nframes,annotation
+segmentId,fileIds,imageSource,nframes,annotation
 
 # ganymede narrow+wide, bw+color
 Jupiter-Voyager1-Ganymede,c132314-c132348,centered,1,"Jdij oijoijpok"
 Jupiter-Voyager1-Ganymede,c132350,composite,20
 Jupiter-Voyager1-Ganymede,c132351,mosaic,40,"pokpok pokpok"
 Jupiter-Voyager1-Ganymede,c132352-c9,adjusted,1
-
+# or what if could say
+Jupiter-Voyager1-Ganymede,c132352+,adjusted,1
+Jupiter-Voyager1-Ganymede,c132410,adjusted,20
+Jupiter-Voyager1-Ganymede,c132411+,adjusted,1
+# etc
 
 

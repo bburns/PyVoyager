@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.36
+Version 0.4
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -270,6 +270,10 @@ Next steps
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
+
+Version 0.4 (2016-07)
+----------------------------------------
+- Add `vg segments` command to build movie segments with more editorial control
 
 Version 0.36 (2016-07-19)
 ----------------------------------------

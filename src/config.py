@@ -117,25 +117,21 @@ titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 
 
-
-# clips
+# videos (clips, segments, movies)
 # ----------------------------------------
 
-# filename used for clip frames
-clipFilespec = 'img%05d.png'
+# filename used for frames
+videoFilespec = 'img%05d.png'
 
 # frame rate - frames per second
-# clipFrameRate = 5 # nowork - gets stuck after a bit - why?
-# clipFrameRate = 8 # nice for ariel flyby
-# clipFrameRate = 10
-# clipFrameRate = 12 # good for triton flyby
-# clipFrameRate = 15
-clipFrameRate = 20
-# clipFrameRate = 25
-# clipFrameRate = 30
-
-# number of frames for title page
-clipFramesForTitles = clipFrameRate * 5 #. not working right - should be 5 secs according to this
+# videoFrameRate = 5 # nowork - gets stuck after a bit - why?
+# videoFrameRate = 8 # nice for ariel flyby
+# videoFrameRate = 10
+# videoFrameRate = 12 # good for triton flyby
+# videoFrameRate = 15
+videoFrameRate = 20
+# videoFrameRate = 25
+# videoFrameRate = 30
 
 # ffmpeg options
 # -y forces overwriting existing file
@@ -146,11 +142,18 @@ clipFramesForTitles = clipFrameRate * 5 #. not working right - should be 5 secs 
 # Use -pix_fmt yuv420p for compatibility with outdated media players
 #   (including Windows Media Player and Quicktime)
 # see http://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
-clipFfmpegOptions = "-y -loglevel warning"
-# clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
-# clipFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
-# clipFfmpegOutputOptions = "-c:v libx264 -crf 23"
-clipFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+videoFfmpegOptions = "-y -loglevel warning"
+# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+# videoFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
+# videoFfmpegOutputOptions = "-c:v libx264 -crf 23"
+videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+
+
+# clips
+# ----------------------------------------
+
+# number of frames for title page
+clipFramesForTitles = videoFrameRate * 5 #. not working right - should be 5 secs according to this
 
 
 # movies
@@ -259,6 +262,19 @@ compositesColCompositeId = 1
 compositesColCenterId = 2
 compositesColFilter = 3
 compositesColWeight = 4
+
+
+# columns in segments.csv
+# keep in synch with vgBuildSegments.py
+# segmentId,fileIds,source,nframes,annotation
+segmentsColSegmentId = 0
+segmentsColImageIds = 1
+segmentsColImageSource = 2
+segmentsColNFrames = 3
+segmentsColAnnotation = 4
+
+
+
 
 
 

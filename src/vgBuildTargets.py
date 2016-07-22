@@ -25,7 +25,7 @@ def buildTargets(volnum, targetPath=None):
     # center the volume, if not already there
     vgBuildCenters.buildCenters(volnum)
 
-    targetInfo = lib.readCsv('db/targets.csv') # remapping listed targets
+    targetInfo = lib.readCsv(config.targetsdb) # remapping listed targets
 
     f = open(config.filesdb, 'rt')
     i = 0
@@ -40,17 +40,16 @@ def buildTargets(volnum, targetPath=None):
                 filter = row[config.filesColFilter]
 
                 # get subfolder, eg data/step04_centers/VGISS_5101
-                # centersSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
-                sourceFolder = config.imagesFolder + 'VGISS_' + volume + '/'
+                # sourceFolder = config.imagesFolder + 'VGISS_' + volume + '/'
+                sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
 
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
                 # eg data/step04_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                # centeredfilename = config.centersPrefix + fileId + '_' + \
-                                   # config.imageType + '_' + filter + '.png'
-                sourceFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                # centeredpath = centersSubfolder + centeredfilename
-                # centeredpath = sourceFolder + centeredfilename
+                # sourceFilename = fileId + '_' + \
+                sourceFilename = config.centersPrefix + fileId + '_' + \
+                                 config.imageType + '_' + filter + '.png'
+                # sourceFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
                 sourceFilepath = sourceFolder + sourceFilename
 
                 # if file exists, create subfolder and copy/link image

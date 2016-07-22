@@ -25,28 +25,46 @@ includeTitles = False
 
 
 #. parameterize, move to lib
-def makeClipFiles():
-    "Build mp4 clips using ffmpeg on sequentially numbered image files"
-    
+# def makeClipFiles():
+def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
+    "Build mp4 videos using ffmpeg on sequentially numbered image files"
+    # eg data/step09_clips/stage/
     print 'Making mp4 clips using ffmpeg'
-    # folder = config.clipsFolder
-    folder = config.clipsStageFolder # eg data/step09_clips/stage/
-    # print folder
-    for root, dirs, files in os.walk(folder):
+    for root, dirs, files in os.walk(stageFolder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
             print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
-            stageFolder = os.path.abspath(root)
+            stageFolderPath = os.path.abspath(root)
             # get target file path relative to staging folder,
             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
-            targetFolder = root[len(folder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+            targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-            clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-            clipPath = '../../../../../../' + clipTitle
-            lib.pngsToMp4(stageFolder, config.clipFilespec, clipPath, config.clipFrameRate)
+            videoTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+            # videoPath = '../../../../../../' + videoTitle
+            videoPath = outputFolder + videoTitle
+            lib.pngsToMp4(stageFolderPath, filespec, videoPath, frameRate)
+            
+# def makeClipFiles():
+#     "Build mp4 clips using ffmpeg on sequentially numbered image files"
+    
+#     print 'Making mp4 clips using ffmpeg'
+#     stageFolder = config.clipsStageFolder # eg data/step09_clips/stage/
+#     # print folder
+#     for root, dirs, files in os.walk(stageFolder):
+#         # print root, dirs
+#         if dirs==[]: # reached the leaf level
+#             print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+#             stageFolderPath = os.path.abspath(root)
+#             # get target file path relative to staging folder,
+#             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+#             targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+#             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+#             clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+#             clipPath = '../../../../../../' + clipTitle
+#             lib.pngsToMp4(stageFolderPath, config.clipFilespec, clipPath, config.clipFrameRate)
 
 
-def makeLinks(bwOrColor, targetPathParts):
+def stageFiles(bwOrColor, targetPathParts):
     "Make links from source files (centers or composites) to clip stage folders"
 
     print 'Making links from source files'
@@ -180,7 +198,7 @@ def makeLinks(bwOrColor, targetPathParts):
                     # need to get out of the target dir
                     pngpathrelative = '../../../../../../../../' + pngpath
                     lib.makeSymbolicLinks(targetfolder, pngpathrelative, nfile, ncopiesPerImage)
-                    print nfile, pngpathrelative
+                    print "Frame %d: %s      \r" % (nfile, pngpathrelative),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage
@@ -202,13 +220,15 @@ def buildClips(bwOrColor, targetPath=None):
     # make sure we have some titles
     vgBuildTitles.buildTitles(targetPath)
 
-    # stage images
+    # stage images for ffmpeg
     lib.rmdir(config.clipsStageFolder)
-    makeLinks(bwOrColor, targetPathParts)
+    stageFiles(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images
-    makeClipFiles()
-
+    # makeClipFiles()
+    lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
+                                  config.clipFilespec, config.clipFrameRate)
+    
 
 if __name__ == '__main__':
     os.chdir('..')

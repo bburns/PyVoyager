@@ -27,7 +27,7 @@ def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
     # this requires running vg from an admin console
     for i in range(ncopies):
         n = nfile + i
-        targetPath2 = targetFolder + config.clipFilespec % n # eg 'img00001.png'
+        targetPath2 = targetFolder + config.videoFilespec % n # eg 'img00001.png'
         # eg mklink data\step09_clips\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png
         #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
         cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
@@ -181,7 +181,7 @@ def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
     # cmd = 'ffmpeg -y %s -r 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg -y %s -framerate %d -i %s -r %d %s' % (config.movieFfmpegOptions, frameRate, filenamePattern, frameRate, outputFilename)
     # cmd = 'ffmpeg %s -framerate 1 -i %s -r %d %s' % (config.movieFfmpegOptions, filenamePattern, frameRate, outputFilename)
-    cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % (config.clipFfmpegOptions, frameRate, filenamePattern, config.clipFfmpegOutputOptions, outputFilename)
+    cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % (config.videoFfmpegOptions, frameRate, filenamePattern, config.videoFfmpegOutputOptions, outputFilename)
     print cmd
     os.system(cmd)
     os.chdir(savedir)

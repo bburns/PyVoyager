@@ -17,6 +17,9 @@ import config
 
 
 
+
+
+
 def img2png(srcdir, filespec, destdir, img2pngOptions):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
 

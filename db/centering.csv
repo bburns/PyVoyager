@@ -7,14 +7,13 @@
 # and turned back on for the centeringOn image.
 
 # this entire file is read into memory
-#. make it a py file? but this requires less syntax
 
 planetCraftTargetCamera,centeringOff,centeringOn
 
 # Jupiter
 # ----------------------------------------
 
-Jupiter-Voyager1-Jupiter-Narrow,C1590049,C1698303
+Jupiter-Voyager1-Jupiter-Narrow,C1590049,C1691638
 
 # adrastea must be invisible...
 Jupiter-Voyager1-Adrastea-Narrow,C0,C9

@@ -37,10 +37,26 @@ C0,Jupiter-Voyager1-Europa-Narrow,2
 C1635212,Jupiter-Voyager1-Europa-Narrow,8
 
 # ganymede
-C1460413,Jupiter-Voyager1-Ganymede-Narrow,2
-C1633443,Jupiter-Voyager1-Ganymede-Narrow,6
-C1640132,Jupiter-Voyager1-Ganymede-Narrow,10
-C1640741,Jupiter-Voyager1-Ganymede-Narrow,1
+C1460413,Jupiter-Voyager1-Ganymede-Narrow,6
+C1624522,Jupiter-Voyager1-Ganymede-Narrow,8
+C1633443,Jupiter-Voyager1-Ganymede-Narrow,10
+# C1640132,Jupiter-Voyager1-Ganymede-Narrow,12
+# pause longer on nice images
+C1640202,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640204,Jupiter-Voyager1-Ganymede-Narrow,12
+C1640322,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640324,Jupiter-Voyager1-Ganymede-Narrow,12
+C1640352,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640354,Jupiter-Voyager1-Ganymede-Narrow,12
+C1640502,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640504,Jupiter-Voyager1-Ganymede-Narrow,12
+C1640528,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640530,Jupiter-Voyager1-Ganymede-Narrow,12
+C1640542,Jupiter-Voyager1-Ganymede-Narrow,24
+C1640544,Jupiter-Voyager1-Ganymede-Narrow,12
+
+
+C1640741,Jupiter-Voyager1-Ganymede-Narrow,2
 
 C1627348,Jupiter-Voyager1-Ganymede-Wide,4
 C1640315,Jupiter-Voyager1-Ganymede-Wide,8

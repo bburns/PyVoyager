@@ -17,6 +17,7 @@ import vgBuildCenters
 
 
 def buildComposites(volnum, overwrite=False):
+# def buildComposites(volnum='', compositeId='', overwrite=False):
     "build composite images by combining channel images"
 
     # walks over records in composites.csv, merges channel images, writes to composites folder
@@ -35,6 +36,8 @@ def buildComposites(volnum, overwrite=False):
         # print "Composites folder exists: " + compositessubfolder
         pass
     else:
+        # if volnum!='':
+
         # build the centered images for the volume, if not already there
         vgBuildCenters.buildCenters(volnum)
 
@@ -56,9 +59,11 @@ def buildComposites(volnum, overwrite=False):
             if i==0: fields = row
             else:
                 vol = row[config.compositesColVolume]
+                compositeId = row[config.compositesColCompositeId]
                 if volnum==vol:
+                # if volnum==vol or compositeId==:
                     # gather image filenames into channelRows so can merge them
-                    compositeId = row[config.compositesColCompositeId]
+                    # buildComposite(compositeId)
                     if compositeId == startId:
                         channelRows.append(row)
                     else:

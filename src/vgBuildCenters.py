@@ -20,7 +20,7 @@ def buildCenters(volnum, overwrite=False):
     #. need to handle indiv imageids
     if volnum=='': return
 
-    adjustmentsSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
+    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + str(volnum) + '/'
     centersSubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
 
     if int(volnum)==0: # test volume - turn on image debugging
@@ -79,10 +79,12 @@ def buildCenters(volnum, overwrite=False):
                         docenter = True
 
                     # center the file
-                    pngfilename = config.adjustmentsPrefix + fileId + '_' + \
+                    adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
                                   config.imageType + '_' + filter + '.png'
-                    infile = adjustmentsSubfolder + pngfilename
-                    outfile = centersSubfolder + config.centersPrefix + pngfilename
+                    infile = adjustmentsSubfolder + adjustedFilename
+                    centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
+                    # outfile = centersSubfolder + config.centersPrefix + pngfilename
+                    outfile = centersSubfolder + centeredFilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     print 'Centering %d: %s     \r' %(nfile,infile),
                     # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),

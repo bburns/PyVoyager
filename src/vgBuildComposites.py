@@ -70,20 +70,16 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
                     else:
                         # we're seeing a new compositeId, so process all the gathered channels
                         if len(channelRows)>0:
-                            # print 'Compositing %d: VGISS_%s/%s.png' %(nfile,vol,compositeId)
-                            print 'Compositing %d: VGISS_%s/%s.png' %(nfile,startVol,startId)
-                            # print channelRows
+                            print 'Compositing %d: VGISS_%s/%s.png    \r' \
+                                % (nfile,startVol,startId),
                             processChannels(channelRows)
                         startId = compositeId
                         startVol = vol
                         channelRows = [row]
                         nfile += 1
-                    # print 'compositing %d: %s/%s\r' %(i,vol,compositeId),
-                    # print 'compositing VGISS_%s/%s.png        \r' %(vol,compositeId),
             i += 1
         if len(channelRows)>0:
-            # print 'Compositing %d: VGISS_%s/%s.png' %(nfile,vol,compositeId)
-            print 'Compositing %d: VGISS_%s/%s.png' %(nfile,startVol,startId)
+            print 'Compositing %d: VGISS_%s/%s.png    \r' % (nfile,startVol,startId),
             processChannels(channelRows)
         print
 

@@ -59,12 +59,14 @@ adjustmentsPrefix = 'adjusted_'
 # blob detection
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
+# blobThreshold = 0.15 # try for -s10 option with uranus - worked
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-# blobThreshold = 0.015 # works for most neptune system images
-blobThreshold = 255 * 0.015 # works for most neptune system images
-# blobThreshold = 0.15 # try for -s10 option with uranus - worked
+blobThreshold = 0.015 # works for most neptune system images
+blobThreshold = 0.016 # works for most neptune system images
+# blobThreshold = 255 * 0.015 # works for most neptune system images (* 255 0.015)=3.8
+# blobThreshold = 1
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles

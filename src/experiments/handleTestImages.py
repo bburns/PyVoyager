@@ -50,17 +50,19 @@ def grabTestImages():
             ext = filename[-4:]
             if ext=='.png':
                 # print filename # eg centered_C1164724_RAW_Clear.png
+                print filename # eg adjusted_C1164724_RAW_Clear.png
                 origname = filename[9:] # eg C1164724_RAW_Clear.png
-                # print origname
+                print origname
                 # now what volume did it come from?
                 # need to look it up in files.csv
                 fileId = origname[:8] # eg C1164724
-                # print fileId
+                print fileId
                 vol = getVolume(fileId) # eg 5101
-                # print vol
-                origfolder = config.imagesFolder
-                origpath = origfolder + 'VGISS_' + vol + '/' + origname
-                # print origpath
+                print vol
+                # origfolder = config.imagesFolder
+                origfolder = config.adjustmentsFolder
+                origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + origname
+                print origpath
 
                 cmd = "cp " + origpath + " " + testfolder
                 print cmd

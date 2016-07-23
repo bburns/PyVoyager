@@ -22,6 +22,47 @@ import config
 
 
 
+#. parameterize, move to lib
+# def makeClipFiles():
+def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
+    "Build mp4 videos using ffmpeg on sequentially numbered image files"
+    # eg data/step09_clips/stage/
+    print 'Making mp4 clips using ffmpeg'
+    for root, dirs, files in os.walk(stageFolder):
+        # print root, dirs
+        if dirs==[]: # reached the leaf level
+            print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+            stageFolderPath = os.path.abspath(root)
+            # get target file path relative to staging folder,
+            # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+            targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+            targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+            videoTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+            # videoPath = '../../../../../../' + videoTitle
+            videoPath = outputFolder + videoTitle
+            pngsToMp4(stageFolderPath, filespec, videoPath, frameRate)
+
+# def makeClipFiles():
+#     "Build mp4 clips using ffmpeg on sequentially numbered image files"
+
+#     print 'Making mp4 clips using ffmpeg'
+#     stageFolder = config.clipsStageFolder # eg data/step09_clips/stage/
+#     # print folder
+#     for root, dirs, files in os.walk(stageFolder):
+#         # print root, dirs
+#         if dirs==[]: # reached the leaf level
+#             print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+#             stageFolderPath = os.path.abspath(root)
+#             # get target file path relative to staging folder,
+#             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+#             targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+#             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+#             clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+#             clipPath = '../../../../../../' + clipTitle
+#             lib.pngsToMp4(stageFolderPath, config.clipFilespec, clipPath, config.clipFrameRate)
+
+
+
 def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
     "Make ncopies of symbolic link from the source to the target file, starting with number nfile"
     # this requires running vg from an admin console

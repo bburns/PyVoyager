@@ -35,6 +35,24 @@ def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
         os.system(cmd)
 
 
+
+def getImageIds(s):
+    "parse a string like c1353371-c1353380 or c1353775 to an array of image ids"
+    # eg getImageIds('c1353775-c1353776') => ['C1353775','C1353776']
+
+    # handle ranges, eg c1353775-c1353776
+    imageIds = s.split('-')
+    if len(imageIds)==2:
+        imageNums = [int(imageId[1:]) for imageId in imageIds]
+        imageRange = range(imageNums[0],imageNums[1]+1)
+        imageRange = ['C' + str(imageNum) for imageNum in imageRange]
+        return imageRange # eg ['C1353775','C1353776']
+
+    # handle invidual imageId
+    imageId = 'C' + s[1:]
+    return [imageId]
+
+
 def getVolumeNumbers(s):
     "parse a string like 5101-5108 or 5104 or 51* to an array of volnum integers"
     # eg getVolumeNumber('5201-5203') => [5201,5202,5203]
@@ -255,11 +273,13 @@ def unzipFile(zipfile, destfolder, overwrite=False):
 
 if __name__ == '__main__':
     os.chdir('..')
-    print getDownloadUrl(5101)
-    print getVolumeNumbers('5104')
-    print getVolumeNumbers('5104-5108')
-    print getVolumeNumbers('51*')
-    print getVolumeNumbers('5*')
-    print getVolumeNumbers('*')
+    # print getDownloadUrl(5101)
+    # print getVolumeNumbers('5104')
+    # print getVolumeNumbers('5104-5108')
+    # print getVolumeNumbers('51*')
+    # print getVolumeNumbers('5*')
+    # print getVolumeNumbers('*')
+    print getImageIds('c1352753')
+    print getImageIds('c1352753-c1352764')
     print 'done'
 

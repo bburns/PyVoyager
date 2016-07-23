@@ -90,10 +90,22 @@ elif cmd=="centers":
     beep()
 
 elif cmd=="composites":
-    vols = args.pop(0)
-    volnums = lib.getVolumeNumbers(vols)
-    for volnum in volnums:
-        vgBuildComposites.buildComposites(volnum, overwrite)
+    # vols = args.pop(0)
+    # volnums = lib.getVolumeNumbers(vols)
+    # for volnum in volnums:
+        # vgBuildComposites.buildComposites(volnum, overwrite)
+    # beep()
+    arg = args.pop(0)
+    if arg[0].lower()=='c':
+        compositeIds = lib.getImageIds(arg)
+        for compositeId in compositeIds:
+            vgBuildComposites.buildComposites('', compositeId, True)
+    else:
+        vols = arg
+        volnums = lib.getVolumeNumbers(vols)
+        for volnum in volnums:
+            # vgBuildComposites.buildComposites(volnum, overwrite)
+            vgBuildComposites.buildComposites(volnum, '', overwrite)
     beep()
 
 elif cmd=="targets":

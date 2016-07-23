@@ -111,6 +111,12 @@ def combineChannels(channels):
     # }
     # if missing a channel will use a blank/black image for that channel
 
+    # if just one channel then return a bw image
+    if len(channels)==1:
+        filename = channels.values()[0]
+        gray = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+        return gray
+
     # get filenames
     #. what are ch4_js and ch4_u ?
     redfilename = channels.get('Orange') or channels.get('Clear')

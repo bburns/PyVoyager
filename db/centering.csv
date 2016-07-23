@@ -8,6 +8,10 @@
 
 # this entire file is read into memory
 
+#. this will be replaced by positions.csv, which will give the % of fov taken by target,
+# which will be used to turn centering on/off.
+
+
 planetCraftTargetCamera,centeringOff,centeringOn
 
 # Jupiter

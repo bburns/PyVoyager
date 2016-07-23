@@ -17,6 +17,9 @@ import vgBuildAdjustments
 def buildCenters(volnum, overwrite=False):
     "Build centered images for given volume, if they don't exist yet"
 
+    #. need to handle indiv imageids
+    if volnum=='': return
+
     adjustmentsSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
     centersSubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
 

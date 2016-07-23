@@ -146,8 +146,9 @@ def initComposites():
                                 outFilter = nonemptyRow[config.filesColFilter]
                                 # if just a single row, write it out as a clear image
                                 # so shows up as b&w
-                                if len(nonemptyRows) == 1:
-                                    outFilter = 'Clear'
+                                # no, that messes things up
+                                # if len(nonemptyRows) == 1:
+                                #     outFilter = 'Clear'
                                 outRow = [outVolume, outCompositeId, outCenterId, outFilter]
                                 if debug: print 'outrow',outRow
                                 writer.writerow(outRow)

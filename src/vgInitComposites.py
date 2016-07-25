@@ -1,4 +1,5 @@
 
+# vg init composites command
 # build composites.csv, which will attempt to describe how to combine image channels
 # based on time, filter, target, camera, NOTE field
 # (right now just filter, target, camera fields)
@@ -67,7 +68,8 @@ def initComposites():
 
     # open the composites.csv file
     fileout = open(config.compositesdb, 'wb')
-    fields = 'volume,compositeId,centerId,filter'.split(',') # keep in synch with row, below
+    # fields = 'volume,compositeId,centerId,filter'.split(',') # keep in synch with row, below
+    fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
     writer.writerow(fields)
 
@@ -142,14 +144,14 @@ def initComposites():
                                 outVolume = nonemptyRow[config.filesColVolume]
                                 if outCompositeId == None:
                                     outCompositeId = nonemptyRow[config.filesColFileId]
-                                outCenterId = nonemptyRow[config.filesColFileId]
+                                outFileId = nonemptyRow[config.filesColFileId]
                                 outFilter = nonemptyRow[config.filesColFilter]
                                 # if just a single row, write it out as a clear image
                                 # so shows up as b&w
                                 # no, that messes things up
                                 # if len(nonemptyRows) == 1:
                                 #     outFilter = 'Clear'
-                                outRow = [outVolume, outCompositeId, outCenterId, outFilter]
+                                outRow = [outVolume, outCompositeId, outFileId, outFilter]
                                 if debug: print 'outrow',outRow
                                 writer.writerow(outRow)
                             buffer = [[],[],[],[],[],[],[]]

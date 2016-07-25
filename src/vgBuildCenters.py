@@ -78,20 +78,21 @@ def buildCenters(volnum, overwrite=False):
                     else: # if no info for this target just center it
                         docenter = True
 
-                    # center the file
-                    adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
-                                  config.imageType + '_' + filter + '.png'
-                    infile = adjustmentsSubfolder + adjustedFilename
-                    centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
-                    # outfile = centersSubfolder + config.centersPrefix + pngfilename
-                    outfile = centersSubfolder + centeredFilename
-                    # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    print 'Centering %d: %s     \r' %(nfile,infile),
-                    # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
-                    if os.path.isfile(infile):
-                        libimg.centerImageFile(infile, outfile)
-                    else:
-                        print 'Warning: missing image file', infile
+                    if docenter:
+                        # center the file
+                        adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
+                                      config.imageType + '_' + filter + '.png'
+                        infile = adjustmentsSubfolder + adjustedFilename
+                        centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
+                        # outfile = centersSubfolder + config.centersPrefix + pngfilename
+                        outfile = centersSubfolder + centeredFilename
+                        # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
+                        print 'Centering %d: %s     \r' %(nfile,infile),
+                        # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
+                        if os.path.isfile(infile):
+                            libimg.centerImageFile(infile, outfile)
+                        else:
+                            print 'Warning: missing image file', infile
 
                     nfile += 1
 

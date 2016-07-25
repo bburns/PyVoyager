@@ -64,7 +64,7 @@ adjustmentsPrefix = 'adjusted_'
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
 blobThreshold = 0.015 # works for most neptune system images
-blobThreshold = 0.016 # works for most neptune system images
+# blobThreshold = 0.016 # works for most neptune system images
 # blobThreshold = 255 * 0.015 # works for most neptune system images (* 255 0.015)=3.8
 # blobThreshold = 1
 
@@ -186,7 +186,7 @@ mosaicsFolder       = onlineFolder  + "step07_mosaics/"
 targetsFolder       = onlineFolder  + "step08_targets/"
 titlesFolder        = onlineFolder  + "step09_titles/"
 clipsFolder         = onlineFolder  + "step10_clips/"
-clipsStageFolder    = clipsFolder + 'stage/'
+clipsStageFolder    = clipsFolder   + 'stage/'
 segmentsFolder      = onlineFolder  + "step11_segments/"
 segmentsStageFolder = segmentsFolder + 'stage/'
 moviesFolder        = onlineFolder  + "step12_movies/"
@@ -261,7 +261,7 @@ filesColNote = 8
 # keep in synch with vgBuildComposites.py
 compositesColVolume = 0
 compositesColCompositeId = 1
-compositesColCenterId = 2
+compositesColFileId = 2
 compositesColFilter = 3
 compositesColWeight = 4
 

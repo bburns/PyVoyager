@@ -40,6 +40,9 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
         #. pass imageid also
         vgBuildCenters.buildCenters(buildVolnum)
 
+        # get centering info - will use to get files from either adjusted or centered folders
+        # centeringInfo = lib.readCsv(config.centeringdb)
+
         # print 'Building composites for', compositessubfolder
 
         lib.rmdir(compositessubfolder)
@@ -101,15 +104,25 @@ def processChannels(channelRows):
     for row in channelRows:
         volume = 'VGISS_' + row[config.compositesColVolume]
         compositeId = row[config.compositesColCompositeId]
-        centerId = row[config.compositesColCenterId]
+        fileId = row[config.compositesColFileId]
         filter = row[config.compositesColFilter].title()
+        # get centered filepath
         # folder = lib.getCenterspath(volume)
         folder = config.centersFolder + volume + '/'
-        filetitle = config.centersPrefix + centerId + '_' + config.imageType + '_' + filter + '.png'
-        channelfilename = folder + filetitle
-        channels[filter] = channelfilename
+        filetitle = config.centersPrefix + fileId + '_' + config.imageType + \
+                    '_' + filter + '.png'
+        channelfilepath = folder + filetitle
+        # if don't have a centered file, use the adjusted file
+        if not os.path.isfile(channelfilepath):
+            folder = config.adjustmentsFolder + volume + '/'
+            filetitle = config.adjustedPrefix + fileId + '_' + config.imageType + \
+                              '_' + filter + '.png'
+            channelfilepath = folder + filetitle
+        channels[filter] = channelfilepath
+    # print channels
     compositessubfolder = config.compositesFolder + volume + '/'
     outfilename = compositessubfolder + config.compositesPrefix + compositeId + '.png'
+    # print outfilename
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)
 

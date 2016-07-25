@@ -1,10 +1,10 @@
 
-# voyager config options
+# Voyager config options
 #--------------------------------------------------------------------------------
 
 
 
-# downloads
+# Downloads
 # ----------------------------------------
 
 # voyager archive url
@@ -21,7 +21,7 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
 
-# images
+# Images
 # ----------------------------------------
 
 # imagetype to extract using img2png
@@ -54,13 +54,13 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 
 
-# adjustments
+# Adjustments
 # ----------------------------------------
 
 adjustmentsPrefix = 'adjusted_'
 
 
-# centers
+# Centers
 # ----------------------------------------
 
 # if you try changing these values, make sure to run `vg test`
@@ -69,14 +69,12 @@ adjustmentsPrefix = 'adjusted_'
 # blob detection
 
 # level from 0.0-1.0 at which to take binary threshold for blob detection
-# blobThreshold = 0.15 # try for -s10 option with uranus - worked
+# blobThreshold = 0.15 # worked with the -s10 option with uranus
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-blobThreshold = 0.015 # works for most neptune system images
-# blobThreshold = 0.016 # works for most neptune system images
-# blobThreshold = 255 * 0.015 # works for most neptune system images (* 255 0.015)=3.8
-# blobThreshold = 1
+# blobThreshold = 0.016 # to v0.35 works for most neptune system images
+blobThreshold = 0.015 # v0.36 works for most neptune system images
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles
@@ -85,6 +83,11 @@ blobThreshold = 0.015 # works for most neptune system images
 # blobAreaCutoff = 20*20
 # blobAreaCutoff = 24*24
 blobAreaCutoff = 30*30
+
+
+# circle detection
+
+# see libimg.py/findCircle for details on the parameters
 
 # canny edge detection threshold
 # used by hough circle detection - lower threshold is half of this
@@ -96,7 +99,19 @@ blobAreaCutoff = 30*30
 # trying to get it to recognize dim jupiters at the edges
 # cannyUpperThreshold = 100
 cannyUpperThreshold = 60
-# no dice - the canny edges start proliferating too much, and still the jupiter edge cases aren't picked up
+# no dice - the canny edges start proliferating, and still the jupiter edge cases aren't picked up
+
+# hough circle detector parameters
+# houghAccumulatorThreshold = 1000
+# houghAccumulatorThreshold = 250 # through v0.36
+houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND regular jupiter
+# houghAccumulatorThreshold = 100 # this worked for dim neptune with noise, but caused regular jupiters to have tiny circles at their centers
+# must be nonzero integers
+houghMinRadius = 1
+# houghMaxRadius = 10 # through v0.36
+houghMaxRadius = 2 # this didn't seem to matter - still got huge circle back
+
+
 
 # prefix for centered filenames
 centersPrefix = 'centered_'
@@ -115,21 +130,21 @@ drawCircles = False # save image with all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 
 
-# composites
+# Composites
 # ----------------------------------------
 
 # prefix for composite filenames
 compositesPrefix = 'composite_'
 
 
-# titles
+# Titles
 # ----------------------------------------
 
 titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 
 
-# videos (clips, segments, movies)
+# Videos (clips, segments, movies)
 # ----------------------------------------
 
 # filename used for frames
@@ -161,14 +176,18 @@ videoFfmpegOptions = "-y -loglevel warning"
 videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 
 
-# clips
+# Clips
 # ----------------------------------------
 
 # number of frames for title page
 clipFramesForTitles = videoFrameRate * 5 #. not working right - should be 5 secs according to this
 
+# clipsIgnoreTargets = 'Sky,Dark,Plaque'.split(',')
 
-# movies
+
+
+
+# Movies
 # ----------------------------------------
 
 
@@ -176,7 +195,7 @@ clipFramesForTitles = videoFrameRate * 5 #. not working right - should be 5 secs
 
 
 
-# files and folders
+# Files and folders
 # ----------------------------------------
 
 # convention: all folders should end with /

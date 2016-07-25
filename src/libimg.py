@@ -271,7 +271,7 @@ def findCircle(im, debugtitle=None):
     # to be. Too high and it won't detect anything, too low and it will find too
     # much clutter.
     # 0-255?
-    canny_threshold=config.cannyUpperThreshold # eg 200
+    canny_threshold = config.cannyUpperThreshold # eg 200
 
     # Second method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the accumulator threshold for the circle centers at the detection
@@ -281,9 +281,10 @@ def findCircle(im, debugtitle=None):
     # declare that it's found a circle. Again, too high will detect nothing, too
     # low will declare anything to be a circle. The ideal value of param 2 will
     # be related to the circumference of the circles. [?]
+    acc_threshold = config.houghAccumulatorThreshold
     # acc_threshold=50
     # acc_threshold=200
-    acc_threshold=250
+    # acc_threshold=250
     # acc_threshold=300
     # acc_threshold=500
     # acc_threshold=600
@@ -291,8 +292,10 @@ def findCircle(im, debugtitle=None):
     # acc_threshold=1000
 
     # not sure what units these are - need a min of 1 to find one with fairly large radius
-    minRadius=1
-    maxRadius=10
+    # minRadius=1
+    # maxRadius=10
+    minRadius = config.houghMinRadius
+    maxRadius = config.houghMaxRadius
 
     circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
 
@@ -309,7 +312,10 @@ def findCircle(im, debugtitle=None):
         circle = np.round(circle).astype('int') # round all values to ints
         if config.drawCircle:
             im = gray2rgb(im)
-            drawCircle(im, circle)
+            for circ in circles:
+                circ = np.round(circ).astype('int')
+                drawCircle(im, circ, (0,0,255)) # red
+            drawCircle(im, circle) # green
             # show(im)
             # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
             cv2.imwrite(debugtitle + '_circles.png', im)

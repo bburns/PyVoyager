@@ -25,6 +25,7 @@ import vgBuildSegments
 import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
+import vgInitPositions
 import vgRetarget
 import vgUpdateCenters
 
@@ -165,6 +166,8 @@ elif cmd=="init":
         vgInitFiles.initFiles()
     elif subject=='composites':
         vgInitComposites.initComposites()
+    elif subject=='positions':
+        vgInitPositions.initPositions()
     beep()
 
 elif cmd=="help":

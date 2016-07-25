@@ -242,6 +242,7 @@ moviesdb = dbFolder + 'movies.csv'
 retargetingdb = dbFolder + 'retargeting.csv'
 frameratesdb = dbFolder + 'framerates.csv'
 segmentsdb = dbFolder + 'segments.csv'
+positionsdb = dbFolder + 'positions.csv'
 
 
 # columns in files.csv

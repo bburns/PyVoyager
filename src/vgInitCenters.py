@@ -38,10 +38,8 @@ def calcCenters(volumeNum):
     # iterate over all available files
     i = 0
     for row in reader:
-        if row==[] or row[0][0]=="#": # skip blanks and comments
-            continue
-        if i==0: # get column headers
-            fields = row
+        if row==[] or row[0][0]=="#": continue # skip blank line and comments
+        if i==0: fields = row # get column headers
         else:
             # get field values
             # volume,fileid,phase,craft,target,time,instrument,filter,note

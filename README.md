@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.4
+Version 0.37 inprogess
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -39,7 +39,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Download Voyager datasets from **PDS archives** [1]
 * Extract the contents of the tar.gz archives
 * Convert Voyager IMG images to PNGs using **img2png** [2]
-* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
+* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **SpiceyPy** [11], **NumPy** [5] and **Matplotlib** [6]
 * Colorize frames by combining images, where possible, using **OpenCV**
 * [Build mosaics from images with hand-annotated information - maybe someday]
 * Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
@@ -49,7 +49,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7].
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SpiceyPy** [11], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7].
 
 I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**.
 
@@ -273,7 +273,14 @@ Next steps
 
 Version 0.4 (2016-07)
 ----------------------------------------
+- Add `vg init positions` to initialize positions.csv, which has angular size of target / camera fov
+- Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views
 - Add `vg segments` command to build movie segments with more editorial control
+- Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv
+
+Version 0.37 (2016-07)
+----------------------------------------
+- Improve centering stabilization
 
 Version 0.36 (2016-07-19)
 ----------------------------------------
@@ -356,3 +363,5 @@ This software is released under the MIT license - see LICENSE.md.
 [8]: https://python-pillow.org/
 [9]: https://www.continuum.io/downloads
 [10]: https://pypi.python.org/pypi/tabulate
+[11]: https://github.com/AndrewAnnex/SpiceyPy
+

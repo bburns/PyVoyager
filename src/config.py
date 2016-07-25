@@ -11,6 +11,16 @@
 downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
+
+# Voyager
+# ----------------------------------------
+
+# camera field of views, in degrees
+# source: http://pds-rings.seti.org/voyager/iss/inst_cat_na1.html
+cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
+
+
+
 # images
 # ----------------------------------------
 

@@ -74,11 +74,11 @@ def buildCenters(volnum, overwrite=False):
                     if centeringInfoRecord:
                         centeringOff = centeringInfoRecord['centeringOff']
                         centeringOn = centeringInfoRecord['centeringOn']
-                        docenter = fileId<centeringOff or fileId>centeringOn
+                        doCenter = fileId<centeringOff or fileId>centeringOn
                     else: # if no info for this target just center it
-                        docenter = True
+                        doCenter = True
 
-                    if docenter:
+                    if doCenter:
                         # center the file
                         adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
                                       config.imageType + '_' + filter + '.png'

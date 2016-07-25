@@ -4,22 +4,26 @@
 # used to determine angular size of targets
 
 # eg
-# volume,imageId,target,distance(km),imageSize
-# 5101,C1460413,Ganymede,490003313,0.0014511376269197615
-# 5101,C1461430,Callisto,489196322,0.0013314370284606923
-# 5101,C1462321,Jupiter,489122642,0.0386484329224622
-# 5101,C1462323,Jupiter,489120468,0.0386486047036475
-# 5101,C1462325,Jupiter,489118422,0.038648766372156
-# 5101,C1462327,Jupiter,489116291,0.03864893475853612
-# 5101,C1462329,Jupiter,489114116,0.038649106623201084
-# 5101,C1462331,Jupiter,489111963,0.03864927675097021
-# 5101,C1462333,Jupiter,489109810,0.03864944688023712
+# imageId,distance(km),imageSize
+# C1460413,490003313,0.00145
+# C1461430,489196322,0.00133
+# C1462321,489122642,0.03864
+# C1462323,489120468,0.03864
+# C1462325,489118422,0.03864
+# C1462327,489116291,0.03864
+# C1462329,489114116,0.03864
 
+# imageSize is the fraction of the image taken up by the target
 
-# degrees
-# narrowAngleFOV = 0.424
-# wideAngleFOV = 3.169
-cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
+# to use, need SPICE kernels - download the following files and put them in the /kernels folder
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+# ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
+# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
 
 
 import csv
@@ -35,23 +39,20 @@ import libspice
 
 
 def initPositions():
-    "calculate distances to targets for all images in db/files.csv"
+    "Initialize db/positions.csv with distances to targets for all images in db/files.csv"
 
-    # imagespath = lib.getImagespath(volumeNum)
-    # imagesfolder = config.imagesFolder + '/' + imageType + '/VGISS_' + str(volumeNum)
+    # open files.csv for reading
+    filein = open(config.filesdb, 'rt')
+    reader = csv.reader(filein)
 
     # open positions.csv for writing
     fileout = open(config.positionsdb, 'wb')
-    # fields = 'volume,imageId,target,distance(km),imageSize'.split(',') # keep in synch with below
     fields = 'imageId,distance(km),imageSize'.split(',') # keep in synch with below
     writer = csv.writer(fileout)
     writer.writerow(fields)
 
-    # open the files.csv file for reading
-    filein = open(config.filesdb, 'rt')
-    reader = csv.reader(filein)
-
-    # load spice kernels (data files)
+    # load SPICE kernels (data files)
+    # see above for sources
     spice.furnsh('kernels/naif0012.tls') # load leap second data (5kb)
     spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 data (6mb)
     spice.furnsh('kernels/Voyager_2.m05016u.merged.bsp') # voyager 2 data (6mb)
@@ -59,14 +60,16 @@ def initPositions():
     spice.furnsh('kernels/sat132.bsp') # saturn satellite data (63mb)
     spice.furnsh('kernels/ura083.bsp') # uranus satellite data (81mb)
     spice.furnsh('kernels/nep016-6.bsp') # neptune satellite data (9mb)
-    spice.furnsh('kernels/pck00010.tpc') # planet/moon physical data
+    spice.furnsh('kernels/pck00010.tpc') # planetary constants (radius etc) (120kb)
 
-    # don't have data for these targets, so will assume they are small enough to center on
-    ignoreTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
-Amalthea,Thebe,J_Rings,Adrastea,Metis,Sigma_Sgr,Larissa,\
-System,Beta_Cma,Arcturus,S_Rings,Phoebe,Unk_Sat,Helene,Prometheus,\
-Pandora,Calypso,U_Rings,N_Rings,Proteus,Amalthea,Taurus,\
-Janus,Telesto,Puck,Theta_Car,Epimetheus'.split(',')
+    # these targets aren't in the PCK datafile, but want to try to center on them,
+    # so write out a record with 0.0 for imageSize
+    centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
+Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
+
+    # don't want to center these targets - so don't write a record for them
+    dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
+Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
 
     # iterate over all available files
     i = 0
@@ -76,54 +79,60 @@ Janus,Telesto,Puck,Theta_Car,Epimetheus'.split(',')
         else:
             # get field values
             # volume,fileid,phase,craft,target,time,instrument,filter,note
-            volume = row[config.filesColVolume] # eg 5101
             fileId = row[config.filesColFileId] # eg C1385455
-            # phase = row[config.filesColPhase] # eg Jupiter
             craft = row[config.filesColCraft] # eg Voyager1
             target = row[config.filesColTarget] # eg Io
-            time = row[config.filesColTime] # eg 1978-12-11T01:03:29
+            utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
             instrument = row[config.filesColInstrument] # eg Narrow
 
-            if time=='UNKNOWN' or time=='UNK':
+            if utcTime[0]=='U': # UNKNOWN or UNK
                 pass
             else:
-                et = spice.str2et(time)
-                frame = 'J2000'
-                abcorr = 'NONE' # abberation correction
+                ephemerisTime = spice.str2et(utcTime) # seconds since J2000
                 observer = craft[:-1] + ' ' + craft[-1] # eg Voyager 1
+                frame = 'J2000'
+                abberationCorrection = 'NONE'
+                doCenter = True
                 try:
-                    position, lightTime = spice.spkpos(target, et, frame, abcorr, observer)
+                    position, lightTime = spice.spkpos(target, ephemerisTime, frame,
+                                                       abberationCorrection, observer)
                 except:
-                    if not target in ignoreTargets:
-                        print 'Insufficient data for', target, time
-                else:
-                    # get distance to target
+                    if target in centerTargets:
+                        doCenter = True
+                    elif target in dontCenterTargets:
+                        doCenter = False
+                    else:
+                        print 'Insufficient data for', target, utcTime
+
+                if doCenter:
+                    # get distance to target, km
                     distance = int(libspice.getDistance(position))
 
-                    # get radius of target
-                    # see  http://spiceypy.readthedocs.io/en/master/documentation.html
-                    dim, radii = spice.bodvrd(target, 'RADII', 3)
-                    radius = int(sum(radii)/3) # just get the avg radius
+                    # get radius of target, km
+                    # see http://spiceypy.readthedocs.io/en/master/documentation.html
+                    try:
+                        dim, radii = spice.bodvrd(target, 'RADII', 3)
+                        radius = int(sum(radii)/3) # just get the avg radius
+                    except:
+                        # if we don't know the radius of the object, just write a 0.0 imageSize
+                        radius = 0
 
-                    # get angular size of target
+                    # get angular size of target, degrees
                     # sin(angle/2) = radius/distance
                     # angle = 2*arcsin(radius/distance)
                     angularSize = 2*math.asin(float(radius)/distance) * 180/math.pi
 
-                    # get field of view of camera
-                    cameraFOV = cameraFOVs[instrument] # Narrow -> 0.424 or Wide -> 3.169
+                    # get field of view of camera, degrees
+                    cameraFOV = config.cameraFOVs[instrument] # Narrow -> 0.424 or Wide -> 3.169
 
-                    # get size of target relative to the camera fov
+                    # get size of target relative to the camera fov, dimensionless
                     imageSize = angularSize/cameraFOV # 1.0 = full frame
                     imageSize = int(imageSize*100000)/100000.0 # trim down
 
+                    # write data
                     # keep in synch with fields, above
-                    # row = [volume,fileId,target,distance]
-                    # row = [volume,fileId,target,distance,radius,angularSize,imageSize]
-                    # row = [volume,fileId,target,distance,imageSize]
                     row = [fileId,distance,imageSize]
                     # print row
-
                     writer.writerow(row)
 
         i += 1
@@ -140,7 +149,5 @@ if __name__ == '__main__':
     os.chdir('..')
     initPositions()
     print 'done'
-
-
 
 

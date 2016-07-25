@@ -3,6 +3,9 @@
 # build target subfolders like Jupiter/Voyager1/Io/Narrow
 # and copy images to them from a specified volume
 
+# links work, but then can't browse folders with image viewer...
+# so just copy them
+
 
 import os
 import csv
@@ -40,68 +43,58 @@ def buildTargets(volnum, targetPath=None):
                 filter = row[config.filesColFilter]
 
                 # get subfolder, eg data/step04_centers/VGISS_5101
-                # sourceFolder = config.imagesFolder + 'VGISS_' + volume + '/'
                 sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
 
                 # get source filename and path
                 # eg centered_C1327321_RAW_Orange.png
                 # eg data/step04_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                # sourceFilename = fileId + '_' + \
                 sourceFilename = config.centersPrefix + fileId + '_' + \
                                  config.imageType + '_' + filter + '.png'
-                # sourceFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
                 sourceFilepath = sourceFolder + sourceFilename
+                targetFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                 '_centered.png'
 
-                # if file exists, create subfolder and copy/link image
-                # if os.path.isfile(centeredpath):
-                if os.path.isfile(sourceFilepath):
+                # if centered file doesn't exist, grab the adjusted image instead
+                if not os.path.isfile(sourceFilepath):
+                    sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+                    sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
+                                     config.imageType + '_' + filter + '.png'
+                    sourceFilepath = sourceFolder + sourceFilename
+                    targetFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                     '_adjusted.png'
 
-                    # get subfolder, eg Jupiter/Voyager1/Io/Narrow
-                    phase = row[config.filesColPhase]
-                    craft = row[config.filesColCraft]
-                    target = row[config.filesColTarget]
-                    instrument = row[config.filesColInstrument]
-                    subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
+                # create subfolder and copy/link image
 
-                    # translate target
-                    # relabel target field if necessary - see db/targets.csv for more info
-                    targetInfoRecord = targetInfo.get(fileId)
-                    if targetInfoRecord:
-                        # make sure old target matches what we have
-                        if targetInfoRecord['oldTarget']==target:
-                            target = targetInfoRecord['newTarget']
+                # get subfolder, eg Jupiter/Voyager1/Io/Narrow
+                phase = row[config.filesColPhase]
+                craft = row[config.filesColCraft]
+                target = row[config.filesColTarget]
+                instrument = row[config.filesColInstrument]
+                subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
-                    # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetFolder = config.targetsFolder + subfolder
-                    targetFilepath = targetFolder + sourceFilename
+                # translate target
+                # relabel target field if necessary - see db/targets.csv for more info
+                targetInfoRecord = targetInfo.get(fileId)
+                if targetInfoRecord:
+                    # make sure old target matches what we have
+                    if targetInfoRecord['oldTarget']==target:
+                        target = targetInfoRecord['newTarget']
 
-                    # skip if file already exists (to save time on copying)
-                    if True:
-                    # if not os.path.isfile(targetFilepath):
+                # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
+                targetFolder = config.targetsFolder + subfolder
+                targetFilepath = targetFolder + targetFilename
 
-                        # create subfolder
-                        lib.mkdir_p(targetFolder)
+                # create subfolder
+                lib.mkdir_p(targetFolder)
 
-                        # links work, but then can't browse folders with image viewer...
-                        # so just copy them
-
-                        # copy file
-                        # cp -s, --symbolic-link - make symbolic links instead of copying
-                        # [but -s is ignored on windows]
-                        # cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                        cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
-                        print cmd + '      \r',
-                        os.system(cmd)
-
-                        # # link to file
-                        # # note: mklink requires admin privileges,
-                        # # so must run this script in an admin console
-                        # # eg ../data/step3_centers/VGISS_5101/centered_C1327321_RAW_ORANGE.PNG
-                        # src2 = '../../../../../' + src # need to get out of the target dir
-                        # cmd = 'mklink ' + targetpath + ' ' + src2
-                        # cmd = cmd.replace('/','\\')
-                        # print cmd
-                        # os.system(cmd)
+                # copy file
+                # cp -s, --symbolic-link - make symbolic links instead of copying
+                # [but -s is ignored on windows]
+                # cmd = 'cp ' + centeredpath + ' ' + targetfolder
+                # cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
+                cmd = 'cp ' + sourceFilepath + ' ' + targetFilepath
+                print cmd + '      \r',
+                os.system(cmd)
 
         i += 1
 

@@ -12,7 +12,7 @@ import sys; sys.path.append('..') # so can import from main src folder
 import config
 
 
-tempFolder = 'c:/users/bburns/desktop/foo'
+tempFolder = 'c:/users/bburns/desktop/foo/'
 testfolder = config.testFolder
 
 os.chdir('../..')
@@ -41,7 +41,7 @@ def getVolume(fileId):
 
 
 def grabTestImages():
-    "for each centered image in foo folder, grab original non-centered image and copy it to the test folder"
+    "for each image in foo folder, grab original (non-centered) image and copy it to the test folder"
     i = 1
     for root, dirs, files in os.walk(tempFolder):
         nfiles = len(files)
@@ -49,22 +49,27 @@ def grabTestImages():
             # print filename
             ext = filename[-4:]
             if ext=='.png':
-                # print filename # eg centered_C1164724_RAW_Clear.png
-                print filename # eg adjusted_C1164724_RAW_Clear.png
-                origname = filename[9:] # eg C1164724_RAW_Clear.png
-                print origname
+                # print filename # eg centered_C1164724_RAW_Clear.png or C1164724_RAW_Clear_centered.png
+                # images in foo can come from centers folder OR targets folder,
+                # which have different naming schemes, so need to handle both.
+                if filename[:9]=='centered':
+                    filename = filename[9:] # eg C1164724_RAW_Clear.png
+                if filename[-13:]=='_centered.png':
+                    filename = filename[:-13] + '.png'  # eg C1164724_RAW_Clear.png
+                print filename
                 # now what volume did it come from?
                 # need to look it up in files.csv
-                fileId = origname[:8] # eg C1164724
+                fileId = filename[:8] # eg C1164724
                 print fileId
                 vol = getVolume(fileId) # eg 5101
                 print vol
-                # origfolder = config.imagesFolder
                 origfolder = config.adjustmentsFolder
-                origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + origname
+                origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + filename
                 print origpath
+                targetpath = testfolder + filename
 
-                cmd = "cp " + origpath + " " + testfolder
+                # cmd = "cp " + origpath + " " + testfolder
+                cmd = "cp " + origpath + " " + targetpath
                 print cmd
                 os.system(cmd)
 

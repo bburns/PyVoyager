@@ -109,34 +109,34 @@ def stageFiles(bwOrColor, targetPathParts):
                 if centeringInfoRecord:
                     centeringOff = centeringInfoRecord['centeringOff']
                     centeringOn = centeringInfoRecord['centeringOn']
-                    docenter = fileId<centeringOff or fileId>centeringOn
+                    doCenter = fileId<centeringOff or fileId>centeringOn
                 else: # if no info for this target just center it
-                    docenter = True
+                    doCenter = True
 
                 # if centering for this image is turned off, let's assume for now that
                 # that means we don't want the color image, since it'd be misaligned anyway.
-                if docenter==False:
+                if doCenter==False:
                     pngSubfolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                    pngfilename = config.adjustmentsPrefix + fileId + '_' + \
+                    pngFilename = config.adjustmentsPrefix + fileId + '_' + \
                                   config.imageType + '_' + filter + '.png'
                 elif bwOrColor=='bw':
                     pngSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
-                    pngfilename = config.centersPrefix + fileId + '_' + \
+                    pngFilename = config.centersPrefix + fileId + '_' + \
                                   config.imageType + '_' + filter + '.png'
                 else:
                     pngSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
-                    pngfilename = config.compositesPrefix + fileId + '.png'
-                pngpath = pngSubfolder + pngfilename
+                    pngFilename = config.compositesPrefix + fileId + '.png'
+                pngPath = pngSubfolder + pngFilename
 
                 # if image file exists, create subfolder and link image
-                if os.path.isfile(pngpath):
+                if os.path.isfile(pngPath):
 
                     # get staging subfolder and make sure it exists
                     # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
                     subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
                     subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                    targetfolder = config.clipsStageFolder + subfolderPlusColor
-                    lib.mkdir_p(targetfolder)
+                    targetFolder = config.clipsStageFolder + subfolderPlusColor
+                    lib.mkdir_p(targetFolder)
 
                     # get current file number in that folder, or start at 0
                     nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
@@ -145,22 +145,22 @@ def stageFiles(bwOrColor, targetPathParts):
                     # if we haven't seen this subfolder before, add the titlepage image a few times.
                     # titlepages are created in the previous step, vgBuildTitles.
                     if includeTitles and nfile==0:
-                        titleimagefilepath = config.titlesFolder + subfolder + 'title.png'
+                        titleImageFilepath = config.titlesFolder + subfolder + 'title.png'
                         # need to get out of the target dir - we're always this deep
-                        titleimagepathrelative = '../../../../../../../../' + titleimagefilepath
-                        ntitlecopies = config.clipFramesForTitles
-                        lib.makeSymbolicLinks(targetfolder, titleimagepathrelative,
-                                              nfile, ntitlecopies)
-                        nfile += ntitlecopies
+                        titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
+                        ntitleCopies = config.clipFramesForTitles
+                        lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
+                                              nfile, ntitleCopies)
+                        nfile += ntitleCopies
 
                     # link to file
                     # note: mklink requires admin privileges,
                     # so must run this script in an admin console
-                    # eg pngpath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                    # eg pngPath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                     # need to get out of the target dir
-                    pngpathrelative = '../../../../../../../../' + pngpath
-                    lib.makeSymbolicLinks(targetfolder, pngpathrelative, nfile, ncopiesPerImage)
-                    print "Frame %d: %s      \r" % (nfile, pngpathrelative),
+                    pngPathRelative = '../../../../../../../../' + pngPath
+                    lib.makeSymbolicLinks(targetFolder, pngPathRelative, nfile, ncopiesPerImage)
+                    print "Frame %d: %s      \r" % (nfile, pngPathRelative),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage

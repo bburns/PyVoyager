@@ -1,5 +1,14 @@
 fileid,x1,y1,x2,y2
 
-adjusted_C2447711_CALIB_Ch4_U_uranus_small
-adjusted_C2448748_CALIB_Uv_uranus_dim
-adjusted_C2450355_CALIB_Ch4_U_uranus_small
+C2447711_uranus_small
+C2448748_uranus_dim
+C2450355_uranus_small
+
+# these two should be centered exactly on top of each other,
+# but sometimes are a pixel or two off
+C1466602_jupiter1
+C1466604_jupiter2
+
+# same with these two, one has a chunk out
+C1471042_jupiter1
+C1471044_jupiter2

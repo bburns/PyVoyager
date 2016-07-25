@@ -8,7 +8,7 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per uncompressed volume, with 87 volumes in total, so there is a lot to explore.
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore.
 
 You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
 
@@ -39,7 +39,8 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Download Voyager datasets from **PDS archives** [1]
 * Extract the contents of the tar.gz archives
 * Convert Voyager IMG images to PNGs using **img2png** [2]
-* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **SpiceyPy** [11], **NumPy** [5] and **Matplotlib** [6]
+* Adjust the contrast of the images and rotate them
+* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
 * Colorize frames by combining images, where possible, using **OpenCV**
 * [Build mosaics from images with hand-annotated information - maybe someday]
 * Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
@@ -49,7 +50,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SpiceyPy** [11], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7].
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12]. 
 
 I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**.
 
@@ -76,6 +77,10 @@ Unzip the tarfile
 Convert the IMG files to PNGs with **img2png**
 
     > vg images 5101
+
+Adjust the contrast levels and rotate the images
+
+    > vg adjujstments 5101
 
 Center the images on the main body in the images
 
@@ -271,12 +276,12 @@ Next steps
 * Option to make b&w movies using one filter, to reduce flickering
 
 
-Version 0.4 (2016-07)
-----------------------------------------
-- Add `vg init positions` to initialize positions.csv, which has angular size of target / camera fov
-- Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views
-- Add `vg segments` command to build movie segments with more editorial control
-- Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv
+<!-- Version 0.4 (2016-07) -->
+<!-- ---------------------------------------- -->
+<!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera fov -->
+<!-- - Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views -->
+<!-- - Add `vg segments` command to build movie segments with more editorial control -->
+<!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
 
 Version 0.37 (2016-07)
 ----------------------------------------
@@ -285,6 +290,9 @@ Version 0.37 (2016-07)
 Version 0.36 (2016-07-19)
 ----------------------------------------
 - Add `vg retarget` command to print out new retargeting records
+- Add `vg adjustments` command to separate adjusting and centering images into separate steps
+
+Made Uranus movies (color)
 
 Version 0.35 (2016-07-19)
 ----------------------------------------
@@ -364,4 +372,5 @@ This software is released under the MIT license - see LICENSE.md.
 [9]: https://www.continuum.io/downloads
 [10]: https://pypi.python.org/pypi/tabulate
 [11]: https://github.com/AndrewAnnex/SpiceyPy
+[12]: http://naif.jpl.nasa.gov/naif/
 

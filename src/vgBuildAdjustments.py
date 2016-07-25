@@ -45,6 +45,7 @@ def buildAdjustments(volnum, overwrite=False):
         # get number of files to process
         # root, dirs, files = os.walk(imagesSubfolder)
         # nfiles = len(files)
+        nfiles = len(os.listdir(imagesSubfolder))
 
         # iterate through all available images, filter on desired volume
         f = open(config.filesdb, 'rt')
@@ -83,7 +84,8 @@ def buildAdjustments(volnum, overwrite=False):
                     outfile = adjustmentsSubfolder + config.adjustmentsPrefix + pngfilename
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
-                    print 'Adjusting %d: %s     \r' %(nfile,infile),
+                    # print 'Adjusting %d: %s     \r' %(nfile,infile),
+                    print 'Adjusting %d/%d: %s     \r' %(nfile,nfiles,infile),
                     if os.path.isfile(infile):
                         libimg.adjustImageFile(infile, outfile)
                     else:

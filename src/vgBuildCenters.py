@@ -43,16 +43,24 @@ def buildCenters(volnum, overwrite=False):
         # get number of files to process
         # root, dirs, files = os.walk(adjustmentsSubfolder)
         # nfiles = len(files)
+        nfiles = len(os.listdir(adjustmentsSubfolder))
 
         # read small db into memory - tells when to turn centering on/off
-        centeringInfo = lib.readCsv(config.centeringdb)
+        # centeringInfo = lib.readCsv(config.centeringdb)
 
         # iterate through all available images, filter on desired volume
         f = open(config.filesdb, 'rt')
-        i = 0
         reader = csv.reader(f)
-        volnum = str(volnum) # eg '5101'
+
+        # open positions.csv file for target angular size info
+        f2 = open(config.positionsdb, 'rt')
+        reader2 = csv.reader(f2)
+        row2 = reader2.next() # skip over fieldnames row
+        fileId2 = ''
+
+        i = 0
         nfile = 1
+        volnum = str(volnum) # eg '5101'
         for row in reader:
             if row==[] or row[0][0]=="#": continue # skip blank lines and comments
             if i==0: fields = row
@@ -66,29 +74,46 @@ def buildCenters(volnum, overwrite=False):
                     target = row[config.filesColTarget]
                     camera = row[config.filesColInstrument]
 
-                    # get the centering info, if any
-                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    # planetCraftTargetCamera = system + craft + target + camera
-                    planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
-                    centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
-                    if centeringInfoRecord:
-                        centeringOff = centeringInfoRecord['centeringOff']
-                        centeringOn = centeringInfoRecord['centeringOn']
-                        doCenter = fileId<centeringOff or fileId>centeringOn
-                    else: # if no info for this target just center it
-                        doCenter = True
+                    # skip ahead in positions.csv until reach same record (if there)
+                    while fileId2 < fileId:
+                        try:
+                            row2 = reader2.next()
+                        except:
+                            break # if reached eof just stop
+                        fileId2 = row2[config.positionsColFileId]
+
+                    # if the same record is there, check if we need to center image
+                    if fileId2 == fileId:
+                        imageSize = float(row2[config.positionsColImageSize])
+                        doCenter = (imageSize <= config.centerImageSizeThreshold)
+                    else:
+                        # otherwise don't center it
+                        doCenter = False
+
+                    # print fileId, row2, doCenter
+
+                    # # get the centering info, if any
+                    # # info includes planetCraftTargetCamera,centeringOff,centeringOn
+                    # # planetCraftTargetCamera = system + craft + target + camera
+                    # planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
+                    # centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                    # if centeringInfoRecord:
+                    #     centeringOff = centeringInfoRecord['centeringOff']
+                    #     centeringOn = centeringInfoRecord['centeringOn']
+                    #     doCenter = fileId<centeringOff or fileId>centeringOn
+                    # else: # if no info for this target just center it
+                    #     doCenter = True
 
                     if doCenter:
                         # center the file
                         adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
-                                      config.imageType + '_' + filter + '.png'
+                                           config.imageType + '_' + filter + '.png'
                         infile = adjustmentsSubfolder + adjustedFilename
                         centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
-                        # outfile = centersSubfolder + config.centersPrefix + pngfilename
                         outfile = centersSubfolder + centeredFilename
                         # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                        print 'Centering %d: %s     \r' %(nfile,infile),
-                        # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
+                        # print 'Centering %d: %s     \r' %(nfile,infile),
+                        print 'Centering %d/%d: %s     \r' %(nfile,nfiles,infile),
                         if os.path.isfile(infile):
                             libimg.centerImageFile(infile, outfile)
                         else:
@@ -99,6 +124,7 @@ def buildCenters(volnum, overwrite=False):
             i += 1
 
         f.close()
+        f2.close()
 
         print
 

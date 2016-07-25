@@ -17,15 +17,19 @@ import spiceypy as spice
 
 # utc time range
 # utcStart = '1979-03-01'
-utcStart = '1979-01-01'
-utcStop  = '1979-03-10'
+# utcStart = '1979-01-01'
+# utcStop  = '1979-03-10'
+utcStart = '1986-01-01'
+utcStop  = '1986-01-30'
 
 # target and observer
 # target = 'JUPITER BARYCENTER'
-target = 'Ganymede'
+# target = 'Ganymede'
+# target = 'URANUS'
+target = 'URANUS BARYCENTER'
 # observer = 'VOYAGER 1'
-observer = 'Voyager 1'
-# observer = 'VOYAGER 2'
+# observer = 'Voyager 1'
+observer = 'VOYAGER 2'
 
 
 def et2str(et):
@@ -44,7 +48,7 @@ def getDistance(x,y,z):
 spice.furnsh('naif0012.tls') # leap second data
 spice.furnsh('Voyager_1.a54206u_V0.2_merged.bsp')
 spice.furnsh('Voyager_2.m05016u.merged.bsp')
-spice.furnsh('jup100.bsp') # jupiter satellite data (20mb)
+# spice.furnsh('jup100.bsp') # jupiter satellite data (20mb)
 
 # get ephemeris time (seconds since J2000)
 etStart = spice.str2et(utcStart)

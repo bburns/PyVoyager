@@ -20,7 +20,6 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
-
 # Images
 # ----------------------------------------
 
@@ -65,6 +64,20 @@ adjustmentsPrefix = 'adjusted_'
 
 # if you try changing these values, make sure to run `vg test`
 # to see how they affect the test images
+
+
+# fraction of image which needs to be taken up by target before centering is turned off
+centerImageSizeThreshold = 0.8
+
+# don't want to center these targets
+dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
+Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
+
+# these targets aren't in the PCK datafile so don't know radius,
+# but want to try to center on them - just assume they're tiny
+centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
+Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
+
 
 # blob detection
 
@@ -306,7 +319,12 @@ segmentsColNFrames = 3
 segmentsColAnnotation = 4
 
 
-
+# columns in positions.csv
+# keep in synch with vgBuildCenters.py and vgInitPositions.py
+# fileId,distance(km),imageSize
+positionsColFileId = 0
+positionsColDistanceKm = 1
+positionsColImageSize = 2
 
 
 

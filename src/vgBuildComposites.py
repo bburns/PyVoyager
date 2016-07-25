@@ -115,8 +115,8 @@ def processChannels(channelRows):
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
             folder = config.adjustmentsFolder + volume + '/'
-            filetitle = config.adjustedPrefix + fileId + '_' + config.imageType + \
-                              '_' + filter + '.png'
+            filetitle = config.adjustmentsPrefix + fileId + '_' + config.imageType + \
+                        '_' + filter + '.png'
             channelfilepath = folder + filetitle
         channels[filter] = channelfilepath
     # print channels

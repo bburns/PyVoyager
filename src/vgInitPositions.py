@@ -13,9 +13,10 @@
 # C1462327,489116291,0.03864
 # C1462329,489114116,0.03864
 
-# imageSize is the fraction of the image taken up by the target
+# imageSize is the fraction of the image taken up by the target, eg 0.73
 
-# to use, need SPICE kernels - download the following files and put them in the /kernels folder
+# to use, need SPICE kernels - download the following files and put them in the /kernels folder:
+
 # ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 # ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
 # ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
@@ -62,14 +63,16 @@ def initPositions():
     spice.furnsh('kernels/nep016-6.bsp') # neptune satellite data (9mb)
     spice.furnsh('kernels/pck00010.tpc') # planetary constants (radius etc) (120kb)
 
-    # these targets aren't in the PCK datafile, but want to try to center on them,
-    # so write out a record with 0.0 for imageSize
-    centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
-Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
+    #. move to config
 
-    # don't want to center these targets - so don't write a record for them
-    dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
-Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
+#     # these targets aren't in the PCK datafile, but want to try to center on them,
+#     # so write out a record with 0.0 for imageSize
+#     centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
+# Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
+
+#     # don't want to center these targets - so don't write a record for them
+#     dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
+# Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
 
     # iterate over all available files
     i = 0
@@ -85,6 +88,11 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
             utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
             instrument = row[config.filesColInstrument] # eg Narrow
 
+            # there are lots of records with UNKNOWN times (which could be interpolated later),
+            # ~1500 in uranus and neptune records
+            # so want to at least try to center them for now.
+            # the old approach of centering.csv would work better though.
+            # so back to that.
             if utcTime[0]=='U': # UNKNOWN or UNK
                 pass
             else:
@@ -97,9 +105,9 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
                     position, lightTime = spice.spkpos(target, ephemerisTime, frame,
                                                        abberationCorrection, observer)
                 except:
-                    if target in centerTargets:
+                    if target in config.centerTargets:
                         doCenter = True
-                    elif target in dontCenterTargets:
+                    elif target in config.dontCenterTargets:
                         doCenter = False
                     else:
                         print 'Insufficient data for', target, utcTime

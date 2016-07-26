@@ -64,7 +64,8 @@ def grabTestImages():
                 vol = getVolume(fileId) # eg 5101
                 print vol
                 origfolder = config.adjustmentsFolder
-                origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + filename
+                # origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + filename
+                origpath = origfolder + 'VGISS_' + vol + '/' + filename[:-4] + config.adjustmentsSuffix + '.png'
                 print origpath
                 targetpath = testfolder + filename
 

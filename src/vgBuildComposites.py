@@ -109,19 +109,22 @@ def processChannels(channelRows):
         # get centered filepath
         # folder = lib.getCenterspath(volume)
         folder = config.centersFolder + volume + '/'
-        filetitle = config.centersPrefix + fileId + '_' + config.imageType + \
-                    '_' + filter + '.png'
+        # filetitle = config.centersPrefix + fileId + '_' + config.imageType + \
+        filetitle = fileId + '_' + config.imageType + \
+                    '_' + filter + config.centersSuffix + '.png'
         channelfilepath = folder + filetitle
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
             folder = config.adjustmentsFolder + volume + '/'
-            filetitle = config.adjustmentsPrefix + fileId + '_' + config.imageType + \
-                        '_' + filter + '.png'
+            # filetitle = config.adjustmentsPrefix + fileId + '_' + config.imageType + \
+            filetitle = fileId + '_' + config.imageType + \
+                        '_' + filter + config.adjustmentsSuffix + '.png'
             channelfilepath = folder + filetitle
         channels[filter] = channelfilepath
     # print channels
-    compositessubfolder = config.compositesFolder + volume + '/'
-    outfilename = compositessubfolder + config.compositesPrefix + compositeId + '.png'
+    compositesSubfolder = config.compositesFolder + volume + '/'
+    # outfilename = compositesSubfolder + config.compositesPrefix + compositeId + '.png'
+    outfilename = compositesSubfolder + compositeId + config.compositesSuffix + '.png'
     # print outfilename
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)

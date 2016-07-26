@@ -46,22 +46,22 @@ def buildTargets(volnum, targetPath=None):
                 sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
 
                 # get source filename and path
-                # eg centered_C1327321_RAW_Orange.png
-                # eg data/step04_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                sourceFilename = config.centersPrefix + fileId + '_' + \
-                                 config.imageType + '_' + filter + '.png'
+                # eg C1327321_RAW_Orange_centered.png
+                # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
+                # sourceFilename = config.centersPrefix + fileId + '_' + \
+                sourceFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                 config.centersSuffix + '.png'
                 sourceFilepath = sourceFolder + sourceFilename
-                targetFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                 '_centered.png'
 
                 # if centered file doesn't exist, grab the adjusted image instead
                 if not os.path.isfile(sourceFilepath):
                     sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                    sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
-                                     config.imageType + '_' + filter + '.png'
+                    # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
+                    sourceFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                     config.adjustmentsSuffix + '.png'
                     sourceFilepath = sourceFolder + sourceFilename
-                    targetFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                     '_adjusted.png'
+
+                targetFilename = sourceFilename
 
                 # create subfolder and copy/link image
 

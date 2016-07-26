@@ -56,7 +56,7 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # Adjustments
 # ----------------------------------------
 
-adjustmentsPrefix = 'adjusted_'
+adjustmentsSuffix = '_adjusted'
 
 
 # Centers
@@ -126,8 +126,8 @@ houghMaxRadius = 2 # this didn't seem to matter - still got huge circle back
 
 
 
-# prefix for centered filenames
-centersPrefix = 'centered_'
+# Suffix for centered filenames
+centersSuffix = '_centered'
 
 # rotate image 180 degrees during centering step
 rotateImage = True
@@ -146,8 +146,15 @@ drawCrosshairs = False # draw crosshairs on image
 # Composites
 # ----------------------------------------
 
-# prefix for composite filenames
-compositesPrefix = 'composite_'
+# Suffix for composite filenames
+compositesSuffix = '_composite'
+
+
+# Mosaics
+# ----------------------------------------
+
+# Suffix for mosaic filenames
+mosaicsSuffix = '_mosaic'
 
 
 # Targets

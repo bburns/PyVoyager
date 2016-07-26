@@ -114,15 +114,18 @@ def stageFiles(bwOrColor, targetPathParts):
                 # that means we don't want the color image, since it'd be misaligned anyway.
                 if doCenter==False:
                     pngSubfolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                    pngFilename = config.adjustmentsPrefix + fileId + '_' + \
-                                  config.imageType + '_' + filter + '.png'
+                    # pngFilename = config.adjustmentsPrefix + fileId + '_' + \
+                    pngFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                  config.adjustmentsSuffix + '.png'
                 elif bwOrColor=='bw':
                     pngSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
-                    pngFilename = config.centersPrefix + fileId + '_' + \
-                                  config.imageType + '_' + filter + '.png'
+                    # pngFilename = config.centersPrefix + fileId + '_' + \
+                    pngFilename = fileId + '_' + config.imageType + '_' + filter + \
+                                  config.centersSuffix + '.png'
                 else:
                     pngSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
-                    pngFilename = config.compositesPrefix + fileId + '.png'
+                    # pngFilename = config.compositesPrefix + fileId + '.png'
+                    pngFilename = fileId + config.compositesSuffix + '.png'
                 pngPath = pngSubfolder + pngFilename
 
                 # if image file exists, create subfolder and link image

@@ -77,9 +77,10 @@ def buildAdjustments(volnum, overwrite=False):
                     #     docenter = True
 
                     # adjust the file
-                    pngfilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                    infile = imagesSubfolder + pngfilename
-                    outfile = adjustmentsSubfolder + config.adjustmentsPrefix + pngfilename
+                    pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
+                    infile = imagesSubfolder + pngFilename
+                    # outfile = adjustmentsSubfolder + config.adjustmentsPrefix + pngFilename
+                    outfile = adjustmentsSubfolder + pngFilename[:-4] + config.adjustmentsSuffix + '.png'
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
                     # print 'Adjusting %d: %s     \r' %(nfile,infile),

@@ -24,19 +24,22 @@ import config
 
 
 def getAdjustedFilename(fileId, filter):
-    ""
+    "get the filename for the adjusted image specified"
     filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
     return filename
 
 def getCenteredFilename(fileId, filter):
-    ""
+    "get the filename for the centered image specified"
     filename = fileId + config.centersSuffix + '_' + filter + config.extension
+    return filename
+
+def getCompositeFilename(fileId, filter):
+    "get the filename for the composite image specified"
+    filename = fileId + config.compositeSuffix + config.extension
     return filename
 
 
 
-#. parameterize, move to lib
-# def makeClipFiles():
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
     "Build mp4 videos using ffmpeg on sequentially numbered image files"
     # eg data/step09_clips/stage/
@@ -78,7 +81,7 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
 
 def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
     "Make ncopies of symbolic link from the source to the target file, starting with number nfile"
-    # this requires running vg from an admin console
+    # this requires running from an admin console
     for i in range(ncopies):
         n = nfile + i
         targetPath2 = targetFolder + config.videoFilespec % n # eg 'img00001.png'

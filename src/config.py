@@ -20,6 +20,16 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
+# Global settings
+# ----------------------------------------
+
+# use jpegs for faster development time
+useJpegs = True
+# useJpegs = False
+extension = '.jpg' if useJpegs else '.png'
+
+
+
 # Images
 # ----------------------------------------
 
@@ -178,7 +188,8 @@ titleFontsize = 48
 # ----------------------------------------
 
 # filename used for frames
-videoFilespec = 'img%05d.png'
+# videoFilespec = 'img%05d.png'
+videoFilespec = 'img%05d' + extension
 
 # frame rate - frames per second
 # videoFrameRate = 5 # nowork - gets stuck after a bit - why?

@@ -37,8 +37,8 @@ def testCentering():
     fileids.sort()
     for fileid in fileids:
 
-        infile = testfolder + fileid + '.png'
-        centeredfile = centeredfolder + fileid + '.png'
+        infile = testfolder + fileid + '.jpg'
+        centeredfile = centeredfolder + fileid + '.jpg'
 
         # any experimenting should be done in centerImageFile or config settings
         debugtitle = debugfolder + fileid

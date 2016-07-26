@@ -117,12 +117,14 @@ def buildCenters(volnum, overwrite=False):
                     if doCenter:
                         # center the file
                         # adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
-                        adjustedFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                           config.adjustmentsSuffix + '.png'
+                        # adjustedFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+                        # adjustedFilename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+                        adjustedFilename = lib.getAdjustedFilename(fileId, filter)
                         infile = adjustmentsSubfolder + adjustedFilename
                         # centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
-                        centeredFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                           config.centersSuffix + '.png'
+                        # centeredFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+                        # centeredFilename = fileId + config.centersSuffix + '_' + filter + config.extension
+                        centeredFilename = lib.getCenteredFilename(fileId, filter)
                         outfile = centersSubfolder + centeredFilename
                         # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                         # print 'Centering %d: %s     \r' %(nfile,infile),

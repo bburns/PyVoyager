@@ -22,6 +22,19 @@ import config
 
 
 
+
+def getAdjustedFilename(fileId, filter):
+    ""
+    filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+    return filename
+
+def getCenteredFilename(fileId, filter):
+    ""
+    filename = fileId + config.centersSuffix + '_' + filter + config.extension
+    return filename
+
+
+
 #. parameterize, move to lib
 # def makeClipFiles():
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
@@ -40,7 +53,7 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
             videoTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
             # videoPath = '../../../../../../' + videoTitle
             videoPath = outputFolder + videoTitle
-            pngsToMp4(stageFolderPath, filespec, videoPath, frameRate)
+            imagesToMp4(stageFolderPath, filespec, videoPath, frameRate)
 
 # def makeClipFiles():
 #     "Build mp4 clips using ffmpeg on sequentially numbered image files"
@@ -59,7 +72,7 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
 #             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
 #             clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
 #             clipPath = '../../../../../../' + clipTitle
-#             lib.pngsToMp4(stageFolderPath, config.clipFilespec, clipPath, config.clipFrameRate)
+#             lib.imagesToMp4(stageFolderPath, config.clipFilespec, clipPath, config.clipFrameRate)
 
 
 
@@ -231,8 +244,8 @@ def mkdir_p(path):
             raise
 
 
-def pngsToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
-    "Convert a sequentially numbered set of pngs to an mp4 movie"
+def imagesToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
+    "Convert a sequentially numbered set of images to an mp4 movie"
     # stageFolder is the folder containing the sequentially numbered files
     savedir = os.getcwd()
     os.chdir(stageFolder)
@@ -266,26 +279,6 @@ def getDownloadUrl(volnumber):
     url = config.downloadUrl.format(volprefix, volnumber)
     return url
 
-
-
-# #. remove this
-# def getImagespath(volnumber):
-#     "get folder path for png images"
-#     # eg c:/users/bburns/desktop/voyager/step2_pngs/VGISS_5101
-#     imagesfolder = config.imagesFolder
-#     filetitle = getVolumeTitle(volnumber)
-#     imagespath = imagesfolder + '/' + filetitle
-#     return imagespath
-
-
-# #. remove this
-# def getCenterspath(volnumber):
-#     "get folder path for centered images"
-#     # eg c:/users/bburns/desktop/voyager/step3_centered/VGISS_5101
-#     centersfolder = config.centersFolder
-#     filetitle = getVolumeTitle(volnumber)
-#     centerspath = centersfolder + '/' + filetitle
-#     return centerspath
 
 
 def unzipFile(zipfile, destfolder, overwrite=False):

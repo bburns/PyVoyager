@@ -73,7 +73,7 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
                     else:
                         # we're seeing a new compositeId, so process all the gathered channels
                         if len(channelRows)>0:
-                            print 'Compositing %d: VGISS_%s/%s.png    \r' \
+                            print 'Compositing %d: VGISS_%s/%s     \r' \
                                 % (nfile,startVol,startId),
                             processChannels(channelRows)
                         startId = compositeId
@@ -82,7 +82,7 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
                         nfile += 1
             i += 1
         if len(channelRows)>0:
-            print 'Compositing %d: VGISS_%s/%s.png    \r' % (nfile,startVol,startId),
+            print 'Compositing %d: VGISS_%s/%s     \r' % (nfile,startVol,startId),
             processChannels(channelRows)
         print
 
@@ -110,21 +110,24 @@ def processChannels(channelRows):
         # folder = lib.getCenterspath(volume)
         folder = config.centersFolder + volume + '/'
         # filetitle = config.centersPrefix + fileId + '_' + config.imageType + \
-        filetitle = fileId + '_' + config.imageType + \
-                    '_' + filter + config.centersSuffix + '.png'
+        # filetitle = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+        # filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
+        filetitle = lib.getCenteredFilename(fileId, filter)
         channelfilepath = folder + filetitle
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
             folder = config.adjustmentsFolder + volume + '/'
             # filetitle = config.adjustmentsPrefix + fileId + '_' + config.imageType + \
-            filetitle = fileId + '_' + config.imageType + \
-                        '_' + filter + config.adjustmentsSuffix + '.png'
+            # filetitle = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+            # filetitle = fileId + '_' + config.adjustmentsSuffix + '_' + filter + config.extension
+            filetitle = lib.getAdjustedFilename(fileId, filter)
             channelfilepath = folder + filetitle
         channels[filter] = channelfilepath
     # print channels
     compositesSubfolder = config.compositesFolder + volume + '/'
     # outfilename = compositesSubfolder + config.compositesPrefix + compositeId + '.png'
-    outfilename = compositesSubfolder + compositeId + config.compositesSuffix + '.png'
+    # outfilename = compositesSubfolder + compositeId + config.compositesSuffix + '.png'
+    outfilename = compositesSubfolder + compositeId + config.compositesSuffix + config.extension
     # print outfilename
     im = libimg.combineChannels(channels)
     cv2.imwrite(outfilename, im)

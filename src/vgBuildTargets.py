@@ -3,7 +3,7 @@
 # build target subfolders like Jupiter/Voyager1/Io/Narrow
 # and copy images to them from a specified volume
 
-# links work, but then can't browse folders with image viewer...
+# symbolic links work, but then can't browse folders with image viewer...
 # so just copy them
 
 
@@ -49,23 +49,35 @@ def buildTargets(volnum, targetPath=None):
                 # eg C1327321_RAW_Orange_centered.png
                 # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
                 # sourceFilename = config.centersPrefix + fileId + '_' + \
-                sourceFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                 config.centersSuffix + '.png'
+
+                #. what if targetname ~
+                # C1372372_adjusted_Orange.png
+                # C1372362_centered_Orange.png?
+                # C1372372_composite.png
+                # C1372372_mosaic.png
+                # then would all sort together
+                # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+                sourceFilename = lib.getCenteredFilename(fileId, filter)
                 sourceFilepath = sourceFolder + sourceFilename
 
                 # if centered file doesn't exist, grab the adjusted image instead
                 if not os.path.isfile(sourceFilepath):
                     sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
                     # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
-                    sourceFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                     config.adjustmentsSuffix + '.png'
+                    # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+                    sourceFilename = lib.getAdjustedFilename(fileId, filter)
                     sourceFilepath = sourceFolder + sourceFilename
 
                 targetFilename = sourceFilename
 
                 # create subfolder and copy/link image
 
-                # translate target
+                # get image properties
+                phase = row[config.filesColPhase]
+                craft = row[config.filesColCraft]
+                target = row[config.filesColTarget]
+                instrument = row[config.filesColInstrument]
+
                 # relabel target field if necessary - see db/targets.csv for more info
                 targetInfoRecord = targetInfo.get(fileId)
                 if targetInfoRecord:
@@ -74,10 +86,6 @@ def buildTargets(volnum, targetPath=None):
                         target = targetInfoRecord['newTarget']
 
                 # get subfolder, eg Jupiter/Voyager1/Io/Narrow
-                phase = row[config.filesColPhase]
-                craft = row[config.filesColCraft]
-                target = row[config.filesColTarget]
-                instrument = row[config.filesColInstrument]
                 subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
                 # ignore targets like Sky, Dark
@@ -94,10 +102,6 @@ def buildTargets(volnum, targetPath=None):
                     lib.mkdir_p(targetFolder)
 
                     # copy file
-                    # cp -s, --symbolic-link - make symbolic links instead of copying
-                    # [but -s is ignored on windows]
-                    # cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                    # cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
                     cmd = 'cp ' + sourceFilepath + ' ' + targetFilepath
                     print cmd + '      \r',
                     os.system(cmd)

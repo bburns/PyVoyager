@@ -113,23 +113,26 @@ def stageFiles(bwOrColor, targetPathParts):
                 # if centering for this image is turned off, let's assume for now that
                 # that means we don't want the color image, since it'd be misaligned anyway.
                 if doCenter==False:
-                    pngSubfolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+                    imageSubfolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
                     # pngFilename = config.adjustmentsPrefix + fileId + '_' + \
-                    pngFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                  config.adjustmentsSuffix + '.png'
+                    # pngFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+                    imageFilename = lib.getAdjustedFilename(fileId, filter)
                 elif bwOrColor=='bw':
                     pngSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
                     # pngFilename = config.centersPrefix + fileId + '_' + \
-                    pngFilename = fileId + '_' + config.imageType + '_' + filter + \
-                                  config.centersSuffix + '.png'
+                    # pngFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+                    imageFilename = lib.getCenteredFilename(fileId, filter)
                 else:
-                    pngSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
+                    imageSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
                     # pngFilename = config.compositesPrefix + fileId + '.png'
-                    pngFilename = fileId + config.compositesSuffix + '.png'
-                pngPath = pngSubfolder + pngFilename
+                    # pngFilename = fileId + config.compositesSuffix + '.png'
+                    imageFilename = lib.getCompositeFilename(fileId)
+                # pngPath = pngSubfolder + pngFilename
+                imagePath = imageSubfolder + imageFilename
 
                 # if image file exists, create subfolder and link image
-                if os.path.isfile(pngPath):
+                # if os.path.isfile(pngPath):
+                if os.path.isfile(imagePath):
 
                     # get staging subfolder and make sure it exists
                     # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
@@ -156,11 +159,11 @@ def stageFiles(bwOrColor, targetPathParts):
                     # link to file
                     # note: mklink requires admin privileges,
                     # so must run this script in an admin console
-                    # eg pngPath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                    # eg imagePath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                     # need to get out of the target dir
-                    pngPathRelative = '../../../../../../../../' + pngPath
-                    lib.makeSymbolicLinks(targetFolder, pngPathRelative, nfile, ncopiesPerImage)
-                    print "Frame %d: %s              \r" % (nfile, pngPath),
+                    imagePathRelative = '../../../../../../../../' + imagePath
+                    lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
+                    print "Frame %d: %s              \r" % (nfile, imagePath),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage

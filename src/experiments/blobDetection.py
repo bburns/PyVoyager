@@ -70,7 +70,8 @@ fileids = results.keys()
 fileids.sort()
 for fileid in fileids:
     
-    filename = fileid + '.png'
+    # filename = fileid + '.png'
+    filename = fileid + '.jpg'
     filepath = folder + filename
     im = mpim.imread(filepath) # values are 0.0-1.0
     outpath = folder + 'out/' + filename

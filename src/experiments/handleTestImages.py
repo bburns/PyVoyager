@@ -48,14 +48,12 @@ def grabTestImages():
         for filename in files:
             # print filename
             ext = filename[-4:]
-            if ext=='.png':
-                # print filename # eg centered_C1164724_RAW_Clear.png or C1164724_RAW_Clear_centered.png
-                # images in foo can come from centers folder OR targets folder,
-                # which have different naming schemes, so need to handle both.
-                if filename[:9]=='centered':
-                    filename = filename[9:] # eg C1164724_RAW_Clear.png
-                if filename[-13:]=='_centered.png':
-                    filename = filename[:-13] + '.png'  # eg C1164724_RAW_Clear.png
+            if ext=='.png' or ext=='.jpg':
+                # print filename
+                # eg C1164724_centered_Clear.png
+                if 'centered' in filename:
+                    # filename = filename[:-13] + '.png'  # eg C1164724_RAW_Clear.png
+                    filename = filename.replace('centered','adjusted')
                 print filename
                 # now what volume did it come from?
                 # need to look it up in files.csv
@@ -65,7 +63,8 @@ def grabTestImages():
                 print vol
                 origfolder = config.adjustmentsFolder
                 # origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + filename
-                origpath = origfolder + 'VGISS_' + vol + '/' + filename[:-4] + config.adjustmentsSuffix + '.png'
+                # origpath = origfolder + 'VGISS_' + vol + '/' + filename[:-4] + config.adjustmentsSuffix + '.png'
+                origpath = origfolder + 'VGISS_' + vol + '/' + filename
                 print origpath
                 targetpath = testfolder + filename
 
@@ -77,21 +76,21 @@ def grabTestImages():
 grabTestImages()
 
 
-def removeTestImages():
-    "walk through foo folder and for each centered file there, remove the corresponding one from the test folder"
-    i = 1
-    for root, dirs, files in os.walk(tempFolder):
-        nfiles = len(files)
-        for filename in files:
-            # print filename
-            ext = filename[-4:]
-            if ext=='.PNG' or ext=='.png':
-                origname = filename[9:]
-                testpath = testfolder + '/' + origname
-                newpath = testfolder + '/ok/'
-                cmd = "mv " + testpath + " " + newpath
-                print cmd
-                os.system(cmd)
+# def removeTestImages():
+#     "walk through foo folder and for each centered file there, remove the corresponding one from the test folder"
+#     i = 1
+#     for root, dirs, files in os.walk(tempFolder):
+#         nfiles = len(files)
+#         for filename in files:
+#             # print filename
+#             ext = filename[-4:].lower()
+#             if ext=='.png' or ext=='.jpg':
+#                 origname = filename[9:]
+#                 testpath = testfolder + '/' + origname
+#                 newpath = testfolder + '/ok/'
+#                 cmd = "mv " + testpath + " " + newpath
+#                 print cmd
+#                 os.system(cmd)
                 
 
 # removeTestImages()

@@ -20,11 +20,6 @@ import vgBuildTitles
 
 
 
-# includeTitles = True
-includeTitles = False
-
-
-
 
 def stageFiles(bwOrColor, targetPathParts):
     "Make links from source files (centers or composites) to clip stage folders"
@@ -71,6 +66,7 @@ def stageFiles(bwOrColor, targetPathParts):
             target = row[config.filesColTarget]
             camera = row[config.filesColInstrument]
 
+            #. make lib fn
             # relabel target field if necessary - see db/targets.csv for more info
             targetInfoRecord = targetInfo.get(fileId)
             if targetInfoRecord:
@@ -144,7 +140,7 @@ def stageFiles(bwOrColor, targetPathParts):
 
                     # if we haven't seen this subfolder before, add the titlepage image a few times.
                     # titlepages are created in the previous step, vgBuildTitles.
-                    if includeTitles and nfile==0:
+                    if config.includeTitles and nfile==0:
                         titleImageFilepath = config.titlesFolder + subfolder + 'title.png'
                         # need to get out of the target dir - we're always this deep
                         titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
@@ -160,7 +156,7 @@ def stageFiles(bwOrColor, targetPathParts):
                     # need to get out of the target dir
                     pngPathRelative = '../../../../../../../../' + pngPath
                     lib.makeSymbolicLinks(targetFolder, pngPathRelative, nfile, ncopiesPerImage)
-                    print "Frame %d: %s      \r" % (nfile, pngPathRelative),
+                    print "Frame %d: %s              \r" % (nfile, pngPath),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage
@@ -187,7 +183,6 @@ def buildClips(bwOrColor, targetPath=None):
     stageFiles(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images
-    # makeClipFiles()
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
                                   config.videoFilespec, config.videoFrameRate)
 

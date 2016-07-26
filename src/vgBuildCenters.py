@@ -41,22 +41,21 @@ def buildCenters(volnum, overwrite=False):
         lib.mkdir(centersSubfolder)
 
         # get number of files to process
-        # root, dirs, files = os.walk(adjustmentsSubfolder)
-        # nfiles = len(files)
         nfiles = len(os.listdir(adjustmentsSubfolder))
 
-        # read small db into memory - tells when to turn centering on/off
-        # centeringInfo = lib.readCsv(config.centeringdb)
+        # read small dbs into memory
+        centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
+        targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
         # iterate through all available images, filter on desired volume
         f = open(config.filesdb, 'rt')
         reader = csv.reader(f)
 
-        # open positions.csv file for target angular size info
-        f2 = open(config.positionsdb, 'rt')
-        reader2 = csv.reader(f2)
-        row2 = reader2.next() # skip over fieldnames row
-        fileId2 = ''
+        # # open positions.csv file for target angular size info
+        # f2 = open(config.positionsdb, 'rt')
+        # reader2 = csv.reader(f2)
+        # row2 = reader2.next() # skip over fieldnames row
+        # fileId2 = ''
 
         i = 0
         nfile = 1
@@ -74,35 +73,46 @@ def buildCenters(volnum, overwrite=False):
                     target = row[config.filesColTarget]
                     camera = row[config.filesColInstrument]
 
-                    # skip ahead in positions.csv until reach same record (if there)
-                    while fileId2 < fileId:
-                        try:
-                            row2 = reader2.next()
-                        except:
-                            break # if reached eof just stop
-                        fileId2 = row2[config.positionsColFileId]
+                    # relabel target field if necessary - see db/targets.csv for more info
+                    #. make lib fn
+                    targetInfoRecord = targetInfo.get(fileId)
+                    if targetInfoRecord:
+                        # make sure old target matches what we have
+                        if targetInfoRecord['oldTarget']==target:
+                            target = targetInfoRecord['newTarget']
 
-                    # if the same record is there, check if we need to center image
-                    if fileId2 == fileId:
-                        imageSize = float(row2[config.positionsColImageSize])
-                        doCenter = (imageSize <= config.centerImageSizeThreshold)
-                    else:
-                        # otherwise don't center it
-                        doCenter = False
+                    # skip this image if don't want target centered (eg Sky, Dark)
+                    if target in config.dontCenterTargets:
+                        continue
 
+                    # mothballing this...
+                    # # skip ahead in positions.csv until reach same record (if there)
+                    # while fileId2 < fileId:
+                    #     try:
+                    #         row2 = reader2.next()
+                    #     except:
+                    #         break # if reached eof just stop
+                    #     fileId2 = row2[config.positionsColFileId]
+                    # # if the same record is there, check if we need to center image
+                    # if fileId2 == fileId:
+                    #     imageSize = float(row2[config.positionsColImageSize])
+                    #     doCenter = (imageSize <= config.centerImageSizeThreshold)
+                    # else:
+                    #     # otherwise don't center it
+                    #     doCenter = False
                     # print fileId, row2, doCenter
 
-                    # # get the centering info, if any
-                    # # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    # # planetCraftTargetCamera = system + craft + target + camera
-                    # planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
-                    # centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
-                    # if centeringInfoRecord:
-                    #     centeringOff = centeringInfoRecord['centeringOff']
-                    #     centeringOn = centeringInfoRecord['centeringOn']
-                    #     doCenter = fileId<centeringOff or fileId>centeringOn
-                    # else: # if no info for this target just center it
-                    #     doCenter = True
+                    # get the centering info, if any
+                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
+                    # planetCraftTargetCamera = system + craft + target + camera
+                    planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
+                    centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                    if centeringInfoRecord:
+                        centeringOff = centeringInfoRecord['centeringOff']
+                        centeringOn = centeringInfoRecord['centeringOn']
+                        doCenter = (fileId < centeringOff) or (fileId > centeringOn)
+                    else: # if no info for this target just center it
+                        doCenter = True
 
                     if doCenter:
                         # center the file
@@ -124,7 +134,7 @@ def buildCenters(volnum, overwrite=False):
             i += 1
 
         f.close()
-        f2.close()
+        # f2.close()
 
         print
 

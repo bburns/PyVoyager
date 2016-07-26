@@ -19,6 +19,7 @@ def initFiles():
     # get the fileid, craft, flyby, target, camera
     # write to files.csv
 
+    # open files.csv for writing
     fileout = open(config.filesdb, 'wb')
     # IMPORTANT: keep fields in synch with row, below, and config.filesCol*
     fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',')

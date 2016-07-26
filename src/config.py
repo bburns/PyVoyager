@@ -153,6 +153,10 @@ compositesPrefix = 'composite_'
 # Titles
 # ----------------------------------------
 
+# includeTitles = True
+includeTitles = False
+
+
 titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 

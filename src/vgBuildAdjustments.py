@@ -43,8 +43,6 @@ def buildAdjustments(volnum, overwrite=False):
         lib.mkdir(adjustmentsSubfolder)
 
         # get number of files to process
-        # root, dirs, files = os.walk(imagesSubfolder)
-        # nfiles = len(files)
         nfiles = len(os.listdir(imagesSubfolder))
 
         # iterate through all available images, filter on desired volume

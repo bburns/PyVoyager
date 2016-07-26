@@ -65,13 +65,6 @@ def buildTargets(volnum, targetPath=None):
 
                 # create subfolder and copy/link image
 
-                # get subfolder, eg Jupiter/Voyager1/Io/Narrow
-                phase = row[config.filesColPhase]
-                craft = row[config.filesColCraft]
-                target = row[config.filesColTarget]
-                instrument = row[config.filesColInstrument]
-                subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
-
                 # translate target
                 # relabel target field if necessary - see db/targets.csv for more info
                 targetInfoRecord = targetInfo.get(fileId)
@@ -80,21 +73,34 @@ def buildTargets(volnum, targetPath=None):
                     if targetInfoRecord['oldTarget']==target:
                         target = targetInfoRecord['newTarget']
 
-                # get target file, eg data/step7_targets/jupiter/voyager1/io/narrow/centered_....
-                targetFolder = config.targetsFolder + subfolder
-                targetFilepath = targetFolder + targetFilename
+                # get subfolder, eg Jupiter/Voyager1/Io/Narrow
+                phase = row[config.filesColPhase]
+                craft = row[config.filesColCraft]
+                target = row[config.filesColTarget]
+                instrument = row[config.filesColInstrument]
+                subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
 
-                # create subfolder
-                lib.mkdir_p(targetFolder)
+                # ignore targets like Sky, Dark
+                addImage = True
+                if target in config.targetsIgnore: addImage = False
+                if addImage:
 
-                # copy file
-                # cp -s, --symbolic-link - make symbolic links instead of copying
-                # [but -s is ignored on windows]
-                # cmd = 'cp ' + centeredpath + ' ' + targetfolder
-                # cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
-                cmd = 'cp ' + sourceFilepath + ' ' + targetFilepath
-                print cmd + '      \r',
-                os.system(cmd)
+                    # get target file,
+                    # eg data/step07_targets/jupiter/voyager1/io/narrow/centered_....
+                    targetFolder = config.targetsFolder + subfolder
+                    targetFilepath = targetFolder + targetFilename
+
+                    # create subfolder
+                    lib.mkdir_p(targetFolder)
+
+                    # copy file
+                    # cp -s, --symbolic-link - make symbolic links instead of copying
+                    # [but -s is ignored on windows]
+                    # cmd = 'cp ' + centeredpath + ' ' + targetfolder
+                    # cmd = 'cp ' + sourceFilepath + ' ' + targetFolder
+                    cmd = 'cp ' + sourceFilepath + ' ' + targetFilepath
+                    print cmd + '      \r',
+                    os.system(cmd)
 
         i += 1
 

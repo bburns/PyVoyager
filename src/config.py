@@ -76,7 +76,7 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
 # these targets aren't in the PCK datafile so don't know radius,
 # but want to try to center on them - just assume they're tiny
 centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
-Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
+Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
 
 # blob detection
@@ -150,6 +150,12 @@ drawCrosshairs = False # draw crosshairs on image
 compositesPrefix = 'composite_'
 
 
+# Targets
+# ----------------------------------------
+
+targetsIgnore = dontCenterTargets
+
+
 # Titles
 # ----------------------------------------
 
@@ -199,9 +205,13 @@ videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 # number of frames for title page
 clipFramesForTitles = videoFrameRate * 5 #. not working right - should be 5 secs according to this
 
-# clipsIgnoreTargets = 'Sky,Dark,Plaque'.split(',')
+# don't want to make clips for these targets
+clipsIgnoreTargets = dontCenterTargets
 
-
+# these targets aren't in the PCK datafile so don't know radius,
+# but want to try to center on them - just assume they're tiny
+# centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
+# Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
 
 # Movies

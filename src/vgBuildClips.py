@@ -80,6 +80,7 @@ def stageFiles(bwOrColor, targetPathParts):
             if (pathCraft and pathCraft!=craft): addImage = False
             if (pathTarget and pathTarget!=target): addImage = False
             if (pathCamera and pathCamera!=camera): addImage = False
+            if target in config.clipsIgnoreTargets: addImage = False
             if addImage:
 
                 # build a key

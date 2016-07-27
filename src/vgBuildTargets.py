@@ -28,7 +28,7 @@ def buildTargets(volnum, targetPath=None):
     volnum = str(volnum)
 
     # center the volume, if not already there
-    vgBuildCenters.buildCenters(volnum)
+    vgBuildCenters.buildCenters(volnum, False, False)
 
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 

@@ -9,7 +9,7 @@ import config
 import lib
 
 
-def buildDownload(volnum, overwrite=False):
+def buildDownload(volnum, overwrite=False, directCall=True):
     "Download the given volume number, if it doesn't exist yet."
 
     # url eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
@@ -18,7 +18,8 @@ def buildDownload(volnum, overwrite=False):
     filepath = config.downloadsFolder + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
 
     if os.path.isfile(filepath) and overwrite==False:
-        print "File exists - skipping download step: " + filepath
+        if directCall:
+            print "File exists - skipping download step: " + filepath
     else:
         print "Downloading " + url
         print "         to " + filepath

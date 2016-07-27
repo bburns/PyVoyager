@@ -19,7 +19,7 @@ import db
 import vgBuildImages
 
 
-def buildAdjustments(volnum, overwrite=False):
+def buildAdjustments(volnum, overwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 
     imagesSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
@@ -32,11 +32,11 @@ def buildAdjustments(volnum, overwrite=False):
 
     # for test (vol=0), can overwrite test folder
     if int(volnum)!=0 and os.path.isdir(adjustmentsSubfolder) and overwrite==False:
-        # print "Folder exists - skipping vg images step: " + centersubfolder
-        pass
+        if directCall:
+            print "Folder exists - skipping vg images step: " + centersubfolder
     else:
         # build the plain images for the volume, if not already there
-        vgBuildImages.buildImages(volnum)
+        vgBuildImages.buildImages(volnum, False, False)
 
         # make new folder
         lib.rmdir(adjustmentsSubfolder)

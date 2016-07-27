@@ -34,11 +34,10 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
     # for test (vol=0), can overwrite test folder
     if os.path.isdir(compositessubfolder) and overwrite==False:
         print "Composites folder exists: " + compositessubfolder
-        pass
     else:
         # build the centered images for the volume, if not already there
         #. pass imageid also
-        vgBuildCenters.buildCenters(buildVolnum)
+        vgBuildCenters.buildCenters(buildVolnum, False, False)
 
         # get centering info - will use to get files from either adjusted or centered folders
         # centeringInfo = lib.readCsv(config.centeringdb)

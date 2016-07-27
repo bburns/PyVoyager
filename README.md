@@ -281,11 +281,13 @@ Next steps
 <!-- - Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views -->
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
 <!-- - Improve centering stabilization -->
+<!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
+<!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
 
-Version 0.37 (2016-07)
+Version 0.37 (2016-07-26)
 ----------------------------------------
-- Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV
-- Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv
+- Update `vg centers` to use records in centers.csv, if available
+- Option to use jpeg intermediate files to save space / speed development
 
 Version 0.36 (2016-07-19)
 ----------------------------------------

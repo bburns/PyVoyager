@@ -16,7 +16,7 @@ import vgBuildAdjustments
 
 
 
-def buildCenters(volnum, overwrite=False):
+def buildCenters(volnum, overwrite=False, directCall=True):
     "Build centered images for given volume, if they don't exist yet"
 
     #. need to handle indiv imageids
@@ -32,11 +32,11 @@ def buildCenters(volnum, overwrite=False):
 
     # for test (vol=0), can overwrite test folder
     if int(volnum)!=0 and os.path.isdir(centersSubfolder) and overwrite==False:
-        print "Folder exists - skipping vg centers step: " + centersSubfolder
-        # pass
+        if directCall:
+            print "Folder exists - skipping vg centers step: " + centersSubfolder
     else:
         # build the adjusted images for the volume, if not already there
-        vgBuildAdjustments.buildAdjustments(volnum)
+        vgBuildAdjustments.buildAdjustments(volnum, False, False)
 
         # make new folder
         lib.rmdir(centersSubfolder)
@@ -134,6 +134,8 @@ def buildCenters(volnum, overwrite=False):
         if os.path.isfile(config.newcentersdb):
             lib.concatFiles(config.centersdb, config.newcentersdb)
             lib.rm(config.newcentersdb)
+            print
+            print 'New records appended to centers.csv file - please make sure the file is sorted before committing it to git"
 
         print
 

@@ -57,13 +57,8 @@ def adjustImageFile(infile, outfile, debugtitle=None):
     misc.imsave(outfile, im)
 
 
-# def getImageCenter(infile):
-#     ""
-#     pass
-
-
 def translateImageFile(infile, outfile, x, y):
-    "shift an image file by x,y pixels"
+    "center an image file on x,y"
     im = mpim.imread(infile)
     boundingBox = [x,y,x,y]
     im = centerImage(im, boundingBox)
@@ -75,7 +70,6 @@ def translateImageFile(infile, outfile, x, y):
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
     misc.imsave(outfile, im)
-    return boundingBox
 
 
 def centerImageFile(infile, outfile, debugtitle=None):

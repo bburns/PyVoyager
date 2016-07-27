@@ -99,7 +99,7 @@ def buildCenters(volnum, overwrite=False):
                                                            fileId, fileIdCenters)
                 if rowCenters:
                     x = int(rowCenters[config.centersColX])
-                    y = int(rowCenters[config.centersColX])
+                    y = int(rowCenters[config.centersColY])
                     libimg.translateImageFile(infile, outfile, x, y)
                 else:
                     # do we actually need to center this image?
@@ -119,7 +119,7 @@ def buildCenters(volnum, overwrite=False):
                     if doCenter:
                         x,y = libimg.centerImageFile(infile, outfile)
                     else:
-                        x,y = 0,0
+                        x,y = 399,399
 
                     # write x,y to newcenters file
                     rowNew = [volume, fileId, x, y]

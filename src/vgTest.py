@@ -28,9 +28,6 @@ def vgTest():
     config.drawCircle = True
     config.drawCrosshairs = True
 
-    # testFolder = 'test/images/'
-    # centeredFolder = testFolder + 'centered/'
-    # debugFolder = testFolder + 'debug/'
     centeredFolder = config.testImagesFolder + 'centered/'
     debugFolder = config.testImagesFolder + 'debug/'
 
@@ -38,7 +35,7 @@ def vgTest():
     lib.mkdir(centeredFolder)
 
     lib.rmdir(debugFolder)
-    lib.mkdir(debugFolder)
+    os.mkdir(debugFolder)
 
     # read in small csv file
     # results = lib.readCsv('test/testImages.csv')

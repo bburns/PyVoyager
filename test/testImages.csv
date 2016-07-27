@@ -6,7 +6,9 @@ fileId,x,y
 C0896631_neptune,333,513
 C0902002_neptune,469,522
 C0902008_neptune,456,580
-
+C1136940_neptune_large,554,296
+C1137522_neptune_huge,384,242
+C1139416_triton_half,542,290
 
 # Jupiter
 
@@ -38,11 +40,15 @@ C2448748_uranus_dim,442,394
 C2450355_uranus_small,396,386
 
 C2531132_ariel_point
-C2567534_ariel_point
+C2567534_ariel_point,112,701
 C2580729_ariel_point
 C2637644_ariel_small,542,528
-C2655505_ariel_bright
-C2673231_ariel_dim
+C2655505_ariel_bright,456,228
+C2673231_ariel_dim,443,397
 C2675945_ariel,400,400
 C2676415_ariel_noise
 C2679728_ariel
+
+C2705115_uranus_crescent_small,408,454
+C2707524_uranus_crescent_large,426,292
+

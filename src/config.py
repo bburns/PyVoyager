@@ -4,12 +4,14 @@
 
 
 
-# Downloads
+# Global settings
 # ----------------------------------------
 
-# voyager archive url
-downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+# use jpegs for faster development time
+useJpegs = True
+# useJpegs = False
 
+extension = '.jpg' if useJpegs else '.png'
 
 
 # Voyager
@@ -20,17 +22,14 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
-# Global settings
+# Download
 # ----------------------------------------
 
-# use jpegs for faster development time
-useJpegs = True
-# useJpegs = False
-extension = '.jpg' if useJpegs else '.png'
+# voyager archive url
+downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
-
-# Images
+# Convert
 # ----------------------------------------
 
 # imagetype to extract using img2png
@@ -63,13 +62,13 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 
 
-# Adjustments
+# Adjust
 # ----------------------------------------
 
 adjustmentsSuffix = '_adjusted'
 
 
-# Centers
+# Center
 # ----------------------------------------
 
 # if you try changing these values, make sure to run `vg test`
@@ -95,10 +94,15 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-blobThreshold = 0.016 # to v0.35 works for most neptune system images
+# blobThreshold = 0.016 # to v0.35 works for most neptune system images
 # blobThreshold = 0.015 # v0.36 works for most neptune system images
+# blobThreshold = 0.02
+# blobThreshold = 2
+# blobThreshold = 3
+blobThreshold = 4
 
-# area in pixels^2 at which switch from blob detection to hough circle detection
+# area in pixels^2 at which switch from blob detection to hough circle detection.
+# mainly depends on the minimum size circle that hough can detect.
 # blob detection works best for small sources - hough for bigger circles
 # blobAreaCutoff = 10*10 # missed some small but sharp circles
 # blobAreaCutoff = 14*14 # missed triton small but clear
@@ -135,7 +139,7 @@ houghMaxRadius = 2 # this didn't seem to matter - still got huge circle back
 
 
 
-# Suffix for centered filenames
+# suffix for centered filenames
 centersSuffix = '_centered'
 
 # rotate image 180 degrees during centering step
@@ -152,21 +156,21 @@ drawCircles = False # save image with all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 
 
-# Composites
+# Composite
 # ----------------------------------------
 
-# Suffix for composite filenames
+# suffix for composite filenames
 compositesSuffix = '_composite'
 
 
-# Mosaics
+# Mosaic
 # ----------------------------------------
 
-# Suffix for mosaic filenames
+# suffix for mosaic filenames
 mosaicsSuffix = '_mosaic'
 
 
-# Targets
+# Target
 # ----------------------------------------
 
 targetsIgnore = dontCenterTargets
@@ -187,7 +191,6 @@ titleFontsize = 48
 # ----------------------------------------
 
 # filename used for frames
-# videoFilespec = 'img%05d.png'
 videoFilespec = 'img%05d' + extension
 
 # frame rate - frames per second

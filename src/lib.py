@@ -39,7 +39,7 @@ def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
 
 def concatFiles(filename1, filename2):
     "concatenate contents of filename2 onto filename1"
-    f1 = open(filename1, 'wb')
+    f1 = open(filename1, 'ab')
     f2 = open(filename2, 'rt')
     for line in f2:
         f1.write(line)

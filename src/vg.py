@@ -20,6 +20,7 @@ import vgComposite
 import vgMosaic
 import vgTarget
 import vgList
+import vgTest
 import vgBuildClips
 import vgBuildSegments
 import vgBuildMovies
@@ -149,7 +150,7 @@ elif cmd=="list":
     vgList.vgList()
 
 elif cmd=="test":
-    testCentering.testCentering()
+    vgTest.vgTest()
 
 elif cmd=="update":
     subject = args.pop(0)
@@ -189,9 +190,10 @@ if cmd=="help":
     print "  vg composite <volnums>            - create color images"
     # print "  vg mosaic <volnums>               - create mosaic images"
     print "  vg target <volnums>               - copy images into target subfolders"
-    print "  vg list                           - show status of local datasets"
     print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
     print "  vg movies                         - create movies from clips"
+    print "  vg list                           - show status of local datasets"
+    print "  vg test                           - run centering tests"
     print
     # print "  vg init files"
     # print "  vg init composites"

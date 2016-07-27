@@ -141,7 +141,8 @@ def combineChannels(channels):
     #. what are ch4_js and ch4_u ?
     redfilename = channels.get('Orange') or channels.get('Clear')
     greenfilename = channels.get('Green') or channels.get('Clear')
-    bluefilename = channels.get('Blue') or channels.get('Violet') or channels.get('Uv') or channels.get('Ch4_Js') or channels.get('Ch4_U') or channels.get('Clear')
+    bluefilename = channels.get('Blue') or channels.get('Violet') or channels.get('Uv') or \
+                   channels.get('Ch4_Js') or channels.get('Ch4_U') or channels.get('Clear')
 
     # read images
     # returns None if filename is invalid - doesn't throw an error
@@ -231,7 +232,8 @@ def drawBoundingBox(im, boundingBox):
     # imBox[x2+1,y1+1:y2+1] = c
 
     # or this
-    # plt.gca().add_patch(patches.Rectangle((y1,x1), y2-y1, x2-x1, fill=False, edgecolor="green", linewidth=0.5))
+    # plt.gca().add_patch(patches.Rectangle((y1,x1), y2-y1, x2-x1, fill=False,
+    #                     edgecolor="green", linewidth=0.5))
 
     # return imBox
 
@@ -317,13 +319,14 @@ def findCircle(im, debugtitle=None):
     minRadius = config.houghMinRadius
     maxRadius = config.houghMaxRadius
 
-    circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold, acc_threshold, minRadius, maxRadius)
+    circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold,
+                               acc_threshold, minRadius, maxRadius)
 
     if config.drawEdges:
         upper = config.cannyUpperThreshold
         lower = upper / 2
         imedges = cv2.Canny(im, lower, upper)
-        cv2.imwrite(debugtitle + '_cannyedges.png', imedges)
+        cv2.imwrite(debugtitle + '_cannyedges.jpg', imedges)
 
     # if circles: # nowork in python
     if type(circles) != type(None):
@@ -338,7 +341,7 @@ def findCircle(im, debugtitle=None):
             drawCircle(im, circle) # green
             # show(im)
             # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-            cv2.imwrite(debugtitle + '_circles.png', im)
+            cv2.imwrite(debugtitle + '_circles.jpg', im)
     else:
         circle = None
     return circle
@@ -409,7 +412,7 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
 
     if config.drawBinaryImage:
         b = cv2.normalize(b, None, 0, 255, cv2.NORM_MINMAX)
-        cv2.imwrite(debugtitle + '_binaryimage.png', b)
+        cv2.imwrite(debugtitle + '_binaryimage.jpg', b)
 
     # find position of objects - index is 0-based
     blobs = ndimage.find_objects(labels)
@@ -428,10 +431,11 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
             width = blob[0].stop - blob[0].start
             height = blob[1].stop - blob[1].start
             area = width * height
-            # check for min width and height so don't pick up edge artifacts
-            if area>areamax and width>1 and height>1:
-                areamax = area
-                largestblob = blob
+            if area>areamax:
+                # check for min width and height so don't pick up edge artifacts
+                if width>1 and height>1:
+                    areamax = area
+                    largestblob = blob
         # get bounding box
         if largestblob:
             x1 = largestblob[0].start
@@ -445,7 +449,7 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
         # drawBoundingBox(im, boundingBox)
         imbox = drawBoundingBox(im, boundingBox)
         imbox = cv2.normalize(imbox, None, 0, 255, cv2.NORM_MINMAX)
-        cv2.imwrite(debugtitle + '_blobboundingbox.png', imbox)
+        cv2.imwrite(debugtitle + '_blobboundingbox.jpg', imbox)
         # show(imbox)
 
     return boundingBox
@@ -456,10 +460,6 @@ def findBoundingBox(im, debugtitle=None):
     "find bounding box returns [x1,y1,x2,y2]"
     # if debugtitle: print 'find bounding box for', debugtitle
     # looks for a small blob, then a large hough circle
-    #. do a pre-canny step?
-    # upper = 200
-    # lower = 100
-    # im = cv2.Canny(im, lower, upper)
     # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
     boundingBox = findBoundingBoxByBlob(im, config.blobThreshold, debugtitle)
     [x1,y1,x2,y2] = boundingBox
@@ -473,9 +473,4 @@ def findBoundingBox(im, debugtitle=None):
         boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
     return boundingBox
 
-
-
-
-# if __name__ == '__main__':
-#     pass
 

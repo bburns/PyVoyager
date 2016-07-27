@@ -10,10 +10,10 @@ import csv
 
 import sys; sys.path.append('..') # so can import from main src folder
 import config
+import lib
 
 
-tempFolder = 'c:/users/bburns/desktop/foo/'
-testfolder = config.testFolder
+tempFolder = 'c:/users/bburns/desktop/VoyagerTest/'
 
 os.chdir('../..')
 
@@ -49,10 +49,8 @@ def grabTestImages():
             # print filename
             ext = filename[-4:]
             if ext=='.png' or ext=='.jpg':
-                # print filename
-                # eg C1164724_centered_Clear.png
+                # print filename # eg C1164724_centered_Clear.png
                 if 'centered' in filename:
-                    # filename = filename[:-13] + '.png'  # eg C1164724_RAW_Clear.png
                     filename = filename.replace('centered','adjusted')
                 print filename
                 # now what volume did it come from?
@@ -62,16 +60,15 @@ def grabTestImages():
                 vol = getVolume(fileId) # eg 5101
                 print vol
                 origfolder = config.adjustmentsFolder
-                # origpath = origfolder + 'VGISS_' + vol + '/' + config.adjustmentsPrefix + filename
-                # origpath = origfolder + 'VGISS_' + vol + '/' + filename[:-4] + config.adjustmentsSuffix + '.png'
                 origpath = origfolder + 'VGISS_' + vol + '/' + filename
                 print origpath
-                targetpath = testfolder + filename
+                # targetpath = testfolder + filename
 
                 # cmd = "cp " + origpath + " " + testfolder
-                cmd = "cp " + origpath + " " + targetpath
-                print cmd
-                os.system(cmd)
+                # cmd = "cp " + origpath + " " + targetpath
+                # print cmd
+                # os.system(cmd)
+                lib.cp(origpath, config.testImagesFolder)
 
 grabTestImages()
 

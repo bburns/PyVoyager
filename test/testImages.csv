@@ -1,0 +1,48 @@
+fileId,x,y
+
+
+# Neptune
+
+C0896631_neptune,333,513
+C0902002_neptune,469,522
+C0902008_neptune,456,580
+
+
+# Jupiter
+
+C1464114_jupiter_gap,508,604
+C1467554_jupiter_dim_edge
+C1467556_jupiter_limb
+C1468052_jupiter,492,540
+C1468054_jupiter,412,516
+C1478739_jupiter_edge_gap,406,726
+C1484711_jupiter_edge_gap
+C1487422_jupiter_edge
+C1490645_jupiter_edge_gap
+C1498111_jupiter_edge_noise
+
+# these two should be centered exactly on top of each other
+#. both are a bit off horizontally
+C1466602_jupiter1,380,220
+C1466604_jupiter2,360,214
+
+# same with these two, but one has a chunk out which throws it off a bit
+C1471042_jupiter1,268,614
+C1471044_jupiter2
+
+
+# Uranus
+
+C2447711_uranus_small,394,392
+C2448748_uranus_dim,442,394
+C2450355_uranus_small,396,386
+
+C2531132_ariel_point
+C2567534_ariel_point
+C2580729_ariel_point
+C2637644_ariel_small,542,528
+C2655505_ariel_bright
+C2673231_ariel_dim
+C2675945_ariel,400,400
+C2676415_ariel_noise
+C2679728_ariel

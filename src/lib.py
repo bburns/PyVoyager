@@ -27,6 +27,7 @@ def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
     "look for a matching join value in the given csv filereader and return the row, or None"
     # this assumes we're walking through the join file in one direction
     # so must be sorted in same way other file is
+    row = None
     while lastJoinValue < joinValue:
         try:
             row = csvReader.next()
@@ -285,27 +286,26 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
 
 
 def readCsv(filename):
-    "read a csv file into a dict of dicts. first column is key. use on small files only."
+    "Read a csv file into a dict of dicts. First column is key. Use on small files only!"
     # comments or blank lines are skipped
+    # not all values need to be filled in
     f = open(filename, 'rt')
     i = 0
     items = {}
     reader = csv.reader(f)
     for row in reader:
-        if row==[] or row[0][0]=='#': # skip blank lines and comments
-            continue
-        if i==0:
-            fields = row
+        if row==[] or row[0][0]=='#': continue # skip blank lines and comments
+        if i==0: fields = row
         else:
-            j = 0
+            col = 0
             item = {}
             for value in row:
-                if j==0:
+                if col==0:
                     pass
                 else:
-                    fieldname = fields[j]
+                    fieldname = fields[col]
                     item[fieldname] = value
-                j += 1
+                col += 1
             key = row[0]
             items[key] = item
         i += 1

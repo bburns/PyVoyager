@@ -75,9 +75,8 @@ adjustmentsSuffix = '_adjusted'
 # if you try changing these values, make sure to run `vg test`
 # to see how they affect the test images
 
-
 # fraction of image which needs to be taken up by target before centering is turned off
-centerImageSizeThreshold = 0.8
+# centerImageSizeThreshold = 0.8
 
 # don't want to center these targets
 dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
@@ -96,8 +95,8 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-# blobThreshold = 0.016 # to v0.35 works for most neptune system images
-blobThreshold = 0.015 # v0.36 works for most neptune system images
+blobThreshold = 0.016 # to v0.35 works for most neptune system images
+# blobThreshold = 0.015 # v0.36 works for most neptune system images
 
 # area in pixels^2 at which switch from blob detection to hough circle detection
 # blob detection works best for small sources - hough for bigger circles
@@ -266,7 +265,10 @@ segmentsStageFolder = segmentsFolder + 'stage/'
 moviesFolder        = onlineFolder  + "step12_movies/"
 
 # test images go here
-testFolder    = 'test/images/'
+testFolder    = 'test/'
+testImagesdb = testFolder + 'testImages.csv'
+testImagesFolder = testFolder + 'images/'
+
 
 # database folder
 dbFolder = 'db/'

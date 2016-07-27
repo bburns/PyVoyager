@@ -16,7 +16,7 @@ import vgAdjust
 
 
 
-def buildCenters(volnum, overwrite=False, directCall=True):
+def vgCenter(volnum, overwrite=False, directCall=True):
     "Build centered images for given volume, if they don't exist yet"
 
     #. need to handle indiv imageids
@@ -136,8 +136,8 @@ def buildCenters(volnum, overwrite=False, directCall=True):
             lib.rm(config.newcentersdb)
             print
             print 'New records appended to centers.csv file - please make sure the file is sorted before committing it to git'
-
-        print
+        else:
+            print
 
                     # mothballing this...
                     # rowPositions, fileIdPositions = lib.getJoinRow(csvPositions,

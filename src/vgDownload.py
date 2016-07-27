@@ -1,6 +1,6 @@
 
-# vg downloads command
-# download tar.gz archives from pds rings site at seti.org
+# vg download command
+# download tar.gz archives from PDS ring site at seti.org
 
 import os
 import os.path
@@ -9,7 +9,7 @@ import config
 import lib
 
 
-def buildDownload(volnum, overwrite=False, directCall=True):
+def vgDownload(volnum, overwrite=False, directCall=True):
     "Download the given volume number, if it doesn't exist yet."
 
     # url eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
@@ -32,5 +32,5 @@ def buildDownload(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildDownload(0)
+    vgDownload(0)
     print 'done'

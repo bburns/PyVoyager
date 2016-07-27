@@ -11,15 +11,15 @@ import re
 
 import config
 import lib
-import vgBuildDownload
-import vgBuildUnzip
-import vgBuildImages
-import vgBuildAdjustments
-import vgBuildCenters
-import vgBuildComposites
-import vgBuildMosaics
-import vgBuildTargets
-import vgBuildList
+import vgDownload
+import vgUnzip
+import vgConvert
+import vgAdjust
+import vgCenter
+import vgComposite
+import vgMosaic
+import vgTarget
+import vgList
 import vgBuildClips
 import vgBuildSegments
 import vgBuildMovies
@@ -59,69 +59,69 @@ if cmd=="download":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildDownload.buildDownload(volnum, overwrite)
+        vgDownload.vgDownload(volnum, overwrite)
     beep()
 
 elif cmd=="unzip":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildUnzip.buildUnzip(volnum, overwrite)
+        vgUnzip.vgUnzip(volnum, overwrite)
     beep()
 
-elif cmd=="images":
+elif cmd=="convert":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildImages.buildImages(volnum, overwrite)
+        vgConvert.vgConvert(volnum, overwrite)
     beep()
 
-elif cmd=="adjustments":
+elif cmd=="adjust":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildAdjustments.buildAdjustments(volnum, overwrite)
+        vgAdjust.vgAdjust(volnum, overwrite)
     beep()
 
-elif cmd=="centers":
+elif cmd=="center":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildCenters.buildCenters(volnum, overwrite)
+        vgCenter.vgCenter(volnum, overwrite)
     beep()
 
-elif cmd=="composites":
+elif cmd=="composite":
     # vols = args.pop(0)
     # volnums = lib.getVolumeNumbers(vols)
     # for volnum in volnums:
-        # vgBuildComposites.buildComposites(volnum, overwrite)
+        # vgComposites.buildComposites(volnum, overwrite)
     # beep()
     arg = args.pop(0)
     if arg[0].lower()=='c':
         compositeIds = lib.getImageIds(arg)
         for compositeId in compositeIds:
-            vgBuildComposites.buildComposites('', compositeId, True)
+            vgComposite.vgComposite('', compositeId, True)
     else:
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            # vgBuildComposites.buildComposites(volnum, overwrite)
-            vgBuildComposites.buildComposites(volnum, '', overwrite)
+            # vgComposites.buildComposites(volnum, overwrite)
+            vgComposite.vgComposite(volnum, '', overwrite)
     beep()
 
-elif cmd=="targets":
+elif cmd=="target":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgBuildTargets.buildTargets(volnum)
+        vgTarget.vgTarget(volnum)
     # targetPath = args.pop(0)
-    # vgBuild.buildTargets(targetPath)
+    # vg.buildTargets(targetPath)
     beep()
 
 elif cmd=="retarget":
     oldTarget = args.pop(0)
     newTarget = args.pop(0)
-    vgRetarget.retarget(oldTarget, newTarget)
+    vgRetarget.vgRetarget(oldTarget, newTarget)
 
 elif cmd=="clips":
     bwOrColor = None
@@ -146,7 +146,7 @@ elif cmd=="movies":
     beep()
 
 elif cmd=="list":
-    vgBuildList.buildList()
+    vgList.vgList()
 
 elif cmd=="test":
     testCentering.testCentering()
@@ -184,11 +184,11 @@ if cmd=="help":
     print
     print "  vg download <volnums>             - download volume(s)"
     print "  vg unzip <volnums>                - unzip volume(s)"
-    print "  vg images <volnums>               - convert IMGs to PNGs"
-    print "  vg centers <volnums>              - center images"
-    print "  vg composites <volnums>           - create color images"
-    # print "  vg mosaics <volnums>              - create mosaic images"
-    print "  vg targets <volnums>              - copy images into target subfolders"
+    print "  vg convert <volnums>              - convert IMGs to PNGs"
+    print "  vg center <volnums>               - center images"
+    print "  vg composite <volnums>            - create color images"
+    # print "  vg mosaic <volnums>               - create mosaic images"
+    print "  vg target <volnums>               - copy images into target subfolders"
     print "  vg list                           - show status of local datasets"
     print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
     print "  vg movies                         - create movies from clips"

@@ -1,5 +1,5 @@
 
-# vg images command
+# vg convert command
 # convert Voyager IMG files to PNG files using img2png
 
 import os.path
@@ -8,7 +8,7 @@ import config
 import lib
 import libimg
 
-import vgBuildUnzip
+import vgUnzip
 
 
 def buildImages(volnum, overwrite=False, directCall=True):
@@ -22,7 +22,7 @@ def buildImages(volnum, overwrite=False, directCall=True):
             print "Images folder exists: " + imagesfolder
     else:
         # unzip the download, if not already there
-        vgBuildUnzip.buildUnzip(volnum, False, False)
+        vgUnzip.vgUnzip(volnum, False, False)
 
         # now convert the images
         lib.rmdir(imagesfolder)
@@ -51,5 +51,5 @@ def buildImages(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildImages(0)
+    vgConvert(0)
     print 'done'

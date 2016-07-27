@@ -1,5 +1,5 @@
 
-# vg clips command
+# vg clip command
 # build clips associated with target subfolders,
 # eg Jupiter/Voyager1/Io/Narrow
 

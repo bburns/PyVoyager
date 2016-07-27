@@ -8,10 +8,10 @@ import os.path
 import config
 import lib
 
-import vgBuildDownload
+import vgDownload
 
 
-def buildUnzip(volnum, overwrite=False, directCall=True):
+def vgUnzip(volnum, overwrite=False, directCall=True):
     "Unzip the given volume number, if it doesn't exist yet."
 
     # get zipfile eg data/step1_downloads/vgiss_5101.tar.gz
@@ -23,7 +23,7 @@ def buildUnzip(volnum, overwrite=False, directCall=True):
             print "Folder exists - skipping unzip step: " + unzippedfolder
     else:
         # download the zip if not already there
-        vgBuildDownload.buildDownload(volnum, False, False)
+        vgDownload.vgDownload(volnum, False, False)
 
         print "Unzipping " + zipfilepath
         print "       to " + unzippedfolder
@@ -36,5 +36,5 @@ def buildUnzip(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildUnzip(0)
+    vgUnzip(0)
     print 'done'

@@ -9,7 +9,7 @@ import tabulate
 import config
 
 
-def buildList():
+def vgList():
     "Get a listing of volumes and what stages they are at"
 
     # build a dictionary like {5101: {'Downloads':True,'Unzips':False,...}, }
@@ -91,7 +91,7 @@ def buildList():
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildList()
+    vgList()
     print 'done'
 
 

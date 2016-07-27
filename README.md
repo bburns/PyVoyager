@@ -76,27 +76,27 @@ Unzip the tarfile
 
 Convert the IMG files to PNGs with **img2png**
 
-    > vg images 5101
+    > vg convert 5101
 
 Adjust the contrast levels and rotate the images
 
-    > vg adjujstments 5101
+    > vg adjust 5101
 
 Center the images on the main body in the images
 
-    > vg centers 5101
+    > vg center 5101
 
 Colorize the images
 
-    > vg composites 5101
+    > vg composite 5101
 
 or do all of these steps automatically (performs missing steps)
 
-    > vg composites 5101
+    > vg composite 5101
 
 or e.g. to download and composite all Uranus images (might take a while),
 
-    > vg composites 7*
+    > vg composite 7*
 
 Then make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
@@ -134,10 +134,10 @@ And entering `vg` will show the available commands:
 
       vg download <volnums>             - download volume(s)
       vg unzip <volnums>                - unzip volume(s)
-      vg images <volnums>               - convert IMGs to PNGs
-      vg centers <volnums>              - center images
-      vg composites <volnums>           - create color images
-      vg targets <volnums>              - copy images into target subfolders
+      vg convert <volnums>              - convert IMGs to PNGs
+      vg center <volnums>               - center images
+      vg composite <volnums>            - create color images
+      vg target <volnums>               - copy images into target subfolders
       vg list                           - show status of local datasets
       vg clips bw|color [<targetpath>]  - create bw or color movies of flybys
       vg movies                         - combine clips into movies
@@ -286,8 +286,9 @@ Next steps
 
 Version 0.37 (2016-07-26)
 ----------------------------------------
-- Update `vg centers` to use records in centers.csv, if available
+- Update `vg center` to use records in centers.csv, if available
 - Option to use jpeg intermediate files to save space / speed development
+- Change commands to verbs
 
 Version 0.36 (2016-07-19)
 ----------------------------------------

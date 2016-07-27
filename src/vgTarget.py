@@ -1,5 +1,5 @@
 
-# vg targets command
+# vg target command
 # build target subfolders like Jupiter/Voyager1/Io/Narrow
 # and copy images to them from a specified volume
 
@@ -13,9 +13,9 @@ import csv
 import config
 import lib
 
-import vgBuildCenters
+import vgCenter
 
-import shutil
+# import shutil
 
 
 #. handle targetPath
@@ -28,7 +28,7 @@ def buildTargets(volnum, targetPath=None):
     volnum = str(volnum)
 
     # center the volume, if not already there
-    vgBuildCenters.buildCenters(volnum, False, False)
+    vgCenter.vgCenter(volnum, False, False)
 
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
@@ -122,6 +122,6 @@ def buildTargets(volnum, targetPath=None):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildTargets(8201)
+    vgTarget(8201)
     print 'done'
 

@@ -1,5 +1,5 @@
 
-# vg composites command
+# vg composite command
 # build composite images from centered images,
 # based on records in composites.csv.
 # see also vgInitComposites.py, which builds initial pass at composites.csv.
@@ -13,11 +13,11 @@ import lib
 import libimg
 
 
-import vgBuildCenters
+import vgCenter
 
 
 # def buildComposites(volnum, overwrite=False):
-def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
+def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
     "build composite images by combining channel images"
 
     # walks over records in composites.csv, merges channel images, writes to composites folder
@@ -37,7 +37,7 @@ def buildComposites(buildVolnum='', buildCompositeId='', overwrite=False):
     else:
         # build the centered images for the volume, if not already there
         #. pass imageid also
-        vgBuildCenters.buildCenters(buildVolnum, False, False)
+        vgCenter.vgCenter(buildVolnum, False, False)
 
         # get centering info - will use to get files from either adjusted or centered folders
         # centeringInfo = lib.readCsv(config.centeringdb)
@@ -136,6 +136,6 @@ if __name__ == '__main__':
     os.chdir('..')
     # buildComposites(5103)
     # buildComposites(8207)
-    buildComposites('','c1617245')
+    vgComposite('','c1617245')
     print 'done'
 

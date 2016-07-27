@@ -1,5 +1,5 @@
 
-# vg adjustments command
+# vg adjust command
 # build adjusted images from plain png images
 
 # for now this just means stretching the CALIB images histograms and rotating 180degrees.
@@ -16,10 +16,10 @@ import lib
 import libimg
 import db
 
-import vgBuildImages
+import vgConvert
 
 
-def buildAdjustments(volnum, overwrite=False, directCall=True):
+def vgAdjust(volnum, overwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 
     imagesSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
@@ -36,7 +36,7 @@ def buildAdjustments(volnum, overwrite=False, directCall=True):
             print "Folder exists - skipping vg images step: " + centersubfolder
     else:
         # build the plain images for the volume, if not already there
-        vgBuildImages.buildImages(volnum, False, False)
+        vgConvert.vgConvert(volnum, False, False)
 
         # make new folder
         lib.rmdir(adjustmentsSubfolder)
@@ -101,7 +101,7 @@ def buildAdjustments(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildAdjustments(0)
+    vgAdjust(0)
     print 'done'
 
 

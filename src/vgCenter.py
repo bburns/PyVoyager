@@ -1,5 +1,5 @@
 
-# vg centers command
+# vg center command
 # build centered images from adjusted images
 
 import csv
@@ -11,7 +11,7 @@ import lib
 import libimg
 import db
 
-import vgBuildAdjustments
+import vgAdjust
 
 
 
@@ -36,7 +36,7 @@ def buildCenters(volnum, overwrite=False, directCall=True):
             print "Folder exists - skipping vg centers step: " + centersSubfolder
     else:
         # build the adjusted images for the volume, if not already there
-        vgBuildAdjustments.buildAdjustments(volnum, False, False)
+        vgAdjust.vgAdjust(volnum, False, False)
 
         # make new folder
         lib.rmdir(centersSubfolder)
@@ -135,7 +135,7 @@ def buildCenters(volnum, overwrite=False, directCall=True):
             lib.concatFiles(config.centersdb, config.newcentersdb)
             lib.rm(config.newcentersdb)
             print
-            print 'New records appended to centers.csv file - please make sure the file is sorted before committing it to git"
+            print 'New records appended to centers.csv file - please make sure the file is sorted before committing it to git'
 
         print
 
@@ -152,7 +152,7 @@ def buildCenters(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildCenters(0)
+    vgCenter(0)
     print 'done'
 
 

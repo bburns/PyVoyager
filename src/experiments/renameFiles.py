@@ -1,4 +1,9 @@
 
+# rename files
+# used when changed filename scheme from adjusted_...Clear.png to ..._adjusted_Clear.png, etc
+# 2016-07-26
+
+
 import os
 
 

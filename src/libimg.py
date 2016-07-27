@@ -57,6 +57,27 @@ def adjustImageFile(infile, outfile, debugtitle=None):
     misc.imsave(outfile, im)
 
 
+# def getImageCenter(infile):
+#     ""
+#     pass
+
+
+def translateImageFile(infile, outfile, x, y):
+    "shift an image file by x,y pixels"
+    im = mpim.imread(infile)
+    boundingBox = [x,y,x,y]
+    im = centerImage(im, boundingBox)
+    if config.drawCrosshairs:
+        im[399, 0:799] = 0.25
+        im[0:799, 399] = 0.25
+    # this actually saves bw images with a colormap
+    # mpim.imsave(outfile, im)
+    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
+    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
+    misc.imsave(outfile, im)
+    return boundingBox
+
+
 def centerImageFile(infile, outfile, debugtitle=None):
     "Center the given image file on a target and save it to outfile."
 
@@ -82,7 +103,12 @@ def centerImageFile(infile, outfile, debugtitle=None):
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
     misc.imsave(outfile, im)
 
-    return boundingBox
+    # return boundingBox
+
+    # return center
+    x = int((boundingBox[0] + boundingBox[2])/2)
+    y = int((boundingBox[1] + boundingBox[3])/2)
+    return x, y
 
 
 

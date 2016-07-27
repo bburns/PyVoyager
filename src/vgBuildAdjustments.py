@@ -80,7 +80,8 @@ def buildAdjustments(volnum, overwrite=False):
                     pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
                     infile = imagesSubfolder + pngFilename
                     # outfile = adjustmentsSubfolder + config.adjustmentsPrefix + pngFilename
-                    outfile = adjustmentsSubfolder + pngFilename[:-4] + config.adjustmentsSuffix + '.png'
+                    # outfile = adjustmentsSubfolder + pngFilename[:-4] + config.adjustmentsSuffix + '.png'
+                    outfile = lib.getAdjustedFilepath(volume, fileId, filter)
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
                     # print 'Adjusting %d: %s     \r' %(nfile,infile),

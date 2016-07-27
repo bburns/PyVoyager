@@ -15,6 +15,8 @@ import lib
 
 import vgBuildCenters
 
+import shutil
+
 
 #. handle targetPath
 def buildTargets(volnum, targetPath=None):
@@ -42,35 +44,33 @@ def buildTargets(volnum, targetPath=None):
                 fileId = row[config.filesColFileId]
                 filter = row[config.filesColFilter]
 
-                # get subfolder, eg data/step04_centers/VGISS_5101
-                sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
+                # # get subfolder, eg data/step04_centers/VGISS_5101
+                # # sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
 
-                # get source filename and path
-                # eg C1327321_RAW_Orange_centered.png
-                # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
-                # sourceFilename = config.centersPrefix + fileId + '_' + \
+                # # get source filename and path
+                # # eg C1327321_RAW_Orange_centered.png
+                # # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
+                # # sourceFilename = config.centersPrefix + fileId + '_' + \
 
-                #. what if targetname ~
-                # C1372372_adjusted_Orange.png
-                # C1372362_centered_Orange.png?
-                # C1372372_composite.png
-                # C1372372_mosaic.png
-                # then would all sort together
-                # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
-                sourceFilename = lib.getCenteredFilename(fileId, filter)
-                sourceFilepath = sourceFolder + sourceFilename
+                # #. what if targetname ~
+                # # C1372372_adjusted_Orange.png
+                # # C1372362_centered_Orange.png?
+                # # C1372372_composite.png
+                # # C1372372_mosaic.png
+                # # then would all sort together
+                # # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+                # # sourceFilename = lib.getCenteredFilename(fileId, filter)
+                # # sourceFilepath = sourceFolder + sourceFilename
+                # sourceFilepath = lib.getCenteredFilepath(fileId, filter)
 
-                # if centered file doesn't exist, grab the adjusted image instead
-                if not os.path.isfile(sourceFilepath):
-                    sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                    # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
-                    # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
-                    sourceFilename = lib.getAdjustedFilename(fileId, filter)
-                    sourceFilepath = sourceFolder + sourceFilename
-
-                targetFilename = sourceFilename
-
-                # create subfolder and copy/link image
+                # # if centered file doesn't exist, grab the adjusted image instead
+                # if not os.path.isfile(sourceFilepath):
+                #     # sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+                #     # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
+                #     # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+                #     # sourceFilename = lib.getAdjustedFilename(fileId, filter)
+                #     # sourceFilepath = sourceFolder + sourceFilename
+                #     sourceFilepath = lib.getAdjustedFilepath(fileId, filter)
 
                 # get image properties
                 phase = row[config.filesColPhase]
@@ -85,26 +85,34 @@ def buildTargets(volnum, targetPath=None):
                     if targetInfoRecord['oldTarget']==target:
                         target = targetInfoRecord['newTarget']
 
-                # get subfolder, eg Jupiter/Voyager1/Io/Narrow
-                subfolder = phase +'/' + craft + '/' + target +'/' + instrument + '/'
-
                 # ignore targets like Sky, Dark
                 addImage = True
                 if target in config.targetsIgnore: addImage = False
                 if addImage:
 
-                    # get target file,
-                    # eg data/step07_targets/jupiter/voyager1/io/narrow/centered_....
-                    targetFolder = config.targetsFolder + subfolder
-                    targetFilepath = targetFolder + targetFilename
-
                     # create subfolder
+                    subfolder = phase + '/' + craft + '/' + target +'/' + instrument + '/'
+                    targetFolder = config.targetsFolder + subfolder
                     lib.mkdir_p(targetFolder)
 
-                    # copy file
-                    cmd = 'cp ' + sourceFilepath + ' ' + targetFilepath
-                    print cmd + '      \r',
-                    os.system(cmd)
+                    print 'Copying ' + fileId + '      \r',
+
+                    # copy adjusted file
+                    src = lib.getAdjustedFilepath(volume, fileId, filter)
+                    lib.cp(src, targetFolder)
+
+                    # copy centered file
+                    src = lib.getCenteredFilepath(volume, fileId, filter)
+                    lib.cp(src, targetFolder)
+
+                    # copy composite file
+                    src = lib.getCompositeFilepath(volume, fileId, filter)
+                    lib.cp(src, targetFolder)
+
+                    # # copy mosaic file
+                    # src = lib.getMosaicFilepath(fileId, filter)
+                    # shutil.copy(src, targetFolder)
+
 
         i += 1
 

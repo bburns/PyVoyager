@@ -309,7 +309,8 @@ indexTranslations = {
 # csv file databases
 filesdb = dbFolder + 'files.csv'
 centeringdb = dbFolder + 'centering.csv'
-# centersdb = dbFolder + 'centers.csv'
+centersdb = dbFolder + 'centers.csv'
+newcentersdb = dbFolder + 'centers_new.csv'
 compositesdb = dbFolder + 'composites.csv'
 mosaicsdb = dbFolder + 'mosaics.csv'
 moviesdb = dbFolder + 'movies.csv'
@@ -319,7 +320,7 @@ segmentsdb = dbFolder + 'segments.csv'
 positionsdb = dbFolder + 'positions.csv'
 
 
-# columns in files.csv
+# files.csv columns
 # keep in synch with vgInitFiles.py, etc
 filesColVolume = 0
 filesColFileId = 1
@@ -332,7 +333,14 @@ filesColFilter = 7
 filesColNote = 8
 
 
-# columns in composites.csv
+# centers.csv columns
+centersColVolume = 0
+centersColFileId = 1
+centersColX = 2
+centersColY = 3
+
+
+# composites.csv columns
 # keep in synch with vgBuildComposites.py
 compositesColVolume = 0
 compositesColCompositeId = 1
@@ -341,7 +349,7 @@ compositesColFilter = 3
 compositesColWeight = 4
 
 
-# columns in segments.csv
+# segments.csv columns
 # keep in synch with vgBuildSegments.py
 # segmentId,fileIds,source,nframes,annotation
 segmentsColSegmentId = 0
@@ -351,7 +359,7 @@ segmentsColNFrames = 3
 segmentsColAnnotation = 4
 
 
-# columns in positions.csv
+# positions.csv columns
 # keep in synch with vgBuildCenters.py and vgInitPositions.py
 # fileId,distance(km),imageSize
 positionsColFileId = 0

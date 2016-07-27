@@ -14,6 +14,8 @@ import db
 import vgBuildAdjustments
 
 
+
+
 def buildCenters(volnum, overwrite=False):
     "Build centered images for given volume, if they don't exist yet"
 
@@ -30,15 +32,16 @@ def buildCenters(volnum, overwrite=False):
 
     # for test (vol=0), can overwrite test folder
     if int(volnum)!=0 and os.path.isdir(centersSubfolder) and overwrite==False:
-        # print "Folder exists - skipping vg centers step: " + centersSubfolder
-        pass
+        print "Folder exists - skipping vg centers step: " + centersSubfolder
+        # pass
     else:
         # build the adjusted images for the volume, if not already there
         vgBuildAdjustments.buildAdjustments(volnum)
 
         # make new folder
         lib.rmdir(centersSubfolder)
-        lib.mkdir(centersSubfolder)
+        # lib.mkdir(centersSubfolder)
+        os.mkdir(centersSubfolder)
 
         # get number of files to process
         nfiles = len(os.listdir(adjustmentsSubfolder))
@@ -48,63 +51,59 @@ def buildCenters(volnum, overwrite=False):
         targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
         # iterate through all available images, filter on desired volume
-        f = open(config.filesdb, 'rt')
-        reader = csv.reader(f)
+        csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+
+        # join on centers.csv file
+        csvCenters, fCenters = lib.openCsvReader(config.centersdb)
+        csvCenters.next() # skip header row
+        fileIdCenters = ''
+
+        # open centers_new.csv file to write any new records to
+        csvNewCenters, fNewCenters = lib.openCsvWriter(config.newcentersdb)
 
         # # open positions.csv file for target angular size info
-        # f2 = open(config.positionsdb, 'rt')
-        # reader2 = csv.reader(f2)
-        # row2 = reader2.next() # skip over fieldnames row
+        # csvPositions = lib.openCsvReader(config.positionsdb)
+        # row2 = csvPositions.next() # skip over fieldnames row
         # fileId2 = ''
 
         i = 0
         nfile = 1
         volnum = str(volnum) # eg '5101'
-        for row in reader:
-            if row==[] or row[0][0]=="#": continue # skip blank lines and comments
-            if i==0: fields = row
+        for rowFiles in csvFiles:
+            if rowFiles==[] or rowFiles[0][0]=="#": continue # skip blank lines and comments
+            if i==0: fields = rowFiles
             else:
-                volume = row[config.filesColVolume]
-                if volume==volnum:
-                    fileId = row[config.filesColFileId]
-                    filter = row[config.filesColFilter]
-                    system = row[config.filesColPhase]
-                    craft = row[config.filesColCraft]
-                    target = row[config.filesColTarget]
-                    camera = row[config.filesColInstrument]
+                volume = rowFiles[config.filesColVolume]
+                if volume!=volnum: continue # filter to given volume
 
-                    # relabel target field if necessary - see db/targets.csv for more info
-                    #. make lib fn
-                    targetInfoRecord = targetInfo.get(fileId)
-                    if targetInfoRecord:
-                        # make sure old target matches what we have
-                        if targetInfoRecord['oldTarget']==target:
-                            target = targetInfoRecord['newTarget']
+                # get image properties
+                fileId = rowFiles[config.filesColFileId]
+                filter = rowFiles[config.filesColFilter]
+                system = rowFiles[config.filesColPhase]
+                craft = rowFiles[config.filesColCraft]
+                target = rowFiles[config.filesColTarget]
+                camera = rowFiles[config.filesColInstrument]
 
-                    # skip this image if don't want target centered (eg Sky, Dark)
-                    if target in config.dontCenterTargets:
-                        continue
+                # relabel target field if necessary
+                target = lib.retarget(targetInfo, fileId, target)
 
-                    # mothballing this...
-                    # # skip ahead in positions.csv until reach same record (if there)
-                    # while fileId2 < fileId:
-                    #     try:
-                    #         row2 = reader2.next()
-                    #     except:
-                    #         break # if reached eof just stop
-                    #     fileId2 = row2[config.positionsColFileId]
-                    # # if the same record is there, check if we need to center image
-                    # if fileId2 == fileId:
-                    #     imageSize = float(row2[config.positionsColImageSize])
-                    #     doCenter = (imageSize <= config.centerImageSizeThreshold)
-                    # else:
-                    #     # otherwise don't center it
-                    #     doCenter = False
-                    # print fileId, row2, doCenter
+                # get filenames
+                infile = lib.getAdjustedFilepath(volume, fileId, filter)
+                outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
-                    # get the centering info, if any
-                    # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    # planetCraftTargetCamera = system + craft + target + camera
+                print 'Centering %d/%d: %s     \r' %(nfile,nfiles,infile),
+                nfile += 1
+
+                # check if we have the x,y translation for this image file already
+                rowCenters, fileIdCenters = lib.getJoinRow(csvCenters, config.centersColFileId,
+                                                           fileId, fileIdCenters)
+                if rowCenters:
+                    x = int(rowCenters[config.centersColX])
+                    y = int(rowCenters[config.centersColX])
+                    libimg.translateImageFile(infile, outfile, x, y)
+                else:
+                    # do we actually need to center this image?
+                    # get centering info from centering.csv
                     planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
                     centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
                     if centeringInfoRecord:
@@ -114,34 +113,40 @@ def buildCenters(volnum, overwrite=False):
                     else: # if no info for this target just center it
                         doCenter = True
 
+                    if target in config.dontCenterTargets: # eg Sky, Dark
+                        doCenter = False
+
                     if doCenter:
-                        # center the file
-                        # adjustedFilename = config.adjustmentsPrefix + fileId + '_' + \
-                        # adjustedFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
-                        # adjustedFilename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
-                        adjustedFilename = lib.getAdjustedFilename(fileId, filter)
-                        infile = adjustmentsSubfolder + adjustedFilename
-                        # centeredFilename = config.centersPrefix + adjustedFilename[9:] # remove 'adjusted_'
-                        # centeredFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
-                        # centeredFilename = fileId + config.centersSuffix + '_' + filter + config.extension
-                        centeredFilename = lib.getCenteredFilename(fileId, filter)
-                        outfile = centersSubfolder + centeredFilename
-                        # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                        # print 'Centering %d: %s     \r' %(nfile,infile),
-                        print 'Centering %d/%d: %s     \r' %(nfile,nfiles,infile),
-                        if os.path.isfile(infile):
-                            libimg.centerImageFile(infile, outfile)
-                        else:
-                            print 'Warning: missing image file', infile
+                        x,y = libimg.centerImageFile(infile, outfile)
+                    else:
+                        x,y = 0,0
 
-                    nfile += 1
-
+                    # write x,y to newcenters file
+                    rowNew = [volume, fileId, x, y]
+                    csvNewCenters.writerow(rowNew)
             i += 1
 
-        f.close()
-        # f2.close()
+        fCenters.close()
+        fNewCenters.close()
+        fFiles.close()
+
+        # now append newcenters records to centers file
+        if os.path.isfile(config.newcentersdb):
+            lib.concatFiles(config.centersdb, config.newcentersdb)
+            lib.rm(config.newcentersdb)
 
         print
+
+                    # mothballing this...
+                    # rowPositions, fileIdPositions = lib.getJoinRow(csvPositions,
+                    #                                            config.positionsColFileId,
+                    #                                            fileId, fileIdPositions)
+                    # if rowPositions:
+                    #     imageSize = float(rowPositions[config.positionsColImageSize])
+                    #     doCenter = (imageSize <= config.centerImageSizeThreshold)
+                    # else:
+                    #     doCenter = False
+
 
 if __name__ == '__main__':
     os.chdir('..')

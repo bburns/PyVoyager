@@ -9,6 +9,7 @@ from setuptools import archive_util # for unpack_archive
 import errno
 import re # for findall
 import csv
+import shutil
 
 # for makeTitlePage
 import PIL
@@ -17,12 +18,74 @@ from PIL import Image
 from PIL import ImageDraw
 
 
-#.. should pass any constants into functions!
+#. should pass any constants into functions (ideally)
 import config
 
 
 
+def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
+    "look for a matching join value in the given csv filereader and return the row, or None"
+    # this assumes we're walking through the join file in one direction
+    # so must be sorted in same way other file is
+    while lastJoinValue < joinValue:
+        try:
+            row = csvReader.next()
+        except:
+            row = None
+            break
+        lastJoinValue = row[joinColumn]
+    return row, lastJoinValue
 
+
+def concatFiles(filename1, filename2):
+    "concatenate contents of filename2 onto filename1"
+    f1 = open(filename1, 'wb')
+    f2 = open(filename2, 'rt')
+    for line in f2:
+        f1.write(line)
+    f2.close()
+    f1.close()
+
+
+def retarget(targetInfo, fileId, target):
+    "get translated target for the given image file and target"
+    # targetInfo is a db read from retargeting.csv using the readCsv fn
+    # see db/retargeting.csv for more info
+    targetInfoRecord = targetInfo.get(fileId)
+    if targetInfoRecord:
+        # make sure old target matches what we have
+        if targetInfoRecord['oldTarget']==target:
+            target = targetInfoRecord['newTarget']
+        else:
+            print 'Warning: retargeting.csv record discrepancy for ' + fileId
+    return target
+
+
+def openCsvWriter(filename):
+    "open a csv writer on the given filename"
+    # use like 'writer.writerow(row)'
+    f = open(filename, 'wb')
+    writer = csv.writer(f)
+    return writer, f
+
+
+def openCsvReader(filename):
+    "open a csv reader on the given filename"
+    # use like 'for row in reader:'
+    f = open(filename, 'rt')
+    reader = csv.reader(f)
+    return reader, f
+
+
+def cp(src, dst):
+    "copy a file to another directory, ignoring any errors"
+    try:
+        shutil.copy(src, dst)
+    except:
+        pass
+
+
+#. might only need the Filepath variants
 def getAdjustedFilename(fileId, filter):
     "get the filename for the adjusted image specified"
     filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
@@ -35,9 +98,30 @@ def getCenteredFilename(fileId, filter):
 
 def getCompositeFilename(fileId, filter):
     "get the filename for the composite image specified"
-    filename = fileId + config.compositeSuffix + config.extension
+    filename = fileId + config.compositesSuffix + config.extension
     return filename
 
+
+def getAdjustedFilepath(volume, fileId, filter):
+    "get the filepath for the adjusted image specified"
+    folder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+    filepath = folder + filetitle
+    return filepath
+
+def getCenteredFilepath(volume, fileId, filter):
+    "get the filepath for the centered image specified"
+    folder = config.centersFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
+    filepath = folder + filetitle
+    return filepath
+
+def getCompositeFilepath(volume, fileId, filter):
+    "get the filepath for the composite image specified"
+    folder = config.compositesFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.compositesSuffix + config.extension
+    filepath = folder + filetitle
+    return filepath
 
 
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):

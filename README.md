@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.37 inprogess
+Version 0.40 inprogess
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio automatically, with each planet and target having a separate segment. Ideally the movie would include some mosaics generated with hand-annotated data, or else separately hand-assembled mosaics of better quality.
 
@@ -269,20 +269,23 @@ Next steps
 * Improve stabilization/centering routines - handle off-screen centers and crescents, use feature detection and alignment to add more stabilization
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
 * Add audio
-* Host PNG images somewhere for download to make cross-platform - put on an Amazon s3 server
+* Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
 * Host mp4s on a server for better quality (YouTube downgrades some to 360p)
 * Build mosaics with hand-annotated information, include in movies
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 * Option to make b&w movies using one filter, to reduce flickering
 
 
-<!-- Version 0.4 (2016-07) -->
+<!-- Later -->
 <!-- ---------------------------------------- -->
 <!-- - Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views -->
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
-<!-- - Improve centering stabilization -->
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
+
+Version 0.40 (2016-07)
+----------------------------------------
+- Add `vg stabilize` command to align centered images more accurately - updates centers.csv and centered images
 
 Version 0.37 (2016-07-27)
 ----------------------------------------

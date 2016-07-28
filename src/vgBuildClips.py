@@ -160,7 +160,8 @@ def stageFiles(bwOrColor, targetPathParts):
                     # need to get out of the target dir
                     imagePathRelative = '../../../../../../../../' + imageFilepath
                     lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
-                    print "Frame %d: %s              \r" % (nfile, imageFilepath),
+                    # print "Frame %d: %s              \r" % (nfile, imageFilepath),
+                    print "Frame: %s              \r" % (nfile, imageFilepath),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage

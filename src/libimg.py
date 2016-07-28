@@ -20,16 +20,15 @@ import config
 
 
 
-def centerAndStabilizeImageFile(infile, outfile, fixedfile):
+def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
     "center an image file on target, then stabilize it relative to the given fixed file"
-    x,y = centerImageFile(infile, outfile)
+    #. this logic is pretty complicated - simplify
+    x,y,radius = centerImageFile(infile, outfile)
     stabilizationOk = True
-    # if given a fixedfile also, try to stabilize against that
-    if fixedfile:
+    # if given a fixedfile also, and radius not too different, try to stabilize against that
+    if fixedfile and abs(radius-lastRadius)<20:
         im1 = cv2.imread(fixedfile)
         im2 = cv2.imread(outfile)
-        # show(im1)
-        # show(im2)
         im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
         im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
         sz = im1.shape
@@ -39,33 +38,69 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile):
         termination_eps = 1e-10
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                     number_of_iterations,  termination_eps)
-        # Run the ECC algorithm. The results are stored in warp_matrix.
-        # throws an error if doesn't converge
+        # run the ECC algorithm - the results are stored in warp_matrix
+        # throws an error if doesn't converge, so catch it
         try:
             cc, warp_matrix = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
                                                     warp_mode, criteria)
         except:
             # if can't find solution, images aren't close enough in similarity
-            print 'fail!'
             stabilizationOk = False
         else:
-            print warp_matrix
+            # print warp_matrix
             # [[ 1.          0.          1.37005 ]
             #  [ 0.          1.          0.485788]]
-            deltax = warp_matrix[0][2]
-            deltay = warp_matrix[1][2]
-            eps = 18
+            # note: x and y are reversed!
+            deltay = warp_matrix[0][2]
+            deltax = warp_matrix[1][2]
+            eps = 18 #. another parameter
             if abs(deltax) > eps or abs(deltay) > eps:
                 stabilizationOk = False
             else:
                 im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
                                              flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
                 cv2.imwrite(outfile, im2_aligned)
-                #. not sure about this yet
                 x += int(deltax)
                 y += int(deltay)
-    return x,y,stabilizationOk
+    return x,y,radius,stabilizationOk
 
+
+
+def centerImageFile(infile, outfile, debugtitle=None):
+    "Center the given image file on a target and save it to outfile."
+    # returns x,y,radius
+
+    im = mpim.imread(infile)
+
+    boundingBox = [0,0,799,799]
+
+    # find the bounding box of biggest object
+    # boundingBox = findBoundingBox(im)
+    boundingBox = findBoundingBox(im, debugtitle)
+
+    # center the image on the target
+    im = centerImage(im, boundingBox)
+
+    if config.drawCrosshairs:
+        im[399, 0:799] = 0.25
+        im[0:799, 399] = 0.25
+
+    # this actually saves bw images with a colormap
+    # mpim.imsave(outfile, im)
+
+    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
+    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
+    misc.imsave(outfile, im)
+
+    # return boundingBox
+
+    # return center
+    x = int((boundingBox[0] + boundingBox[2])/2)
+    y = int((boundingBox[1] + boundingBox[3])/2)
+    # return x, y
+    #. this is cheating, but it works so far
+    radius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
+    return x, y, radius
 
 
 def img2png(srcdir, filespec, destdir, img2pngOptions):
@@ -118,39 +153,6 @@ def translateImageFile(infile, outfile, x, y):
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
     misc.imsave(outfile, im)
-
-
-def centerImageFile(infile, outfile, debugtitle=None):
-    "Center the given image file on a target and save it to outfile."
-
-    im = mpim.imread(infile)
-
-    boundingBox = [0,0,799,799]
-
-    # find the bounding box of biggest object
-    # boundingBox = findBoundingBox(im)
-    boundingBox = findBoundingBox(im, debugtitle)
-
-    # center the image on the target
-    im = centerImage(im, boundingBox)
-
-    if config.drawCrosshairs:
-        im[399, 0:799] = 0.25
-        im[0:799, 399] = 0.25
-
-    # this actually saves bw images with a colormap
-    # mpim.imsave(outfile, im)
-
-    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
-    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
-    misc.imsave(outfile, im)
-
-    # return boundingBox
-
-    # return center
-    x = int((boundingBox[0] + boundingBox[2])/2)
-    y = int((boundingBox[1] + boundingBox[3])/2)
-    return x, y
 
 
 

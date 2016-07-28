@@ -119,9 +119,8 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                         doCenter = False
 
                     if doCenter:
-                        print
-                        print 'currentimage',volume,fileId,filter,targetKey
-                        # print lastImageInTargetSequence
+                        # print
+                        # print 'currentimage',volume,fileId,filter,targetKey
                         # x,y = libimg.centerImageFile(infile, outfile)
                         # for this target sequence (eg ariel flyby), what was the last image? 
                         # use that as a fixed image against which we try to align the current image
@@ -130,19 +129,19 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                             lastVolume = volFileFilter[0]
                             lastFileId = volFileFilter[1]
                             lastFilter = volFileFilter[2]
-                            # lastRadius = volFileFilter[3]
+                            lastRadius = volFileFilter[3]
                             fixedfile = lib.getCenteredFilepath(lastVolume, lastFileId, lastFilter)
-                            print 'centering against', fixedfile
+                            # print 'centering against', fixedfile
                         else:
                             fixedfile = None
+                            lastRadius = 0
                         # center the image using blob and hough, then align it to the fixed image
-                        x,y,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile)
-                        # x,y,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius)
-                        print stabilizationOk
+                        # x,y,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile)
+                        x,y,radius,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius)
                         # if alignment was successful, remember this image
                         if stabilizationOk:
-                            lastImageInTargetSequence[targetKey] = [volume, fileId, filter]
-                            # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
+                            # lastImageInTargetSequence[targetKey] = [volume, fileId, filter]
+                            lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
                         # else:
                             # stop
                     else:

@@ -20,6 +20,46 @@ import config
 
 
 
+def centerAndStabilizeImageFile(infile, outfile, fixedfile):
+    "center an image file on target, then stabilize it relative to the given fixed file"
+    x,y = centerImageFile(infile, outfile)
+
+    if fixedfile:
+        im1 = cv2.imread(fixedfile)
+        im2 = cv2.imread(outfile)
+        im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+        im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+        sz = im1.shape
+        warp_mode = cv2.MOTION_TRANSLATION
+        warp_matrix = np.eye(2, 3, dtype=np.float32)
+        number_of_iterations = 5000
+        termination_eps = 1e-10
+        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                    number_of_iterations,  termination_eps)
+        # Run the ECC algorithm. The results are stored in warp_matrix.
+        try:
+            (cc, warp_matrix) = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
+                                                      warp_mode, criteria)
+        except:
+            # if can't find solution, images aren't close enough in similarity
+            print 'fail!'
+            updateLastImage = False
+        else:
+            # print warp_matrix
+            # ? are these fractions of 800? (* 800 0.0037005) 2.96, (* 800 0.00485788) 3.88 maybe so
+            # [[ 1.          0.          0.0037005 ]
+            #  [ 0.          1.          0.00485788]]
+            im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
+                                         flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+            cv2.imwrite(outfile, im2_aligned)
+            deltax = warp_matrix[0][2] * sz[0]
+            deltay = warp_matrix[1][2] * sz[1]
+            x += deltax
+            y += deltay
+            updateLastImage = True
+    return x,y,updateLastImage
+
+
 
 def img2png(srcdir, filespec, destdir, img2pngOptions):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
@@ -275,11 +315,13 @@ def findCircle(im, debugtitle=None):
     # Hough detection parameters
 
     # only available method now
-    method = cv2.cv.CV_HOUGH_GRADIENT
+    # method = cv2.cv.CV_HOUGH_GRADIENT
+    method = cv2.HOUGH_GRADIENT # if get error value not found, upgrade to cv2 v3
 
     # size of parameter space relative to input image - should affect precision of result
-    dp = 1
+    # dp = 1
     # dp = 2 # didn't seem to help with jitters
+    dp = config.houghParameterSpace
 
     # distance between circles
     # minDist = 1 # way too many found

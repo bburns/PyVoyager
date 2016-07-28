@@ -128,6 +128,9 @@ cannyUpperThreshold = 60
 # no dice - the canny edges start proliferating, and still the jupiter edge cases aren't picked up
 
 # hough circle detector parameters
+houghParameterSpace = 1
+# houghParameterSpace = 4 # didn't help with jitters
+# houghParameterSpace = 10 # actually made jittering worse
 # houghAccumulatorThreshold = 1000
 # houghAccumulatorThreshold = 250 # through v0.36
 houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND regular jupiter

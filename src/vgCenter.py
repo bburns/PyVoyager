@@ -61,6 +61,9 @@ def vgCenter(volnum, overwrite=False, directCall=True):
         # open centers_new.csv file to write any new records to
         csvNewCenters, fNewCenters = lib.openCsvWriter(config.newcentersdb)
 
+        # dictionary to keep track of last image file in target sequence (eg for Ariel flyby)
+        lastImageInTargetSequence = {}
+        
         # # open positions.csv file for target angular size info
         # csvPositions = lib.openCsvReader(config.positionsdb)
         # row2 = csvPositions.next() # skip over fieldnames row
@@ -104,8 +107,8 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                 else:
                     # do we actually need to center this image?
                     # get centering info from centering.csv
-                    planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
-                    centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                    targetKey = system + '-' + craft + '-' + target + '-' + camera
+                    centeringInfoRecord = centeringInfo.get(targetKey)
                     if centeringInfoRecord:
                         centeringOff = centeringInfoRecord['centeringOff']
                         centeringOn = centeringInfoRecord['centeringOn']
@@ -117,7 +120,23 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                         doCenter = False
 
                     if doCenter:
-                        x,y = libimg.centerImageFile(infile, outfile)
+                        # x,y = libimg.centerImageFile(infile, outfile)
+                        # for this target sequence (eg ariel flyby), what was the last image? 
+                        # use that as a fixed image against which we try to align the current image.
+                        volFileFilter = lastImageInTargetSequence.get(targetKey)
+                        if volFileFilter:
+                            lastVolume = volFileFilter[0]
+                            lastFileId = volFileFilter[1]
+                            lastFilter = volFileFilter[2]
+                            fixedfile = lib.getAdjustedFilepath(lastVolume, lastFileId, lastFilter)
+                        else:
+                            fixedfile = None
+                        # center the image using blob and hough, then align it to the fixed image
+                        x,y,updateLastImage = libimg.centerAndStabilizeImageFile(infile, outfile,
+                                                                                 fixedfile)
+                        # if alignment was successful, remember this image
+                        if updateLastImage:
+                            lastImageInTargetSequence[targetKey] = [volume, fileId, filter]
                     else:
                         x,y = 399,399
 

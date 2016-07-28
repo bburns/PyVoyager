@@ -210,7 +210,7 @@ There are several cases that need to be handled:
 6. targets larger than the field of view
 7. edge defects which the blob detector picks up need to be ignored
 
-The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 15x15 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' targets and targets with gaps.
+The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 15x15 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' circular targets and targets with gaps.
 
 But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment.
 
@@ -221,7 +221,7 @@ Targets larger than the field of view must be handled specially, as the blob and
     Neptune-Voyager2-Neptune-Wide,C1137509,C1140815
     Neptune-Voyager2-Triton-Narrow,C1139255,C1140614
 
-The alternative would be to base this more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for a gradual slow-down and speed up around closest approach.
+The alternative would be to base this more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for a gradual slow-down around closest approach.
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
 

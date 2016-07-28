@@ -23,10 +23,13 @@ import config
 def centerAndStabilizeImageFile(infile, outfile, fixedfile):
     "center an image file on target, then stabilize it relative to the given fixed file"
     x,y = centerImageFile(infile, outfile)
-
+    stabilizationOk = True
+    # if given a fixedfile also, try to stabilize against that
     if fixedfile:
         im1 = cv2.imread(fixedfile)
         im2 = cv2.imread(outfile)
+        # show(im1)
+        # show(im2)
         im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
         im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
         sz = im1.shape
@@ -37,27 +40,31 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile):
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                     number_of_iterations,  termination_eps)
         # Run the ECC algorithm. The results are stored in warp_matrix.
+        # throws an error if doesn't converge
         try:
-            (cc, warp_matrix) = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
-                                                      warp_mode, criteria)
+            cc, warp_matrix = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
+                                                    warp_mode, criteria)
         except:
             # if can't find solution, images aren't close enough in similarity
             print 'fail!'
-            updateLastImage = False
+            stabilizationOk = False
         else:
-            # print warp_matrix
-            # ? are these fractions of 800? (* 800 0.0037005) 2.96, (* 800 0.00485788) 3.88 maybe so
-            # [[ 1.          0.          0.0037005 ]
-            #  [ 0.          1.          0.00485788]]
-            im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
-                                         flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
-            cv2.imwrite(outfile, im2_aligned)
-            deltax = warp_matrix[0][2] * sz[0]
-            deltay = warp_matrix[1][2] * sz[1]
-            x += deltax
-            y += deltay
-            updateLastImage = True
-    return x,y,updateLastImage
+            print warp_matrix
+            # [[ 1.          0.          1.37005 ]
+            #  [ 0.          1.          0.485788]]
+            deltax = warp_matrix[0][2]
+            deltay = warp_matrix[1][2]
+            eps = 18
+            if abs(deltax) > eps or abs(deltay) > eps:
+                stabilizationOk = False
+            else:
+                im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
+                                             flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+                cv2.imwrite(outfile, im2_aligned)
+                #. not sure about this yet
+                x += int(deltax)
+                y += int(deltay)
+    return x,y,stabilizationOk
 
 
 

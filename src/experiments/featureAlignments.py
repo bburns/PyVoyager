@@ -19,20 +19,28 @@ import libimg
 folder = 'alignments/'
 
 files = [
-    'C1467552_centered_Uv',
-    'C1467554_centered_Blue',
-    'C1467556_centered_Green',
-    'C1467558_centered_Orange',
-    'C1467821_centered_Uv',
-    'C1467823_centered_Blue',
-    'C1467825_centered_Green',
+    # these are the first ones to go wrong in 5101
+    # works fine
+    'C1462321_centered_Clear',
+    'C1462323_centered_Clear',
 
-    'C2447705_centered_Green',
-    'C2447711_centered_Ch4_U',
-    'C2448604_centered_Violet',
-    'C2448610_centered_Blue',
-    'C2448702_centered_Violet',
-    'C2448726_centered_Green',
+    # 'C1462341_centered_Violet',
+    # 'C1462343_centered_Blue',
+
+    # 'C1467552_centered_Uv',
+    # 'C1467554_centered_Blue',
+    # 'C1467556_centered_Green',
+    # 'C1467558_centered_Orange',
+    # 'C1467821_centered_Uv',
+    # 'C1467823_centered_Blue',
+    # 'C1467825_centered_Green',
+
+    # 'C2447705_centered_Green',
+    # 'C2447711_centered_Ch4_U',
+    # 'C2448604_centered_Violet',
+    # 'C2448610_centered_Blue',
+    # 'C2448702_centered_Violet',
+    # 'C2448726_centered_Green',
     ]
 
 

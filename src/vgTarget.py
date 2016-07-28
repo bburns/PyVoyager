@@ -95,7 +95,7 @@ def buildTargets(volnum, targetPath=None):
                     targetFolder = config.targetsFolder + subfolder
                     lib.mkdir_p(targetFolder)
 
-                    print 'Copying ' + fileId + '      \r',
+                    print 'Volume %s copying %s       \r' % (volume, fileId),
 
                     # copy adjusted file
                     src = lib.getAdjustedFilepath(volume, fileId, filter)

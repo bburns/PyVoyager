@@ -23,10 +23,14 @@ import config
 def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
     "center an image file on target, then stabilize it relative to the given fixed file"
     #. this logic is pretty complicated - simplify
+    #. a fn should do ONE thing - this does two, complicatedly
+    # eg in vgCenter could call centerImageFile to get x,y,radius
+    # then call stabilizeImageFile
     x,y,radius = centerImageFile(infile, outfile)
     stabilizationOk = True
-    # if given a fixedfile also, and radius not too different, try to stabilize against that
-    if fixedfile and abs(radius-lastRadius)<20:
+    # if given a fixedfile, and radius not too different, try to stabilize against that
+    #. this returns True if radius too different - ok?
+    if fixedfile and abs(radius-lastRadius)<config.stabilizeMaxRadiusDifference:
         im1 = cv2.imread(fixedfile)
         im2 = cv2.imread(outfile)
         im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
@@ -34,8 +38,8 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
         sz = im1.shape
         warp_mode = cv2.MOTION_TRANSLATION
         warp_matrix = np.eye(2, 3, dtype=np.float32)
-        number_of_iterations = 5000
-        termination_eps = 1e-10
+        number_of_iterations = config.stabilizeECCIterations
+        termination_eps = config.stabilizeECCTerminationEpsilon
         criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
                     number_of_iterations,  termination_eps)
         # run the ECC algorithm - the results are stored in warp_matrix
@@ -53,8 +57,10 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
             # note: x and y are reversed!
             deltay = warp_matrix[0][2]
             deltax = warp_matrix[1][2]
-            eps = 18 #. another parameter
-            if abs(deltax) > eps or abs(deltay) > eps:
+            # if image shifted too much, assume something went wrong
+            # this helped before implemented the maxradius check - might not be needed anymore?
+            if abs(deltax) > config.stabilizeMaxDeltaPosition or \
+               abs(deltay) > config.stabilizeMaxDeltaPosition:
                 stabilizationOk = False
             else:
                 im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),

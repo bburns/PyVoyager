@@ -26,7 +26,7 @@ import config
 def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
     "look for a matching join value in the given csv filereader and return the row, or None"
     # this assumes we're walking through the join file in one direction
-    # so must be sorted in same way other file is
+    # so must be sorted on the join column
     row = None
     while lastJoinValue < joinValue:
         try:

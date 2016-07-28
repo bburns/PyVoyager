@@ -93,7 +93,7 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                 infile = lib.getAdjustedFilepath(volume, fileId, filter)
                 outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
-                print 'Centering %d/%d: %s     \r' %(nfile,nfiles,infile),
+                print 'Volume %s centering %d/%d: %s     \r' %(volume,nfile,nfiles,infile),
                 nfile += 1
 
                 # check if we have the x,y translation for this image file already
@@ -147,7 +147,6 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                     else:
                         x,y = 399,399
 
-                    print
                     # write x,y to newcenters file
                     rowNew = [volume, fileId, x, y]
                     csvNewCenters.writerow(rowNew)

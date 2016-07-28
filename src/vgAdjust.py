@@ -85,7 +85,7 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
                     # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
                     # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
                     # print 'Adjusting %d: %s     \r' %(nfile,infile),
-                    print 'Adjusting %d/%d: %s     \r' %(nfile,nfiles,infile),
+                    print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
                     if os.path.isfile(infile):
                         libimg.adjustImageFile(infile, outfile)
                     else:

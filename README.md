@@ -266,7 +266,7 @@ There's a Trello board to track issues and progress here - https://trello.com/b/
 Next steps
 ----------------------------------------
 
-* Improve stabilization/centering routines - handle off-screen centers and crescents, use feature detection and alignment to add more stabilization
+* Improve stabilization/centering routines - handle off-screen centers and crescents
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
 * Add audio
 * Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
@@ -285,7 +285,7 @@ Next steps
 
 Version 0.40 (2016-07)
 ----------------------------------------
-- Add `vg stabilize` command to align centered images more accurately - updates centers.csv and centered images
+- Add ECC (Enhanced Correlation Coefficient) stabilization [13] to `vg center` step to align centered images more accurately
 
 Version 0.37 (2016-07-27)
 ----------------------------------------
@@ -380,4 +380,5 @@ This software is released under the MIT license - see LICENSE.md.
 [10]: https://pypi.python.org/pypi/tabulate
 [11]: https://github.com/AndrewAnnex/SpiceyPy
 [12]: http://naif.jpl.nasa.gov/naif/
+[13]: https://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
 

@@ -2,6 +2,8 @@
 # vg stabilize command
 # stabilize centered images and update centers.csv
 
+#. obsolete
+
 
 import os
 import csv

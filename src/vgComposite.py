@@ -72,8 +72,8 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
                     else:
                         # we're seeing a new compositeId, so process all the gathered channels
                         if len(channelRows)>0:
-                            print 'Compositing %d: VGISS_%s/%s     \r' \
-                                % (nfile,startVol,startId),
+                            print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
+                                % (vol,nfile,startVol,startId),
                             processChannels(channelRows)
                         startId = compositeId
                         startVol = vol

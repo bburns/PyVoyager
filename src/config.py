@@ -94,9 +94,10 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 # blobThreshold = 0.05
 # blobThreshold = 0.025
 # blobThreshold = 0.012 # works for most, but small triton, which has light corners
-# blobThreshold = 0.016 # to v0.35 works for most neptune system images
-# blobThreshold = 0.015 # v0.36 works for most neptune system images
+# blobThreshold = 0.016 # to v0.35 works for most neptune system images (* 256 0.016) 4.096
+# blobThreshold = 0.015 # v0.36 works for most neptune system images (* 256 0.015) 3.84
 # blobThreshold = 0.02
+# level is from 0-255 with cv2 images
 # blobThreshold = 2
 # blobThreshold = 3
 blobThreshold = 4
@@ -139,6 +140,21 @@ houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND reg
 houghMinRadius = 1
 # houghMaxRadius = 10 # through v0.36
 houghMaxRadius = 2 # this didn't seem to matter - still got huge circle back
+
+
+# Stabilization
+
+# if radius of target in image is too different from previous frame, don't try to stabilize the image
+stabilizeMaxRadiusDifference = 20
+
+# ECC parameters
+#. try reducing these to speed it up - images shouldn't have shifted very much.
+# do some tests to determine good values
+stabilizeECCIterations = 5000
+stabilizeECCTerminationEpsilon = 1e-10
+
+# if image needs to shift too much, assume something is wrong - don't shift it
+stabilizeMaxDeltaPosition = 18
 
 
 

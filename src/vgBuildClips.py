@@ -57,10 +57,9 @@ def stageFiles(bwOrColor, targetPathParts):
             filter = row[config.filesColFilter]
 
             # show progress
-            if volume!=lastVolume:
+            # if volume!=lastVolume:
                 # print 'Volume %s    \r' % volume,
-                # print
-                lastVolume = volume
+                # lastVolume = volume
 
             system = row[config.filesColPhase]
             craft = row[config.filesColCraft]
@@ -134,14 +133,13 @@ def stageFiles(bwOrColor, targetPathParts):
                     nfile = nfilesInTargetDir.get(targetKey)
                     if not nfile: nfile = 0
 
-                    # if we haven't seen this subfolder before, add the titlepage image a few times.
-                    # titlepages are created in the previous step, vgBuildTitles.
+                    # if we haven't seen this subfolder before, add the titlepage image a few times
+                    # titlepages are created in the previous step, vgBuildTitles
                     if config.includeTitles and nfile==0:
                         titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
                                              config.extension
                         # need to get out of the target dir - we're always this deep
                         titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
-                        # ntitleCopies = config.clipFramesForTitles
                         ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
                         lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
                                               nfile, ntitleCopies)

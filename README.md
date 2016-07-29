@@ -27,29 +27,26 @@ https://www.youtube.com/watch?v=kcJB9rNzCH4
 Voyager 2 Triton flyby v0.32
 
 https://www.youtube.com/watch?v=VF3UCo2P-4Y  
-Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune and the winds on the planet blowing in the opposite direction
+Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune in a retrograde direction
 
 https://www.youtube.com/watch?v=c8O2BKqM0Qc  
 Voyager 2 Neptune flyby color v0.2 - automatically colorized version
 
 https://www.youtube.com/watch?v=o4zh8C-ma_A  
-Voyager 1 Jupiter approach v0.1 - (raw images with reseau marks)
+Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks)
 
 
 What you can do
 ----------------------------------------
 
-Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centers.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command.
+Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required - 
 
-Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`. 
-
-Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file.
-
-Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
-
-Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
-
-And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file. 
+- Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centers.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command.
+- Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`. 
+- Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file.
+- Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
+- Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
+- And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file. 
 
 
 Pipeline

@@ -186,6 +186,7 @@ if cmd=="help":
     print "  vg download <volnums>             - download volume(s)"
     print "  vg unzip <volnums>                - unzip volume(s)"
     print "  vg convert <volnums>              - convert IMGs to PNGs"
+    print "  vg adjust <volnums>               - adjust images (rotate and enhance)"
     print "  vg center <volnums>               - center images"
     print "  vg composite <volnums>            - create color images"
     # print "  vg mosaic <volnums>               - create mosaic images"

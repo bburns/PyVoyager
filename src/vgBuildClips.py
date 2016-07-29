@@ -58,7 +58,8 @@ def stageFiles(bwOrColor, targetPathParts):
 
             # show progress
             if volume!=lastVolume:
-                print 'Volume %s    \r' % volume,
+                # print 'Volume %s    \r' % volume,
+                # print
                 lastVolume = volume
 
             system = row[config.filesColPhase]
@@ -84,7 +85,7 @@ def stageFiles(bwOrColor, targetPathParts):
             if addImage:
 
                 # build a key
-                planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
+                targetKey = system + '-' + craft + '-' + target + '-' + camera
 
                 # how many copies of this file should we stage?
                 framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
@@ -97,12 +98,12 @@ def stageFiles(bwOrColor, targetPathParts):
                     ncopiesPerImageMemory[key] = ncopiesPerImage
                 else:
                     # lookup where we left off for this target, or 1x speed if not seen before
-                    ncopiesPerImage = ncopiesPerImageMemory.get(planetCraftTargetCamera) or 1
+                    ncopiesPerImage = ncopiesPerImageMemory.get(targetKey) or 1
 
                 # get image source path
                 # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 #. make this a fn - duplicated elsewhere
-                centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
+                centeringInfoRecord = centeringInfo.get(targetKey)
                 if centeringInfoRecord:
                     centeringOff = centeringInfoRecord['centeringOff']
                     centeringOn = centeringInfoRecord['centeringOn']
@@ -113,22 +114,13 @@ def stageFiles(bwOrColor, targetPathParts):
                 # if centering for this image is turned off, let's assume for now that
                 # that means we don't want the color image, since it'd be misaligned anyway.
                 if doCenter==False:
-                    # imageSubfolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                    # imageFilename = lib.getAdjustedFilename(fileId, filter)
                     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
                 elif bwOrColor=='bw':
-                    # imageSubfolder = config.centersFolder + 'VGISS_' + volume + '/'
-                    # imageFilename = lib.getCenteredFilename(fileId, filter)
                     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
                 else:
-                    # imageSubfolder = config.compositesFolder + 'VGISS_' + volume + '/'
-                    # imageFilename = lib.getCompositeFilename(fileId, filter)
                     imageFilepath = lib.getCompositeFilepath(volume, fileId, filter)
-                # pngPath = pngSubfolder + pngFilename
-                # imagePath = imageSubfolder + imageFilename
 
                 # if image file exists, create subfolder and link image
-                # if os.path.isfile(pngPath):
                 if os.path.isfile(imageFilepath):
 
                     # get staging subfolder and make sure it exists
@@ -139,16 +131,18 @@ def stageFiles(bwOrColor, targetPathParts):
                     lib.mkdir_p(targetFolder)
 
                     # get current file number in that folder, or start at 0
-                    nfile = nfilesInTargetDir.get(planetCraftTargetCamera)
+                    nfile = nfilesInTargetDir.get(targetKey)
                     if not nfile: nfile = 0
 
                     # if we haven't seen this subfolder before, add the titlepage image a few times.
                     # titlepages are created in the previous step, vgBuildTitles.
                     if config.includeTitles and nfile==0:
-                        titleImageFilepath = config.titlesFolder + subfolder + 'title.png'
+                        titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
+                                             config.extension
                         # need to get out of the target dir - we're always this deep
                         titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
-                        ntitleCopies = config.clipFramesForTitles
+                        # ntitleCopies = config.clipFramesForTitles
+                        ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
                         lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
                                               nfile, ntitleCopies)
                         nfile += ntitleCopies
@@ -161,11 +155,11 @@ def stageFiles(bwOrColor, targetPathParts):
                     imagePathRelative = '../../../../../../../../' + imageFilepath
                     lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
                     # print "Frame %d: %s              \r" % (nfile, imageFilepath),
-                    print "Frame: %s              \r" % (nfile, imageFilepath),
+                    print "Volume %s frame: %s              \r" % (volume, imageFilepath),
 
                     # increment the file number for the target folder
                     nfile += ncopiesPerImage
-                    nfilesInTargetDir[planetCraftTargetCamera] = nfile
+                    nfilesInTargetDir[targetKey] = nfile
 
         i += 1
 

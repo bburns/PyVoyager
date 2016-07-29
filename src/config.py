@@ -198,9 +198,11 @@ targetsIgnore = dontCenterTargets
 # Titles
 # ----------------------------------------
 
-# includeTitles = True
-includeTitles = False
+includeTitles = True
+# includeTitles = False
 
+# titleSecondsToShow = 5
+titleSecondsToShow = 4
 
 titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
@@ -240,9 +242,6 @@ videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 
 # Clips
 # ----------------------------------------
-
-# number of frames for title page
-clipFramesForTitles = videoFrameRate * 5 #. not working right - should be 5 secs according to this
 
 # don't want to make clips for these targets
 clipsIgnoreTargets = dontCenterTargets

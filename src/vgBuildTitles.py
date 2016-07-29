@@ -66,14 +66,17 @@ def buildTitles(targetPath=None):
                     print subfolder + '                  \r',
 
                     # make title image
-                    title = target + " Flyby" # eg Triton Flyby
+                    # title = target + " Flyby" # eg Triton Flyby
+                    title = target # eg Triton
                     subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
                     subtitle2 = system + " System" # eg Neptune System
                     subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
                     img = lib.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
 
                     # save it
-                    titlefilepath = targetfolder + 'title.png'
+                    # note: file type must match that of other frames in movie,
+                    # so use config.extension here
+                    titlefilepath = targetfolder + 'title' + config.extension
                     img.save(titlefilepath)
 
                     # remember this targetpath

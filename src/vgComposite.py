@@ -80,8 +80,10 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
                         channelRows = [row]
                         nfile += 1
             i += 1
+        # do the last leftover group
         if len(channelRows)>0:
-            print 'Compositing %d: VGISS_%s/%s     \r' % (nfile,startVol,startId),
+            print 'Volume %s compositing %d: VGISS_%s/%s     \r' % \
+                  (buildVolnum,nfile,startVol,startId),
             processChannels(channelRows)
         print
 

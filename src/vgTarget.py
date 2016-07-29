@@ -19,7 +19,7 @@ import vgCenter
 
 
 #. handle targetPath
-def buildTargets(volnum, targetPath=None):
+def vgTarget(volnum, targetPath=None):
     "Copy images in given volume to target subfolders"
 
     # iterate down files.csv

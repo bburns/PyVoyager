@@ -68,7 +68,6 @@ def initComposites():
 
     # open the composites.csv file
     fileout = open(config.compositesdb, 'wb')
-    # fields = 'volume,compositeId,centerId,filter'.split(',') # keep in synch with row, below
     fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
     writer.writerow(fields)
@@ -100,7 +99,7 @@ def initComposites():
             if debug: print 'row',row[:-1] # skip note
 
             # get correct circular buffer
-            bufferKey = target+instrument # eg TritonNarrow
+            bufferKey = target + instrument # eg TritonNarrow
             if debug: print 'bufferkey', bufferKey
             buffer = circbuffers.get(bufferKey)
             if buffer==None:

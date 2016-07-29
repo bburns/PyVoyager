@@ -13,7 +13,6 @@
 #. should be possible to ditch the second column, yes? just have the code find it?
 
 fileId,planetCraftTargetCamera,nframesPerImage
-#--------------------------------------------------------------------------------
 
 # Jupiter
 # ----------------------------------------
@@ -70,6 +69,7 @@ C1636826,Jupiter-Voyager1-Io-Narrow,10
 
 # Uranus
 # ----------------------------------------
+
 C2672949,Uranus-Voyager2-Uranus-Narrow,10
 C2673007,Uranus-Voyager2-Uranus-Narrow,1
 
@@ -92,33 +92,34 @@ C2685214,Uranus-Voyager2-Uranus-Wide,10
 C2686212,Uranus-Voyager2-Uranus-Wide,1
 
 # ariel
-# first record is first frame of ariel movie
-C2531132,Uranus-Voyager2-Ariel-Narrow,3
-C2681743,Uranus-Voyager2-Ariel-Narrow,20
+C2531132,Uranus-Voyager2-Ariel-Narrow,4
+C2681743,Uranus-Voyager2-Ariel-Narrow,25
 C2684338,Uranus-Voyager2-Ariel-Narrow,25
-C2690305,Uranus-Voyager2-Ariel-Narrow,5
+C2690305,Uranus-Voyager2-Ariel-Narrow,8
 
 # miranda
-C2564729,Uranus-Voyager2-Miranda-Narrow,8
+C2564729,Uranus-Voyager2-Miranda-Narrow,4
+C2681429,Uranus-Voyager2-Miranda-Narrow,12
 C2684409,Uranus-Voyager2-Miranda-Narrow,25
-C2690737,Uranus-Voyager2-Miranda-Narrow,3
+C2690737,Uranus-Voyager2-Miranda-Narrow,4
 
 # oberon
-C2465854,Uranus-Voyager2-Oberon-Narrow,3
-C2683623,Uranus-Voyager2-Oberon-Narrow,10
+C2465854,Uranus-Voyager2-Oberon-Narrow,4
+C2683623,Uranus-Voyager2-Oberon-Narrow,25
+C2690421,Uranus-Voyager2-Oberon-Narrow,10
 
 # puck is only one frame - show for a while
-C2683716,Uranus-Voyager2-Puck-Narrow,40
+C2683716,Uranus-Voyager2-Puck-Narrow,44
 
 # titania
-C2465905,Uranus-Voyager2-Titania-Narrow,3
-C2683039,Uranus-Voyager2-Titania-Narrow,20
-C2690508,Uranus-Voyager2-Titania-Narrow,3
+C2465905,Uranus-Voyager2-Titania-Narrow,6
+C2683039,Uranus-Voyager2-Titania-Narrow,30
+C2690508,Uranus-Voyager2-Titania-Narrow,8
 
 # umbriel
-C2465918,Uranus-Voyager2-Umbriel-Narrow,3
-C2684004,Uranus-Voyager2-Umbriel-Narrow,20
-C2690340,Uranus-Voyager2-Umbriel-Narrow,3
+C2465918,Uranus-Voyager2-Umbriel-Narrow,4
+C2684004,Uranus-Voyager2-Umbriel-Narrow,40
+C2690340,Uranus-Voyager2-Umbriel-Narrow,4
 
 
 # Neptune

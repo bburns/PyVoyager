@@ -129,7 +129,7 @@ cannyUpperThreshold = 60
 # no dice - the canny edges start proliferating, and still the jupiter edge cases aren't picked up
 
 # hough circle detector parameters
-houghParameterSpace = 1
+houghParameterSpace = 1 # always
 # houghParameterSpace = 4 # didn't help with jitters
 # houghParameterSpace = 10 # actually made jittering worse
 # houghAccumulatorThreshold = 1000
@@ -139,22 +139,41 @@ houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND reg
 # must be nonzero integers
 houghMinRadius = 1
 # houghMaxRadius = 10 # through v0.36
-houghMaxRadius = 2 # this didn't seem to matter - still got huge circle back
+houghMaxRadius = 2 # v0.37 this didn't seem to matter - still got huge circle back
 
 
 # Stabilization
 
-# if radius of target in image is too different from previous frame, don't try to stabilize the image
-stabilizeMaxRadiusDifference = 20
+# if radius of target in image is too different from previous frame,
+# assume there's an error and don't try to stabilize the image.
+# needs to be large enough to be able to track a target from near to far,
+# but still filter out large jumps, so a bit tricky
+#. should be a percentage?
+# stabilizeMaxRadiusDifference = 20 # v0.40 uranus
+stabilizeMaxRadiusDifference = 50 # v0.41 jupiter
 
 # ECC parameters
 #. try reducing these to speed it up - images shouldn't have shifted very much.
 # do some tests to determine good values
-stabilizeECCIterations = 5000
-stabilizeECCTerminationEpsilon = 1e-10
+# stabilizeECCIterations = 10000
+# stabilizeECCIterations = 5000 # v0.40 uranus
+# stabilizeECCIterations = 4000
+# stabilizeECCIterations = 2000
+stabilizeECCIterations = 1000 # v0.41 jupiter
+# stabilizeECCIterations = 500
+# stabilizeECCTerminationEpsilon = 1e-12
+# stabilizeECCTerminationEpsilon = 1e-11
+# stabilizeECCTerminationEpsilon = 1e-10 # v0.40 uranus
+# stabilizeECCTerminationEpsilon = 1e-9
+# stabilizeECCTerminationEpsilon = 1e-8
+stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
 
 # if image needs to shift too much, assume something is wrong - don't shift it
-stabilizeMaxDeltaPosition = 18
+# stabilizeMaxDeltaPosition = 18 # v0.40 uranus
+# stabilizeMaxDeltaPosition = 20
+# stabilizeMaxDeltaPosition = 30
+stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
+# stabilizeMaxDeltaPosition = 800
 
 
 
@@ -198,8 +217,8 @@ targetsIgnore = dontCenterTargets
 # Titles
 # ----------------------------------------
 
-includeTitles = True
-# includeTitles = False
+# includeTitles = True
+includeTitles = False
 
 # titleSecondsToShow = 5
 titleSecondsToShow = 4

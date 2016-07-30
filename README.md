@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.40
+Version 0.41 inprogress
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -319,10 +319,17 @@ Next steps
 
 <!-- Later -->
 <!-- ---------------------------------------- -->
-<!-- - Add `vg init segments` to initialize segments.csv, which interleaves narrow and wide angle camera views -->
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
+- improve stabilization parameters
+
+Version 0.41 (2016-07)
+----------------------------------------
+- (refactor, clean up code)
+- (make ariel movie with aligned composite, mosaic - test crowdsourcing aspects)
+- (changed stabilization routine so it stabilizes against the first occurrence of target in volume, instead of against previous frame, as Jupiter tended to drift to the left. fixed that problem, but didn't retest it on uranus)
+
 
 Version 0.40 (2016-07-28)
 ----------------------------------------

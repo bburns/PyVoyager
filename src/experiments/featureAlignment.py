@@ -60,19 +60,13 @@ cv2.imwrite('foo.jpg', im2_aligned)
 
 
 
-
-
-# im1 = cv2.imread(file1, cv2.IMREAD_GRAYSCALE) # values are 0-255
-# im2 = cv2.imread(file2, cv2.IMREAD_GRAYSCALE) # values are 0-255
-
+# Load files
+# # im1 = cv2.imread(file1, cv2.IMREAD_GRAYSCALE) # values are 0-255
+# # im2 = cv2.imread(file2, cv2.IMREAD_GRAYSCALE) # values are 0-255
 # libimg.show(im1)
-
-
-
 # img = cv2.imread(file1) # values are 0-255
 # img = cv2.imread(file2) # values are 0-255
 # gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
 
 # HARRIS corners
 # http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_features_harris/py_features_harris.html

@@ -1,5 +1,11 @@
 
-# continuation of feature alignment experiments
+# refinement of feature alignment experiments
+
+
+
+# inprogress
+
+
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpim
@@ -58,6 +64,10 @@ for filename in files:
     if filename==lastFilename: continue
 
     print lastFilename, filename
+
+    infile = outputfolder + lastFilename
+    # outfile = o
+    x,y,radius,stabilizationOk = centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius)
 
     im1 = cv2.imread(outputfolder + lastFilename)
     im2 = cv2.imread(folder + filename)

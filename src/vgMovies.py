@@ -49,9 +49,8 @@ def makeContentsFile(movieContentsFilepath, clipIds):
     f.close()
 
 
-def buildMovies():
+def vgMovies():
     "Combine individual clips into movies based on db/movies.csv"
-    # makeClipList()
 
     # walk over db/movies.csv file, eg
     # movieId,clipId
@@ -96,6 +95,6 @@ def buildMovies():
 
 if __name__ == '__main__':
     os.chdir('..')
-    buildMovies()
+    vgMovies()
     print 'done'
 

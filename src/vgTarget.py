@@ -15,7 +15,6 @@ import lib
 
 import vgCenter
 
-# import shutil
 
 
 #. handle targetPath

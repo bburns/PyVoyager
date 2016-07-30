@@ -19,11 +19,11 @@ import vgCenter
 import vgComposite
 import vgMosaic
 import vgTarget
+import vgClips
+import vgSegments
+import vgMovies
 import vgList
 import vgTest
-import vgBuildClips
-import vgBuildSegments
-import vgBuildMovies
 import vgInitFiles
 import vgInitComposites
 import vgInitPositions
@@ -31,13 +31,6 @@ import vgRetarget
 import vgUpdateCenters
 
 
-#. nowork - why?
-# import sys; sys.path.append('../test')
-# import testCentering
-
-
-def beep():
-    os.system('beep')
 
 
 # get command and arguments
@@ -61,42 +54,42 @@ if cmd=="download":
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgDownload.vgDownload(volnum, overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="unzip":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgUnzip.vgUnzip(volnum, overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="convert":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgConvert.vgConvert(volnum, overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="adjust":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgAdjust.vgAdjust(volnum, overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="center":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgCenter.vgCenter(volnum, overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="composite":
     # vols = args.pop(0)
     # volnums = lib.getVolumeNumbers(vols)
     # for volnum in volnums:
         # vgComposites.buildComposites(volnum, overwrite)
-    # beep()
+    # lib.beep()
     arg = args.pop(0)
     if arg[0].lower()=='c':
         compositeIds = lib.getImageIds(arg)
@@ -108,7 +101,7 @@ elif cmd=="composite":
         for volnum in volnums:
             # vgComposites.buildComposites(volnum, overwrite)
             vgComposite.vgComposite(volnum, '', overwrite)
-    beep()
+    lib.beep()
 
 elif cmd=="target":
     vols = args.pop(0)
@@ -117,7 +110,7 @@ elif cmd=="target":
         vgTarget.vgTarget(volnum)
     # targetPath = args.pop(0)
     # vg.buildTargets(targetPath)
-    beep()
+    lib.beep()
 
 elif cmd=="retarget":
     oldTarget = args.pop(0)
@@ -132,19 +125,19 @@ elif cmd=="clips":
     if nargs==3:
         targetpath = args.pop(0)
     if bwOrColor=='bw' or bwOrColor=='color':
-        vgBuildClips.buildClips(bwOrColor, targetpath)
+        vgClips.vgClips(bwOrColor, targetpath)
     else:
         cmd="help"
-    beep()
+    lib.beep()
 
 elif cmd=="segments":
     targetpath = args.pop(0)
-    vgBuildSegments.buildSegments(targetpath)
-    beep()
+    vgSegments.vgSegments(targetpath)
+    lib.beep()
 
 elif cmd=="movies":
-    vgBuildMovies.buildMovies()
-    beep()
+    vgMovies.vgMovies()
+    lib.beep()
 
 elif cmd=="list":
     vgList.vgList()
@@ -169,7 +162,7 @@ elif cmd=="init":
         vgInitComposites.initComposites()
     elif subject=='positions':
         vgInitPositions.initPositions()
-    beep()
+    lib.beep()
 
 elif cmd=="help":
     pass

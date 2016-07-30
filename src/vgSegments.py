@@ -179,7 +179,7 @@ def stageFiles(targetPathParts):
     print
 
 
-def buildSegments(targetPath=''):
+def vgSegments(targetPath=''):
     "Build segments associated with the given target path (eg //Io)"
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
@@ -201,10 +201,10 @@ def buildSegments(targetPath=''):
 if __name__ == '__main__':
     os.chdir('..')
     # print lib.parseTargetPath('')
-    # buildSegments('bw', 'Jupiter/Voyager1/Io/Narrow')
-    # buildSegments('bw', '//Triton')
-    # buildSegments("Neptune")
-    buildSegments()
+    # vgSegments('bw', 'Jupiter/Voyager1/Io/Narrow')
+    # vgSegments('bw', '//Triton')
+    # vgSegments("Neptune")
+    vgSegments()
     # makeLinks()
     # makeSegmentFiles()
     print 'done'

@@ -16,7 +16,7 @@ import os.path
 import config
 import lib
 
-import vgBuildTitles
+import vgTitles
 
 
 
@@ -165,9 +165,9 @@ def stageFiles(bwOrColor, targetPathParts):
     print
 
 
-def buildClips(bwOrColor, targetPath=None):
+def vgClips(bwOrColor, targetPath=None):
     "Build bw or color clips associated with the given target path (eg //Io)"
-    # eg buildClips('bw', 'Jupiter/Voyager1')
+    # eg vgClips('bw', 'Jupiter/Voyager1')
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
@@ -187,9 +187,9 @@ def buildClips(bwOrColor, targetPath=None):
 if __name__ == '__main__':
     os.chdir('..')
     # print lib.parseTargetPath('')
-    # buildClips('bw', 'Jupiter/Voyager1/Io/Narrow')
-    # buildClips('bw', '//Triton')
-    # buildClips("Neptune")
+    # vgClips('bw', 'Jupiter/Voyager1/Io/Narrow')
+    # vgClips('bw', '//Triton')
+    # vgClips("Neptune")
     # makeLinks()
     makeClipFiles()
     print 'done'

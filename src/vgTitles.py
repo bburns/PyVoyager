@@ -16,7 +16,7 @@ import lib
 
 
 
-def buildTitles(targetPath=None):
+def vgTitles(targetPath=None):
     "Make titles for specified targetpaths"
 
     # what does the user want to focus on?
@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
     os.chdir('..')
 
-    buildTitles('//Triton')
+    vgTitles('//Triton')
 
     # import os
     # os.system(filename)

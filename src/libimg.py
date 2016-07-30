@@ -1,6 +1,6 @@
 
 # image processing routines
-# some are generic, some specific to PyVoyager
+# not reusable - many are specific to PyVoyager
 
 
 import os
@@ -13,7 +13,6 @@ import math # for log
 import random
 
 
-#. should pass any constants into functions
 import config
 
 
@@ -27,47 +26,59 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
     # eg in vgCenter could call centerImageFile to get x,y,radius
     # then call stabilizeImageFile
     x,y,radius = centerImageFile(infile, outfile)
-    stabilizationOk = True
+    # if no file to stabilize to, must be the first image in the sequence,
+    # so just say it's stabilized
+    if not fixedfile:
+        stabilizationOk = True
     # if given a fixedfile, and radius not too different, try to stabilize against that
-    #. this returns True if radius too different - ok?
-    if fixedfile and abs(radius-lastRadius)<config.stabilizeMaxRadiusDifference:
-        im1 = cv2.imread(fixedfile)
-        im2 = cv2.imread(outfile)
-        im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-        im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
-        sz = im1.shape
-        warp_mode = cv2.MOTION_TRANSLATION
-        warp_matrix = np.eye(2, 3, dtype=np.float32)
-        number_of_iterations = config.stabilizeECCIterations
-        termination_eps = config.stabilizeECCTerminationEpsilon
-        criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-                    number_of_iterations,  termination_eps)
-        # run the ECC algorithm - the results are stored in warp_matrix
-        # throws an error if doesn't converge, so catch it
-        try:
-            cc, warp_matrix = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
-                                                    warp_mode, criteria)
-        except:
-            # if can't find solution, images aren't close enough in similarity
-            stabilizationOk = False
+    else:
+        stabilizationOk = False
+        # this helps prevent stabilizing to badly centered images
+        #. should be a percentage
+        if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
+            # stabilizationOk = False
+            print
+            print 'max radius delta exceeded', radius, lastRadius
         else:
-            # print warp_matrix
-            # [[ 1.          0.          1.37005 ]
-            #  [ 0.          1.          0.485788]]
-            # note: x and y are reversed!
-            deltay = warp_matrix[0][2]
-            deltax = warp_matrix[1][2]
-            # if image shifted too much, assume something went wrong
-            # this helped before implemented the maxradius check - might not be needed anymore?
-            if abs(deltax) > config.stabilizeMaxDeltaPosition or \
-               abs(deltay) > config.stabilizeMaxDeltaPosition:
+            # stabilizationOk = True
+            im1 = cv2.imread(fixedfile)
+            im2 = cv2.imread(outfile)
+            im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+            im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
+            sz = im1.shape
+            warp_mode = cv2.MOTION_TRANSLATION
+            warp_matrix = np.eye(2, 3, dtype=np.float32)
+            number_of_iterations = config.stabilizeECCIterations
+            termination_eps = config.stabilizeECCTerminationEpsilon
+            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                        number_of_iterations,  termination_eps)
+            # run the ECC algorithm - the results are stored in warp_matrix
+            # throws an error if doesn't converge, so catch it
+            try:
+                cc, warp_matrix = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
+                                                        warp_mode, criteria)
+            except:
+                # if can't find solution, images aren't close enough in similarity
                 stabilizationOk = False
             else:
-                im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
-                                             flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
-                cv2.imwrite(outfile, im2_aligned)
-                x += int(deltax)
-                y += int(deltay)
+                # print warp_matrix
+                # [[ 1.          0.          1.37005 ]
+                #  [ 0.          1.          0.485788]]
+                # note: x and y are reversed!
+                deltay = warp_matrix[0][2]
+                deltax = warp_matrix[1][2]
+                # if image shifted too much, assume something went wrong
+                if abs(deltax) > config.stabilizeMaxDeltaPosition or \
+                   abs(deltay) > config.stabilizeMaxDeltaPosition:
+                    print
+                    print 'max delta position exceeded', deltax, deltay
+                    stabilizationOk = False
+                else:
+                    im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
+                                                 flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
+                    cv2.imwrite(outfile, im2_aligned)
+                    x += int(deltax)
+                    y += int(deltay)
     return x,y,radius,stabilizationOk
 
 
@@ -159,9 +170,6 @@ def translateImageFile(infile, outfile, x, y):
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
     misc.imsave(outfile, im)
-
-
-
 
 
 

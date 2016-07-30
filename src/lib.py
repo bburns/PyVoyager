@@ -1,5 +1,7 @@
 
 # library routines for voyager
+# not independent from PyVoyager, but things that might get reused,
+# or want kept out of sight.
 
 
 import os # for system, mkdir, mkdirs
@@ -18,23 +20,29 @@ from PIL import Image
 from PIL import ImageDraw
 
 
-#. should pass any constants into functions (ideally)
 import config
 
+
+def beep():
+    os.system('beep')
 
 
 def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
     "look for a matching join value in the given csv filereader and return the row, or None"
     # this assumes we're walking through the join file in one direction
     # so must be sorted on the join column
+    # lastJoinValue acts as a pointer to the current record, so must return it also
     row = None
     while lastJoinValue < joinValue:
         try:
+            #. want a peek fn, not pop
             row = csvReader.next()
         except:
             row = None
             break
         lastJoinValue = row[joinColumn]
+    if lastJoinValue!=joinValue:
+        row = None
     return row, lastJoinValue
 
 

@@ -186,50 +186,91 @@ def showMpim(im, title='mpim image - press esc to continue'):
 
 
 def combineChannels(channels):
-    "combine the given weighted channel files and return a single cv2 image"
-    #. could pass in weights, or just define them in config
-    # eg channels = {
-    #   'Orange':'composites/orange.png',
-    #   'Green':'composites/green.png',
-    #   'Blue':'composites/blue.png',
-    # }
-    # if missing a channel will use a blank/black image for that channel
+    """
+    Combine the given channels and return a single cv2 image.
+    If only one channel included will return a b/w image.
+    If missing a channel will use a blank/black image for that channel.
+    channels is an array of [filter, filename, <weight, x, y>]
+    (the last 3 are optional)
+    eg channels = [
+      ['Orange','composites/orange.png'],
+      ['Green','composites/green.png',0.8,30,40],
+      ['Blue','composites/blue.png',0.9,50,66],
+    ]
+    """
+    colFilter = 0
+    colFilename = 1
+    colWeight = 2
+    colX = 4 # note: x and y are reversed, due to numpy's matrices being like matlab
+    colY = 3
+    colIm = -1
 
     # if just one channel then return a bw image
     if len(channels)==1:
-        filename = channels.values()[0]
+        filename = channels[0][colFilename]
         gray = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
         return gray
 
-    # get filenames
-    #. what are ch4_js and ch4_u ?
-    redfilename = channels.get('Orange') or channels.get('Clear')
-    greenfilename = channels.get('Green') or channels.get('Clear')
-    bluefilename = channels.get('Blue') or channels.get('Violet') or channels.get('Uv') or \
-                   channels.get('Ch4_Js') or channels.get('Ch4_U') or channels.get('Clear')
+    # find size of canvas
+    xmin = 0; xmax = 799; ymin = 0; ymax = 799
+    for row in channels:
+        x = row[colX] if len(row)>colX else 0
+        y = row[colY] if len(row)>colY else 0
+        if x < xmin: xmin = x
+        if x+800 > xmax: xmax = x+800
+        if y < ymin: ymin = y
+        if y+800 > ymax: ymax = y+800
+    w = xmax-xmin+1; h = ymax-ymin+1
+    enlarged = w!=800 or h!=800
 
-    # read images
-    # returns None if filename is invalid - doesn't throw an error
-    # (note: can't say 'or blank' here as in javascript)
-    red = cv2.imread(redfilename,cv2.IMREAD_GRAYSCALE)
-    green = cv2.imread(greenfilename,cv2.IMREAD_GRAYSCALE)
-    blue = cv2.imread(bluefilename,cv2.IMREAD_GRAYSCALE)
+    # get images for each channel
+    rowRed = None
+    rowGreen = None
+    rowBlue = None
+    for row in channels:
+        filename = row[colFilename]
+        # note: this returns None if filename is invalid - doesn't throw an error
+        im = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+        # apply weight if necessary
+        weight = row[colWeight] if len(row)>colWeight else 1.0
+        if weight!=1.0: im = cv2.multiply(im,weight)
+        # if canvas needs to be enlarged, do so
+        if enlarged:
+            canvas = np.zeros((w,h), np.uint8) # 0-255
+            # copy image into canvas at right point
+            x = row[colX] if len(row)>colX else 0
+            y = row[colY] if len(row)>colY else 0
+            print xmin,x,ymin,y
+            canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
+            im = canvas
+        row.append(im)
+        # now assign the row to one of the available channels
+        # eventually would like something more accurate than just rgb
+        filter = row[colFilter]
+        if filter in ['Orange','Clear']:
+            rowRed = row
+        if filter in ['Green','Clear']:
+            rowGreen = row
+        if filter in ['Blue','Violet','Uv','Ch4_Js','Ch4_U','Clear']:
+            rowBlue = row
 
     # assign a blank image if missing a channel
-    blank = np.zeros((800,800), np.uint8)
-    if type(red)==type(None): red = blank
-    if type(green)==type(None): green = blank
-    if type(blue)==type(None): blue = blank
-
-    # apply weights
-    # blue = cv2.multiply(blue,0.6)
-    # red = cv2.multiply(red,0.5)
-    # green = cv2.multiply(green,1.0)
+    blank = np.zeros((w,h), np.uint8)
+    imRed = rowRed[colIm] if rowRed else blank
+    imGreen = rowGreen[colIm] if rowGreen else blank
+    imBlue = rowBlue[colIm] if rowBlue else blank
 
     # merge channels - BGR for cv2
-    im2 = cv2.merge((blue, green, red))
+    imMerged = cv2.merge((imBlue, imGreen, imRed))
 
-    return im2
+    #. scale image to 800x800
+    # if enlarged:
+        # pass
+
+    # later - maybe crop canvas
+    # eg im = im[400:1200, 400:1200]
+
+    return imMerged
 
 
 def mpim2cv2(im):
@@ -620,4 +661,28 @@ def drawMatches(img1, kp1, img2, kp2, matches):
     cv2.imshow('Matched Features', out)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    import lib
+    orange = '../'+lib.getAdjustedFilepath('7206','C2684338','Clear')
+    green = '../'+lib.getAdjustedFilepath('7206','C2684342','Green')
+    blue = '../'+lib.getAdjustedFilepath('7206','C2684340','Violet')
+    print orange
+    channels = [
+      # ['Orange','experiments/composites/orange.png',0.75,6,0],
+      # ['Green','experiments/composites/green.png',1,0,0],
+      # ['Blue','experiments/composites/blue.png',1,0,0],
+        # 7206,C2684338,C2684338,Clear,1,0,0
+        # 7206,C2684338,C2684340,Violet,1,10,10
+        # 7206,C2684338,C2684342,Green,1,20,20
+        # 7206,C2684338,C2684344,Uv,1,0,0
+      ['Orange',orange,0.8,120,-65],
+      ['Green',green,1,150,20],
+      ['Blue',blue,1,0,0],
+    ]
+    im = combineChannels(channels)
+    show(im)
+    cv2.imwrite('foo.jpg',im)
+
 

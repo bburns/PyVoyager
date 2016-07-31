@@ -98,7 +98,7 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                 nfile += 1
 
                 # check if we have the x,y translation for this image file already.
-                # fileIdCenters acts as a pointer to the current record.
+                # fileIdCenters acts a bit as a pointer to the current record.
                 rowCenters, fileIdCenters = lib.getJoinRow(csvCenters, config.centersColFileId,
                                                            fileId, fileIdCenters)
                 if rowCenters:

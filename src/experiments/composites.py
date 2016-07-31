@@ -1,10 +1,8 @@
 
-
 # combine channels to make composite images
 
 import cv2
 import numpy as np
-
 
 
 # this works
@@ -51,12 +49,9 @@ def combineChannels(channels):
     
     # assign a blank image if missing a channel
     blank = np.zeros((800,800), np.uint8)
-    if red==None:
-        red = blank
-    if green==None:
-        green = blank
-    if blue==None:
-        blue = blank
+    if red is None: red = blank
+    if green is None: green = blank
+    if blue is None: blue = blank
     
     # apply weights
     blue = cv2.multiply(blue,0.6)

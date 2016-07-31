@@ -125,7 +125,7 @@ def getCenteredFilepath(volume, fileId, filter):
     filepath = folder + filetitle
     return filepath
 
-def getCompositeFilepath(volume, fileId, filter):
+def getCompositeFilepath(volume, fileId):
     "get the filepath for the composite image specified"
     folder = config.compositesFolder + 'VGISS_' + volume + '/'
     filetitle = fileId + config.compositesSuffix + config.extension

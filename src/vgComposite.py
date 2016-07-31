@@ -16,24 +16,28 @@ import libimg
 import vgCenter
 
 
-# def buildComposites(volnum, overwrite=False):
 def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
-    "build composite images by combining channel images"
+    """
+    Build composite images by combining channel images.
 
-    # walks over records in composites.csv, merges channel images, writes to composites folder
-    # eg
-    # composites:
-    # volume,compositeId,centerId,filter,weight
-    # VGISS_5103,C1537728,C1537728,Blue
-    # VGISS_5103,C1537728,C1537730,Orange
-    # VGISS_5103,C1537728,C1537732,Green
+    Walks over records in composites.csv, merges channel images, writes to composites folder
+    eg
+    composites.csv:
+    volume,compositeId,centerId,filter,weight,x,y
+    VGISS_5103,C1537728,C1537728,Blue
+    VGISS_5103,C1537728,C1537730,Orange,0.8
+    VGISS_5103,C1537728,C1537732,Green,1,10,3
+    =>
+    step05_composites/VGISS_5103/C1537728_composite.jpg
+    Note: weight and x,y are optional - default to 1,0,0
+    """
 
-    centersubfolder = config.centersFolder + 'VGISS_' + str(buildVolnum) + '/'
-    compositessubfolder = config.compositesFolder + 'VGISS_' + str(buildVolnum) + '/'
+    compositesSubfolder = config.compositesFolder + 'VGISS_' + str(buildVolnum) + '/'
+    buildCompositeId = buildCompositeId.upper() # always capital C
 
     # for test (vol=0), can overwrite test folder
-    if os.path.isdir(compositessubfolder) and overwrite==False:
-        print "Composites folder exists: " + compositessubfolder
+    if os.path.isdir(compositesSubfolder) and overwrite==False:
+        print "Composites folder exists: " + compositesSubfolder
     else:
         # build the centered images for the volume, if not already there
         #. pass imageid also
@@ -42,10 +46,12 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
         # get centering info - will use to get files from either adjusted or centered folders
         # centeringInfo = lib.readCsv(config.centeringdb)
 
-        # print 'Building composites for', compositessubfolder
+        # print 'Building composites for', compositesSubfolder
 
-        lib.rmdir(compositessubfolder)
-        lib.mkdir(compositessubfolder)
+        # if we're building an entire volume, remove the existing directory first
+        if buildVolnum!='':
+            lib.rmdir(compositesSubfolder)
+        lib.mkdir(compositesSubfolder)
 
         # iterate over composites.csv records
         filein = open(config.compositesdb,'rt')
@@ -62,8 +68,6 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
             else:
                 vol = row[config.compositesColVolume]
                 compositeId = row[config.compositesColCompositeId]
-                # if volnum==vol:
-                # print compositeId,buildCompositeId
                 if vol==buildVolnum or compositeId==buildCompositeId:
                     # gather image filenames into channelRows so can merge them
                     # buildComposite(compositeId)
@@ -89,55 +93,56 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
 
 
 def processChannels(channelRows):
-    "channels is an array of rows corresponding to rows in the composites.csv file"
-    # arrays should have [volnum,compositeId,centerId,filter,weight]
-    # eg [
-    #   [5101,C434823,C434823,Orange]
-    #   [5101,C434823,C434825,Blue]
-    #   [5101,C434823,C434827,Green]
-    #   ]
-    # we combine them and write them to a file in the composites folder, step5_composites
-
+    #. could also have zoom factor, warp info, rotate
+    """
+    Combine channel images into new file.
+    channelRows is an array of rows corresponding to rows in the composites.csv file.
+    should have [volnum,compositeId,centerId,filter,weight,x,y]
+    eg [
+      ['5101','C434823','C434823','Orange']
+      ['5101','C434823','C434825','Blue','0.8','42','18']
+      ['5101','C434823','C434827','Green','1','-50','83']
+      ]
+    they are combined and written to a file in the composites folder, step05_composites
+    """
     # print channelRows
-    channels = {}
+    # channels = {}
     volume = ''
     compositeId = ''
+    row2s = []
     for row in channelRows:
-        volume = 'VGISS_' + row[config.compositesColVolume]
+        volume = row[config.compositesColVolume]
         compositeId = row[config.compositesColCompositeId]
         fileId = row[config.compositesColFileId]
-        filter = row[config.compositesColFilter].title()
+        filter = row[config.compositesColFilter]
+        weight = row[config.compositesColWeight] if len(row)>config.compositesColWeight else 1.0
+        x = row[config.compositesColX] if len(row)>config.compositesColX else 0
+        y = row[config.compositesColY] if len(row)>config.compositesColY else 0
+        #. will use imageSource to know adjusted vs centered
         # get centered filepath
-        # folder = lib.getCenterspath(volume)
-        folder = config.centersFolder + volume + '/'
-        # filetitle = config.centersPrefix + fileId + '_' + config.imageType + \
-        # filetitle = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
-        # filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
-        filetitle = lib.getCenteredFilename(fileId, filter)
-        channelfilepath = folder + filetitle
+        channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
-            folder = config.adjustmentsFolder + volume + '/'
-            # filetitle = config.adjustmentsPrefix + fileId + '_' + config.imageType + \
-            # filetitle = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
-            # filetitle = fileId + '_' + config.adjustmentsSuffix + '_' + filter + config.extension
-            filetitle = lib.getAdjustedFilename(fileId, filter)
-            channelfilepath = folder + filetitle
-        channels[filter] = channelfilepath
-    # print channels
-    compositesSubfolder = config.compositesFolder + volume + '/'
-    # outfilename = compositesSubfolder + config.compositesPrefix + compositeId + '.png'
-    # outfilename = compositesSubfolder + compositeId + config.compositesSuffix + '.png'
-    outfilename = compositesSubfolder + compositeId + config.compositesSuffix + config.extension
-    # print outfilename
-    im = libimg.combineChannels(channels)
-    cv2.imwrite(outfilename, im)
+            channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+        # channels[filter] = [channelfilepath,float(weight),int(x),int(y)]
+        row2 = [filter,channelfilepath,float(weight),int(x),int(y)]
+        row2s.append(row2)
+    print row2s
+
+    outfilepath = lib.getCompositeFilepath(volume, compositeId)
+    # im = libimg.combineChannels(channels)
+    im = libimg.combineChannels(row2s)
+    cv2.imwrite(outfilepath, im)
 
 
 if __name__ == '__main__':
     os.chdir('..')
     # buildComposites(5103)
     # buildComposites(8207)
-    vgComposite('','c1617245')
+    # vgComposite('','c1617245')
+    vgComposite('','c2684338',True)
+    filename = lib.getCompositeFilepath('7206','c2684338')
+    im = cv2.imread(filename)
+    libimg.show(im)
     print 'done'
 

@@ -389,6 +389,8 @@ compositesColCompositeId = 1
 compositesColFileId = 2
 compositesColFilter = 3
 compositesColWeight = 4
+compositesColX = 5
+compositesColY = 6
 
 
 # segments.csv columns

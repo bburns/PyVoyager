@@ -5,10 +5,10 @@
 
 segmentId,fileIds,imageSource,nframes
 
-# ganymede narrow+wide, bw+color
-Jupiter-Voyager1-Ganymede,c132314,centered,1
-Jupiter-Voyager1-Ganymede,c132352,adjusted,1
-Jupiter-Voyager1-Ganymede,c132350,composite,20
-Jupiter-Voyager1-Ganymede,c132351,mosaic,40
+# ganymede bw+color
+Jupiter-Voyager1-Ganymede-Narrow,c132314,centered,1
+Jupiter-Voyager1-Ganymede-Narrow,c132352,adjusted,1
+Jupiter-Voyager1-Ganymede-Narrow,c132350,composite,20
+Jupiter-Voyager1-Ganymede-Narrow,c132351,mosaic,40
 
 

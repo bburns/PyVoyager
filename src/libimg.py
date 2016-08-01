@@ -17,10 +17,32 @@ import config
 
 
 
+def resizeImage(im, w, h):
+    """Resize image, keeping aspect ratio, filling in gaps with black, return new image."""
+
+    oldH, oldW = im.shape[:2]
+    print oldH, oldW
+    aspectRatio = float(oldW) / float(oldH)
+    print aspectRatio
+    if aspectRatio > 1: # width>height
+        newW = w
+        newH = int(newW / aspectRatio)
+    else:
+        newH = h
+        newW = int(newH * aspectRatio)
+    print newH, newW
+    im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
+
+    # add the new image to a blank canvas
+    canvas = np.zeros((h,w,3), np.uint8)
+    x = int((w-newW)/2)
+    y = int((h-newH)/2)
+    canvas[y:y+newH, x:x+newW] = np.array(im)
+    return canvas
 
 
 def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
-    "center an image file on target, then stabilize it relative to the given fixed file"
+    """center an image file on target, then stabilize it relative to the given fixed file"""
     #. this logic is pretty complicated - simplify
     #. a fn should do ONE thing - this does two, complicatedly
     # eg in vgCenter could call centerImageFile to get x,y,radius
@@ -261,16 +283,17 @@ def combineChannels(channels):
     imBlue = rowBlue[colIm] if rowBlue else blank
 
     # merge channels - BGR for cv2
-    imMerged = cv2.merge((imBlue, imGreen, imRed))
+    im = cv2.merge((imBlue, imGreen, imRed))
 
-    #. scale image to 800x800
-    # if enlarged:
-        # pass
+    # scale image to 800x800
+    if enlarged:
+        im = resizeImage(im, 800, 800)
+        # im.thumbnail((800,800), Image.BICUBIC) # PIL
 
     # later - maybe crop canvas
     # eg im = im[400:1200, 400:1200]
 
-    return imMerged
+    return im
 
 
 def mpim2cv2(im):
@@ -670,17 +693,10 @@ if __name__ == "__main__":
     blue = '../'+lib.getAdjustedFilepath('7206','C2684340','Violet')
     print orange
     channels = [
-      # ['Orange','experiments/composites/orange.png',0.75,6,0],
-      # ['Green','experiments/composites/green.png',1,0,0],
-      # ['Blue','experiments/composites/blue.png',1,0,0],
-        # 7206,C2684338,C2684338,Clear,1,0,0
-        # 7206,C2684338,C2684340,Violet,1,10,10
-        # 7206,C2684338,C2684342,Green,1,20,20
-        # 7206,C2684338,C2684344,Uv,1,0,0
-      ['Orange',orange,0.8,120,-65],
-      ['Green',green,1,150,20],
-      ['Blue',blue,1,0,0],
-    ]
+        ['Orange',orange,0.8,120,-65],
+        ['Green',green,1,150,20],
+        ['Blue',blue,1,0,0],
+        ]
     im = combineChannels(channels)
     show(im)
     cv2.imwrite('foo.jpg',im)

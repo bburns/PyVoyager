@@ -112,8 +112,9 @@ def stageFiles(bwOrColor, targetPathParts):
 
                 # if centering for this image is turned off, let's assume for now that
                 # that means we don't want the color image, since it'd be misaligned anyway.
-                # this is true for moons like miranda, e.g., but for jupiter i like the psychedelic colors
-                #. so turn back on?
+                #. this is true for moons like miranda, e.g.,
+                # but for jupiter i like the psychedelic colors
+                # so turn back on?
                 if doCenter==False:
                     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
                 elif bwOrColor=='bw':
@@ -135,7 +136,8 @@ def stageFiles(bwOrColor, targetPathParts):
                     nfile = nfilesInTargetDir.get(targetKey)
                     if not nfile: nfile = 0
 
-                    # if we haven't seen this subfolder before, add the titlepage image a few times
+                    # if we haven't seen this subfolder before,
+                    # add the titlepage image a few times
                     # titlepages are created in the previous step, vgBuildTitles
                     if config.includeTitles and nfile==0:
                         titleImageFilepath = config.titlesFolder + subfolder + 'title' + \

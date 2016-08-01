@@ -140,9 +140,19 @@ if __name__ == '__main__':
     # buildComposites(5103)
     # buildComposites(8207)
     # vgComposite('','c1617245')
-    vgComposite('','c2684338',True)
-    filename = lib.getCompositeFilepath('7206','c2684338')
+
+    # works
+    # vgComposite('','c2684338',True)
+    # filename = lib.getCompositeFilepath('7206','c2684338')
+    # im = cv2.imread(filename)
+    # libimg.show(im)
+
+    vgComposite('','C2656801',True)
+    filename = lib.getCompositeFilepath('7205','C2656801')
     im = cv2.imread(filename)
     libimg.show(im)
+
     print 'done'
+
+
 

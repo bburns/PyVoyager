@@ -326,6 +326,7 @@ Next steps
 
 Version 0.41 (2016-07)
 ----------------------------------------
+- Specify composite images with color weights and x,y offsets
 - (refactor, clean up code)
 - (make ariel movie with aligned composite, mosaic - test crowdsourcing aspects)
 - (changed stabilization routine so it stabilizes against the first occurrence of target in volume, instead of against previous frame, as Jupiter tended to drift to the left. fixed that problem, but didn't retest it on uranus)

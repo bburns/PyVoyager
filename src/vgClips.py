@@ -1,9 +1,12 @@
 
-# vg clip command
-# build clips associated with target subfolders,
-# eg Jupiter/Voyager1/Io/Narrow
+"""
+vg clip command
+build clips associated with target subfolders,
+eg Jupiter/Voyager1/Io/Narrow
 
-# this must be run in an admin console because mklink requires elevated privileges
+this must be run in an admin console because mklink requires elevated privileges
+
+"""
 
 #. need to build clips for planet/system titles and all.mp4 titlepage
 #. and postscript titlepages
@@ -22,7 +25,7 @@ import vgTitles
 
 
 def stageFiles(bwOrColor, targetPathParts):
-    "Make links from source files (centers or composites) to clip stage folders"
+    """Make links from source files (centers or composites) to clip stage folders"""
 
     print 'Making links from source files'
 
@@ -114,13 +117,21 @@ def stageFiles(bwOrColor, targetPathParts):
                 # that means we don't want the color image, since it'd be misaligned anyway.
                 #. this is true for moons like miranda, e.g.,
                 # but for jupiter i like the psychedelic colors
-                # so turn back on?
                 if doCenter==False:
                     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
                 elif bwOrColor=='bw':
                     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
                 else:
-                    imageFilepath = lib.getCompositeFilepath(volume, fileId, filter)
+                    imageFilepath = lib.getCompositeFilepath(volume, fileId)
+
+                # i think for more control we'll need something like segments.csv
+                # use composite image if available, otherwise the centered or adjusted image
+                # if bwOrColor=='color':
+                #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+                # if not os.path.isfile(imageFilepath):
+                #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+                # if not os.path.isfile(imageFilepath):
+                #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
 
                 # if image file exists, create subfolder and link image
                 if os.path.isfile(imageFilepath):
@@ -156,7 +167,6 @@ def stageFiles(bwOrColor, targetPathParts):
                     # need to get out of the target dir
                     imagePathRelative = '../../../../../../../../' + imageFilepath
                     lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
-                    # print "Frame %d: %s              \r" % (nfile, imageFilepath),
                     print "Volume %s frame: %s              \r" % (volume, imageFilepath),
 
                     # increment the file number for the target folder
@@ -177,7 +187,7 @@ def vgClips(bwOrColor, targetPath=None):
     targetPathParts = lib.parseTargetPath(targetPath)
 
     # make sure we have some titles
-    vgBuildTitles.buildTitles(targetPath)
+    vgTitles.vgTitles(targetPath)
 
     # stage images for ffmpeg
     lib.rmdir(config.clipsStageFolder)

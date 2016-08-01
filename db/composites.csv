@@ -64766,10 +64766,11 @@ volume,compositeId,imageId,filter,weight,x,y
 7206,C2684450,C2684501,Clear
 
 # note: uv winds up winning over violet because it's the last one
-7206,C2684338,C2684338,Clear,0.8,120,-65
-7206,C2684338,C2684340,Violet,1,0,0
-7206,C2684338,C2684342,Green,1,150,20
-7206,C2684338,C2684344,Uv,1,-24,0
+# could just comment it out, since violet is sharper
+7206,C2684338,C2684338,Clear,0.8,120,-65,show
+7206,C2684338,C2684340,Violet,1.1,0,0,show
+7206,C2684338,C2684342,Green,1,150,20,show
+# 7206,C2684338,C2684344,Uv,1,-24,0
 
 7206,C2684533,C2684533,Clear
 7206,C2684535,C2684535,Clear

@@ -68,8 +68,8 @@ def initComposites():
 
     # open the composites.csv file
     fileout = open(config.compositesdb, 'wb')
-    fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
     writer = csv.writer(fileout)
+    fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
     writer.writerow(fields)
 
     # iterate over all image files

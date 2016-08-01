@@ -1,8 +1,14 @@
 
-# vg composite command
-# build composite images from centered images,
-# based on records in composites.csv.
-# see also vgInitComposites.py, which builds initial pass at composites.csv.
+"""
+vg composite command
+
+Build composite images from centered images,
+based on records in composites.csv.
+See also vgInitComposites.py, which builds initial pass at composites.csv.
+
+Note: even single channel images get a composite image (bw).
+Uses centered image if available, otherwise uses the plain adjusted image.
+"""
 
 import os
 import csv
@@ -35,7 +41,6 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
     compositesSubfolder = config.compositesFolder + 'VGISS_' + str(buildVolnum) + '/'
     buildCompositeId = buildCompositeId.upper() # always capital C
 
-    # for test (vol=0), can overwrite test folder
     if os.path.isdir(compositesSubfolder) and overwrite==False:
         print "Composites folder exists: " + compositesSubfolder
     else:
@@ -96,6 +101,7 @@ def processChannels(channelRows):
     #. could also have zoom factor, warp info, rotate
     """
     Combine channel images into new file.
+
     channelRows is an array of rows corresponding to rows in the composites.csv file.
     should have [volnum,compositeId,centerId,filter,weight,x,y]
     eg [
@@ -106,10 +112,9 @@ def processChannels(channelRows):
     they are combined and written to a file in the composites folder, step05_composites
     """
     # print channelRows
-    # channels = {}
     volume = ''
     compositeId = ''
-    row2s = []
+    channels = []
     for row in channelRows:
         volume = row[config.compositesColVolume]
         compositeId = row[config.compositesColCompositeId]
@@ -118,20 +123,17 @@ def processChannels(channelRows):
         weight = row[config.compositesColWeight] if len(row)>config.compositesColWeight else 1.0
         x = row[config.compositesColX] if len(row)>config.compositesColX else 0
         y = row[config.compositesColY] if len(row)>config.compositesColY else 0
-        #. will use imageSource to know adjusted vs centered
+        #. may use imageSource to know adjusted vs centered
         # get centered filepath
         channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
             channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-        # channels[filter] = [channelfilepath,float(weight),int(x),int(y)]
-        row2 = [filter,channelfilepath,float(weight),int(x),int(y)]
-        row2s.append(row2)
-    print row2s
+        channel = [filter,channelfilepath,float(weight),int(x),int(y)]
+        channels.append(channel)
 
     outfilepath = lib.getCompositeFilepath(volume, compositeId)
-    # im = libimg.combineChannels(channels)
-    im = libimg.combineChannels(row2s)
+    im = libimg.combineChannels(channels)
     cv2.imwrite(outfilepath, im)
 
 
@@ -141,12 +143,13 @@ if __name__ == '__main__':
     # buildComposites(8207)
     # vgComposite('','c1617245')
 
-    # works
+    # ariel - works
     # vgComposite('','c2684338',True)
     # filename = lib.getCompositeFilepath('7206','c2684338')
     # im = cv2.imread(filename)
     # libimg.show(im)
 
+    # uranus
     vgComposite('','C2656801',True)
     filename = lib.getCompositeFilepath('7205','C2656801')
     im = cv2.imread(filename)

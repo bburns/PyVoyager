@@ -1,7 +1,9 @@
 
-# image processing routines
-# not reusable - many are specific to PyVoyager
+"""
+image processing routines
 
+not reusable - many are specific to PyVoyager
+"""
 
 import os
 import matplotlib.image as mpim # for imread, imsave
@@ -18,7 +20,7 @@ import config
 
 
 def resizeImage(im, w, h):
-    """Resize image, keeping aspect ratio, filling in gaps with black, return new image."""
+    "Resize image, keeping aspect ratio, filling in gaps with black, return new image."
 
     oldH, oldW = im.shape[:2]
     print oldH, oldW
@@ -42,7 +44,7 @@ def resizeImage(im, w, h):
 
 
 def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
-    """center an image file on target, then stabilize it relative to the given fixed file"""
+    "center an image file on target, then stabilize it relative to the given fixed file"
     #. this logic is pretty complicated - simplify
     #. a fn should do ONE thing - this does two, complicatedly
     # eg in vgCenter could call centerImageFile to get x,y,radius
@@ -106,8 +108,10 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
 
 
 def centerImageFile(infile, outfile, debugtitle=None):
-    "Center the given image file on a target and save it to outfile."
-    # returns x,y,radius
+    """
+    Center the given image file on a target and save it to outfile.
+    Returns x,y,radius
+    """
 
     im = mpim.imread(infile)
 
@@ -210,6 +214,7 @@ def showMpim(im, title='mpim image - press esc to continue'):
 def combineChannels(channels):
     """
     Combine the given channels and return a single cv2 image.
+
     If only one channel included will return a b/w image.
     If missing a channel will use a blank/black image for that channel.
     channels is an array of [filter, filename, <weight, x, y>]
@@ -693,7 +698,7 @@ if __name__ == "__main__":
     blue = '../'+lib.getAdjustedFilepath('7206','C2684340','Violet')
     print orange
     channels = [
-        ['Orange',orange,0.8,120,-65],
+        ['Orange',orange,0.7,120,-65],
         ['Green',green,1,150,20],
         ['Blue',blue,1,0,0],
         ]

@@ -105,7 +105,7 @@ def vgTarget(volnum, targetPath=None):
                     lib.cp(src, targetFolder)
 
                     # copy composite file
-                    src = lib.getCompositeFilepath(volume, fileId, filter)
+                    src = lib.getCompositeFilepath(volume, fileId)
                     lib.cp(src, targetFolder)
 
                     # # copy mosaic file

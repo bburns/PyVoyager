@@ -118,6 +118,20 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
     return x,y,radius,stabilizationOk
 
 
+def centerImageFileAt(infile, outfile, x, y, debugtitle=None):
+    """
+    Center the given image file at the given x,y and save it to outfile.
+    """
+    im = mpim.imread(infile)
+    # center the image on the target
+    boundingBox = [x,y,x,y]
+    im = centerImage(im, boundingBox)
+    if config.drawCrosshairs:
+        im[399, 0:799] = 0.25
+        im[0:799, 399] = 0.25
+    cv2.imwrite(outfile, im)
+
+
 def centerImageFile(infile, outfile, debugtitle=None):
     """
     Center the given image file on a target and save it to outfile.
@@ -144,14 +158,12 @@ def centerImageFile(infile, outfile, debugtitle=None):
 
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # but the CALIB images are really dark, and this result looks nice, so leaving it for now
-    misc.imsave(outfile, im)
+    # misc.imsave(outfile, im)
+    #. this should be cv2.imwrite, as the adjust step already does this
+    cv2.imwrite(outfile, im)
 
-    # return boundingBox
-
-    # return center
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
-    # return x, y
     #. this is cheating, but it works so far
     radius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
     return x, y, radius
@@ -193,20 +205,6 @@ def adjustImageFile(infile, outfile, debugtitle=None):
     # the CALIB images are really dark, and this result looks nice
     misc.imsave(outfile, im)
 
-
-def translateImageFile(infile, outfile, x, y):
-    "center an image file on x,y"
-    im = mpim.imread(infile)
-    boundingBox = [x,y,x,y]
-    im = centerImage(im, boundingBox)
-    if config.drawCrosshairs:
-        im[399, 0:799] = 0.25
-        im[0:799, 399] = 0.25
-    # this actually saves bw images with a colormap
-    # mpim.imsave(outfile, im)
-    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
-    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
-    misc.imsave(outfile, im)
 
 
 

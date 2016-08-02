@@ -59,12 +59,13 @@ import vgSegments
 import vgMovies
 import vgList
 import vgTest
+import vgGrab
 import vgInitFiles
+import vgInitCenters
 import vgInitComposites
 import vgInitPositions
 import vgRetarget
 import vgUpdateCenters
-import vgGrab
 
 
 
@@ -197,6 +198,11 @@ elif cmd=="init":
     subject = args.pop(0)
     if subject=='files':
         vgInitFiles.initFiles()
+    elif subject=='centers':
+        vols = args.pop(0)
+        volnums = lib.getVolumeNumbers(vols)
+        for volnum in volnums:
+            vgInitCenters.vgInitCenters(volnum)
     elif subject=='composites':
         vgInitComposites.initComposites()
     elif subject=='positions':
@@ -210,43 +216,5 @@ else:
     print "Command not recognized."
     cmd = 'help'
 
-
 if cmd=="help":
     print __doc__
-    # print
-    # print "Voyager commands"
-    # print
-    # print "  vg download <volnums>             - download volume(s)"
-    # print "  vg unzip <volnums>                - unzip volume(s)"
-    # print "  vg convert <volnums>              - convert IMGs to PNGs"
-    # print "  vg adjust <volnums>               - adjust images (rotate and enhance)"
-    # print "  vg center <volnums>               - center images"
-    # print "  vg composite <volnums>            - create color images"
-    # print "  vg target <volnums>               - copy images into target subfolders"
-    # print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
-    # print "  vg movies                         - create movies from clips"
-    # print "  vg list                           - show status of local datasets"
-    # print "  vg test                           - run centering tests"
-    # print
-    # print "where"
-    # print
-    # print "  <volnums> = 5101..5120 Voyager 1 Jupiter"
-    # print "              6101..6121 Voyager 1 Saturn"
-    # print "              5201..5214 Voyager 2 Jupiter"
-    # print "              6201..6215 Voyager 2 Saturn"
-    # print "              7201..7207 Voyager 2 Uranus"
-    # print "              8201..8210 Voyager 2 Neptune"
-    # print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
-    # print
-    # print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
-    # print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
-    # print "  <spacecraft> = Voyager1|Voyager2"
-    # print "  <target>     = Jupiter|Io|Europa|, etc."
-    # print "  <camera>     = Narrow|Wide"
-    # print
-    # print "e.g. vg clips bw //Triton"
-    # print
-    # print "You can also add `-y` to a command to have it overwrite any existing data."
-    # print
-
-

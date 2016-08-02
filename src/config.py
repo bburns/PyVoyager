@@ -304,6 +304,9 @@ segmentsFolder      = onlineFolder  + "step11_segments/"
 segmentsStageFolder = segmentsFolder + 'stage/'
 moviesFolder        = onlineFolder  + "step12_movies/"
 
+grabFolder          = onlineFolder  + "grab/"
+grabbedFolder       = onlineFolder  + "grabbed/"
+
 # test images go here
 testFolder    = 'test/'
 testImagesdb = testFolder + 'testImages.csv'

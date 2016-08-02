@@ -1,7 +1,42 @@
 
 # vg
 # voyager command line interface
-# --------------------------------------------------------------------------------
+
+"""
+PyVoyager commands
+
+  vg download <volnums>             - download volume(s)
+  vg unzip <volnums>                - unzip volume(s)
+  vg convert <volnums>              - convert IMGs to PNGs
+  vg adjust <volnums>               - adjust images (rotate and enhance)
+  vg center <volnums>               - center images
+  vg composite <volnums>            - create color images
+  vg target <volnums>               - copy images into target subfolders
+  vg clips bw|color [<targetpath>]  - create bw or color clips
+  vg movies                         - create movies from clips
+  vg list                           - show status of local datasets
+  vg test                           - run centering tests
+
+where
+
+  <volnums> = 5101..5120 Voyager 1 Jupiter
+              6101..6121 Voyager 1 Saturn
+              5201..5214 Voyager 2 Jupiter
+              6201..6215 Voyager 2 Saturn
+              7201..7207 Voyager 2 Uranus
+              8201..8210 Voyager 2 Neptune
+              (ranges and wildcards like 5101-5104 or 51* are ok)
+
+  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
+  <system>     = Jupiter|Saturn|Uranus|Neptune
+  <spacecraft> = Voyager1|Voyager2
+  <target>     = Jupiter|Io|Europa|, etc.
+  <camera>     = Narrow|Wide
+
+e.g. vg clips bw //Triton
+
+You can also add `-y` to a command to have it overwrite any existing data.
+"""
 
 import sys
 import os
@@ -173,45 +208,41 @@ else:
 
 
 if cmd=="help":
-    print
-    print "Voyager commands"
-    print
-    print "  vg download <volnums>             - download volume(s)"
-    print "  vg unzip <volnums>                - unzip volume(s)"
-    print "  vg convert <volnums>              - convert IMGs to PNGs"
-    print "  vg adjust <volnums>               - adjust images (rotate and enhance)"
-    print "  vg center <volnums>               - center images"
-    print "  vg composite <volnums>            - create color images"
-    # print "  vg mosaic <volnums>               - create mosaic images"
-    print "  vg target <volnums>               - copy images into target subfolders"
-    print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
-    print "  vg movies                         - create movies from clips"
-    print "  vg list                           - show status of local datasets"
-    print "  vg test                           - run centering tests"
-    print
-    # print "  vg init files"
-    # print "  vg init composites"
-    # print "  vg init mosaics"
+    print __doc__
     # print
-    print "where"
-    print
-    print "  <volnums> = 5101..5120 Voyager 1 Jupiter"
-    print "              6101..6121 Voyager 1 Saturn"
-    print "              5201..5214 Voyager 2 Jupiter"
-    print "              6201..6215 Voyager 2 Saturn"
-    print "              7201..7207 Voyager 2 Uranus"
-    print "              8201..8210 Voyager 2 Neptune"
-    print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
-    print
-    print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
-    print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
-    print "  <spacecraft> = Voyager1|Voyager2"
-    print "  <target>     = Jupiter|Io|Europa|, etc."
-    print "  <camera>     = Narrow|Wide"
-    print
-    print "e.g. vg clips bw //Triton"
-    print
-    print "You can also add `-y` to a command to have it overwrite any existing data."
-    print
+    # print "Voyager commands"
+    # print
+    # print "  vg download <volnums>             - download volume(s)"
+    # print "  vg unzip <volnums>                - unzip volume(s)"
+    # print "  vg convert <volnums>              - convert IMGs to PNGs"
+    # print "  vg adjust <volnums>               - adjust images (rotate and enhance)"
+    # print "  vg center <volnums>               - center images"
+    # print "  vg composite <volnums>            - create color images"
+    # print "  vg target <volnums>               - copy images into target subfolders"
+    # print "  vg clips bw|color [<targetpath>]  - create bw or color clips"
+    # print "  vg movies                         - create movies from clips"
+    # print "  vg list                           - show status of local datasets"
+    # print "  vg test                           - run centering tests"
+    # print
+    # print "where"
+    # print
+    # print "  <volnums> = 5101..5120 Voyager 1 Jupiter"
+    # print "              6101..6121 Voyager 1 Saturn"
+    # print "              5201..5214 Voyager 2 Jupiter"
+    # print "              6201..6215 Voyager 2 Saturn"
+    # print "              7201..7207 Voyager 2 Uranus"
+    # print "              8201..8210 Voyager 2 Neptune"
+    # print "              (ranges and wildcards like 5101-5104 or 51* are ok)"
+    # print
+    # print "  <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]"
+    # print "  <system>     = Jupiter|Saturn|Uranus|Neptune"
+    # print "  <spacecraft> = Voyager1|Voyager2"
+    # print "  <target>     = Jupiter|Io|Europa|, etc."
+    # print "  <camera>     = Narrow|Wide"
+    # print
+    # print "e.g. vg clips bw //Triton"
+    # print
+    # print "You can also add `-y` to a command to have it overwrite any existing data."
+    # print
 
 

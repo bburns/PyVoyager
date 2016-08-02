@@ -90,8 +90,9 @@ def cp(src, dst):
     "copy a file to another directory, ignoring any errors"
     try:
         shutil.copy(src, dst)
+        return True
     except:
-        pass
+        return False
 
 
 #. might only need the Filepath variants

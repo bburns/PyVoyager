@@ -64,6 +64,7 @@ import vgInitComposites
 import vgInitPositions
 import vgRetarget
 import vgUpdateCenters
+import vgGrab
 
 
 
@@ -179,6 +180,9 @@ elif cmd=="list":
 
 elif cmd=="test":
     vgTest.vgTest()
+
+elif cmd=="grab":
+    vgGrab.vgGrab()
 
 elif cmd=="update":
     subject = args.pop(0)

@@ -1,6 +1,9 @@
 
-# vg center command
-# build centered images from adjusted images
+"""
+vg center command
+
+Build centered images from adjusted images.
+"""
 
 import csv
 import os
@@ -18,19 +21,13 @@ import vgAdjust
 def vgCenter(volnum, overwrite=False, directCall=True):
     "Build centered images for given volume, if they don't exist yet"
 
-    #. need to handle indiv imageids
+    #. need to handle indiv imageids? what would stabilization mean then though?
     if volnum=='': return
 
     adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + str(volnum) + '/'
     centersSubfolder = config.centersFolder + 'VGISS_' + str(volnum) + '/'
 
-    if int(volnum)==0: # test volume - turn on image debugging
-        config.drawBoundingBox = True
-        config.drawCircle = True
-        config.drawCrosshairs = True
-
-    # for test (vol=0), can overwrite test folder
-    if int(volnum)!=0 and os.path.isdir(centersSubfolder) and overwrite==False:
+    if os.path.isdir(centersSubfolder) and overwrite==False:
         if directCall:
             print "Folder exists - skipping vg centers step: " + centersSubfolder
     else:
@@ -39,7 +36,6 @@ def vgCenter(volnum, overwrite=False, directCall=True):
 
         # make new folder
         lib.rmdir(centersSubfolder)
-        # lib.mkdir(centersSubfolder)
         os.mkdir(centersSubfolder)
 
         # get number of files to process
@@ -54,7 +50,7 @@ def vgCenter(volnum, overwrite=False, directCall=True):
 
         # join on centers.csv file
         csvCenters, fCenters = lib.openCsvReader(config.centersdb)
-        csvCenters.next() # skip header row
+        csvCenters.next() # skip header row #. brittle
         fileIdCenters = ''
 
         # open centers_new.csv file to write any new records to
@@ -150,8 +146,6 @@ def vgCenter(volnum, overwrite=False, directCall=True):
                         if stabilizationOk:
                             # lastImageInTargetSequence[targetKey] = [volume, fileId, filter]
                             lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
-                        # else:
-                            # stop
                     else:
                         x,y = 399,399
 

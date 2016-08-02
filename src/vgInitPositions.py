@@ -1,31 +1,33 @@
 
-# vg init positions command
-# initialize db/positions.csv
-# used to determine angular size of targets
+"""
+vg init positions command
 
-# eg
-# imageId,distance(km),imageSize
-# C1460413,490003313,0.00145
-# C1461430,489196322,0.00133
-# C1462321,489122642,0.03864
-# C1462323,489120468,0.03864
-# C1462325,489118422,0.03864
-# C1462327,489116291,0.03864
-# C1462329,489114116,0.03864
+initialize db/positions.csv
+used to determine angular size of targets
 
-# imageSize is the fraction of the image taken up by the target, eg 0.73
+eg
+imageId,distance(km),imageSize
+C1460413,490003313,0.00145
+C1461430,489196322,0.00133
+C1462321,489122642,0.03864
+C1462323,489120468,0.03864
+C1462325,489118422,0.03864
+C1462327,489116291,0.03864
+C1462329,489114116,0.03864
 
-# to use, need SPICE kernels - download the following files and put them in the /kernels folder:
+imageSize is the fraction of the image taken up by the target, eg 0.73
 
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
-# ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
-# ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+to use, need SPICE kernels - download the following files and put them in the /kernels folder:
 
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
+ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
+"""
 
 import csv
 import os
@@ -54,7 +56,7 @@ def initPositions():
 
     # load SPICE kernels (data files)
     # see above for sources
-    spice.furnsh('kernels/naif0012.tls') # load leap second data (5kb)
+    spice.furnsh('kernels/naif0012.tls') # leap second data (5kb)
     spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 data (6mb)
     spice.furnsh('kernels/Voyager_2.m05016u.merged.bsp') # voyager 2 data (6mb)
     spice.furnsh('kernels/jup100.bsp') # jupiter satellite data (20mb)
@@ -89,6 +91,7 @@ def initPositions():
             instrument = row[config.filesColInstrument] # eg Narrow
 
             # there are lots of records with UNKNOWN times (which could be interpolated later),
+            # (or just use the last recorded time and see how it does)
             # ~1500 in uranus and neptune records
             # so want to at least try to center them for now.
             # the old approach of centering.csv would work better though.
@@ -96,6 +99,8 @@ def initPositions():
             if utcTime[0]=='U': # UNKNOWN or UNK
                 pass
             else:
+                # get position of observer (eg Voyager 1) relative to target (eg Io).
+                # position is an (x,y,z) coordinate in the given frame of reference.
                 ephemerisTime = spice.str2et(utcTime) # seconds since J2000
                 observer = craft[:-1] + ' ' + craft[-1] # eg Voyager 1
                 frame = 'J2000'

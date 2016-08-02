@@ -1,6 +1,6 @@
 
 """
-image processing routines
+Image processing routines
 
 not reusable - many are specific to PyVoyager
 """
@@ -43,24 +43,25 @@ def resizeImage(im, w, h):
     return canvas
 
 
-def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
-    "center an image file on target, then stabilize it relative to the given fixed file"
-    #. this logic is pretty complicated - simplify
-    #. a fn should do ONE thing - this does two, complicatedly
-    # eg in vgCenter could call centerImageFile to get x,y,radius
-    # then call stabilizeImageFile
-    x,y,radius = centerImageFile(infile, outfile)
+
+def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
+    """
+    stabilize infile against fixedfile and write to outfile.
+
+    #. rename these
+    lastRadius is the radius of the target in the fixedfile,
+    radius is the radius of the infile
+    """
     # if no file to stabilize to, must be the first image in the sequence,
     # so just say it's stabilized
     if not fixedfile:
         stabilizationOk = True
-    # if given a fixedfile, and radius not too different, try to stabilize against that
+    # if given a fixedfile try to stabilize against that
     else:
         stabilizationOk = False
         # this helps prevent stabilizing to badly centered images
-        #. should be a percentage
+        #. should be a percentage?
         if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
-            # stabilizationOk = False
             print
             print 'max radius delta exceeded', radius, lastRadius
         else:
@@ -103,8 +104,18 @@ def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
                     cv2.imwrite(outfile, im2_aligned)
                     x += int(deltax)
                     y += int(deltay)
-    return x,y,radius,stabilizationOk
+    # return x,y,radius,stabilizationOk
+    return x,y,stabilizationOk
 
+
+def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
+    "center an image file on target, then stabilize it relative to the given fixed file"
+    # center file on target, roughly - return approx radius of target
+    x,y,radius = centerImageFile(infile, outfile)
+    # given a file to stabilize on, try to stabilize the infile
+    # lastRadius and radius are used to determine if it has changed 'too much'
+    x,y,stabilizationOk = stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius)
+    return x,y,radius,stabilizationOk
 
 
 def centerImageFile(infile, outfile, debugtitle=None):

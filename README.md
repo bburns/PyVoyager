@@ -287,6 +287,25 @@ This file is used by the `vg composites <volume>` command to generate the color 
 
 The clips are generated with the `vg clips bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
 
+Here is how black and white vs color clips are generated -
+
+    Adjusted   Centered     Composite    Notes
+    ------------------------------------------------------------------
+    [ ]        [ ]\         [ ]          centered 3 color composite
+    [ ]        [ ] |-------/
+    [ ]        [ ]/
+    [ ]        [ ]----------[ ]          centered bw
+    [ ]        [ ]\_________[ ]          centered 2 color composite
+    [ ]        [ ]/
+    [ ]---------------------[ ]          uncentered bw
+    [ ]\                    [ ]          uncentered 3 color composite
+    [ ] -------------------/
+    [ ]/
+    [ ]        [ ]----------[ ]          centered bw
+    [ ]        [ ]----------[ ]          centered bw
+    \------------/           |
+       bw clips         color clips
+
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
 That's about it!

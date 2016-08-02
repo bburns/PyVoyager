@@ -352,9 +352,11 @@ indexTranslations = {
 
 
 # csv file databases
+#. rename
 filesdb = dbFolder + 'files.csv'
 centeringdb = dbFolder + 'centering.csv'
 centersdb = dbFolder + 'centers.csv'
+dbCentersOverride = dbFolder + 'centersOverride.csv'
 newcentersdb = dbFolder + 'centers_new.csv'
 compositesdb = dbFolder + 'composites.csv'
 mosaicsdb = dbFolder + 'mosaics.csv'
@@ -364,6 +366,8 @@ frameratesdb = dbFolder + 'framerates.csv'
 segmentsdb = dbFolder + 'segments.csv'
 positionsdb = dbFolder + 'positions.csv'
 
+
+#. rename all these to colFilesVolume etc
 
 # files.csv columns
 # keep in synch with vgInitFiles.py, etc
@@ -383,6 +387,7 @@ centersColVolume = 0
 centersColFileId = 1
 centersColX = 2
 centersColY = 3
+centersColRadius = 4 # not sure yet
 
 
 # composites.csv columns

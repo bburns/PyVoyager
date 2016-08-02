@@ -12,6 +12,7 @@ import errno
 import re # for findall
 import csv
 import shutil
+import more_itertools
 
 # for makeTitlePage
 import PIL
@@ -23,27 +24,56 @@ from PIL import ImageDraw
 import config
 
 
+
+
+
+def centerThisImageQ(centeringInfo, targetKey, fileId, target):
+    """
+    Should this image be centered? Checks with centering.csv and config.dontCenterTargets.
+    Used by vgCenter and vgInitCenters
+    """
+    centeringInfoRecord = centeringInfo.get(targetKey)
+    if centeringInfoRecord:
+        centeringOff = centeringInfoRecord['centeringOff']
+        centeringOn = centeringInfoRecord['centeringOn']
+        doCenter = (fileId < centeringOff) or (fileId > centeringOn)
+    else: # if no info for this target just center it
+        doCenter = True
+    if target in config.dontCenterTargets: # eg Sky, Dark
+        doCenter = False
+    return doCenter
+
+
 def beep():
     os.system('beep')
 
 
-def getJoinRow(csvReader, joinColumn, joinValue, lastJoinValue):
-    "look for a matching join value in the given csv filereader and return the row, or None"
-    # this assumes we're walking through the join file in one direction
-    # so must be sorted on the join column
-    # lastJoinValue acts as a pointer to the current record, so must return it also
-    row = None
-    while lastJoinValue < joinValue:
+def getJoinRow(csvReader, joinColumn, joinValue):
+    """
+    Look for a matching join value in the given csv filereader and return the row, or None.
+    This assumes we're walking through the join file in one direction,
+    so must be sorted on the join column.
+    csvReader iterator must be wrapped with more_itertools.peekable() -
+    see http://stackoverflow.com/a/27698681/243392
+    """
+    #. make this robust to comments and blank lines
+    try:
+        row = csvReader.peek()
+        currentValue = row[joinColumn] # if blank row this will throw error also
+    except:
+        return None
+    while currentValue < joinValue:
         try:
-            #. want a peek fn, not pop
-            row = csvReader.next()
-        except:
-            row = None
-            break
-        lastJoinValue = row[joinColumn]
-    if lastJoinValue!=joinValue:
-        row = None
-    return row, lastJoinValue
+            csvReader.next() # pop
+            row = csvReader.peek()
+            currentValue = row[joinColumn]
+        except: # eof
+            return None
+    if currentValue==joinValue:
+        csvReader.next() # pop
+        return row
+    else:
+        return None
 
 
 def concatFiles(filename1, filename2):
@@ -82,7 +112,9 @@ def openCsvReader(filename):
     "open a csv reader on the given filename"
     # use like 'for row in reader:'
     f = open(filename, 'rt')
-    reader = csv.reader(f)
+    # reader = csv.reader(f)
+    # use peekable - see http://stackoverflow.com/a/27698681/243392
+    reader = more_itertools.peekable(csv.reader(f))
     return reader, f
 
 
@@ -403,13 +435,34 @@ def unzipFile(zipfile, destfolder, overwrite=False):
 
 if __name__ == '__main__':
     os.chdir('..')
+
     # print getDownloadUrl(5101)
     # print getVolumeNumbers('5104')
     # print getVolumeNumbers('5104-5108')
     # print getVolumeNumbers('51*')
     # print getVolumeNumbers('5*')
     # print getVolumeNumbers('*')
-    print getImageIds('c1352753')
-    print getImageIds('c1352753-c1352764')
+
+    # print getImageIds('c1352753')
+    # print getImageIds('c1352753-c1352764')
+
+    # test getJoinRow fn
+    data = more_itertools.peekable(iter([[2],[3],[5],[6],[7]]))
+    col = 0
+    row = getJoinRow(data, col, 1)
+    assert row is None
+    assert data.peek()==[2]
+    assert data.peek()==[2]  # doesn't skip ahead
+    row = getJoinRow(data, col, 2)
+    assert row==[2]
+    assert data.peek()==[3]
+    row = getJoinRow(data, col, 4)
+    assert row is None
+    assert data.peek()==[5]
+    row = getJoinRow(data, col, 8)
+    assert row is None
+    row = getJoinRow(data, col, 10)
+    assert row is None
+
     print 'done'
 

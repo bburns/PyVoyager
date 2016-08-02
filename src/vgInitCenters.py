@@ -19,20 +19,6 @@ import libimg
 
 
 
-def centerThisImageQ(centeringInfo, targetKey, fileId, target):
-    "should this image be centered? check with centering.csv and config.dontCenterTargets"
-    centeringInfoRecord = centeringInfo.get(targetKey)
-    if centeringInfoRecord:
-        centeringOff = centeringInfoRecord['centeringOff']
-        centeringOn = centeringInfoRecord['centeringOn']
-        doCenter = (fileId < centeringOff) or (fileId > centeringOn)
-    else: # if no info for this target just center it
-        doCenter = True
-    if target in config.dontCenterTargets: # eg Sky, Dark
-        doCenter = False
-    return doCenter
-
-
 def vgInitCenters(volnum):
     "Build centered images for given volume and write x,y,radius to centers.csv"
 
@@ -112,7 +98,7 @@ def vgInitCenters(volnum):
             targetKey = system + '-' + craft + '-' + target + '-' + camera
 
             # do we actually need to center this image?
-            doCenter = centerThisImageQ(centeringInfo, targetKey, fileId, target)
+            doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
 
             if doCenter==False:
                 x,y = 399,399

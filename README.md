@@ -69,7 +69,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** version 3 [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12]. 
+You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** version 3 [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], **more-itertools** [14], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12]. 
 
 I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**. 
 
@@ -451,4 +451,4 @@ This software is released under the MIT license - see LICENSE.md.
 [11]: https://github.com/AndrewAnnex/SpiceyPy
 [12]: http://naif.jpl.nasa.gov/naif/
 [13]: https://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
-
+[14]: https://github.com/erikrose/more-itertools

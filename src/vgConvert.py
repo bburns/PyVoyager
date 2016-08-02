@@ -17,7 +17,7 @@ def vgConvert(volnum, overwrite=False, directCall=True):
     unzippedSubfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
     imagesSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
 
-    if int(volnum)!=0 and os.path.isdir(imagesSubfolder) and overwrite==False:
+    if os.path.isdir(imagesSubfolder) and overwrite==False:
         if directCall:
             print "Images folder exists: " + imagesSubfolder
     else:

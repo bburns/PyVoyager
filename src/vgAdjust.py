@@ -25,18 +25,15 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
     imagesSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
     adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + str(volnum) + '/'
 
-    if int(volnum)==0: # test volume - turn on image debugging
-        config.drawBoundingBox = True
-        config.drawCircle = True
-        config.drawCrosshairs = True
-
-    # for test (vol=0), can overwrite test folder
-    if int(volnum)!=0 and os.path.isdir(adjustmentsSubfolder) and overwrite==False:
+    if os.path.isdir(adjustmentsSubfolder) and overwrite==False:
         if directCall:
             print "Folder exists - skipping vg images step: " + centersubfolder
     else:
+        volnum = str(volnum) # eg '5101'
+
         # build the plain images for the volume, if not already there
-        vgConvert.vgConvert(volnum, False, False)
+        if volnum!='':
+            vgConvert.vgConvert(volnum, False, False)
 
         # make new folder
         lib.rmdir(adjustmentsSubfolder)
@@ -49,7 +46,6 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
         f = open(config.filesdb, 'rt')
         i = 0
         reader = csv.reader(f)
-        volnum = str(volnum) # eg '5101'
         nfile = 1
         for row in reader:
             if row==[] or row[0][0]=="#": continue # skip blank lines and comments

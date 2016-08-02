@@ -115,18 +115,19 @@ elif cmd=="adjust":
     lib.beep()
 
 elif cmd=="center":
-    vols = args.pop(0)
-    volnums = lib.getVolumeNumbers(vols)
-    for volnum in volnums:
-        vgCenter.vgCenter(volnum, overwrite)
+    arg = args.pop(0)
+    if arg[0].lower()=='c':
+        imageIds = lib.getImageIds(arg)
+        for imageId in imageIds:
+            vgCenter.vgCenter('', imageId, True)
+    else:
+        vols = arg
+        volnums = lib.getVolumeNumbers(vols)
+        for volnum in volnums:
+            vgCenter.vgCenter(volnum, overwrite)
     lib.beep()
 
 elif cmd=="composite":
-    # vols = args.pop(0)
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-        # vgComposites.buildComposites(volnum, overwrite)
-    # lib.beep()
     arg = args.pop(0)
     if arg[0].lower()=='c':
         compositeIds = lib.getImageIds(arg)
@@ -136,7 +137,6 @@ elif cmd=="composite":
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            # vgComposites.buildComposites(volnum, overwrite)
             vgComposite.vgComposite(volnum, '', overwrite)
     lib.beep()
 

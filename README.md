@@ -341,15 +341,19 @@ Next steps
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
-- improve stabilization parameters
+<!-- - improve stabilization parameters -->
+<!-- - (make ariel movie with override centers, aligned composite, mosaic - test crowdsourcing aspects) -->
 
-Version 0.41 (2016-07)
+Version 0.41 (2016-08)
 ----------------------------------------
 - Specify composite images with color weights and x,y offsets
-- (refactor, clean up code)
-- (make ariel movie with aligned composite, mosaic - test crowdsourcing aspects)
-- (changed stabilization routine so it stabilizes against the first occurrence of target in volume, instead of against previous frame, as Jupiter tended to drift to the left. fixed that problem, but didn't retest it on uranus)
+- Add `vg init centers <vol>` command - writes stabilized centers to `centers.csv`
+- `vg center <vol>` and `vg center <imageId>` now just use `centers.csv` and `centersOverride.csv`
+- Add `vg grab` command - 
+- Changed stabilization routine so it stabilizes against the first occurrence of target in volume, instead of against previous frame, as Jupiter tended to drift to the left. Didn't retest it on Uranus.
+<!-- - (refactor, clean up code) -->
 
+<!-- Make stabilized and center override Voyager 1 Jupiter rotation movie (color) -->
 
 Version 0.40 (2016-07-28)
 ----------------------------------------

@@ -46,7 +46,8 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
     else:
         # build the centered images for the volume, if not already there
         #. pass imageid also
-        vgCenter.vgCenter(buildVolnum, False, False)
+        if buildVolnum!='':
+            vgCenter.vgCenter(buildVolnum, False, False)
 
         # get centering info - will use to get files from either adjusted or centered folders
         # centeringInfo = lib.readCsv(config.centeringdb)

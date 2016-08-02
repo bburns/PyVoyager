@@ -23,14 +23,11 @@ def vgDownload(volnum, overwrite=False, directCall=True):
     else:
         print "Downloading " + url
         print "         to " + filepath
-        if int(volnum)==0:
-            print "         (nothing to do - test volume 0)"
-        else:
-            lib.rm(filepath)
-            lib.downloadFile(url, filepath)
+        lib.rm(filepath)
+        lib.downloadFile(url, filepath)
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgDownload(0)
+    # vgDownload(0)
     print 'done'

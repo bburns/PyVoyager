@@ -21,27 +21,31 @@ import vgAdjust
 
 
 
-def vgCenter(volnum, overwrite=False, directCall=True):
+def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     "Build centered images for given volume, if they don't exist yet"
 
-    volnum = str(volnum) # eg '5101'
+    buildImageId = buildImageId.upper() # always capital C
     
     #. need to handle indiv imageids? what would stabilization mean then though?
-    if volnum=='': return
+    # if buildVolnum=='': return
 
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
-    centersSubfolder = config.centersFolder + 'VGISS_' + volnum + '/'
+    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + str(buildVolnum) + '/'
+    centersSubfolder = config.centersFolder + 'VGISS_' + str(buildVolnum) + '/'
 
     if os.path.isdir(centersSubfolder) and overwrite==False:
         if directCall:
             print "Folder exists - skipping vg centers step: " + centersSubfolder
     else:
+        buildVolnum = str(buildVolnum) # eg '5101'
+    
         # build the adjusted images for the volume, if not already there
-        vgAdjust.vgAdjust(volnum, False, False)
+        if buildVolnum!='':
+            vgAdjust.vgAdjust(buildVolnum, False, False)
 
-        # make new folder
-        lib.rmdir(centersSubfolder)
-        os.mkdir(centersSubfolder)
+        # if we're building an entire volume, remove the existing directory first
+        if buildVolnum!='':
+            lib.rmdir(centersSubfolder)
+            os.mkdir(centersSubfolder)
 
         # get number of files to process
         nfiles = len(os.listdir(adjustmentsSubfolder))
@@ -69,54 +73,58 @@ def vgCenter(volnum, overwrite=False, directCall=True):
             if i==0: fields = rowFiles
             else:
                 volume = rowFiles[config.filesColVolume]
-                if volume!=volnum: continue # filter to given volume
-
-                # get image properties
                 fileId = rowFiles[config.filesColFileId]
-                filter = rowFiles[config.filesColFilter]
-                system = rowFiles[config.filesColPhase]
-                craft = rowFiles[config.filesColCraft]
-                target = rowFiles[config.filesColTarget]
-                camera = rowFiles[config.filesColInstrument]
-
-                # relabel target field if necessary
-                target = lib.retarget(targetInfo, fileId, target)
-
-                # get filenames
-                infile = lib.getAdjustedFilepath(volume, fileId, filter)
-                outfile = lib.getCenteredFilepath(volume, fileId, filter)
-
-                # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-                print 'Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile)
-                nfile += 1
-
-                targetKey = system + '-' + craft + '-' + target + '-' + camera
                 
-                # do we actually need to center this image?
-                doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-                # print doCenter
+                # if volume!=buildVolnum: continue # filter to given volume
+                if volume==buildVolnum or fileId==buildImageId:
 
-                x,y = 399,399
-                if doCenter:
-                    # get x,y = from joined file
-                    rowCentersOverride = lib.getJoinRow(csvCentersOverride, config.centersColFileId, fileId)
-                    if rowCentersOverride:
-                        print 'found centers override record - using x,y from that'
-                        print rowCentersOverride
-                        x = int(rowCentersOverride[config.centersColX])
-                        y = int(rowCentersOverride[config.centersColY])
-                        # radius = int(rowCentersOverride[config.centersColRadius])
-                    else:
-                        rowCenters = lib.getJoinRow(csvCenters, config.centersColFileId, fileId)
-                        if rowCenters:
-                            # print 'found centers record - using that'
-                            # print rowCenters
-                            x = int(rowCenters[config.centersColX])
-                            y = int(rowCenters[config.centersColY])
+                    # get image properties
+                    filter = rowFiles[config.filesColFilter]
+                    system = rowFiles[config.filesColPhase]
+                    craft = rowFiles[config.filesColCraft]
+                    target = rowFiles[config.filesColTarget]
+                    camera = rowFiles[config.filesColInstrument]
+
+                    # relabel target field if necessary
+                    target = lib.retarget(targetInfo, fileId, target)
+
+                    # get filenames
+                    infile = lib.getAdjustedFilepath(volume, fileId, filter)
+                    outfile = lib.getCenteredFilepath(volume, fileId, filter)
+
+                    # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+                    print 'Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile)
+                    nfile += 1
+
+                    targetKey = system + '-' + craft + '-' + target + '-' + camera
+
+                    # do we actually need to center this image?
+                    doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
+                    # print doCenter
+
+                    x,y = 399,399
+                    if doCenter:
+                        # get x,y = from joined file
+                        rowCentersOverride = lib.getJoinRow(csvCentersOverride,
+                                                            config.centersColFileId, fileId)
+                        if rowCentersOverride:
+                            print 'found centers override record - using x,y from that'
+                            print rowCentersOverride
+                            x = int(rowCentersOverride[config.centersColX])
+                            y = int(rowCentersOverride[config.centersColY])
+                            # radius = int(rowCentersOverride[config.centersColRadius])
                         else:
-                            print 'record not found'
-                # center image file (if x,y==399,399 will just copy the file to centered folder)
-                libimg.centerImageFileAt(infile, outfile, x, y)
+                            rowCenters = lib.getJoinRow(csvCenters,
+                                                        config.centersColFileId, fileId)
+                            if rowCenters:
+                                # print 'found centers record - using that'
+                                # print rowCenters
+                                x = int(rowCenters[config.centersColX])
+                                y = int(rowCenters[config.centersColY])
+                            else:
+                                print 'record not found'
+                    # center image file (if x,y==399,399 will just copy the file to center folder)
+                    libimg.centerImageFileAt(infile, outfile, x, y)
                             
             i += 1
 
@@ -127,7 +135,7 @@ def vgCenter(volnum, overwrite=False, directCall=True):
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgCenter(0)
+    vgCenter('','C1540858')
     print 'done'
 
 

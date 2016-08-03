@@ -7,6 +7,8 @@ Build centers.csv file for a volume by centering and stablizing images in files.
 Currently this stabilizes images within a volume - ideally it would distribute
 the images to their targets and then stabilize on that sequence, but this works
 fairly well, with possible discontinuities at volume boundaries.
+
+See also vgCenter.py
 """
 
 import csv
@@ -44,17 +46,6 @@ def vgInitCenters(volnum):
 
     # iterate through all available images, filter on desired volume
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
-
-    # # join on centers.csv file
-    # csvCenters, fCenters = lib.openCsvReader(config.centersdb)
-    # csvCenters.next() # skip header row #. brittle
-    # # fileIdCenters = lib.nextRow(csvCenters, config.centersColFileId)
-    # fileIdCenters = ''
-
-    # # join on centersOverride.csv file
-    # csvCentersOverride, fCentersOverride = lib.openCsvReader(config.dbCentersOverride)
-    # csvCentersOverride.next() # skip header row #. brittle
-    # fileIdCentersOverride = ''
 
     # open centers_new.csv file to write any new records to
     csvNewCenters, fNewCenters = lib.openCsvWriter(config.newcentersdb)
@@ -106,66 +97,54 @@ def vgInitCenters(volnum):
 
                 # print
                 # print 'currentimage',volume,fileId,filter,targetKey
+
                 # for this target sequence (eg ariel flyby), what was the last good image?
                 # use that as a fixed image against which we try to align the
                 # current image.
                 # we need to remember the fileId, volume, filter, and radius
                 lastImageRecord = lastImageInTargetSequence.get(targetKey)
                 if lastImageRecord:
-                    lastVolume = lastImageRecord[0]
-                    lastFileId = lastImageRecord[1]
-                    lastFilter = lastImageRecord[2]
-                    lastRadius = lastImageRecord[3]
-                    fixedfile = lib.getCenteredFilepath(lastVolume, lastFileId, lastFilter)
-                    print 'centering against', fixedfile
+                    fixedfile = lastImageRecord[0]
+                    ntimesused = lastImageRecord[1]
+                    lastRadius = lastImageRecord[2]
+                    lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
+                    # lastVolume = lastImageRecord[0]
+                    # lastFileId = lastImageRecord[1]
+                    # lastFilter = lastImageRecord[2]
+                    # lastRadius = lastImageRecord[3]
+                    # fixedfile = lib.getCenteredFilepath(lastVolume, lastFileId, lastFilter)
+                    print 'aligning to', fixedfile
                 else:
                     fixedfile = None
+                    ntimesused = 0
                     lastRadius = 0
-                    print 'no image to center against yet for',targetKey
+                    print 'no image to align to yet for',targetKey
 
-                # #. get x,y = from joined file
-                # rowCentersOverride, fileIdCentersOverride = lib.getJoinRow(csvCentersOverride,
-                #                                                            config.centersColFileId,
-                #                                                            fileId,
-                #                                                            fileIdCentersOverride)
-                # if rowCentersOverride:
-                #     print 'found centers override record - using x,y,radius from that'
-                #     x = int(rowCentersOverride[config.centersColX])
-                #     y = int(rowCentersOverride[config.centersColY])
-                #     radius = int(rowCentersOverride[config.centersColRadius])
-                #     # center image at x,y
-                #     centerImageFileAt(infile, outfile, x, y)
-                # else:
-                #     # find center of target
-                #     x,y,radius = centerImageFile(infile, outfile)
-
-                # find center of target
+                # find center of target using blob and hough, then align to fixedimage
                 x,y,radius = libimg.centerImageFile(infile, outfile)
                 x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
                                                                 lastRadius, x,y,radius)
 
-                # # center the image using blob and hough, then align it to the fixed image
-                # # x,y,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile)
-                # # x,y,radius,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, None, lastRadius)
-                # # x,y,radius,stabilizationOk = libimg.centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius)
-                # # if image was successfully stabilized, remember it
-                # x,y,radius = centerImageFile(infile, outfile)
-                # # given a file to stabilize on, try to stabilize the infile
-                # # lastRadius and radius are used to determine if it has changed 'too much'
-                # x,y,stabilizationOk = stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius)
-
-                if stabilizationOk:
-                    lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
+                if fixedfile is None:
+                    fixedfile = outfile
+                    print 'first fixed frame', fixedfile
+                    lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
+                # if image was successfully stabilized, remember it
+                # lastRadius and radius are used to determine if it has changed 'too much'
+                if stabilizationOk and ntimesused>10: #. param
+                    fixedfile = outfile
+                    print 'new fixed frame', fixedfile
+                    # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
+                    # lastImageInTargetSequence[targetKey] = [fixedfile, ntimesused, radius]
+                    lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
 
                 # write x,y,radius to newcenters file
-                rowNew = [volume, fileId, x, y, radius]
                 #. change to this
                 # rowNew = [fileId, volume, x, y, radius]
+                rowNew = [volume, fileId, x, y, radius]
                 csvNewCenters.writerow(rowNew)
         i += 1
 
-    # fCentersOverride.close()
-    # fCenters.close()
     fNewCenters.close()
     fFiles.close()
 

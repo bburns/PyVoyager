@@ -124,7 +124,7 @@ elif cmd=="center":
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            vgCenter.vgCenter(volnum, overwrite)
+            vgCenter.vgCenter(volnum, '', overwrite)
     lib.beep()
 
 elif cmd=="composite":

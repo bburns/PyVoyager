@@ -65,7 +65,7 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
             print
             print 'max radius delta exceeded', radius, lastRadius
         else:
-            # stabilizationOk = True
+            stabilizationOk = True
             im1 = cv2.imread(fixedfile)
             im2 = cv2.imread(outfile)
             im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)

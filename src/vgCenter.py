@@ -5,6 +5,8 @@ vg center command
 Build centered and stabilized images from adjusted images using centers.csv
 and centersOverride.csv.
 
+See also vgInitCenters.py
+
 """
 
 import csv
@@ -75,7 +77,6 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
                 volume = rowFiles[config.filesColVolume]
                 fileId = rowFiles[config.filesColFileId]
                 
-                # if volume!=buildVolnum: continue # filter to given volume
                 if volume==buildVolnum or fileId==buildImageId:
 
                     # get image properties
@@ -100,7 +101,6 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
 
                     # do we actually need to center this image?
                     doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-                    # print doCenter
 
                     x,y = 399,399
                     if doCenter:

@@ -1,7 +1,9 @@
 
-# vg list command
-# show listing of volumes and what stage they're at
+"""
+vg list command
 
+Show listing of volumes and what stage they're at.
+"""
 
 import os
 import tabulate

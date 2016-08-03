@@ -41,17 +41,19 @@ import libimg
 import libspice
 
 
-def initPositions():
+def vgInitPositions():
     "Initialize db/positions.csv with distances to targets for all images in db/files.csv"
 
     # open files.csv for reading
-    filein = open(config.filesdb, 'rt')
-    reader = csv.reader(filein)
+    # filein = open(config.filesdb, 'rt')
+    # reader = csv.reader(filein)
+    reader, filein = lib.openCsvReader(config.filesdb)
 
     # open positions.csv for writing
-    fileout = open(config.positionsdb, 'wb')
+    # fileout = open(config.positionsdb, 'wb')
+    # writer = csv.writer(fileout)
+    writer, fileout = lib.openCsvWriter(config.positionsdb)
     fields = 'imageId,distance(km),imageSize'.split(',') # keep in synch with below
-    writer = csv.writer(fileout)
     writer.writerow(fields)
 
     # load SPICE kernels (data files)
@@ -77,78 +79,72 @@ def initPositions():
 # Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
 
     # iterate over all available files
-    i = 0
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # skip blank line and comments
-        if i==0: fields = row # get column headers
+        # get field values
+        # volume,fileid,phase,craft,target,time,instrument,filter,note
+        fileId = row[config.filesColFileId] # eg C1385455
+        craft = row[config.filesColCraft] # eg Voyager1
+        target = row[config.filesColTarget] # eg Io
+        utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
+        instrument = row[config.filesColInstrument] # eg Narrow
+
+        # there are lots of records with UNKNOWN times (which could be interpolated later),
+        # (or just use the last recorded time and see how it does)
+        # ~1500 in uranus and neptune records
+        # so want to at least try to center them for now.
+        # the old approach of centering.csv would work better though.
+        # so back to that.
+        if utcTime[0]=='U': # UNKNOWN or UNK
+            pass
         else:
-            # get field values
-            # volume,fileid,phase,craft,target,time,instrument,filter,note
-            fileId = row[config.filesColFileId] # eg C1385455
-            craft = row[config.filesColCraft] # eg Voyager1
-            target = row[config.filesColTarget] # eg Io
-            utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
-            instrument = row[config.filesColInstrument] # eg Narrow
+            # get position of observer (eg Voyager 1) relative to target (eg Io).
+            # position is an (x,y,z) coordinate in the given frame of reference.
+            ephemerisTime = spice.str2et(utcTime) # seconds since J2000
+            observer = craft[:-1] + ' ' + craft[-1] # eg Voyager 1
+            frame = 'J2000'
+            abberationCorrection = 'NONE'
+            doCenter = True
+            try:
+                position, lightTime = spice.spkpos(target, ephemerisTime, frame,
+                                                   abberationCorrection, observer)
+            except:
+                if target in config.centerTargets:
+                    doCenter = True
+                elif target in config.dontCenterTargets:
+                    doCenter = False
+                else:
+                    print 'Insufficient data for', target, utcTime
 
-            # there are lots of records with UNKNOWN times (which could be interpolated later),
-            # (or just use the last recorded time and see how it does)
-            # ~1500 in uranus and neptune records
-            # so want to at least try to center them for now.
-            # the old approach of centering.csv would work better though.
-            # so back to that.
-            if utcTime[0]=='U': # UNKNOWN or UNK
-                pass
-            else:
-                # get position of observer (eg Voyager 1) relative to target (eg Io).
-                # position is an (x,y,z) coordinate in the given frame of reference.
-                ephemerisTime = spice.str2et(utcTime) # seconds since J2000
-                observer = craft[:-1] + ' ' + craft[-1] # eg Voyager 1
-                frame = 'J2000'
-                abberationCorrection = 'NONE'
-                doCenter = True
+            if doCenter:
+                # get distance to target, km
+                distance = int(libspice.getDistance(position))
+
+                # get radius of target, km
+                # see http://spiceypy.readthedocs.io/en/master/documentation.html
                 try:
-                    position, lightTime = spice.spkpos(target, ephemerisTime, frame,
-                                                       abberationCorrection, observer)
+                    dim, radii = spice.bodvrd(target, 'RADII', 3)
+                    radius = int(sum(radii)/3) # just get the avg radius
                 except:
-                    if target in config.centerTargets:
-                        doCenter = True
-                    elif target in config.dontCenterTargets:
-                        doCenter = False
-                    else:
-                        print 'Insufficient data for', target, utcTime
+                    # if we don't know the radius of the object, just write a 0.0 imageSize
+                    radius = 0
 
-                if doCenter:
-                    # get distance to target, km
-                    distance = int(libspice.getDistance(position))
+                # get angular size of target, degrees
+                # sin(angle/2) = radius/distance
+                # angle = 2*arcsin(radius/distance)
+                angularSize = 2*math.asin(float(radius)/distance) * 180/math.pi
 
-                    # get radius of target, km
-                    # see http://spiceypy.readthedocs.io/en/master/documentation.html
-                    try:
-                        dim, radii = spice.bodvrd(target, 'RADII', 3)
-                        radius = int(sum(radii)/3) # just get the avg radius
-                    except:
-                        # if we don't know the radius of the object, just write a 0.0 imageSize
-                        radius = 0
+                # get field of view of camera, degrees
+                cameraFOV = config.cameraFOVs[instrument] # Narrow -> 0.424 or Wide -> 3.169
 
-                    # get angular size of target, degrees
-                    # sin(angle/2) = radius/distance
-                    # angle = 2*arcsin(radius/distance)
-                    angularSize = 2*math.asin(float(radius)/distance) * 180/math.pi
+                # get size of target relative to the camera fov, dimensionless
+                imageSize = angularSize/cameraFOV # 1.0 = full frame
+                imageSize = int(imageSize*100000)/100000.0 # trim down
 
-                    # get field of view of camera, degrees
-                    cameraFOV = config.cameraFOVs[instrument] # Narrow -> 0.424 or Wide -> 3.169
-
-                    # get size of target relative to the camera fov, dimensionless
-                    imageSize = angularSize/cameraFOV # 1.0 = full frame
-                    imageSize = int(imageSize*100000)/100000.0 # trim down
-
-                    # write data
-                    # keep in synch with fields, above
-                    row = [fileId,distance,imageSize]
-                    # print row
-                    writer.writerow(row)
-
-        i += 1
+                # write data
+                # keep in synch with fields, above
+                row = [fileId,distance,imageSize]
+                # print row
+                writer.writerow(row)
 
     # Clean up the kernels
     spice.kclear()
@@ -157,10 +153,9 @@ def initPositions():
     fileout.close()
 
 
-
 if __name__ == '__main__':
     os.chdir('..')
-    initPositions()
+    vgInitPositions()
     print 'done'
 
 

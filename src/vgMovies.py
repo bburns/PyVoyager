@@ -1,9 +1,11 @@
 
-# vg movies command
-# combine individual clips into one movie using ffmpeg, and add music
+"""
+vg movies command
 
-# see http://trac.ffmpeg.org/wiki/Concatenate#demuxer
+Combine individual clips into one movie using ffmpeg, and add music.
 
+See http://trac.ffmpeg.org/wiki/Concatenate#demuxer
+"""
 
 import os
 import os.path
@@ -68,24 +70,19 @@ def vgMovies():
     # repeat until eof
     # should end up with movies for each planet flyby, and one with all of them, all.mp4
 
-    f = open(config.moviesdb, 'rt')
-    reader = csv.reader(f)
-    i = 0
+    # f = open(config.moviesdb, 'rt')
+    # reader = csv.reader(f)
+    reader, f = lib.openCsvReader(config.moviesdb)
     lastMovieId=''
     clipIds = []
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # ignore blank lines and comments
-        if i==0: fields = row
-        else:
-            movieId = row[0] # eg Neptune-Voyager2
-            clipId = row[1] # eg Neptune-Voyager2-Triton-Narrow
-            if movieId != lastMovieId and lastMovieId != '':
-                concatenateClips(lastMovieId, clipIds)
-                clipIds = []
-
-            clipIds.append(clipId)
-            lastMovieId = movieId
-        i += 1
+        movieId = row[0] # eg Neptune-Voyager2
+        clipId = row[1] # eg Neptune-Voyager2-Triton-Narrow
+        if movieId != lastMovieId and lastMovieId != '':
+            concatenateClips(lastMovieId, clipIds)
+            clipIds = []
+        clipIds.append(clipId)
+        lastMovieId = movieId
 
     concatenateClips(lastMovieId, clipIds)
 

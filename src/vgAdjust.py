@@ -1,11 +1,13 @@
 
-# vg adjust command
-# build adjusted images from plain png images
+"""
+vg adjust command
 
-# for now this just means stretching the CALIB images histograms and rotating 180degrees.
-# in future could adjust the RAW images by removing reseau marks and dark current images, etc.
-# maybe sharpening
+Build adjusted images from plain png images.
 
+For now this just means stretching the CALIB images histograms and rotating 180 degrees.
+In future could adjust the RAW images by removing reseau marks and dark current images, etc,
+maybe sharpening.
+"""
 
 import csv
 import os
@@ -14,7 +16,6 @@ import os.path
 import config
 import lib
 import libimg
-import db
 
 import vgConvert
 
@@ -22,15 +23,15 @@ import vgConvert
 def vgAdjust(volnum, overwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 
-    imagesSubfolder = config.imagesFolder + 'VGISS_' + str(volnum) + '/'
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + str(volnum) + '/'
+    volnum = str(volnum) # eg '5101'
+
+    imagesSubfolder = config.imagesFolder + 'VGISS_' + volnum + '/'
+    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
 
     if os.path.isdir(adjustmentsSubfolder) and overwrite==False:
         if directCall:
             print "Folder exists - skipping vg images step: " + centersubfolder
     else:
-        volnum = str(volnum) # eg '5101'
-
         # build the plain images for the volume, if not already there
         if volnum!='':
             vgConvert.vgConvert(volnum, False, False)
@@ -43,61 +44,36 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
         nfiles = len(os.listdir(imagesSubfolder))
 
         # iterate through all available images, filter on desired volume
-        f = open(config.filesdb, 'rt')
-        i = 0
-        reader = csv.reader(f)
+        # f = open(config.filesdb, 'rt')
+        # reader = csv.reader(f)
+        reader, f = lib.openCsvReader(config.filesdb)
         nfile = 1
         for row in reader:
-            if row==[] or row[0][0]=="#": continue # skip blank lines and comments
-            if i==0: fields = row
-            else:
-                volume = row[config.filesColVolume]
-                if volume==volnum:
-                    fileId = row[config.filesColFileId]
-                    filter = row[config.filesColFilter]
-                    system = row[config.filesColPhase]
-                    craft = row[config.filesColCraft]
-                    target = row[config.filesColTarget]
-                    camera = row[config.filesColInstrument]
+            volume = row[config.filesColVolume]
+            if volume==volnum:
+                fileId = row[config.filesColFileId]
+                filter = row[config.filesColFilter]
+                system = row[config.filesColPhase]
+                craft = row[config.filesColCraft]
+                target = row[config.filesColTarget]
+                camera = row[config.filesColInstrument]
 
-                    # # get the centering info, if any
-                    # # info includes planetCraftTargetCamera,centeringOff,centeringOn
-                    # # planetCraftTargetCamera = system + craft + target + camera
-                    # planetCraftTargetCamera = system + '-' + craft + '-' + target + '-' + camera
-                    # centeringInfoRecord = centeringInfo.get(planetCraftTargetCamera)
-                    # if centeringInfoRecord:
-                    #     centeringOff = centeringInfoRecord['centeringOff']
-                    #     centeringOn = centeringInfoRecord['centeringOn']
-                    #     docenter = fileId<centeringOff or fileId>centeringOn
-                    # else: # if no info for this target just center it
-                    #     docenter = True
-
-                    # adjust the file
-                    pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                    infile = imagesSubfolder + pngFilename
-                    # outfile = adjustmentsSubfolder + config.adjustmentsPrefix + pngFilename
-                    # outfile = adjustmentsSubfolder + pngFilename[:-4] + config.adjustmentsSuffix + '.png'
-                    outfile = lib.getAdjustedFilepath(volume, fileId, filter)
-                    # print 'centering %d/%d: %s' %(nfile,nfiles,infile)
-                    # print 'Centering %d/%d: %s     \r' %(nfile,nfilesinfile),
-                    # print 'Adjusting %d: %s     \r' %(nfile,infile),
-                    print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-                    if os.path.isfile(infile):
-                        libimg.adjustImageFile(infile, outfile)
-                    else:
-                        print 'Warning: missing image file', infile
-
-                    nfile += 1
-
-            i += 1
-
+                # adjust the file
+                pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
+                infile = imagesSubfolder + pngFilename
+                outfile = lib.getAdjustedFilepath(volume, fileId, filter)
+                print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+                if os.path.isfile(infile):
+                    libimg.adjustImageFile(infile, outfile)
+                else:
+                    print 'Warning: missing image file', infile
+                nfile += 1
         f.close()
-
         print
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgAdjust(0)
+    # vgAdjust(5101)
     print 'done'
 
 

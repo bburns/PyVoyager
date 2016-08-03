@@ -1,8 +1,10 @@
 
-# vg init files command
-# build the files.csv table from the VGISS index files
-# files.csv lists ALL available voyager images
+"""
+vg init files command
 
+Build the files.csv table from the VGISS index files.
+files.csv lists ALL available voyager images.
+"""
 
 import os
 import csv
@@ -12,7 +14,7 @@ import lib
 
 
 
-def initFiles():
+def vgInitFiles():
     "Build the files table (files.csv) from the VGISS index files (rawimages_*.tab)"
 
     # iterate down the giant csv files
@@ -20,10 +22,11 @@ def initFiles():
     # write to files.csv
 
     # open files.csv for writing
-    fileout = open(config.filesdb, 'wb')
     # IMPORTANT: keep fields in synch with row, below, and config.filesCol*
+    # fileout = open(config.filesdb, 'wb')
+    # writer = csv.writer(fileout)
+    writer, fileout = lib.openCsvWriter(config.filesdb)
     fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',')
-    writer = csv.writer(fileout)
     writer.writerow(fields)
 
     # iterate over rawimages_* files in index folder
@@ -82,6 +85,6 @@ def initFiles():
 
 if __name__ == '__main__':
     os.chdir('..')
-    initFiles()
+    vgInitFiles()
     print 'done'
 

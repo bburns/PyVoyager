@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.41 inprogress
+Version 0.42 inprogress
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -22,6 +22,9 @@ These movies are still in early stages, so pardon the jitters and the mini 'volc
 
 https://www.youtube.com/watch?v=JuL3hSbp7Yc  
 Voyager 2 Uranus system flyby in color and black and white v0.40 (5 mins)
+
+https://www.youtube.com/watch?v=rAGWBo3-J2E  
+Voyager 1 Jupiter rotation movie color v0.41
 
 https://www.youtube.com/watch?v=kcJB9rNzCH4  
 Voyager 2 Triton flyby v0.32
@@ -330,30 +333,35 @@ Next steps
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
 * Add audio
 * Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
-* Host mp4s on a server for better quality (YouTube downgrades some to 360p)
 * Build mosaics with hand-annotated information, include in movies
-* Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
+* Host mp4s on a server for better quality (YouTube downgrades some to 360p)
 * Option to make b&w movies using one filter, to reduce flickering
+* Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 
 
 <!-- Later -->
 <!-- ---------------------------------------- -->
+<!-- - improve stabilization parameters -->
+<!-- - (make ariel movie with override centers, aligned composite, mosaic - test crowdsourcing aspects) -->
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
-<!-- - improve stabilization parameters -->
-<!-- - (make ariel movie with override centers, aligned composite, mosaic - test crowdsourcing aspects) -->
 
-Version 0.41 (2016-08)
+Version 0.42 (2016-08)
+----------------------------------------
+- Refactor, clean up code
+
+
+
+Version 0.41 (2016-08-02)
 ----------------------------------------
 - Specify composite images with color weights and x,y offsets
 - Add `vg init centers <vol>` command - writes stabilized centers to `centers.csv`
 - `vg center <vol>` and `vg center <imageId>` now just use `centers.csv` and `centersOverride.csv`
-- Add `vg grab` command - 
-- Changed stabilization routine so it stabilizes against the first occurrence of target in volume, instead of against previous frame, as Jupiter tended to drift to the left. Didn't retest it on Uranus.
-<!-- - (refactor, clean up code) -->
+- Add `vg grab` command 
+- Changed stabilization routine so it stabilizes against every 10 good frames, instead of against previous frame, as Jupiter tended to drift to the left. Had also tried stabilizing it to first image in sequence, but jittered towards the end. Didn't retest it on Uranus.
 
-<!-- Make stabilized and center override Voyager 1 Jupiter rotation movie (color) -->
+Made stabilized Voyager 1 Jupiter rotation movie (color)
 
 Version 0.40 (2016-07-28)
 ----------------------------------------

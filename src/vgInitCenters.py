@@ -58,92 +58,82 @@ def vgInitCenters(volnum):
     # row2 = csvPositions.next() # skip over fieldnames row
     # fileId2 = ''
 
-    i = 0
     nfile = 1
     for rowFiles in csvFiles:
-        if rowFiles==[] or rowFiles[0][0]=="#": continue # skip blank lines and comments
-        if i==0: fields = rowFiles
+        volume = rowFiles[config.filesColVolume]
+        if volume!=volnum: continue # filter to given volume
+
+        # get image properties
+        fileId = rowFiles[config.filesColFileId]
+        filter = rowFiles[config.filesColFilter]
+        system = rowFiles[config.filesColPhase]
+        craft = rowFiles[config.filesColCraft]
+        target = rowFiles[config.filesColTarget]
+        camera = rowFiles[config.filesColInstrument]
+
+        # relabel target field if necessary
+        target = lib.retarget(targetInfo, fileId, target)
+
+        # get filenames
+        infile = lib.getAdjustedFilepath(volume, fileId, filter)
+        outfile = lib.getCenteredFilepath(volume, fileId, filter)
+
+        # print 'Volume %s centering %d/%d: %s     \r' %(volume,nfile,nfiles,infile),
+        print 'Volume %s centering %d/%d: %s' %(volume,nfile,nfiles,infile)
+        nfile += 1
+
+        targetKey = system + '-' + craft + '-' + target + '-' + camera
+
+        # do we actually need to center this image?
+        doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
+
+        if doCenter==False:
+            x,y = 399,399
         else:
-            volume = rowFiles[config.filesColVolume]
-            if volume!=volnum: continue # filter to given volume
 
-            # get image properties
-            fileId = rowFiles[config.filesColFileId]
-            filter = rowFiles[config.filesColFilter]
-            system = rowFiles[config.filesColPhase]
-            craft = rowFiles[config.filesColCraft]
-            target = rowFiles[config.filesColTarget]
-            camera = rowFiles[config.filesColInstrument]
+            # print
+            # print 'currentimage',volume,fileId,filter,targetKey
 
-            # relabel target field if necessary
-            target = lib.retarget(targetInfo, fileId, target)
-
-            # get filenames
-            infile = lib.getAdjustedFilepath(volume, fileId, filter)
-            outfile = lib.getCenteredFilepath(volume, fileId, filter)
-
-            # print 'Volume %s centering %d/%d: %s     \r' %(volume,nfile,nfiles,infile),
-            print 'Volume %s centering %d/%d: %s' %(volume,nfile,nfiles,infile)
-            nfile += 1
-
-            targetKey = system + '-' + craft + '-' + target + '-' + camera
-
-            # do we actually need to center this image?
-            doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-
-            if doCenter==False:
-                x,y = 399,399
+            # for this target sequence (eg ariel flyby), what was the last good image?
+            # use that as a fixed image against which we try to align the
+            # current image.
+            # we need to remember the fileId, volume, filter, and radius
+            lastImageRecord = lastImageInTargetSequence.get(targetKey)
+            if lastImageRecord:
+                fixedfile = lastImageRecord[0]
+                ntimesused = lastImageRecord[1]
+                lastRadius = lastImageRecord[2]
+                lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
+                print 'aligning to', fixedfile
             else:
+                fixedfile = None
+                ntimesused = 0
+                lastRadius = 0
+                print 'no image to align to yet for',targetKey
 
-                # print
-                # print 'currentimage',volume,fileId,filter,targetKey
+            # find center of target using blob and hough, then align to fixedimage
+            x,y,radius = libimg.centerImageFile(infile, outfile)
+            x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
+                                                            lastRadius, x,y,radius)
 
-                # for this target sequence (eg ariel flyby), what was the last good image?
-                # use that as a fixed image against which we try to align the
-                # current image.
-                # we need to remember the fileId, volume, filter, and radius
-                lastImageRecord = lastImageInTargetSequence.get(targetKey)
-                if lastImageRecord:
-                    fixedfile = lastImageRecord[0]
-                    ntimesused = lastImageRecord[1]
-                    lastRadius = lastImageRecord[2]
-                    lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-                    # lastVolume = lastImageRecord[0]
-                    # lastFileId = lastImageRecord[1]
-                    # lastFilter = lastImageRecord[2]
-                    # lastRadius = lastImageRecord[3]
-                    # fixedfile = lib.getCenteredFilepath(lastVolume, lastFileId, lastFilter)
-                    print 'aligning to', fixedfile
-                else:
-                    fixedfile = None
-                    ntimesused = 0
-                    lastRadius = 0
-                    print 'no image to align to yet for',targetKey
+            if fixedfile is None:
+                fixedfile = outfile
+                print 'first fixed frame', fixedfile
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
+            # if image was successfully stabilized, remember it
+            # lastRadius and radius are used to determine if it has changed 'too much'
+            if stabilizationOk and ntimesused>10: #. param
+                fixedfile = outfile
+                print 'new fixed frame', fixedfile
+                # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
+                # lastImageInTargetSequence[targetKey] = [fixedfile, ntimesused, radius]
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
 
-                # find center of target using blob and hough, then align to fixedimage
-                x,y,radius = libimg.centerImageFile(infile, outfile)
-                x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-                                                                lastRadius, x,y,radius)
-
-                if fixedfile is None:
-                    fixedfile = outfile
-                    print 'first fixed frame', fixedfile
-                    lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
-                # if image was successfully stabilized, remember it
-                # lastRadius and radius are used to determine if it has changed 'too much'
-                if stabilizationOk and ntimesused>10: #. param
-                    fixedfile = outfile
-                    print 'new fixed frame', fixedfile
-                    # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
-                    # lastImageInTargetSequence[targetKey] = [fixedfile, ntimesused, radius]
-                    lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
-
-                # write x,y,radius to newcenters file
-                #. change to this
-                # rowNew = [fileId, volume, x, y, radius]
-                rowNew = [volume, fileId, x, y, radius]
-                csvNewCenters.writerow(rowNew)
-        i += 1
+            # write x,y,radius to newcenters file
+            #. change to this
+            # rowNew = [fileId, volume, x, y, radius]
+            rowNew = [volume, fileId, x, y, radius]
+            csvNewCenters.writerow(rowNew)
 
     fNewCenters.close()
     fFiles.close()

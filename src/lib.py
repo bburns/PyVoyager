@@ -26,6 +26,23 @@ import config
 
 
 
+def dataLines(lines):
+    """
+    A filter that excludes comments, blank lines, and the header (first data row) from lines.
+    This is a generator - use by wrapping a file or other source of lines and iterating as normally.
+    eg
+    f = open(filename,'r')
+    for line in dataLines(f):
+        print line
+    """
+    i = 0
+    for line in lines:
+        line = line.strip()
+        if line and line[0]!='#':
+            if i>0:
+                yield line
+            i += 1
+
 
 def centerThisImageQ(centeringInfo, targetKey, fileId, target):
     """
@@ -101,19 +118,24 @@ def retarget(targetInfo, fileId, target):
 
 
 def openCsvWriter(filename):
-    "open a csv writer on the given filename"
-    # use like 'writer.writerow(row)'
+    """
+    Open a csv writer on the given filename.
+    Use like 'writer.writerow(row)'
+    """
     f = open(filename, 'wb')
     writer = csv.writer(f)
     return writer, f
 
 
 def openCsvReader(filename):
-    "open a csv reader on the given filename"
-    # use like 'for row in reader:'
+    """
+    Open a csv reader on the given filename.
+    Then use like 'for row in reader:'
+    Wraps the reader iterator in peekable - see http://stackoverflow.com/a/27698681/243392
+    Then can say reader.peek() to just look at the current record.
+    """
     f = open(filename, 'rt')
-    # reader = csv.reader(f)
-    # use peekable - see http://stackoverflow.com/a/27698681/243392
+    f = dataLines(f)
     reader = more_itertools.peekable(csv.reader(f))
     return reader, f
 

@@ -19,18 +19,14 @@ import config
 def getVolume(fileId):
     "get volume associated with the given file id"
     # slow linear search but ok for this task
-    f = open(config.filesdb,'rt')
-    reader = csv.reader(f)
-    i = 0
+    # f = open(config.filesdb,'rt')
+    # reader = csv.reader(f)
+    reader, f = lib.openCsvReader(config.filesdb)
     volume = ''
     for row in reader:
-        if i==0:
-            fields = row
-        else:
-            if fileId==row[config.filesColFileId]:
-                volume = row[config.filesColVolume] # eg '5101'
-                break
-        i+=1
+        if fileId==row[config.filesColFileId]:
+            volume = row[config.filesColVolume] # eg '5101'
+            break
     f.close()
     return volume
 

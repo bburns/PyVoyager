@@ -1,11 +1,12 @@
 
-# vg target command
-# build target subfolders like Jupiter/Voyager1/Io/Narrow
-# and copy images to them from a specified volume
+"""
+vg target command
+build target subfolders like Jupiter/Voyager1/Io/Narrow
+and copy images to them from a specified volume
 
-# symbolic links work, but then can't browse folders with image viewer...
-# so just copy them
-
+symbolic links work, but then can't browse folders with image viewer...
+so just copy them
+"""
 
 import os
 import csv
@@ -31,89 +32,83 @@ def vgTarget(volnum, targetPath=None):
 
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
-    f = open(config.filesdb, 'rt')
-    i = 0
-    reader = csv.reader(f)
+    # f = open(config.filesdb, 'rt')
+    # reader = csv.reader(f)
+    reader, f = lib.openCsvReader(config.filesdb)
     for row in reader:
-        if row==[] or row[0][0]=="#": continue # ignore blank lines and comments
-        if i==0: fields = row
-        else:
-            volume = row[config.filesColVolume]
-            if volume==volnum:
-                fileId = row[config.filesColFileId]
-                filter = row[config.filesColFilter]
+        volume = row[config.filesColVolume]
+        if volume==volnum:
+            fileId = row[config.filesColFileId]
+            filter = row[config.filesColFilter]
 
-                # # get subfolder, eg data/step04_centers/VGISS_5101
-                # # sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
+            # # get subfolder, eg data/step04_centers/VGISS_5101
+            # # sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
 
-                # # get source filename and path
-                # # eg C1327321_RAW_Orange_centered.png
-                # # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
-                # # sourceFilename = config.centersPrefix + fileId + '_' + \
+            # # get source filename and path
+            # # eg C1327321_RAW_Orange_centered.png
+            # # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
+            # # sourceFilename = config.centersPrefix + fileId + '_' + \
 
-                # #. what if targetname ~
-                # # C1372372_adjusted_Orange.png
-                # # C1372362_centered_Orange.png?
-                # # C1372372_composite.png
-                # # C1372372_mosaic.png
-                # # then would all sort together
-                # # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
-                # # sourceFilename = lib.getCenteredFilename(fileId, filter)
-                # # sourceFilepath = sourceFolder + sourceFilename
-                # sourceFilepath = lib.getCenteredFilepath(fileId, filter)
+            # #. what if targetname ~
+            # # C1372372_adjusted_Orange.png
+            # # C1372362_centered_Orange.png?
+            # # C1372372_composite.png
+            # # C1372372_mosaic.png
+            # # then would all sort together
+            # # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
+            # # sourceFilename = lib.getCenteredFilename(fileId, filter)
+            # # sourceFilepath = sourceFolder + sourceFilename
+            # sourceFilepath = lib.getCenteredFilepath(fileId, filter)
 
-                # # if centered file doesn't exist, grab the adjusted image instead
-                # if not os.path.isfile(sourceFilepath):
-                #     # sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-                #     # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
-                #     # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
-                #     # sourceFilename = lib.getAdjustedFilename(fileId, filter)
-                #     # sourceFilepath = sourceFolder + sourceFilename
-                #     sourceFilepath = lib.getAdjustedFilepath(fileId, filter)
+            # # if centered file doesn't exist, grab the adjusted image instead
+            # if not os.path.isfile(sourceFilepath):
+            #     # sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+            #     # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
+            #     # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
+            #     # sourceFilename = lib.getAdjustedFilename(fileId, filter)
+            #     # sourceFilepath = sourceFolder + sourceFilename
+            #     sourceFilepath = lib.getAdjustedFilepath(fileId, filter)
 
-                # get image properties
-                phase = row[config.filesColPhase]
-                craft = row[config.filesColCraft]
-                target = row[config.filesColTarget]
-                instrument = row[config.filesColInstrument]
+            # get image properties
+            phase = row[config.filesColPhase]
+            craft = row[config.filesColCraft]
+            target = row[config.filesColTarget]
+            instrument = row[config.filesColInstrument]
 
-                # relabel target field if necessary - see db/targets.csv for more info
-                targetInfoRecord = targetInfo.get(fileId)
-                if targetInfoRecord:
-                    # make sure old target matches what we have
-                    if targetInfoRecord['oldTarget']==target:
-                        target = targetInfoRecord['newTarget']
+            # relabel target field if necessary - see db/targets.csv for more info
+            targetInfoRecord = targetInfo.get(fileId)
+            if targetInfoRecord:
+                # make sure old target matches what we have
+                if targetInfoRecord['oldTarget']==target:
+                    target = targetInfoRecord['newTarget']
 
-                # ignore targets like Sky, Dark
-                addImage = True
-                if target in config.targetsIgnore: addImage = False
-                if addImage:
+            # ignore targets like Sky, Dark
+            addImage = True
+            if target in config.targetsIgnore: addImage = False
+            if addImage:
 
-                    # create subfolder
-                    subfolder = phase + '/' + craft + '/' + target +'/' + instrument + '/'
-                    targetFolder = config.targetsFolder + subfolder
-                    lib.mkdir_p(targetFolder)
+                # create subfolder
+                subfolder = phase + '/' + craft + '/' + target +'/' + instrument + '/'
+                targetFolder = config.targetsFolder + subfolder
+                lib.mkdir_p(targetFolder)
 
-                    print 'Volume %s copying %s       \r' % (volume, fileId),
+                print 'Volume %s copying %s       \r' % (volume, fileId),
 
-                    # copy adjusted file
-                    src = lib.getAdjustedFilepath(volume, fileId, filter)
-                    lib.cp(src, targetFolder)
+                # copy adjusted file
+                src = lib.getAdjustedFilepath(volume, fileId, filter)
+                lib.cp(src, targetFolder)
 
-                    # copy centered file
-                    src = lib.getCenteredFilepath(volume, fileId, filter)
-                    lib.cp(src, targetFolder)
+                # copy centered file
+                src = lib.getCenteredFilepath(volume, fileId, filter)
+                lib.cp(src, targetFolder)
 
-                    # copy composite file
-                    src = lib.getCompositeFilepath(volume, fileId)
-                    lib.cp(src, targetFolder)
+                # copy composite file
+                src = lib.getCompositeFilepath(volume, fileId)
+                lib.cp(src, targetFolder)
 
-                    # # copy mosaic file
-                    # src = lib.getMosaicFilepath(fileId, filter)
-                    # shutil.copy(src, targetFolder)
-
-
-        i += 1
+                # # copy mosaic file
+                # src = lib.getMosaicFilepath(fileId, filter)
+                # shutil.copy(src, targetFolder)
 
     f.close()
     print

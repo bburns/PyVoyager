@@ -1,8 +1,10 @@
 
-# vg test command
-# test of centering routines
+"""
+vg test command
 
-# any experimenting with settings should be done in centerImageFile or config settings
+test of centering routines
+any experimenting with settings should be done in centerImageFile or config settings
+"""
 
 import cv2
 import matplotlib.image as mpim # for imread, imsave

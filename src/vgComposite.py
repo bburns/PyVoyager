@@ -60,36 +60,32 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
         lib.mkdir(compositesSubfolder)
 
         # iterate over composites.csv records
-        filein = open(config.compositesdb,'rt')
-        reader = csv.reader(filein)
-        i = 0
+        # filein = open(config.compositesdb,'rt')
+        # reader = csv.reader(filein)
+        reader, f = lib.openCsvReader(config.compositesdb)
         startId = ''
         startVol = ''
         channelRows = []
         buildVolnum = str(buildVolnum)
         nfile = 0
         for row in reader:
-            if row==[] or row[0][0]=="#": continue # skip blank lines and comments
-            if i==0: fields = row
-            else:
-                vol = row[config.compositesColVolume]
-                compositeId = row[config.compositesColCompositeId]
-                if vol==buildVolnum or compositeId==buildCompositeId:
-                    # gather image filenames into channelRows so can merge them
-                    # buildComposite(compositeId)
-                    if compositeId == startId:
-                        channelRows.append(row)
-                    else:
-                        # we're seeing a new compositeId, so process all the gathered channels
-                        if len(channelRows)>0:
-                            print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
-                                % (vol,nfile,startVol,startId),
-                            processChannels(channelRows)
-                        startId = compositeId
-                        startVol = vol
-                        channelRows = [row]
-                        nfile += 1
-            i += 1
+            vol = row[config.compositesColVolume]
+            compositeId = row[config.compositesColCompositeId]
+            if vol==buildVolnum or compositeId==buildCompositeId:
+                # gather image filenames into channelRows so can merge them
+                # buildComposite(compositeId)
+                if compositeId == startId:
+                    channelRows.append(row)
+                else:
+                    # we're seeing a new compositeId, so process all the gathered channels
+                    if len(channelRows)>0:
+                        print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
+                            % (vol,nfile,startVol,startId),
+                        processChannels(channelRows)
+                    startId = compositeId
+                    startVol = vol
+                    channelRows = [row]
+                    nfile += 1
         # do the last leftover group
         if len(channelRows)>0:
             print 'Volume %s compositing %d: VGISS_%s/%s     \r' % \

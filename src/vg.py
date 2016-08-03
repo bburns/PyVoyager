@@ -65,7 +65,7 @@ import vgInitCenters
 import vgInitComposites
 import vgInitPositions
 import vgRetarget
-import vgUpdateCenters
+import vgUncenter
 
 
 
@@ -185,28 +185,26 @@ elif cmd=="test":
 elif cmd=="grab":
     vgGrab.vgGrab()
 
-elif cmd=="update":
-    subject = args.pop(0)
-    if subject=='centers':
-        vols = args.pop(0)
-        volnums = lib.getVolumeNumbers(vols)
-        for volnum in volnums:
-            vgUpdateCenters.updateCenters(volnum)
-        beep()
+elif cmd=="uncenter":
+    vols = args.pop(0)
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgUncenter.vgUncenter(volnum)
+    beep()
 
 elif cmd=="init":
     subject = args.pop(0)
     if subject=='files':
-        vgInitFiles.initFiles()
+        vgInitFiles.vgInitFiles()
     elif subject=='centers':
         vols = args.pop(0)
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
             vgInitCenters.vgInitCenters(volnum)
     elif subject=='composites':
-        vgInitComposites.initComposites()
+        vgInitComposites.vgInitComposites()
     elif subject=='positions':
-        vgInitPositions.initPositions()
+        vgInitPositions.vgInitPositions()
     lib.beep()
 
 elif cmd=="help":

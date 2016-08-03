@@ -1,7 +1,9 @@
 
-# vg init segments command
-# initialize db/segments.csv
+"""
+vg init segments command
 
+initialize db/segments.csv
+"""
 
 
 import os
@@ -24,7 +26,7 @@ import lib
 #     pass
 
 
-def initSegments():
+def vgInitSegments():
     "initialize segments.csv from files.csv and positions.csv"
 
     # # open segments.csv for writing
@@ -84,7 +86,7 @@ def initSegments():
 
 if __name__ == '__main__':
     os.chdir('..')
-    initSegments()
+    vgInitSegments()
     print 'done'
 
 

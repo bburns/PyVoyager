@@ -131,7 +131,7 @@ def vgInitCenters(volnum, overwrite=False):
             # if image was successfully stabilized, remember it
             # lastRadius and radius are used to determine if it has changed 'too much'
             # if stabilizationOk and ntimesused>10:
-            if stabilizationOk and ntimesused>config.stabilizeNTimesFixedFrameUsed:
+            if stabilizationOk and ntimesused>config.stabilizeNTimesToUseFixedFrame:
                 fixedfile = outfile
                 print 'new fixed frame', fixedfile
                 # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
@@ -139,9 +139,8 @@ def vgInitCenters(volnum, overwrite=False):
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
 
             # write x,y,radius to newcenters file
-            #. change to this
-            # rowNew = [fileId, volume, x, y, radius]
-            rowNew = [volume, fileId, x, y, radius]
+            # rowNew = [volume, fileId, x, y, radius]
+            rowNew = [fileId, volume, x, y, radius]
             csvNewCenters.writerow(rowNew)
 
     fNewCenters.close()

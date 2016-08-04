@@ -194,7 +194,7 @@ Parameters
 
 All configuration settings are stored in `config.py` - the goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though it might be necessary to specify some parameters per volume. 
 
-There are 11 parameters that control the centering and stabilization routines - 
+There are 12 parameters that control the centering and stabilization routines - 
 
     blobThreshold = 4
     blobAreaCutoff = 30*30
@@ -210,6 +210,7 @@ There are 11 parameters that control the centering and stabilization routines -
     stabilizeMaxDeltaPosition = 18
     stabilizeECCIterations = 5000
     stabilizeECCTerminationEpsilon = 1e-10
+    stabilizeNTimesFixedFrameUsed = 10
 
 
 How it works
@@ -350,7 +351,6 @@ Next steps
 Version 0.42 (2016-08)
 ----------------------------------------
 - Refactor, clean up code
-
 
 
 Version 0.41 (2016-08-02)

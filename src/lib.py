@@ -25,15 +25,41 @@ import config
 
 
 
+def fileContainsString(filename, s):
+    "Return True if file contains the given string"
+    containsString = False
+    f = open(filename,'rt')
+    for line in f:
+        if s in line:
+            containsString = True
+            break
+    f.close()
+    return containsString
+
+
+def removeLinesFromFile(filename, s):
+    "Remove lines containing the given string from the file, unless line is a comment"
+    f = open(filename,'rt')
+    f2 = open(filename+'_new','wb')
+    for line in f:
+        if s in line and line[0]!='#':
+            pass
+        else:
+            f2.write(line)
+    f2.close()
+    f.close()
+    os.rename(filename, filename+'_old')
+    os.rename(filename+'_new', filename)
+
 
 def dataLines(lines):
     """
     A filter that excludes comments, blank lines, and the header (first data row) from lines.
-    This is a generator - use by wrapping a file or other source of lines and iterating as normally.
-    eg
-    f = open(filename,'r')
-    for line in dataLines(f):
-        print line
+    This is a generator - use by wrapping a file or other line source and iterating as normally.
+    e.g.
+        f = open(filename,'r')
+        for line in dataLines(f):
+            print line
     """
     i = 0
     for line in lines:
@@ -485,6 +511,12 @@ if __name__ == '__main__':
     assert row is None
     row = getJoinRow(data, col, 10)
     assert row is None
+
+
+    # print fileContainsString('src/'+__file__, 'fileContainsString')
+    # print fileContainsString('src/'+__file__, 'fileContainsString' + 'x')
+    # removeLinesFromFile('src/'+__file__,'xxx') # remove this line
+    # removeLinesFromFile('src/'+__file__,'yyy'+'vvv') # not this one
 
     print 'done'
 

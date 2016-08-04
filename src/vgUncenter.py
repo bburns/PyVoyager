@@ -16,7 +16,6 @@ import os.path
 import config
 import lib
 import libimg
-import db
 
 
 def vgUncenter(volnum):

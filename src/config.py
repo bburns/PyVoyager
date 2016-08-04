@@ -352,7 +352,7 @@ indexTranslations = {
 
 
 # csv file databases
-#. rename
+#. rename to dbFoo
 filesdb = dbFolder + 'files.csv'
 centeringdb = dbFolder + 'centering.csv'
 centersdb = dbFolder + 'centers.csv'
@@ -371,8 +371,10 @@ positionsdb = dbFolder + 'positions.csv'
 
 # files.csv columns
 # keep in synch with vgInitFiles.py, etc
-filesColVolume = 0
-filesColFileId = 1
+# filesColVolume = 0
+# filesColFileId = 1
+filesColFileId = 0
+filesColVolume = 1
 filesColPhase = 2
 filesColCraft = 3
 filesColTarget = 4
@@ -383,8 +385,10 @@ filesColNote = 8
 
 
 # centers.csv columns
-centersColVolume = 0
-centersColFileId = 1
+# centersColVolume = 0
+# centersColFileId = 1
+centersColFileId = 0
+centersColVolume = 1
 centersColX = 2
 centersColY = 3
 centersColRadius = 4 # not sure yet
@@ -392,8 +396,10 @@ centersColRadius = 4 # not sure yet
 
 # composites.csv columns
 # keep in synch with vgBuildComposites.py
-compositesColVolume = 0
-compositesColCompositeId = 1
+# compositesColVolume = 0
+# compositesColCompositeId = 1
+compositesColCompositeId = 0
+compositesColVolume = 1
 compositesColFileId = 2
 compositesColFilter = 3
 compositesColWeight = 4

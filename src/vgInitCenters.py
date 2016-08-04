@@ -20,8 +20,7 @@ import lib
 import libimg
 
 
-
-def vgInitCenters(volnum):
+def vgInitCenters(volnum, overwrite=False):
     "Build centered images for given volume and write x,y,radius to centers.csv"
 
     volnum = str(volnum)
@@ -29,6 +28,15 @@ def vgInitCenters(volnum):
     #. need to handle indiv imageids? what would stabilization mean then though?
     # stabilize to previous image
     if volnum=='': return
+
+    #. if file contains the given volume, either stop or remove those lines
+    s = ',' + volnum + ','
+    if lib.fileContainsString(config.centersdb, s):
+        if overwrite:
+            lib.removeLinesFromFile(config.centersdb, s)
+        else:
+            print 'Centers.csv already contains volume ' + volnum + ' - run with -y to overwrite'
+            return
 
     adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
     centersSubfolder = config.centersFolder + 'VGISS_' + volnum + '/'

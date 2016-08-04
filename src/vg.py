@@ -200,7 +200,7 @@ elif cmd=="init":
         vols = args.pop(0)
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            vgInitCenters.vgInitCenters(volnum)
+            vgInitCenters.vgInitCenters(volnum, overwrite)
     elif subject=='composites':
         vgInitComposites.vgInitComposites()
     elif subject=='positions':

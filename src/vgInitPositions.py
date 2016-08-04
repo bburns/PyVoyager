@@ -2,8 +2,8 @@
 """
 vg init positions command
 
-initialize db/positions.csv
-used to determine angular size of targets
+Initialize positions.csv.
+Used to determine expected angular size of targets.
 
 eg
 imageId,distance(km),imageSize
@@ -15,9 +15,10 @@ C1462325,489118422,0.03864
 C1462327,489116291,0.03864
 C1462329,489114116,0.03864
 
-imageSize is the fraction of the image taken up by the target, eg 0.73
+imageFraction is the fraction of the image width and height (since they're the same)
+taken up by the target, eg 0.73
 
-to use, need SPICE kernels - download the following files and put them in the /kernels folder:
+To use, need SPICE kernels - download the following files and put them in the /kernels folder:
 
 ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
@@ -29,7 +30,6 @@ ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merg
 ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
 """
 
-import csv
 import os
 import os.path
 import math
@@ -42,19 +42,15 @@ import libspice
 
 
 def vgInitPositions():
-    "Initialize db/positions.csv with distances to targets for all images in db/files.csv"
+    "Initialize positions.csv with distances to targets for all images in files.csv"
 
     # open files.csv for reading
-    # filein = open(config.filesdb, 'rt')
-    # reader = csv.reader(filein)
-    reader, filein = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
 
     # open positions.csv for writing
-    # fileout = open(config.positionsdb, 'wb')
-    # writer = csv.writer(fileout)
-    writer, fileout = lib.openCsvWriter(config.positionsdb)
-    fields = 'imageId,distance(km),imageSize'.split(',') # keep in synch with below
-    writer.writerow(fields)
+    csvPositions, fPositions = lib.openCsvWriter(config.positionsdb)
+    fields = 'imageId,distance(km),imageFraction'.split(',') # keep in synch with below
+    csvPositions.writerow(fields)
 
     # load SPICE kernels (data files)
     # see above for sources
@@ -79,7 +75,7 @@ def vgInitPositions():
 # Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
 
     # iterate over all available files
-    for row in reader:
+    for row in csvFiles:
         # get field values
         # volume,fileid,phase,craft,target,time,instrument,filter,note
         fileId = row[config.filesColFileId] # eg C1385455
@@ -88,12 +84,7 @@ def vgInitPositions():
         utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
         instrument = row[config.filesColInstrument] # eg Narrow
 
-        # there are lots of records with UNKNOWN times (which could be interpolated later),
-        # (or just use the last recorded time and see how it does)
-        # ~1500 in uranus and neptune records
-        # so want to at least try to center them for now.
-        # the old approach of centering.csv would work better though.
-        # so back to that.
+        # there are a dozen or so UNKNOWN times, all Dark targets, but for one Rhea record
         if utcTime[0]=='U': # UNKNOWN or UNK
             pass
         else:
@@ -144,13 +135,13 @@ def vgInitPositions():
                 # keep in synch with fields, above
                 row = [fileId,distance,imageSize]
                 # print row
-                writer.writerow(row)
+                csvPositions.writerow(row)
 
     # Clean up the kernels
     spice.kclear()
 
-    filein.close()
-    fileout.close()
+    fFiles.close()
+    fPositions.close()
 
 
 if __name__ == '__main__':

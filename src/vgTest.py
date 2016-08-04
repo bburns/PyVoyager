@@ -64,10 +64,10 @@ def vgTest():
 
                 rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
                 if rowPositions:
-                    imageSize = float(rowPositions[config.positionsColImageSize]) # fraction of frame
+                    imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
                     # draw a yellow circle on centeredFile to mark expected target size
                     im = cv2.imread(centeredFile)
-                    radius = int(400*imageSize)
+                    radius = int(400*imageFraction)
                     circle = (399,399,radius)
                     libimg.drawCircle(im, circle, color = (0,255,255))
                     cv2.imwrite(centeredFile, im)

@@ -64,6 +64,7 @@ import vgInitFiles
 import vgInitCenters
 import vgInitComposites
 import vgInitPositions
+import vgInitErrata
 import vgRetarget
 import vgUncenter
 
@@ -205,6 +206,8 @@ elif cmd=="init":
         vgInitComposites.vgInitComposites()
     elif subject=='positions':
         vgInitPositions.vgInitPositions()
+    elif subject=='errata':
+        vgInitErrata.vgInitErrata()
     lib.beep()
 
 elif cmd=="help":

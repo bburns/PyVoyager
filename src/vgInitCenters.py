@@ -160,8 +160,8 @@ def vgInitCenters(volnum, overwrite=False):
                 #                                            config.positionsColFileId,
                 #                                            fileId, fileIdPositions)
                 # if rowPositions:
-                #     imageSize = float(rowPositions[config.positionsColImageSize])
-                #     doCenter = (imageSize <= config.centerImageSizeThreshold)
+                #     imageFraction = float(rowPositions[config.positionsColImageFraction])
+                #     doCenter = (imageFraction <= config.centerImageFractionThreshold)
                 # else:
                 #     doCenter = False
 

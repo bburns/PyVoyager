@@ -71,11 +71,11 @@ adjustmentsSuffix = '_adjusted'
 # Center
 # ----------------------------------------
 
-# if you try changing these values, make sure to run `vg test`
+# if you try changing these values, make sure to run 'vg test'
 # to see how they affect the test images
 
 # fraction of image which needs to be taken up by target before centering is turned off
-# centerImageSizeThreshold = 0.8
+# centerImageFractionThreshold = 0.8
 
 # don't want to center these targets
 dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
@@ -83,13 +83,15 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
 
 # these targets aren't in the PCK datafile so don't know radius,
 # but want to try to center on them - just assume they're tiny
+#. if necessary could give them values here
 centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
 Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
 
 # blob detection
 
-# level from 0.0-1.0 at which to take binary threshold for blob detection
+# level at which to take binary threshold for blob detection
+# level is 0.0-1.0 for scipy images
 # blobThreshold = 0.15 # worked with the -s10 option with uranus
 # blobThreshold = 0.05
 # blobThreshold = 0.025
@@ -97,7 +99,7 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 # blobThreshold = 0.016 # to v0.35 works for most neptune system images (* 256 0.016) 4.096
 # blobThreshold = 0.015 # v0.36 works for most neptune system images (* 256 0.015) 3.84
 # blobThreshold = 0.02
-# level is from 0-255 with cv2 images
+# level is 0-255 with cv2 images
 # blobThreshold = 2
 # blobThreshold = 3
 blobThreshold = 4
@@ -333,7 +335,8 @@ indexFileColFiletype = 3 # eg CALIBRATED_IMAGE
 indexFileColCraft = 4 # eg VOYAGER 1
 indexFileColPhase = 5 # eg JUPITER ENCOUNTER
 indexFileColTarget = 6 # eg IO
-indexFileColTime = 10 # eg 1979-03-05T15:32:56
+indexFileColTime = 9 # eg 1979-03-05T15:32:56
+indexFileColTimeReceived = 10 # eg 1979-03-05T15:32:56
 indexFileColInstrument = 11 # eg WIDE ANGLE CAMERA
 indexFileColFilter = 16 # eg ORANGE
 indexFileColNote = 19 # eg 3 COLOR ROTATION MOVIE
@@ -370,6 +373,7 @@ retargetingdb = dbFolder + 'retargeting.csv'
 frameratesdb = dbFolder + 'framerates.csv'
 segmentsdb = dbFolder + 'segments.csv'
 positionsdb = dbFolder + 'positions.csv'
+erratadb = dbFolder + 'errata.csv'
 
 
 #. rename all these to colFilesVolume etc
@@ -427,7 +431,7 @@ segmentsColAnnotation = 4
 # fileId,distance(km),imageSize
 positionsColFileId = 0
 positionsColDistanceKm = 1
-positionsColImageSize = 2
+positionsColImageFraction = 2
 
 
 

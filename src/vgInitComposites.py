@@ -71,33 +71,29 @@ def vgInitComposites():
     "Build the composites.csv file from likely looking groups of images in files.csv"
 
     # open the composites.csv file
-    # fileout = open(config.compositesdb, 'wb')
-    # writer = csv.writer(fileout)
-    writer, fileout = lib.openCsvWriter(config.compositesdb)
+    csvComposites, fComposites = lib.openCsvWriter(config.compositesdb)
     fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
-    writer.writerow(fields)
+    csvComposites.writerow(fields)
 
     # iterate over all image files
-    # filein = open(config.filesdb, 'rt')
-    # reader = csv.reader(filein)
-    reader, filein = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
 
     # this will store circular buffers with 7 empty lists -
     # the maximum number of filters in a group we're checking for
     circbuffers = {}
 
-    for row in reader:
+    for row in csvFiles:
         # get field values
-        # volume,fileid,phase,craft,target,time,instrument,filter,note
+        # volume,fileId,phase,craft,target,time,instrument,filter,note
+        fileId = row[config.filesColFileId] # eg C1385455
         volume = row[config.filesColVolume] # eg 5101
-        fileid = row[config.filesColFileId] # eg C1385455
         phase = row[config.filesColPhase] # eg Jupiter
         craft = row[config.filesColCraft] # eg Voyager1
         target = row[config.filesColTarget] # eg Io
         instrument = row[config.filesColInstrument] # eg Narrow
         filter = row[config.filesColFilter] # eg Orange
         # note = row[config.filesColNote]
-        # print volume, fileid, phase, craft, target, instrument, filter
+        # print volume, fileId, phase, craft, target, instrument, filter
         if debug: print 'row',row[:-1] # skip note
 
         # get correct circular buffer
@@ -119,7 +115,7 @@ def vgInitComposites():
                 if debug: print 'bufferrow',bufferRow[:-1]
                 # we know the target and instrument are the same, so can skip them
                 bufferVolume = bufferRow[config.filesColVolume] # eg 5101
-                bufferFileid = bufferRow[config.filesColFileId] # eg C1385455
+                bufferFileId = bufferRow[config.filesColFileId] # eg C1385455
                 bufferPhase = bufferRow[config.filesColPhase] # eg Jupiter
                 bufferCraft = bufferRow[config.filesColCraft] # eg Voyager1
                 bufferFilter = bufferRow[config.filesColFilter] # eg Orange
@@ -154,7 +150,7 @@ def vgInitComposites():
                             #     outFilter = 'Clear'
                             outRow = [outVolume, outCompositeId, outFileId, outFilter]
                             if debug: print 'outrow',outRow
-                            writer.writerow(outRow)
+                            csvComposites.writerow(outRow)
                         buffer = [[],[],[],[],[],[],[]]
                         circbuffers[bufferKey] = buffer
 
@@ -167,13 +163,13 @@ def vgInitComposites():
 
     # write row
     # keep in sync with fields, above
-    # row = [volume, fileid, phase, craft, target, instrument, filter, note]
+    # row = [volume, fileId, phase, craft, target, instrument, filter, note]
     # print row # too slow
     # writer.writerow(row)
     # print
 
-    filein.close()
-    fileout.close()
+    fFiles.close()
+    fComposites.close()
 
 
 if __name__ == '__main__':

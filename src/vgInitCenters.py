@@ -130,7 +130,8 @@ def vgInitCenters(volnum, overwrite=False):
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
             # if image was successfully stabilized, remember it
             # lastRadius and radius are used to determine if it has changed 'too much'
-            if stabilizationOk and ntimesused>10: #. param
+            # if stabilizationOk and ntimesused>10:
+            if stabilizationOk and ntimesused>config.stabilizeNTimesFixedFrameUsed:
                 fixedfile = outfile
                 print 'new fixed frame', fixedfile
                 # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]

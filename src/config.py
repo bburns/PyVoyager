@@ -175,6 +175,10 @@ stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
 stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
 # stabilizeMaxDeltaPosition = 800
 
+# how many times to use fixed frame before getting new one
+# if this is 1 the target may drift off to the left
+# if it's 9999 the target may stutter towards the end of the volume
+stabilizeNTimesFixedFrameUsed = 10 # v0.41 jupiter
 
 
 # suffix for centered filenames

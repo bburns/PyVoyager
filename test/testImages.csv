@@ -1,5 +1,7 @@
-fileId,x,y
 
+# keep this file sorted by imageId so can join with positions.csv file
+
+fileId,x,y
 
 # Neptune
 
@@ -13,32 +15,27 @@ C1139416_triton_half,542,290
 # Jupiter
 
 C1464114_jupiter_gap,508,604
+C1466602_jupiter1,380,220
+C1466604_jupiter2,360,214
 C1467554_jupiter_dim_edge
 C1467556_jupiter_limb
 C1468052_jupiter,492,540
 C1468054_jupiter,412,516
+C1471042_jupiter1,268,614
+C1471044_jupiter2
 C1478739_jupiter_edge_gap,406,726
 C1484711_jupiter_edge_gap
 C1487422_jupiter_edge
 C1490645_jupiter_edge_gap
 C1498111_jupiter_edge_noise
-
-# these two should be centered exactly on top of each other
-#. both are a bit off horizontally
-C1466602_jupiter1,380,220
-C1466604_jupiter2,360,214
-
-# same with these two, but one has a chunk out which throws it off a bit
-C1471042_jupiter1,268,614
-C1471044_jupiter2
-
+C1540528_jupiter1
+C1540530_jupiter2
 
 # Uranus
 
 C2447711_uranus_small,394,392
 C2448748_uranus_dim,442,394
 C2450355_uranus_small,396,386
-
 C2531132_ariel_point
 C2567534_ariel_point,112,701
 C2580729_ariel_point
@@ -48,7 +45,6 @@ C2673231_ariel_dim,443,397
 C2675945_ariel,400,400
 C2676415_ariel_noise
 C2679728_ariel
-
 C2705115_uranus_crescent_small,408,454
 C2707524_uranus_crescent_large,426,292
 

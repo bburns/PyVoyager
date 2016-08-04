@@ -332,17 +332,20 @@ def mpim2cv2(im):
     # print type(gray[0,0])
 
 
-def drawCircle(im2, circle, color = (0,255,0)):
-    "Draw a circle on the given cv2 image."
+def drawCircle(im, circle, color = (0,255,0)):
+    """
+    Draw a circle on the given cv2 image.
+    circle is (x,y,radius), color is (b,g,r).
+    """
     (x,y,r) = circle
     lineWidth = 1
-    cv2.circle(im2, (x,y), r, color, lineWidth)
+    cv2.circle(im, (x,y), r, color, lineWidth)
 
 
-def gray2rgb(im2):
+def gray2rgb(im):
     "convert a gray cv2 image to rgb, return new image"
-    im2 = cv2.cvtColor(im2, cv2.COLOR_GRAY2RGB)
-    return im2
+    im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
+    return im
 
 
 def drawBoundingBox(im, boundingBox):

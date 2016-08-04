@@ -39,8 +39,10 @@ def vgTest():
     lib.rmdir(debugFolder)
     os.mkdir(debugFolder)
 
+    # open positions file
+    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+    
     # read in small csv file
-    # results = lib.readCsv('test/testImages.csv')
     results = lib.readCsv(config.testImagesdb) # test/testImages.csv
     ntests = len(results)
     ntestsok = 0
@@ -54,13 +56,22 @@ def vgTest():
 
                 fileId = filename[:8] # eg C1328423
                 fileTitle = filename[:-4] # eg C1328423_neptune_dim
-                # infile = testFolder + filename
                 infile = config.testImagesFolder + filename
                 centeredFile = centeredFolder + filename
                 debugTitle = debugFolder + fileTitle
 
                 x, y, radius = libimg.centerImageFile(infile, centeredFile, debugTitle)
 
+                rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+                if rowPositions:
+                    imageSize = float(rowPositions[config.positionsColImageSize]) # fraction of frame
+                    # draw a yellow circle on centeredFile to mark expected target size
+                    im = cv2.imread(centeredFile)
+                    radius = int(400*imageSize)
+                    circle = (399,399,radius)
+                    libimg.drawCircle(im, circle, color = (0,255,255))
+                    cv2.imwrite(centeredFile, im)
+                
                 # get expected results
                 result = results.get(fileTitle)
                 if result != None:
@@ -86,6 +97,7 @@ def vgTest():
 
         del dirs[:] # don't recurse
 
+    fPositions.close()
     print
     accuracy = ntestsok/float(ntests)*100
     print "Accuracy %0.1f%% (%d/%d tests passed)." % (accuracy, ntestsok, ntests)

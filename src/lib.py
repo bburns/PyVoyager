@@ -98,8 +98,9 @@ def getJoinRow(csvReader, joinColumn, joinValue):
     so must be sorted on the join column.
     csvReader iterator must be wrapped with more_itertools.peekable() -
     see http://stackoverflow.com/a/27698681/243392
+    And if you use the openCsvReader fn to get the csvReader it will ignore blank lines,
+    comments, and the first data line (the header).
     """
-    #. make this robust to comments and blank lines
     try:
         row = csvReader.peek()
         currentValue = row[joinColumn] # if blank row this will throw error also

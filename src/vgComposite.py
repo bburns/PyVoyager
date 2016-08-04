@@ -38,16 +38,16 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
     Note: weight and x,y are optional - default to 1,0,0
     """
 
-    compositesSubfolder = config.compositesFolder + 'VGISS_' + str(buildVolnum) + '/'
+    buildVolnum = str(buildVolnum)
+    compositesSubfolder = config.compositesFolder + 'VGISS_' + buildVolnum + '/'
     buildCompositeId = buildCompositeId.upper() # always capital C
 
     if os.path.isdir(compositesSubfolder) and overwrite==False:
         print "Composites folder exists: " + compositesSubfolder
     else:
         # build the centered images for the volume, if not already there
-        #. pass imageid also
         if buildVolnum!='':
-            vgCenter.vgCenter(buildVolnum, False, False)
+            vgCenter.vgCenter(buildVolnum, '', False, False)
 
         # get centering info - will use to get files from either adjusted or centered folders
         # centeringInfo = lib.readCsv(config.centeringdb)
@@ -57,20 +57,17 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
         # if we're building an entire volume, remove the existing directory first
         if buildVolnum!='':
             lib.rmdir(compositesSubfolder)
-        lib.mkdir(compositesSubfolder)
+        os.mkdir(compositesSubfolder)
 
         # iterate over composites.csv records
-        # filein = open(config.compositesdb,'rt')
-        # reader = csv.reader(filein)
         reader, f = lib.openCsvReader(config.compositesdb)
         startId = ''
         startVol = ''
         channelRows = []
-        buildVolnum = str(buildVolnum)
         nfile = 0
         for row in reader:
-            vol = row[config.compositesColVolume]
             compositeId = row[config.compositesColCompositeId]
+            vol = row[config.compositesColVolume]
             if vol==buildVolnum or compositeId==buildCompositeId:
                 # gather image filenames into channelRows so can merge them
                 # buildComposite(compositeId)
@@ -100,11 +97,11 @@ def processChannels(channelRows):
     Combine channel images into new file.
 
     channelRows is an array of rows corresponding to rows in the composites.csv file.
-    should have [volnum,compositeId,centerId,filter,weight,x,y]
+    should have [compositeId,centerId,volnum,filter,weight,x,y]
     eg [
-      ['5101','C434823','C434823','Orange']
-      ['5101','C434823','C434825','Blue','0.8','42','18']
-      ['5101','C434823','C434827','Green','1','-50','83']
+      ['C434823','C434823','5101','Orange']
+      ['C434823','C434825','5101','Blue','0.8','42','18']
+      ['C434823','C434827','5101','Green','1','-50','83']
       ]
     they are combined and written to a file in the composites folder, step05_composites
     """
@@ -113,9 +110,9 @@ def processChannels(channelRows):
     compositeId = ''
     channels = []
     for row in channelRows:
-        volume = row[config.compositesColVolume]
         compositeId = row[config.compositesColCompositeId]
         fileId = row[config.compositesColFileId]
+        volume = row[config.compositesColVolume]
         filter = row[config.compositesColFilter]
         weight = row[config.compositesColWeight] if len(row)>config.compositesColWeight else 1.0
         x = row[config.compositesColX] if len(row)>config.compositesColX else 0

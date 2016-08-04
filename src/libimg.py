@@ -23,16 +23,16 @@ def resizeImage(im, w, h):
     "Resize image, keeping aspect ratio, filling in gaps with black, return new image."
 
     oldH, oldW = im.shape[:2]
-    print oldH, oldW
+    # print oldH, oldW
     aspectRatio = float(oldW) / float(oldH)
-    print aspectRatio
+    # print aspectRatio
     if aspectRatio > 1: # width>height
         newW = w
         newH = int(newW / aspectRatio)
     else:
         newH = h
         newW = int(newH * aspectRatio)
-    print newH, newW
+    # print newH, newW
     im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
@@ -108,14 +108,14 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
     return x,y,stabilizationOk
 
 
-def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
-    "center an image file on target, then stabilize it relative to the given fixed file"
-    # center file on target, roughly - return approx radius of target
-    x,y,radius = centerImageFile(infile, outfile)
-    # given a file to stabilize on, try to stabilize the infile
-    # lastRadius and radius are used to determine if it has changed 'too much'
-    x,y,stabilizationOk = stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius)
-    return x,y,radius,stabilizationOk
+# def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
+#     "center an image file on target, then stabilize it relative to the given fixed file"
+#     # center file on target, roughly - return approx radius of target
+#     x,y,radius = centerImageFile(infile, outfile)
+#     # given a file to stabilize on, try to stabilize the infile
+#     # lastRadius and radius are used to determine if it has changed 'too much'
+#     x,y,stabilizationOk = stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius)
+#     return x,y,radius,stabilizationOk
 
 
 def centerImageFileAt(infile, outfile, x, y, debugtitle=None):
@@ -183,7 +183,7 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     # now move the png files to destdir
     # (srcdir is relative to the python program so need to switch back to that dir)
     os.chdir(savedir)
-    # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes in srcdir
+    # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes
     cmd = "move " + srcdir +"\\*.png " + destdir + " > nul"
     # print cmd
     os.system(cmd)
@@ -204,8 +204,6 @@ def adjustImageFile(infile, outfile, debugtitle=None):
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # the CALIB images are really dark, and this result looks nice
     misc.imsave(outfile, im)
-
-
 
 
 def show(im2, title='cv2 image - press esc to continue'):
@@ -247,15 +245,15 @@ def combineChannels(channels):
         gray = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
         return gray
 
-    # find size of canvas
+    # find size of canvas that will contain all images
     xmin = 0; xmax = 799; ymin = 0; ymax = 799
     for row in channels:
         x = row[colX] if len(row)>colX else 0
         y = row[colY] if len(row)>colY else 0
         if x < xmin: xmin = x
-        if x+800 > xmax: xmax = x+800
+        if x+799 > xmax: xmax = x+799
         if y < ymin: ymin = y
-        if y+800 > ymax: ymax = y+800
+        if y+799 > ymax: ymax = y+799
     w = xmax-xmin+1; h = ymax-ymin+1
     enlarged = w!=800 or h!=800
 
@@ -273,10 +271,10 @@ def combineChannels(channels):
         # if canvas needs to be enlarged, do so
         if enlarged:
             canvas = np.zeros((w,h), np.uint8) # 0-255
-            # copy image into canvas at right point
             x = row[colX] if len(row)>colX else 0
             y = row[colY] if len(row)>colY else 0
-            print xmin,x,ymin,y
+            # print xmin,x,ymin,y
+            # copy image into canvas at right point
             canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
             im = canvas
         row.append(im)

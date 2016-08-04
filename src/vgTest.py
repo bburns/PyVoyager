@@ -2,8 +2,8 @@
 """
 vg test command
 
-test of centering routines
-any experimenting with settings should be done in centerImageFile or config settings
+Test of centering routines.
+Any experimenting with settings should be done in centerImageFile or config settings.
 """
 
 import cv2
@@ -59,7 +59,7 @@ def vgTest():
                 centeredFile = centeredFolder + filename
                 debugTitle = debugFolder + fileTitle
 
-                x, y = libimg.centerImageFile(infile, centeredFile, debugTitle)
+                x, y, radius = libimg.centerImageFile(infile, centeredFile, debugTitle)
 
                 # get expected results
                 result = results.get(fileTitle)

@@ -105,9 +105,9 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 blobThreshold = 4
 
 
-blobAdaptiveSize = 9
-blobAdaptiveConstant = 6
-
+# adaptive thresholding
+blobAdaptiveSize = 9 # v0.42
+blobAdaptiveConstant = 6 # v0.42
 
 
 
@@ -118,8 +118,9 @@ blobAdaptiveConstant = 6
 # blobAreaCutoff = 14*14 # missed triton small but clear
 # blobAreaCutoff = 20*20
 # blobAreaCutoff = 24*24
-blobAreaCutoff = 30*30
+# blobAreaCutoff = 30*30 # v0.36ish
 
+blobRadiusMax = 10 # v0.42
 
 # circle detection
 

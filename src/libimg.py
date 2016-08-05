@@ -641,20 +641,24 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
 # def findBoundingBox(im, radius=None, debugtitle=None):
 def findBoundingBox(im, radius, debugtitle=None):
     "find bounding box returns [x1,y1,x2,y2]"
-    #. check if radius<threshold, then always use blob detector
-    # if debugtitle: print 'find bounding box for', debugtitle
-    # looks for a small blob, then a large hough circle
-    # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
-    boundingBox = findBoundingBoxByBlob(im, config.blobThreshold, debugtitle)
-    [x1,y1,x2,y2] = boundingBox
-    # if box is > some size, try looking for a circle
-    width = x2 - x1
-    height = y2 - y1
-    area = width*height
-    # if debugtitle: print 'area',area
-    if area>config.blobAreaCutoff: # eg 10*10 pixels
-        # boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-        # boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
+    # # if debugtitle: print 'find bounding box for', debugtitle
+    # # looks for a small blob, then a large hough circle
+    # # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
+    # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold, debugtitle)
+    # [x1,y1,x2,y2] = boundingBox
+    # # if box is > some size, try looking for a circle
+    # width = x2 - x1
+    # height = y2 - y1
+    # area = width*height
+    # # if debugtitle: print 'area',area
+    # if area>config.blobAreaCutoff: # eg 10*10 pixels
+    #     # boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
+    #     # boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
+    #     boundingBox = findBoundingBoxByCircle(im, radius, debugtitle) # use hough to find circle
+    # check if radius<threshold, then always use blob detector
+    if radius<config.blobRadiusMax:
+        boundingBox = findBoundingBoxByBlob(im, config.blobThreshold, debugtitle)
+    else:
         boundingBox = findBoundingBoxByCircle(im, radius, debugtitle) # use hough to find circle
     return boundingBox
 

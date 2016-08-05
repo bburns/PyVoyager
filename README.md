@@ -350,9 +350,10 @@ Next steps
 
 Version 0.42 (2016-08)
 ----------------------------------------
-- Refactor, clean up code
 - Use expected target size to narrow down Hough circle search for more accurate results - uses SPICE positions
-
+- Use adaptive thresholding before running blob detection - works better than plain thresholding for pointlike targets
+- `vg test` draws expected target size on centered images, based on positions.csv
+- Refactor, clean up code
 
 Version 0.41 (2016-08-02)
 ----------------------------------------

@@ -71,6 +71,11 @@ adjustmentsSuffix = '_adjusted'
 # Center
 # ----------------------------------------
 
+# this can be a filetitle path for the centering algorithms to save intermediate
+# stage images to, eg 'test/images/debug/C1382377' - it will append '_canny.jpg',
+# '_binary.jpg', etc and save the files there.
+debugImageTitle = None
+
 # if you try changing these values, make sure to run 'vg test'
 # to see how they affect the test images
 
@@ -89,6 +94,7 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
 
 # blob detection
+# --------------------
 
 # level at which to take binary threshold for blob detection
 # level is 0.0-1.0 for scipy images
@@ -102,14 +108,11 @@ Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 # level is 0-255 with cv2 images
 # blobThreshold = 2
 # blobThreshold = 3
-blobThreshold = 4
-
+# blobThreshold = 4
 
 # adaptive thresholding
-blobAdaptiveSize = 9 # v0.42
-blobAdaptiveConstant = 6 # v0.42
-
-
+blobAdaptiveThresholdSize = 9 # v0.42
+blobAdaptiveThresholdConstant = 6 # v0.42
 
 # area in pixels^2 at which switch from blob detection to hough circle detection.
 # mainly depends on the minimum size circle that hough can detect.
@@ -123,47 +126,39 @@ blobAdaptiveConstant = 6 # v0.42
 blobRadiusMax = 10 # v0.42
 
 # circle detection
+# --------------------
 
-# see libimg.py/findCircle for details on the parameters
+# hough circle detector parameters
+
+# size of accumulator space relative to image
+# would think increasing this would help with jitters,
+# but just made tests worse
+#. try again, reduce accthresh also
+houghAccumulatorSize = 1 # always
+# houghAccumulatorSize = 2 # always
 
 # canny edge detection threshold
 # used by hough circle detection - lower threshold is half of this
 # if this is too high then dim circles won't be detected
 # but if it's too low you'd get too many spurious edges in the edge image
-# 200 misses some of the dim images
-# cannyUpperThreshold = 200
-# the CALIB images are usually very dim
-# trying to get it to recognize dim jupiters at the edges
-# cannyUpperThreshold = 100
-# cannyUpperThreshold = 60
-# cannyUpperThreshold = 200 # v0.42
-cannyUpperThreshold = 150 # v0.42
-# cannyUpperThreshold = 100 # v0.42
-# no dice - the canny edges start proliferating, and still the jupiter edge cases aren't picked up
-
-# hough circle detector parameters
-houghParameterSpace = 1 # always
-# houghParameterSpace = 2 # doesn't seem to help
-# houghParameterSpace = 1.2 # always
-# houghParameterSpace = 4 # didn't help with jitters
-# houghParameterSpace = 10 # actually made jittering worse
+houghCannyUpperThreshold = 200 # v0.37
+# houghCannyUpperThreshold = 150 # v0.42
 
 # houghAccumulatorThreshold = 1000
 # houghAccumulatorThreshold = 250 # through v0.36
-# houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND regular jupiter
-# houghAccumulatorThreshold = 100 # v0.42
-# houghAccumulatorThreshold = 50 # v0.42
-# houghAccumulatorThreshold = 25 # v0.42
-# houghAccumulatorThreshold = 20 # v0.42
-# houghAccumulatorThreshold = 15 # v0.42
-# houghAccumulatorThreshold = 10 # v0.42
+# houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND regular jupiter [this was actually the canny upper threshold]
 houghAccumulatorThreshold = 5 # v0.42
+# houghAccumulatorThreshold = 1 # v0.42
 # houghAccumulatorThreshold = 100 # this worked for dim neptune with noise, but caused regular jupiters to have tiny circles at their centers
 
-# these were set incorrectly
-houghMinRadius = 1
-# houghMaxRadius = 10 # through v0.36
-houghMaxRadius = 2 # v0.37 this didn't seem to matter - still got huge circle back
+# # these were set incorrectly
+# houghMinRadius = 1
+# # houghMaxRadius = 10 # through v0.36
+# houghMaxRadius = 2 # v0.37 this didn't seem to matter - still got huge circle back
+
+
+houghRadiusSearchPercent = 10
+
 
 
 # Stabilization

@@ -33,6 +33,7 @@ def vgTest():
     centeredFolder = config.testImagesFolder + 'centered/'
     debugFolder = config.testImagesFolder + 'debug/'
 
+    #. fix this weird issue with access denied
     lib.rmdir(centeredFolder)
     # lib.mkdir(centeredFolder)
     os.mkdir(centeredFolder)
@@ -49,11 +50,10 @@ def vgTest():
     ntests = len(results)
     ntestsok = 0
 
-    # for root, dirs, files in os.walk(testFolder):
     for root, dirs, files in os.walk(config.testImagesFolder): # test/images
         for filename in files:
 
-            ext = filename[-4:]
+            ext = filename[-4:].lower()
             if ext=='.jpg' or ext=='.png':
 
                 fileId = filename[:8] # eg C1328423
@@ -61,15 +61,19 @@ def vgTest():
                 infile = config.testImagesFolder + filename
                 centeredFile = centeredFolder + filename
                 debugTitle = debugFolder + fileTitle
+                config.debugImageTitle = debugTitle
 
                 rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
                 if rowPositions:
                     imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
                     radius = int(400*imageFraction) #.param
+                else:
+                    radius = None
                 
                 #. note x,y reversed - very confusing - fix
                 # x, y, r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
-                y,x,r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
+                # y,x,r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
+                y,x,r = libimg.centerImageFile(infile, centeredFile, radius)
 
                 if rowPositions:
                     # draw a yellow circle on centeredFile to mark expected target size

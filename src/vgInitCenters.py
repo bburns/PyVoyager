@@ -11,7 +11,6 @@ fairly well, with possible discontinuities at volume boundaries.
 See also vgCenter.py
 """
 
-import csv
 import os
 import os.path
 
@@ -61,10 +60,8 @@ def vgInitCenters(volnum, overwrite=False):
     # dictionary to keep track of last image file in target sequence (eg for Ariel flyby)
     lastImageInTargetSequence = {}
 
-    # # open positions.csv file for target angular size info
-    # csvPositions = lib.openCsvReader(config.positionsdb)
-    # row2 = csvPositions.next() # skip over fieldnames row
-    # fileId2 = ''
+    # open positions.csv file for target angular size info
+    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
 
     nfile = 1
     for rowFiles in csvFiles:
@@ -119,15 +116,24 @@ def vgInitCenters(volnum, overwrite=False):
                 lastRadius = 0
                 print 'no image to align to yet for',targetKey
 
+            # get expected radius
+            rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+            if rowPositions:
+                imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
+                radius = int(400*imageFraction) #.param
+            else:
+                radius = None
+
             # find center of target using blob and hough, then align to fixedimage
-            x,y,radius = libimg.centerImageFile(infile, outfile)
+            # x,y,radius = libimg.centerImageFile(infile, outfile)
+            x,y,radiusFound = libimg.centerImageFile(infile, outfile, radius)
             x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-                                                            lastRadius, x,y,radius)
+                                                            lastRadius, x,y,radiusFound)
 
             if fixedfile is None:
                 fixedfile = outfile
                 print 'first fixed frame', fixedfile
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
             # if image was successfully stabilized, remember it
             # lastRadius and radius are used to determine if it has changed 'too much'
             # if stabilizationOk and ntimesused>10:
@@ -136,13 +142,14 @@ def vgInitCenters(volnum, overwrite=False):
                 print 'new fixed frame', fixedfile
                 # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
                 # lastImageInTargetSequence[targetKey] = [fixedfile, ntimesused, radius]
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radius]
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
 
             # write x,y,radius to newcenters file
             # rowNew = [volume, fileId, x, y, radius]
-            rowNew = [fileId, volume, x, y, radius]
+            rowNew = [fileId, volume, x, y, radiusFound]
             csvNewCenters.writerow(rowNew)
 
+    fPositions.close()
     fNewCenters.close()
     fFiles.close()
 
@@ -154,16 +161,6 @@ def vgInitCenters(volnum, overwrite=False):
         print 'New records appended to centers.csv file - please make sure the file is sorted before committing it to git'
     else:
         print
-
-                # mothballing this...
-                # rowPositions, fileIdPositions = lib.getJoinRow(csvPositions,
-                #                                            config.positionsColFileId,
-                #                                            fileId, fileIdPositions)
-                # if rowPositions:
-                #     imageFraction = float(rowPositions[config.positionsColImageFraction])
-                #     doCenter = (imageFraction <= config.centerImageFractionThreshold)
-                # else:
-                #     doCenter = False
 
 
 if __name__ == '__main__':

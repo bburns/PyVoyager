@@ -5,46 +5,46 @@ fileId,x,y
 
 # Neptune
 
-C0896631_neptune,333,513
-C0902002_neptune,469,522
-C0902008_neptune,456,580
-C1136940_neptune_large,554,296
-C1137522_neptune_huge,384,242
-C1139416_triton_half,542,290
+C0896631_neptune,513,333
+C0902002_neptune,522,469
+C0902008_neptune,580,456
+C1136940_neptune_large,296,554
+C1137522_neptune_huge,242,384
+C1139416_triton_half,290,542
 
 # Jupiter
 
-C1464114_jupiter_gap,508,604
-C1466602_jupiter1,380,220
-C1466604_jupiter2,360,214
-C1467554_jupiter_dim_edge
-C1467556_jupiter_limb
-C1468052_jupiter,492,540
-C1468054_jupiter,412,516
-C1471042_jupiter1,268,614
-C1471044_jupiter2
+C1464114_jupiter_gap,604,508
+C1466602_jupiter1,220,380
+C1466604_jupiter2,214,360
+C1467554_jupiter_dim_edge,745,434
+C1467556_jupiter_limb,840,387
+C1468052_jupiter,540,486
+C1468054_jupiter,512,410
+C1471042_jupiter1,614,268
+C1471044_jupiter2,629,227
 C1478739_jupiter_edge_gap,406,726
-C1484711_jupiter_edge_gap
-C1487422_jupiter_edge
-C1490645_jupiter_edge_gap
-C1498111_jupiter_edge_noise
-C1540528_jupiter1
-C1540530_jupiter2
+C1484711_jupiter_edge_gap,720,355
+C1487422_jupiter_edge,742,443
+C1490645_jupiter_edge_gap,805,442
+C1498111_jupiter_edge_noise,622,486
+C1540528_jupiter1,440,328
+C1540530_jupiter2,390,388
 
 # Uranus
 
 C2447711_uranus_small,394,392
 C2448748_uranus_dim,442,394
-C2450355_uranus_small,396,386
-C2531132_ariel_point
-C2567534_ariel_point,112,701
-C2580729_ariel_point
-C2637644_ariel_small,542,528
-C2655505_ariel_bright,456,228
+C2450355_uranus_small,386,396
+C2531132_ariel_point,339,753
+C2567534_ariel_point,701,112
+C2580729_ariel_point,566,232
+C2637644_ariel_small,528,542
+C2655505_ariel_bright,228,456
 C2673231_ariel_dim,443,397
 C2675945_ariel,400,400
-C2676415_ariel_noise
-C2679728_ariel
-C2705115_uranus_crescent_small,408,454
-C2707524_uranus_crescent_large,426,292
+C2676415_ariel_noise,387,395
+C2679728_ariel,354,545
+C2705115_uranus_crescent_small,454,408
+C2707524_uranus_crescent_large,292,426
 

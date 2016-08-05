@@ -132,7 +132,8 @@ def centerImageFileAt(infile, outfile, x, y, debugtitle=None):
     cv2.imwrite(outfile, im)
 
 
-def centerImageFile(infile, outfile, debugtitle=None):
+# def centerImageFile(infile, outfile, debugtitle=None):
+def centerImageFile(infile, outfile, radius=None, debugtitle=None):
     """
     Center the given image file on a target and save it to outfile.
     Returns x,y,radius
@@ -144,7 +145,8 @@ def centerImageFile(infile, outfile, debugtitle=None):
 
     # find the bounding box of biggest object
     # boundingBox = findBoundingBox(im)
-    boundingBox = findBoundingBox(im, debugtitle)
+    # boundingBox = findBoundingBox(im, debugtitle)
+    boundingBox = findBoundingBox(im, radius, debugtitle)
 
     # center the image on the target
     im = centerImage(im, boundingBox)
@@ -210,6 +212,8 @@ def show(im2, title='cv2 image - press esc to continue'):
     "Show a cv2 image and wait for a keypress"
     cv2.imshow(title, im2)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 
 def showMpim(im, title='mpim image - press esc to continue'):
@@ -382,7 +386,9 @@ def drawBoundingBox(im, boundingBox):
 
 
 # def findCircle(im):
-def findCircle(im, debugtitle=None):
+# def findCircle(im, debugtitle=None):
+# def findCircle(im, radius=None, debugtitle=None):
+def findCircle(im, radius, debugtitle=None):
     "Find best circle in given image, return as (x,y,r)"
 
     # internally the HoughCircles function calls the Canny edge detector
@@ -459,13 +465,25 @@ def findCircle(im, debugtitle=None):
     # acc_threshold=1000
 
     # not sure what units these are - need a min of 1 to find one with fairly large radius
-    # minRadius=1
-    # maxRadius=10
-    minRadius = config.houghMinRadius
-    maxRadius = config.houghMaxRadius
+    #. make parameter
+    if radius:
+        minRadius = int(0.9*radius)
+        maxRadius = int(1.1*radius)
+    else:
+        minRadius = config.houghMinRadius
+        maxRadius = config.houghMaxRadius
 
-    circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold,
-                               acc_threshold, minRadius, maxRadius)
+    # circles = cv2.HoughCircles(im, method, dp, minDist, canny_threshold,
+                               # acc_threshold, minRadius, maxRadius)
+    # c = 0
+    # circles = cv2.HoughCircles(im, method, dp, minDist, c,
+    #                            canny_threshold,
+    #                            acc_threshold, minRadius, maxRadius)
+    circles = cv2.HoughCircles(im, method, dp, minDist,
+                               param1=canny_threshold,
+                               param2=acc_threshold,
+                               minRadius=minRadius,
+                               maxRadius=maxRadius)
 
     if config.drawEdges:
         upper = config.cannyUpperThreshold
@@ -474,7 +492,12 @@ def findCircle(im, debugtitle=None):
         cv2.imwrite(debugtitle + '_cannyedges.jpg', imedges)
 
     # if circles: # nowork in python
-    if type(circles) != type(None):
+    # if type(circles) != type(None):
+    # if not circles is None:
+    if circles is None:
+        print 'no circles found'
+        circle = None
+    else:
         circles = circles[0,:] # extract array
         circle = circles[0]
         circle = np.round(circle).astype('int') # round all values to ints
@@ -487,8 +510,6 @@ def findCircle(im, debugtitle=None):
             # show(im)
             # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
             cv2.imwrite(debugtitle + '_circles.jpg', im)
-    else:
-        circle = None
     return circle
 
 
@@ -520,17 +541,25 @@ def centerImage(im, boundingBox):
 
 
 # def findBoundingBoxByCircle(im):
-def findBoundingBoxByCircle(im, debugtitle=None):
+# def findBoundingBoxByCircle(im, debugtitle=None):
+# def findBoundingBoxByCircle(im, radius=None, debugtitle=None):
+def findBoundingBoxByCircle(im, radius, debugtitle=None):
     "Find the bounding box enclosing the best circle in image and return it."
     # circle = findCircle(im)
-    circle = findCircle(im, debugtitle)
-    if type(circle) != type(None):
-        # note: x and y are reversed (rows given first)
+    # circle = findCircle(im, debugtitle)
+    circle = findCircle(im, radius, debugtitle)
+    # if type(circle) != type(None):
+    if not circle is None:
         (x,y,r) = circle
+        # note: x and y are reversed (rows given first)
         x1 = y-r
         x2 = y+r
         y1 = x-r
         y2 = x+r
+        # x1 = x-r
+        # x2 = x+r
+        # y1 = y-r
+        # y2 = y+r
         # if config.drawCircle:
         #     im = gray2rgb(im)
         #     drawCircle(im, circle)
@@ -550,7 +579,12 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
     "Find the largest blob in the given image and return the bounding box [x1,y1,x2,y2]"
 
     # threshold to binary image
-    b = 1*(im>blobThreshold)
+    # b = 1*(im>blobThreshold)
+
+    # adaptive thresholding works much better, so far
+    # b = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 9, 6)
+    b = cv2.adaptiveThreshold(im, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
+                              config.blobAdaptiveSize, config.blobAdaptiveConstant)
 
     # find and label blob objects
     labels, nobjs = ndimage.measurements.label(b)
@@ -603,8 +637,11 @@ def findBoundingBoxByBlob(im, blobThreshold, debugtitle):
 
 
 # def findBoundingBox(im):
-def findBoundingBox(im, debugtitle=None):
+# def findBoundingBox(im, debugtitle=None):
+# def findBoundingBox(im, radius=None, debugtitle=None):
+def findBoundingBox(im, radius, debugtitle=None):
     "find bounding box returns [x1,y1,x2,y2]"
+    #. check if radius<threshold, then always use blob detector
     # if debugtitle: print 'find bounding box for', debugtitle
     # looks for a small blob, then a large hough circle
     # boundingBox = findBoundingBoxByBlob(im, config.blobThreshold)
@@ -617,7 +654,8 @@ def findBoundingBox(im, debugtitle=None):
     # if debugtitle: print 'area',area
     if area>config.blobAreaCutoff: # eg 10*10 pixels
         # boundingBox = findBoundingBoxByCircle(im) # use hough to find circle
-        boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
+        # boundingBox = findBoundingBoxByCircle(im, debugtitle) # use hough to find circle
+        boundingBox = findBoundingBoxByCircle(im, radius, debugtitle) # use hough to find circle
     return boundingBox
 
 

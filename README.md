@@ -351,6 +351,7 @@ Next steps
 Version 0.42 (2016-08)
 ----------------------------------------
 - Refactor, clean up code
+- Use expected target size to narrow down Hough circle search for more accurate results - uses SPICE positions
 
 
 Version 0.41 (2016-08-02)

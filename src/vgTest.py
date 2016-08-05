@@ -34,9 +34,11 @@ def vgTest():
     debugFolder = config.testImagesFolder + 'debug/'
 
     lib.rmdir(centeredFolder)
-    lib.mkdir(centeredFolder)
+    # lib.mkdir(centeredFolder)
+    os.mkdir(centeredFolder)
 
     lib.rmdir(debugFolder)
+    # lib.mkdir(debugFolder) # if folder is open in explorer will end up with no debugfolder!
     os.mkdir(debugFolder)
 
     # open positions file
@@ -60,15 +62,19 @@ def vgTest():
                 centeredFile = centeredFolder + filename
                 debugTitle = debugFolder + fileTitle
 
-                x, y, radius = libimg.centerImageFile(infile, centeredFile, debugTitle)
-
                 rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
                 if rowPositions:
                     imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
+                    radius = int(400*imageFraction) #.param
+                
+                #. note x,y reversed - very confusing - fix
+                # x, y, r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
+                y,x,r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
+
+                if rowPositions:
                     # draw a yellow circle on centeredFile to mark expected target size
                     im = cv2.imread(centeredFile)
-                    radius = int(400*imageFraction)
-                    circle = (399,399,radius)
+                    circle = (399,399,radius) #.params
                     libimg.drawCircle(im, circle, color = (0,255,255))
                     cv2.imwrite(centeredFile, im)
                 
@@ -85,7 +91,7 @@ def vgTest():
 
                         # show message
                         if deltax <= maxerror and deltay <= maxerror:
-                            print "[OK]     %s" % (fileTitle)
+                            # print "[OK]     %s" % (fileTitle)
                             ntestsok += 1
                         else:
                             print "[FAILED] %s, (%d, %d) expected (%d, %d)" % \

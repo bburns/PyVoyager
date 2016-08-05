@@ -8,7 +8,7 @@ fileId,x,y
 C0896631_neptune,513,333
 C0902002_neptune,522,469
 C0902008_neptune,580,456
-C1136940_neptune_large,296,554
+C1136940_neptune_large,308,548
 C1137522_neptune_huge,242,384
 C1139416_triton_half,290,542
 
@@ -23,8 +23,8 @@ C1468052_jupiter,540,486
 C1468054_jupiter,512,410
 C1471042_jupiter1,614,268
 C1471044_jupiter2,629,227
-C1478739_jupiter_edge_gap,406,726
-C1484711_jupiter_edge_gap,720,355
+C1478739_jupiter_edge_gap,728,396
+C1484711_jupiter_edge_gap,728,354
 C1487422_jupiter_edge,742,443
 C1490645_jupiter_edge_gap,805,442
 C1498111_jupiter_edge_noise,622,486
@@ -34,17 +34,25 @@ C1540530_jupiter2,390,388
 # Uranus
 
 C2447711_uranus_small,394,392
-C2448748_uranus_dim,442,394
+C2448205_adjusted_Violet,552,458
+C2448304_adjusted_Clear,498,370
+C2448748_uranus_dim,392,440
 C2450355_uranus_small,386,396
+C2451047_adjusted_Ch4_Js,405,392
 C2531132_ariel_point,339,753
 C2567534_ariel_point,701,112
+C2570529_adjusted_Clear,586,111
 C2580729_ariel_point,566,232
 C2637644_ariel_small,528,542
 C2655505_ariel_bright,228,456
 C2673231_ariel_dim,443,397
 C2675945_ariel,400,400
 C2676415_ariel_noise,387,395
-C2679728_ariel,354,545
+C2679301_adjusted_Clear,30,672
+C2679728_ariel,352,542
+C2682006_adjusted_Blue,406,406
+C2683039_adjusted_Clear,354,334
+C2690329_adjusted_Clear,240,244
 C2705115_uranus_crescent_small,454,408
 C2707524_uranus_crescent_large,292,426
 

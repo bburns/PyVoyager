@@ -108,17 +108,6 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
     return x,y,stabilizationOk
 
 
-# def centerAndStabilizeImageFile(infile, outfile, fixedfile, lastRadius):
-#     "center an image file on target, then stabilize it relative to the given fixed file"
-#     # center file on target, roughly - return approx radius of target
-#     x,y,radius = centerImageFile(infile, outfile)
-#     # given a file to stabilize on, try to stabilize the infile
-#     # lastRadius and radius are used to determine if it has changed 'too much'
-#     x,y,stabilizationOk = stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius)
-#     return x,y,radius,stabilizationOk
-
-
-# def centerImageFileAt(infile, outfile, x, y, debugtitle=None):
 def centerImageFileAt(infile, outfile, x, y):
     """
     Center the given image file at the given x,y and save it to outfile.
@@ -133,15 +122,14 @@ def centerImageFileAt(infile, outfile, x, y):
     cv2.imwrite(outfile, im)
 
 
-# def centerImageFile(infile, outfile, debugtitle=None):
-# def centerImageFile(infile, outfile, radius=None, debugtitle=None):
 def centerImageFile(infile, outfile, radius=None):
     """
     Center the given image file on a target and save it to outfile.
     Returns x,y,radius
     """
-
-    im = mpim.imread(infile)
+    # im = mpim.imread(infile)
+    # im = cv2.imread(infile)
+    im = cv2.imread(infile, 0) #. param
 
     boundingBox = [0,0,799,799]
 
@@ -186,6 +174,7 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     os.system(cmd)
 
     # now move the png files to destdir
+    #. use os.rename
     # (srcdir is relative to the python program so need to switch back to that dir)
     os.chdir(savedir)
     # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes
@@ -212,18 +201,12 @@ def adjustImageFile(infile, outfile):
     misc.imsave(outfile, im)
 
 
-def show(im2, title='cv2 image - press esc to continue'):
+def show(im, title='cv2 image - press esc to continue'):
     "Show a cv2 image and wait for a keypress"
-    cv2.imshow(title, im2)
+    cv2.imshow(title, im)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-
-
-def showMpim(im, title='mpim image - press esc to continue'):
-    "Show an mpim image and wait for a keypress"
-    im2 = mpim2cv2(im)
-    show(im2, title)
 
 
 def combineChannels(channels):
@@ -314,30 +297,6 @@ def combineChannels(channels):
     # eg im = im[400:1200, 400:1200]
 
     return im
-
-
-def mpim2cv2(im):
-    "Convert mpim (matplotimage library) image to cv2 (opencv) image."
-    # mpim images are 0.0-1.0, cv2 are 0-255
-    im2 = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-    im2 = im2.astype('uint8')
-    return im2
-
-    # A simple call to the imread method loads our image as a multi-dimensional
-    # NumPy array (one for each Red, Green, and Blue component, respectively)
-    # im = mpim.imread(infile)
-    # OpenCV represents RGB images as multi-dimensional NumPy arrays - but in reverse order!
-    # This means that images are actually represented in BGR order rather than RGB!
-    # im = cv2.imread(infile)
-    # There's an easy fix though. All we need to do is convert the image from BGR to RGB
-    # im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-
-    # # output = im.copy()
-    # # gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    # gray = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
-    # print type(gray)
-    # print gray.shape
-    # print type(gray[0,0])
 
 
 def drawCircle(im, circle, color = (0,255,0)):
@@ -582,9 +541,9 @@ def findBoundingBoxByBlob(im):
 
 
 def findBoundingBox(im, radius):
-    "Find bounding box with target expected radius. Returns [x1,y1,x2,y2]"
-    # check if radius<threshold, then use blob detector
-    if radius<config.blobRadiusMax:
+    "Find bounding box with expected target radius. Returns [x1,y1,x2,y2]"
+    if radius < config.blobRadiusMax: # eg 10 pixels
+        # use blob detector if radius<threshold
         boundingBox = findBoundingBoxByBlob(im)
     else:
         # use hough to find circle
@@ -592,7 +551,7 @@ def findBoundingBox(im, radius):
     return boundingBox
 
 
-
+#. do i need this anymore? was this before upgrading to v3?
 def drawMatches(img1, kp1, img2, kp2, matches):
     # source: http://stackoverflow.com/questions/11114349/how-to-visualize-descriptor-matching-using-opencv-module-in-python
     """

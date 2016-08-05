@@ -65,14 +65,13 @@ def vgTest():
 
                 rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
                 if rowPositions:
-                    imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
+                    # fraction of frame
+                    imageFraction = float(rowPositions[config.positionsColImageFraction]) 
                     radius = int(400*imageFraction) #.param
                 else:
                     radius = None
                 
                 #. note x,y reversed - very confusing - fix
-                # x, y, r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
-                # y,x,r = libimg.centerImageFile(infile, centeredFile, radius, debugTitle)
                 y,x,r = libimg.centerImageFile(infile, centeredFile, radius)
 
                 if rowPositions:

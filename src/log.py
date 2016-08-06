@@ -44,6 +44,17 @@ def log(*args):
     print s # echo to stdout
 
 
+def logr(*args):
+    "like log(), but prints with \r to keep output on same line."
+    f = open(config.logfile,'ab')
+    sargs = [str(a) for a in args]
+    s = ' '.join(sargs)
+    f.write(s + '\n')
+    f.close()
+    print s + '                                 \r', # echo to stdout
+
+
+
 def stop():
     log('----------------------------------------')
     time('stopped')
@@ -53,5 +64,10 @@ if __name__ == '__main__':
     start()
     log('testing',1,2,3)
     log('x',1.234)
+    logr('test1')
+    logr('test2')
+    logr('test3')
+    log()
+    stop()
 
 

@@ -6,14 +6,13 @@ not reusable - many are specific to PyVoyager
 """
 
 import os
-import matplotlib.image as mpim # for imread, imsave
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
-import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
-import numpy as np # for zeros, array, copy
-import cv2 # for hough circle detection
-import math # for log
+import numpy as np
+import cv2
+import math
 import random
-
+# import matplotlib.image as mpim # for imread, imsave
+# import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 
 import config
 import log
@@ -33,22 +32,17 @@ def resizeImage(im, w, h):
         newH = h
         newW = int(newH * aspectRatio)
     # print newH, newW
-    # im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
     im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
-    # canvas = np.zeros((h,w,3), np.uint8)
     canvas = np.zeros(im.shape, np.uint8)
     x = int((w-newW)/2)
     y = int((h-newH)/2)
-    # canvas[y:y+newH, x:x+newW] = np.array(im)
     canvas[y:y+newH, x:x+newW] = im
     return canvas
 
 
 
-# def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius):
-# def stabilizeImageFile(infile, outfile, x,y,foundRadius, targetRadius):
 def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
     """
     stabilize infile edges against target circle and write to outfile.
@@ -71,21 +65,19 @@ def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
         else:
             stabilizationOk = True
 
-            # get fixed image of target circle
-            # imFixed = cv2.imread(fixedfile,0)#.param
+            # get fixed image of target disc
             imFixed = np.zeros((800,800), np.uint8) #.params
-            circle = (399,399,targetRadius) #.params
-            # drawCircle(imFixed, circle, color = 255) # outline
-            # drawCircle(imFixed, circle, color = 255, thickness = -1) # filled
             cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # filled
 
-            # get edges for infile
-            im = cv2.imread(infile,0)#.param
-            # upper = 200 #. pass this in
-            # lower = upper/2
-            # imIn = cv2.Canny(im, lower, upper)
-            imIn = im
+            # get input file
+            imIn = cv2.imread(infile,0)#.param
 
+            # # get edges for infile
+            # im = cv2.imread(infile,0)#.param
+            # # upper = 200 #. pass this in
+            # # lower = upper/2
+            # # imIn = cv2.Canny(im, lower, upper)
+            # imIn = im
 
             szFixed = imFixed.shape
             warp_mode = cv2.MOTION_TRANSLATION
@@ -152,12 +144,6 @@ def centerImageFile(infile, outfile, targetRadius=None):
     """
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
-    #. will be part of vg denoise
-    # im = im[0:798,0:798] # trim last 3 pixels
-    # im = im[0:796,0:796] # trim last 3 pixels
-
-    boundingBox = [0,0,799,799] #.param
-
     # find the bounding box of biggest object
     # either a blob or a circle
     boundingBox = findBoundingBox(im, targetRadius)
@@ -165,20 +151,11 @@ def centerImageFile(infile, outfile, targetRadius=None):
     # center the image on the target
     im = centerImage(im, boundingBox)
 
-    # can't do these here because stabilization happens afterwards
-    # if config.drawCrosshairs:
-    #     im[399, 0:799] = 64 #.params
-    #     im[0:799, 399] = 64
-    # if config.drawTarget:
-    #     im = gray2rgb(im)
-    #     circle = (399,399,radius) #.params
-    #     drawCircle(im, circle, color = (0,255,255))
-
     cv2.imwrite(outfile, im)
 
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
-    #. this is kind of cheating, but works so far
+    # this is pretty approximate when it's just a blob
     foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
     return x, y, foundRadius
 

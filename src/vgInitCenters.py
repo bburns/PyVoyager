@@ -89,7 +89,7 @@ def vgInitCenters(volnum, overwrite=False):
         outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-        log.log('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
+        log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 
         targetKey = system + '-' + craft + '-' + target + '-' + camera

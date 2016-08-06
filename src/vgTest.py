@@ -23,11 +23,11 @@ def vgTest():
     
     maxerror = 2
 
-    config.drawBinaryImage = True
-    config.drawBoundingBox = True
-    config.drawEdges = True
-    config.drawCircles = True
-    config.drawCircle = True
+    # config.drawBinaryImage = True
+    # config.drawBoundingBox = True
+    # config.drawEdges = True
+    # config.drawCircles = True
+    # config.drawCircle = True
     config.drawCrosshairs = True
 
     centeredFolder = config.testImagesFolder + 'centered/'
@@ -35,12 +35,12 @@ def vgTest():
 
     #. fix this weird issue with access denied
     lib.rmdir(centeredFolder)
-    # lib.mkdir(centeredFolder)
-    os.mkdir(centeredFolder)
+    lib.mkdir(centeredFolder)
+    # os.mkdir(centeredFolder)
 
     lib.rmdir(debugFolder)
-    # lib.mkdir(debugFolder) # if folder is open in explorer will end up with no debugfolder!
-    os.mkdir(debugFolder)
+    lib.mkdir(debugFolder) # if folder is open in explorer will end up with no debugfolder!
+    # os.mkdir(debugFolder)
 
     # open positions file
     csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
@@ -71,8 +71,7 @@ def vgTest():
                 else:
                     radius = None
                 
-                #. note x,y reversed - very confusing - fix
-                y,x,r = libimg.centerImageFile(infile, centeredFile, radius)
+                x,y,r = libimg.centerImageFile(infile, centeredFile, radius)
 
                 if rowPositions:
                     # draw a yellow circle on centeredFile to mark expected target size

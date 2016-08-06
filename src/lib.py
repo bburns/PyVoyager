@@ -407,14 +407,28 @@ def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
     try:
         os.mkdir(path)
-    except:
+    except WindowsError as exc:
+        print exc
+        print exc.errno
         pass
+    # except OSError as exc:
+        # if exc.errno == errno.EEXIST and os.path.isdir(path):
+            # pass
+        # else:
+            # raise
+    except WindowsError as exc:
+        if exc.errno == 5 and os.path.isdir(path):
+            pass
+        else:
+            print 'pokpok'
+            raise
+
 
 def mkdir_p(path):
     "Make a directory tree, ignoring any errors (eg if it already exists)"
     try:
         os.makedirs(path)
-    except OSError as exc:  # Python >2.5
+    except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:

@@ -33,7 +33,8 @@ def resizeImage(im, w, h):
         newH = h
         newW = int(newH * aspectRatio)
     # print newH, newW
-    im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
+    # im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
+    im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
     canvas = np.zeros((h,w,3), np.uint8)
@@ -112,13 +113,13 @@ def centerImageFileAt(infile, outfile, x, y):
     """
     Center the given image file at the given x,y and save it to outfile.
     """
-    im = mpim.imread(infile)
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
     # center the image on the target
     boundingBox = [x,y,x,y]
     im = centerImage(im, boundingBox)
     if config.drawCrosshairs:
-        im[399, 0:799] = 0.25
-        im[0:799, 399] = 0.25
+        im[399, 0:799] = 64
+        im[0:799, 399] = 64
     cv2.imwrite(outfile, im)
 
 
@@ -127,7 +128,7 @@ def centerImageFile(infile, outfile, radius=None):
     Center the given image file on a target and save it to outfile.
     Returns x,y,radius
     """
-    im = cv2.imread(infile, 0) #. param
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
     boundingBox = [0,0,799,799]
 
@@ -138,8 +139,8 @@ def centerImageFile(infile, outfile, radius=None):
     im = centerImage(im, boundingBox)
 
     if config.drawCrosshairs:
-        im[399, 0:799] = 0.25
-        im[0:799, 399] = 0.25
+        im[399, 0:799] = 64
+        im[0:799, 399] = 64
 
     cv2.imwrite(outfile, im)
 
@@ -176,17 +177,17 @@ def adjustImageFile(infile, outfile):
     #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
     # im = mpim.imread(infile)
-    im = cv2.imread(infile, 0) #. param
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
     # adjust image
     im = np.rot90(im, 2) # rotate by 180
 
     # this actually saves bw images with a colormap
     # mpim.imsave(outfile, im)
-
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # the CALIB images are really dark, and this result looks nice
     # misc.imsave(outfile, im)
+
     # rather do it explicitly though...
     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
 
@@ -224,7 +225,7 @@ def combineChannels(channels):
     # if just one channel then return a bw image
     if len(channels)==1:
         filename = channels[0][colFilename]
-        gray = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+        gray = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
         return gray
 
     # find size of canvas that will contain all images
@@ -246,18 +247,20 @@ def combineChannels(channels):
     for row in channels:
         filename = row[colFilename]
         # note: this returns None if filename is invalid - doesn't throw an error
-        im = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+        im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
         # apply weight if necessary
         weight = row[colWeight] if len(row)>colWeight else 1.0
         if weight!=1.0: im = cv2.multiply(im,weight)
         # if canvas needs to be enlarged, do so
         if enlarged:
-            canvas = np.zeros((w,h), np.uint8) # 0-255
+            # canvas = np.zeros((w,h), np.uint8) # 0-255
+            canvas = np.zeros((h,w), np.uint8) # 0-255
             x = row[colX] if len(row)>colX else 0
             y = row[colY] if len(row)>colY else 0
             # print xmin,x,ymin,y
             # copy image into canvas at right point
-            canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
+            # canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
+            canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
             im = canvas
         row.append(im)
         # now assign the row to one of the available channels
@@ -271,7 +274,8 @@ def combineChannels(channels):
             rowBlue = row
 
     # assign a blank image if missing a channel
-    blank = np.zeros((w,h), np.uint8)
+    # blank = np.zeros((w,h), np.uint8)
+    blank = np.zeros((h,w), np.uint8)
     imRed = rowRed[colIm] if rowRed else blank
     imGreen = rowGreen[colIm] if rowGreen else blank
     imBlue = rowBlue[colIm] if rowBlue else blank
@@ -293,11 +297,11 @@ def combineChannels(channels):
 def drawCircle(im, circle, color = (0,255,0)):
     """
     Draw a circle on the given cv2 image.
-    circle is (x,y,radius), color is (b,g,r).
+    Note: circle is (y,x,radius), color is (b,g,r).
     """
-    (x,y,r) = circle
+    (y,x,r) = circle
     lineWidth = 1
-    cv2.circle(im, (x,y), r, color, lineWidth)
+    cv2.circle(im, (y,x), r, color, lineWidth)
 
 
 def gray2rgb(im):
@@ -308,7 +312,6 @@ def gray2rgb(im):
 
 def drawBoundingBox(im, boundingBox):
     "draw a box on image, return new image"
-
     [x1,y1,x2,y2] = boundingBox
     imbox = np.copy(im)
     imbox = cv2.cvtColor(imbox, cv2.COLOR_GRAY2RGB)
@@ -318,7 +321,7 @@ def drawBoundingBox(im, boundingBox):
 
 
 def findCircle(im, radius=None):
-    "Find best circle in given image, with optional expected radius. Returns as (x,y,r)"
+    "Find best circle in given image, with optional expected radius. Return as (y,x,r)"
 
     # note: internally the HoughCircles function calls the Canny edge detector
 
@@ -368,20 +371,58 @@ def findCircle(im, radius=None):
     #                            minRadius = minRadius,
     #                            maxRadius = maxRadius)
     circles = None
+
+    # look for circles, lowering canny threshold if can't find any (assume target is dim)
     while circles is None:
         circles = cv2.HoughCircles(im, method, dp, minDist,
                                    param1 = canny_threshold,
                                    param2 = acc_threshold,
                                    minRadius = minRadius,
                                    maxRadius = maxRadius)
-        # try lowering canny threshold, assuming target is dim
-        canny_threshold = int(canny_threshold / 2)
-        if canny_threshold < 20:
-            break
+        if circles is None:
+            canny_threshold = int(canny_threshold / 2)
+            print 'reducing canny threshold to',canny_threshold
+            if canny_threshold < 20:
+                break
+
+    # #. if still can't find circles, try expanding image size
+    # # (to find targets with centers outside of image, like limbs)
+    # # for 800x800 would be 2400x2400
+    # if circles is None:
+    #     print 'try enlarging image size'
+    #     w,h = im.shape[1],im.shape[0]
+    #     # imLarger = blank image 3x3 of imsize
+    #     # newsize = (imwidth * 2, imheight * 2)
+    #     canvas = np.zeros(h*3,w*3)
+    #     # copy im into canvas in middle
+    #     # canvas[h:h+h, w:w+w] = np.array(im)
+    #     canvas[h:h+h, w:w+w] = im
+    #     canny_threshold = config.houghCannyUpperThreshold
+    #     circles = cv2.HoughCircles(canvas, method, dp, minDist,
+    #                                param1 = canny_threshold,
+    #                                param2 = acc_threshold,
+    #                                minRadius = minRadius,
+    #                                maxRadius = maxRadius)
+    #     # if found circle, crop im out of canvas, centered on target
+    #     #. what if imageFraction>1?
+    #     # crop canvas to original image size
+    #     # eg imcrop = canvas[400:1200, 400:1200]
+    #     # x1 = int(imwidth/2)
+    #     # y1 = int(imheight/2)
+    #     if not circles is None:
+    #         print 'circle found!'
+    #         # circles = circles[0,:] # extract array
+    #         circle = circles[0,:][0]
+    #         circle = np.round(circle).astype('int') # round all values to ints
+    #         y,x,r = circle
+    #         x1 = x - int(w/2)
+    #         y1 = y - int(h/2)
+    #         im = canvas[y1:y1+h,x1:x1+w]
+
 
     # draw canny edges
     if config.debugImageTitle:
-        upper = config.houghCannyUpperThreshold
+        upper = canny_threshold
         lower = upper / 2
         imedges = cv2.Canny(im, lower, upper)
         cv2.imwrite(config.debugImageTitle + '_cannyedges.jpg', imedges)
@@ -401,7 +442,7 @@ def findCircle(im, radius=None):
                 drawCircle(im, circ, (0,0,255)) # red
             drawCircle(im, circle) # green
             cv2.imwrite(config.debugImageTitle + '_circles.jpg', im)
-    return circle
+    return circle # (y,x,r)
 
 
 def centerImage(im, boundingBox):
@@ -411,22 +452,28 @@ def centerImage(im, boundingBox):
     cx = int((x1+x2)/2.0)
     cy = int((y1+y2)/2.0)
 
-    imwidth = im.shape[0]
-    imheight = im.shape[1]
+    #. reverse these
+    # imwidth = im.shape[0]
+    # imheight = im.shape[1]
+    imwidth = im.shape[1]
+    imheight = im.shape[0]
 
     # make a bigger canvas to place image im on
-    newsize = (imwidth * 2, imheight * 2)
+    newsize = (imheight * 2, imwidth * 2)
     canvas = np.zeros(newsize)
 
     # put image on canvas centered on bounding box
     # eg canvas[800-cx:1600-cx, 800-cy:1600-cy] = np.array(im)
-    canvas[imwidth-cx : imwidth-cx+imwidth, imheight-cy : imheight-cy+imheight] = np.array(im)
+    # canvas[imwidth-cx : imwidth-cx+imwidth, imheight-cy : imheight-cy+imheight] = np.array(im)
+    # canvas[imheight-cy : imheight-cy+imheight, imwidth-cx : imwidth-cx+imwidth] = np.array(im)
+    canvas[imheight-cy : imheight-cy+imheight, imwidth-cx : imwidth-cx+imwidth] = im
 
     # crop canvas to original image size
     # eg imcrop = canvas[400:1200, 400:1200]
     x1 = int(imwidth/2)
     y1 = int(imheight/2)
-    imcrop = canvas[x1:x1+imwidth, y1:y1+imheight]
+    # imcrop = canvas[x1:x1+imwidth, y1:y1+imheight]
+    imcrop = canvas[y1:y1+imheight, x1:x1+imwidth]
 
     return imcrop
 
@@ -435,17 +482,13 @@ def findBoundingBoxByCircle(im, radius):
     "Find the bounding box enclosing the best circle in image and return it."
     circle = findCircle(im, radius)
     if not circle is None:
+        #. this is supposed to be y,x,r - not sure what's going on
+        # (y,x,r) = circle
         (x,y,r) = circle
-        # note: x and y are reversed (rows given first)
-        #. fix
-        x1 = y-r
-        x2 = y+r
-        y1 = x-r
-        y2 = x+r
-        # x1 = x-r
-        # x2 = x+r
-        # y1 = y-r
-        # y2 = y+r
+        x1 = x-r
+        x2 = x+r
+        y1 = y-r
+        y2 = y+r
     else:
         # if no circles just return the whole image
         x1 = 0
@@ -490,8 +533,8 @@ def findBoundingBoxByBlob(im):
         areamax = 0
         largestblob = None
         for blob in blobs:
-            width = blob[0].stop - blob[0].start
-            height = blob[1].stop - blob[1].start
+            width = blob[1].stop - blob[1].start
+            height = blob[0].stop - blob[0].start
             area = width * height
             if area>areamax:
                 # check for min width and height so don't pick up edge artifacts
@@ -503,10 +546,14 @@ def findBoundingBoxByBlob(im):
                     largestblob = blob
         # get bounding box
         if largestblob:
-            x1 = largestblob[0].start
-            x2 = largestblob[0].stop
-            y1 = largestblob[1].start
-            y2 = largestblob[1].stop
+            x1 = largestblob[1].start
+            x2 = largestblob[1].stop
+            y1 = largestblob[0].start
+            y2 = largestblob[0].stop
+            # x1 = largestblob[0].start
+            # x2 = largestblob[0].stop
+            # y1 = largestblob[1].start
+            # y2 = largestblob[1].stop
 
     boundingBox = [x1,y1,x2,y2]
 
@@ -520,11 +567,10 @@ def findBoundingBoxByBlob(im):
 
 def findBoundingBox(im, radius):
     "Find bounding box with expected target radius. Returns [x1,y1,x2,y2]"
+    # use blob detector if radius<threshold
     if radius < config.blobRadiusMax: # eg 10 pixels
-        # use blob detector if radius<threshold
         boundingBox = findBoundingBoxByBlob(im)
-    else:
-        # use hough to find circle
+    else: # use hough to find circle
         boundingBox = findBoundingBoxByCircle(im, radius)
     return boundingBox
 

@@ -127,16 +127,11 @@ def centerImageFile(infile, outfile, radius=None):
     Center the given image file on a target and save it to outfile.
     Returns x,y,radius
     """
-    # im = mpim.imread(infile)
-    # im = cv2.imread(infile)
     im = cv2.imread(infile, 0) #. param
 
     boundingBox = [0,0,799,799]
 
     # find the bounding box of biggest object
-    # boundingBox = findBoundingBox(im)
-    # boundingBox = findBoundingBox(im, debugtitle)
-    # boundingBox = findBoundingBox(im, radius, debugtitle)
     boundingBox = findBoundingBox(im, radius)
 
     # center the image on the target
@@ -146,18 +141,11 @@ def centerImageFile(infile, outfile, radius=None):
         im[399, 0:799] = 0.25
         im[0:799, 399] = 0.25
 
-    # this actually saves bw images with a colormap
-    # mpim.imsave(outfile, im)
-
-    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
-    # but the CALIB images are really dark, and this result looks nice, so leaving it for now
-    # misc.imsave(outfile, im)
-    #. this should be cv2.imwrite, as the adjust step already does this
     cv2.imwrite(outfile, im)
 
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
-    #. this is cheating, but it works so far
+    #. this is kind of cheating, but works so far
     radius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
     return x, y, radius
 
@@ -183,12 +171,12 @@ def img2png(srcdir, filespec, destdir, img2pngOptions):
     os.system(cmd)
 
 
-# def adjustImageFile(infile, outfile, debugtitle=None):
 def adjustImageFile(infile, outfile):
     "Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg."
     #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
-    im = mpim.imread(infile)
+    # im = mpim.imread(infile)
+    im = cv2.imread(infile, 0) #. param
 
     # adjust image
     im = np.rot90(im, 2) # rotate by 180
@@ -198,7 +186,11 @@ def adjustImageFile(infile, outfile):
 
     # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
     # the CALIB images are really dark, and this result looks nice
-    misc.imsave(outfile, im)
+    # misc.imsave(outfile, im)
+    # rather do it explicitly though...
+    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+
+    cv2.imwrite(outfile, im)
 
 
 def show(im, title='cv2 image - press esc to continue'):
@@ -206,7 +198,6 @@ def show(im, title='cv2 image - press esc to continue'):
     cv2.imshow(title, im)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 
 def combineChannels(channels):
@@ -316,52 +307,28 @@ def gray2rgb(im):
 
 
 def drawBoundingBox(im, boundingBox):
-    "draw a box on image"
+    "draw a box on image, return new image"
 
     [x1,y1,x2,y2] = boundingBox
     imbox = np.copy(im)
     imbox = cv2.cvtColor(imbox, cv2.COLOR_GRAY2RGB)
+    # note y,x
     cv2.rectangle(imbox, (y1,x1), (y2,x2), (255,0,0), 2)
     return imbox
-
-    # cv2.rectangle(im, (y1,x1), (y2,x2), (0,255,0), 2)
-
-    # im = im.copy() # rect gives error otherwise
-    # cv2.rectangle(im, (y1,x1), (y2,x2), 1)
-
-    # c = 0.5
-    # imBox[x1:x2,y1] = c
-    # imBox[x1:x2,y2] = c
-    # imBox[x1,y1:y2] = c
-    # imBox[x2,y1:y2] = c
-
-    # but this can go out of bounds
-    # imBox[x1+1:x2+1,y1+1] = c
-    # imBox[x1+1:x2+1,y2+1] = c
-    # imBox[x1+1,y1+1:y2+1] = c
-    # imBox[x2+1,y1+1:y2+1] = c
-
-    # or this
-    # plt.gca().add_patch(patches.Rectangle((y1,x1), y2-y1, x2-x1, fill=False,
-    #                     edgecolor="green", linewidth=0.5))
-
-    # return imBox
 
 
 def findCircle(im, radius=None):
     "Find best circle in given image, with optional expected radius. Returns as (x,y,r)"
-    # note: internally the HoughCircles function calls the Canny edge detector
 
-    # convert mpim image to cv2 image format - ok if im is already cv2 format
-    # im = mpim2cv2(im)
+    # note: internally the HoughCircles function calls the Canny edge detector
 
     # set Hough detection parameters
 
     # only available method now
-    method = cv2.HOUGH_GRADIENT # if get error here, upgrade to cv2 v3
+    method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
 
     # size of accumulator space relative to input image
-    dp = config.houghAccumulatorSize
+    dp = config.houghAccumulatorSize # eg 1.0
 
     # distance between circles
     # minDist = 1 # way too many found
@@ -395,11 +362,22 @@ def findCircle(im, radius=None):
         minRadius = 0
         maxRadius = 0
 
-    circles = cv2.HoughCircles(im, method, dp, minDist,
-                               param1 = canny_threshold,
-                               param2 = acc_threshold,
-                               minRadius = minRadius,
-                               maxRadius = maxRadius)
+    # circles = cv2.HoughCircles(im, method, dp, minDist,
+    #                            param1 = canny_threshold,
+    #                            param2 = acc_threshold,
+    #                            minRadius = minRadius,
+    #                            maxRadius = maxRadius)
+    circles = None
+    while circles is None:
+        circles = cv2.HoughCircles(im, method, dp, minDist,
+                                   param1 = canny_threshold,
+                                   param2 = acc_threshold,
+                                   minRadius = minRadius,
+                                   maxRadius = maxRadius)
+        # try lowering canny threshold, assuming target is dim
+        canny_threshold = int(canny_threshold / 2)
+        if canny_threshold < 20:
+            break
 
     # draw canny edges
     if config.debugImageTitle:

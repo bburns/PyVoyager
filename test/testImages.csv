@@ -1,19 +1,11 @@
-
 # keep this file sorted by imageId so can join with positions.csv file
-
 fileId,x,y
-
-# Neptune
-
 C0896631_neptune,513,333
 C0902002_neptune,522,469
 C0902008_neptune,580,456
 C1136940_neptune_large,308,548
 C1137522_neptune_huge,242,384
 C1139416_triton_half,290,542
-
-# Jupiter
-
 C1464114_jupiter_gap,604,508
 C1466602_jupiter1,220,380
 C1466604_jupiter2,214,360
@@ -23,16 +15,13 @@ C1468052_jupiter,540,486
 C1468054_jupiter,512,410
 C1471042_jupiter1,614,268
 C1471044_jupiter2,629,227
-C1478739_jupiter_edge_gap,728,396
+C1478739_jupiter_edge_gap,724,398
 C1484711_jupiter_edge_gap,728,354
 C1487422_jupiter_edge,742,443
 C1490645_jupiter_edge_gap,805,442
 C1498111_jupiter_edge_noise,622,486
 C1540528_jupiter1,440,328
 C1540530_jupiter2,390,388
-
-# Uranus
-
 C2447711_uranus_small,394,392
 C2448205_adjusted_Violet,552,458
 C2448304_adjusted_Clear,498,370

@@ -37,10 +37,12 @@ def resizeImage(im, w, h):
     im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
-    canvas = np.zeros((h,w,3), np.uint8)
+    # canvas = np.zeros((h,w,3), np.uint8)
+    canvas = np.zeros(im.shape, np.uint8)
     x = int((w-newW)/2)
     y = int((h-newH)/2)
-    canvas[y:y+newH, x:x+newW] = np.array(im)
+    # canvas[y:y+newH, x:x+newW] = np.array(im)
+    canvas[y:y+newH, x:x+newW] = im
     return canvas
 
 
@@ -310,6 +312,12 @@ def gray2rgb(im):
     return im
 
 
+def rgb2gray(im):
+    "convert an rgb image to gray, return new image"
+    im = cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)
+    return im
+
+
 def drawBoundingBox(im, boundingBox):
     "draw a box on image, return new image"
     [x1,y1,x2,y2] = boundingBox
@@ -335,10 +343,7 @@ def findCircle(im, radius=None):
     dp = config.houghAccumulatorSize # eg 1.0
 
     # distance between circles
-    # minDist = 1 # way too many found
-    # minDist = 10 # too many
-    # minDist = 200
-    minDist = config.houghMinDistanceBetweenCircles
+    minDist = config.houghMinDistanceBetweenCircles # eg 200
 
     # First method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the higher threshold of the two passed to the Canny() edge
@@ -357,12 +362,12 @@ def findCircle(im, radius=None):
     # low will declare anything to be a circle. The ideal value of param 2 will
     # be related to the circumference of the circles.
     # (so should be proportional to the radius)
-    acc_threshold = config.houghAccumulatorThreshold
+    acc_threshold = config.houghAccumulatorThreshold # eg 10
 
     if radius:
         pct = config.houghRadiusSearchPercent # eg 10
-        minRadius = int((1-float(pct)/100)*radius)
-        maxRadius = int((1+float(pct)/100)*radius)
+        minRadius = int((1-float(pct)/100) * radius)
+        maxRadius = int((1+float(pct)/100) * radius)
     else:
         minRadius = 0
         maxRadius = 0
@@ -388,40 +393,48 @@ def findCircle(im, radius=None):
                 break
 
     # this doesn't get executed, because it just finds false circles...
-    # could try increasing accth
-    # #. if still can't find circles, try expanding image size
-    # # (to find targets with centers outside of image, like limbs)
-    # # for 800x800 would be 2400x2400
-    # if circles is None:
-    #     print 'try enlarging image size'
-    #     w,h = im.shape[1],im.shape[0]
-    #     # imLarger = blank image 3x3 of imsize
-    #     # newsize = (imwidth * 2, imheight * 2)
-    #     canvas = np.zeros(h*3,w*3)
-    #     # copy im into canvas in middle
-    #     # canvas[h:h+h, w:w+w] = np.array(im)
-    #     canvas[h:h+h, w:w+w] = im
-    #     canny_threshold = config.houghCannyUpperThreshold
-    #     circles = cv2.HoughCircles(canvas, method, dp, minDist,
-    #                                param1 = canny_threshold,
-    #                                param2 = acc_threshold,
-    #                                minRadius = minRadius,
-    #                                maxRadius = maxRadius)
-    #     # if found circle, crop im out of canvas, centered on target
-    #     #. what if imageFraction>1?
-    #     # crop canvas to original image size
-    #     # eg imcrop = canvas[400:1200, 400:1200]
-    #     # x1 = int(imwidth/2)
-    #     # y1 = int(imheight/2)
-    #     if not circles is None:
-    #         print 'circle found!'
-    #         # circles = circles[0,:] # extract array
-    #         circle = circles[0,:][0]
-    #         circle = np.round(circle).astype('int') # round all values to ints
-    #         y,x,r = circle
-    #         x1 = x - int(w/2)
-    #         y1 = y - int(h/2)
-    #         im = canvas[y1:y1+h,x1:x1+w]
+    # could try increasing acc_th
+
+    #. if still can't find circles, try expanding image size
+    # (to find targets with centers outside of image, like limbs)
+    # for 800x800 would be 2400x2400
+    if circles is None:
+        print 'try enlarging image size'
+        w,h = im.shape[1],im.shape[0]
+        # imLarger = blank image 3x3 of imsize
+        # newsize = (imwidth * 2, imheight * 2)
+        canvas = np.zeros((h*3,w*3), np.uint8)
+        # copy im into canvas in middle
+        canvas[h:h+h, w:w+w] = im
+        # c2 = resizeImage(canvas,600,600)
+        # show(c2)
+        # upper = 200
+        # lower = upper/2
+        # c2 = cv2.Canny(c2, lower, upper)
+        # show(c2)
+        print canvas.shape
+        print type(canvas[0][0])
+        canny_threshold = config.houghCannyUpperThreshold
+        circles = cv2.HoughCircles(canvas, method, dp, minDist,
+                                   param1 = canny_threshold,
+                                   param2 = acc_threshold,
+                                   minRadius = minRadius,
+                                   maxRadius = maxRadius)
+        # if found circle, crop im out of canvas, centered on target
+        #. what if imageFraction>1?
+        # crop canvas to original image size
+        # eg imcrop = canvas[400:1200, 400:1200]
+        # x1 = int(imwidth/2)
+        # y1 = int(imheight/2)
+        if not circles is None:
+            print 'circle found! crop to it'
+            # circles = circles[0,:] # extract array
+            circle = circles[0,:][0]
+            circle = np.round(circle).astype('int') # round all values to ints
+            y,x,r = circle
+            x1 = x - int(w/2)
+            y1 = y - int(h/2)
+            im = canvas[y1:y1+h,x1:x1+w]
 
 
     # draw canny edges
@@ -432,7 +445,7 @@ def findCircle(im, radius=None):
         cv2.imwrite(config.debugImageTitle + '_cannyedges.jpg', imedges)
 
     if circles is None:
-        # print 'no circles found'
+        print 'no circles found'
         circle = None
     else:
         circles = circles[0,:] # extract array

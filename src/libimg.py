@@ -316,7 +316,8 @@ def drawBoundingBox(im, boundingBox):
     imbox = np.copy(im)
     imbox = cv2.cvtColor(imbox, cv2.COLOR_GRAY2RGB)
     # note y,x
-    cv2.rectangle(imbox, (y1,x1), (y2,x2), (255,0,0), 2)
+    # cv2.rectangle(imbox, (y1,x1), (y2,x2), (255,0,0), 2)
+    cv2.rectangle(imbox, (x1,y1),(x2,y2), (255,0,0), 2)
     return imbox
 
 

@@ -137,25 +137,20 @@ blobRadiusMax = 10 # v0.42
 houghAccumulatorSize = 1 # always
 # houghAccumulatorSize = 2 # always
 
+houghMinDistanceBetweenCircles = 400
+
 # canny edge detection threshold
 # used by hough circle detection - lower threshold is half of this
 # if this is too high then dim circles won't be detected
 # but if it's too low you'd get too many spurious edges in the edge image
-houghCannyUpperThreshold = 200 # v0.37
+# houghCannyUpperThreshold = 250 # v0.36 and prior
+houghCannyUpperThreshold = 200 # v0.37 works on dim neptune with noise AND regular jupiter
 # houghCannyUpperThreshold = 150 # v0.42
 
-# houghAccumulatorThreshold = 1000
-# houghAccumulatorThreshold = 250 # through v0.36
-# houghAccumulatorThreshold = 200 # v0.37 worked on dim neptune with noise AND regular jupiter [this was actually the canny upper threshold]
-houghAccumulatorThreshold = 5 # v0.42
-# houghAccumulatorThreshold = 1 # v0.42
-# houghAccumulatorThreshold = 100 # this worked for dim neptune with noise, but caused regular jupiters to have tiny circles at their centers
-
-# # these were set incorrectly
-# houghMinRadius = 1
-# # houghMaxRadius = 10 # through v0.36
-# houghMaxRadius = 2 # v0.37 this didn't seem to matter - still got huge circle back
-
+# houghAccumulatorThreshold = 1 # v0.37
+# houghAccumulatorThreshold = 5 # v0.42
+# houghAccumulatorThreshold = 10 # v0.42
+houghAccumulatorThreshold = 20 # v0.42
 
 houghRadiusSearchPercent = 10
 

@@ -337,7 +337,8 @@ def findCircle(im, radius=None):
     # distance between circles
     # minDist = 1 # way too many found
     # minDist = 10 # too many
-    minDist = 200
+    # minDist = 200
+    minDist = config.houghMinDistanceBetweenCircles
 
     # First method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the higher threshold of the two passed to the Canny() edge
@@ -371,9 +372,9 @@ def findCircle(im, radius=None):
     #                            param2 = acc_threshold,
     #                            minRadius = minRadius,
     #                            maxRadius = maxRadius)
-    circles = None
 
     # look for circles, lowering canny threshold if can't find any (assume target is dim)
+    circles = None
     while circles is None:
         circles = cv2.HoughCircles(im, method, dp, minDist,
                                    param1 = canny_threshold,
@@ -386,6 +387,8 @@ def findCircle(im, radius=None):
             if canny_threshold < 20:
                 break
 
+    # this doesn't get executed, because it just finds false circles...
+    # could try increasing accth
     # #. if still can't find circles, try expanding image size
     # # (to find targets with centers outside of image, like limbs)
     # # for 800x800 would be 2400x2400

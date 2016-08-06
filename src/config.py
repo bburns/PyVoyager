@@ -14,6 +14,10 @@ useJpegs = True
 extension = '.jpg' if useJpegs else '.png'
 
 
+logfile = 'log.txt'
+
+
+
 # Voyager
 # ----------------------------------------
 
@@ -192,7 +196,10 @@ stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
 # if this is 1 the target may drift off to the left
 # if it's 9999 the target may stutter towards the end of the volume
 # stabilizeNTimesFixedFrameUsed = 10 # v0.41 jupiter
-stabilizeNTimesToUseFixedFrame = 10 # v0.41 jupiter
+# stabilizeNTimesToUseFixedFrame = 10 # v0.41 jupiter
+# stabilizeNTimesToUseFixedFrame = 100 # v0.42 try for uranus - still glitchy
+# stabilizeNTimesToUseFixedFrame = 400 # v0.42 try for neptune
+stabilizeNTimesToUseFixedFrame = 9999 # v0.42 try for jupiter - ie turn off, with round instead of int - see if fixes leftward drift
 
 
 # suffix for centered filenames

@@ -16,7 +16,7 @@ import random
 
 
 import config
-
+import log
 
 
 def resizeImage(im, w, h):
@@ -59,14 +59,14 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
     # so just say it's stabilized
     if not fixedfile:
         stabilizationOk = True
-    # if given a fixedfile try to stabilize against that
-    else:
+    else: # if given a fixedfile try to stabilize against that
         stabilizationOk = False
         # this helps prevent stabilizing to badly centered images
         #. should be a percentage?
         if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
-            print
-            print 'max radius delta exceeded', radius, lastRadius
+            # print
+            # print 'max radius delta exceeded', radius, lastRadius
+            log.log('max radius delta exceeded', radius, lastRadius)
         else:
             stabilizationOk = True
             im1 = cv2.imread(fixedfile)
@@ -98,15 +98,18 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
                 # if image shifted too much, assume something went wrong
                 if abs(deltax) > config.stabilizeMaxDeltaPosition or \
                    abs(deltay) > config.stabilizeMaxDeltaPosition:
-                    print
-                    print 'max delta position exceeded', deltax, deltay
+                    # print
+                    # print 'max delta position exceeded', deltax, deltay
+                    log.log('max delta position exceeded', deltax, deltay)
                     stabilizationOk = False
                 else:
                     im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
                                                  flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
                     cv2.imwrite(outfile, im2_aligned)
-                    x += int(deltax)
-                    y += int(deltay)
+                    # x += int(deltax)
+                    # y += int(deltay)
+                    x += round(deltax)
+                    y += round(deltay)
     # return x,y,radius,stabilizationOk
     return x,y,stabilizationOk
 
@@ -134,7 +137,7 @@ def centerImageFile(infile, outfile, radius=None):
 
     #......
     # im = im[0:798,0:798] # trim last 3 pixels
-    im = im[0:796,0:796] # trim last 3 pixels
+    # im = im[0:796,0:796] # trim last 3 pixels
 
 
     boundingBox = [0,0,799,799]
@@ -288,6 +291,12 @@ def combineChannels(channels):
     imBlue = rowBlue[colIm] if rowBlue else blank
 
     # merge channels - BGR for cv2
+    # print imBlue.shape
+    # print imGreen.shape
+    # print imRed.shape
+    # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
+    # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
+    # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
 
     # scale image to 800x800
@@ -393,7 +402,8 @@ def findCircle(im, radius=None):
                                    maxRadius = maxRadius)
         if circles is None:
             canny_threshold = int(canny_threshold / 2)
-            print 'reducing canny threshold to',canny_threshold
+            # print 'reducing canny threshold to',canny_threshold
+            log.log('reducing canny threshold to',canny_threshold)
             if canny_threshold < 20:
                 break
 
@@ -452,7 +462,8 @@ def findCircle(im, radius=None):
         cv2.imwrite(config.debugImageTitle + '_cannyedges.jpg', imedges)
 
     if circles is None:
-        print 'no circles found'
+        # print 'no circles found'
+        log.log('no circles found')
         circle = None
     else:
         circles = circles[0,:] # extract array

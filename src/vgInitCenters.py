@@ -17,6 +17,7 @@ import os.path
 import config
 import lib
 import libimg
+import log
 
 
 def vgInitCenters(volnum, overwrite=False):
@@ -83,8 +84,9 @@ def vgInitCenters(volnum, overwrite=False):
         infile = lib.getAdjustedFilepath(volume, fileId, filter)
         outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
-        # print 'Volume %s centering %d/%d: %s     \r' %(volume,nfile,nfiles,infile),
-        print 'Volume %s centering %d/%d: %s' %(volume,nfile,nfiles,infile)
+        # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+        # print 'Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile)
+        log.log('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 
         targetKey = system + '-' + craft + '-' + target + '-' + camera
@@ -100,26 +102,27 @@ def vgInitCenters(volnum, overwrite=False):
             # print 'currentimage',volume,fileId,filter,targetKey
 
             # for this target sequence (eg ariel flyby), what was the last good image?
-            # use that as a fixed image against which we try to align the
-            # current image.
-            # we need to remember the fileId, volume, filter, and radius
+            # use that as a fixed image against which we try to align the current image.
             lastImageRecord = lastImageInTargetSequence.get(targetKey)
             if lastImageRecord:
                 fixedfile = lastImageRecord[0]
                 ntimesused = lastImageRecord[1]
                 lastRadius = lastImageRecord[2]
                 lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-                print 'aligning to', fixedfile
+                # print 'aligning to', fixedfile
+                log.log('aligning to', fixedfile)
             else:
                 fixedfile = None
                 ntimesused = 0
                 lastRadius = 0
-                print 'no image to align to yet for',targetKey
+                # print 'no image to align to yet for',targetKey
+                log.log('no image to align to yet for',targetKey)
 
             # get expected radius
             rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
             if rowPositions:
-                imageFraction = float(rowPositions[config.positionsColImageFraction]) # fraction of frame
+                # fraction of frame
+                imageFraction = float(rowPositions[config.positionsColImageFraction])
                 radius = int(400*imageFraction) #.param
             else:
                 radius = None
@@ -132,16 +135,16 @@ def vgInitCenters(volnum, overwrite=False):
 
             if fixedfile is None:
                 fixedfile = outfile
-                print 'first fixed frame', fixedfile
+                # print 'first fixed frame', fixedfile
+                log.log('first fixed frame', fixedfile)
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
             # if image was successfully stabilized, remember it
             # lastRadius and radius are used to determine if it has changed 'too much'
             # if stabilizationOk and ntimesused>10:
             if stabilizationOk and ntimesused>config.stabilizeNTimesToUseFixedFrame:
                 fixedfile = outfile
-                print 'new fixed frame', fixedfile
-                # lastImageInTargetSequence[targetKey] = [volume, fileId, filter, radius]
-                # lastImageInTargetSequence[targetKey] = [fixedfile, ntimesused, radius]
+                # print 'new fixed frame', fixedfile
+                log.log('new fixed frame', fixedfile)
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
 
             # write x,y,radius to newcenters file

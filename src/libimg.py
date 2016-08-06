@@ -132,6 +132,11 @@ def centerImageFile(infile, outfile, radius=None):
     """
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
+    #......
+    # im = im[0:798,0:798] # trim last 3 pixels
+    im = im[0:796,0:796] # trim last 3 pixels
+
+
     boundingBox = [0,0,799,799]
 
     # find the bounding box of biggest object
@@ -392,50 +397,52 @@ def findCircle(im, radius=None):
             if canny_threshold < 20:
                 break
 
-    # this doesn't get executed, because it just finds false circles...
-    # could try increasing acc_th
-
-    #. if still can't find circles, try expanding image size
-    # (to find targets with centers outside of image, like limbs)
-    # for 800x800 would be 2400x2400
-    if circles is None:
-        print 'try enlarging image size'
-        w,h = im.shape[1],im.shape[0]
-        # imLarger = blank image 3x3 of imsize
-        # newsize = (imwidth * 2, imheight * 2)
-        canvas = np.zeros((h*3,w*3), np.uint8)
-        # copy im into canvas in middle
-        canvas[h:h+h, w:w+w] = im
-        # c2 = resizeImage(canvas,600,600)
-        # show(c2)
-        # upper = 200
-        # lower = upper/2
-        # c2 = cv2.Canny(c2, lower, upper)
-        # show(c2)
-        print canvas.shape
-        print type(canvas[0][0])
-        canny_threshold = config.houghCannyUpperThreshold
-        circles = cv2.HoughCircles(canvas, method, dp, minDist,
-                                   param1 = canny_threshold,
-                                   param2 = acc_threshold,
-                                   minRadius = minRadius,
-                                   maxRadius = maxRadius)
-        # if found circle, crop im out of canvas, centered on target
-        #. what if imageFraction>1?
-        # crop canvas to original image size
-        # eg imcrop = canvas[400:1200, 400:1200]
-        # x1 = int(imwidth/2)
-        # y1 = int(imheight/2)
-        if not circles is None:
-            print 'circle found! crop to it'
-            # circles = circles[0,:] # extract array
-            circle = circles[0,:][0]
-            circle = np.round(circle).astype('int') # round all values to ints
-            y,x,r = circle
-            x1 = x - int(w/2)
-            y1 = y - int(h/2)
-            im = canvas[y1:y1+h,x1:x1+w]
-
+    # need largish acc threshold for this to get triggered
+    # #. if still can't find circles, try expanding image size
+    # # (to find targets with centers outside of image, like limbs)
+    # # for 800x800 would be 2400x2400
+    # if circles is None:
+    #     print 'try enlarging image size'
+    #     w,h = im.shape[1],im.shape[0]
+    #     # imLarger = blank image 3x3 of imsize
+    #     # newsize = (imwidth * 2, imheight * 2)
+    #     canvas = np.zeros((h*3,w*3), np.uint8)
+    #     # copy im into canvas in middle
+    #     canvas[h:h+h, w:w+w] = im
+    #     c2 = resizeImage(canvas,600,600)
+    #     show(c2)
+    #     # upper = 200
+    #     # lower = upper/2
+    #     # c2 = cv2.Canny(c2, lower, upper)
+    #     # show(c2)
+    #     print canvas.shape
+    #     print type(canvas[0][0])
+    #     canny_threshold = config.houghCannyUpperThreshold
+    #     acc_threshold = 5
+    #     circles = cv2.HoughCircles(canvas, method, dp, minDist,
+    #                                param1 = canny_threshold,
+    #                                param2 = acc_threshold,
+    #                                minRadius = minRadius,
+    #                                maxRadius = maxRadius)
+    #     # if found circle, crop im out of canvas, centered on target
+    #     #. what if imageFraction>1?
+    #     # crop canvas to original image size
+    #     # eg imcrop = canvas[400:1200, 400:1200]
+    #     # x1 = int(imwidth/2)
+    #     # y1 = int(imheight/2)
+    #     if not circles is None:
+    #         print 'circle found! crop to it'
+    #         # circles = circles[0,:] # extract array
+    #         circle = circles[0,:][0]
+    #         circle = np.round(circle).astype('int') # round all values to ints
+    #         im2 = gray2rgb(canvas)
+    #         drawCircle(im2, circle) # green
+    #         im2 = resizeImage(im2,600,600)
+    #         show(im2)
+    #         y,x,r = circle
+    #         x1 = x - int(w/2)
+    #         y1 = y - int(h/2)
+    #         im = canvas[y1:y1+h,x1:x1+w]
 
     # draw canny edges
     if config.debugImageTitle:

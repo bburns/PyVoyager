@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.42 inprogress
+Version 0.42
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -348,12 +348,19 @@ Next steps
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
 
-Version 0.42 (2016-08)
+Version 0.42 (2016-08-06)
 ----------------------------------------
-- Use expected target size to narrow down Hough circle search for more accurate results - uses SPICE positions
-- Use adaptive thresholding before running blob detection - works better than plain thresholding for pointlike targets
+- `vg init centers` uses expected target size to narrow down Hough circle search for more accurate results - uses SPICE positions
+- `vg init centers` uses adaptive thresholding before running blob detection - works better than plain thresholding for pointlike targets
+- `vg init centers` aligns image to expected target disc - works better than aligning to any prior image
+- `vg init centers` if can't find a circle, fall back to the blob bounding box - stabilization can often handle the rest, so partial targets can be stabilized, even limbs
+- `vg init centers` optionally draws expected target size on images, based on positions.csv
 - `vg test` draws expected target size on centered images, based on positions.csv
-- Refactor, clean up code
+- Commands can write output to logfile 'log.txt'
+
+Still not completely stable - need to align final couple of pixels
+
+Made another stabilized Voyager 1 Jupiter rotation movie (color)
 
 Version 0.41 (2016-08-02)
 ----------------------------------------
@@ -362,6 +369,8 @@ Version 0.41 (2016-08-02)
 - `vg center <vol>` and `vg center <imageId>` now just use `centers.csv` and `centersOverride.csv`
 - Add `vg grab` command 
 - Changed stabilization routine so it stabilizes against every 10 good frames, instead of against previous frame, as Jupiter tended to drift to the left. Had also tried stabilizing it to first image in sequence, but jittered towards the end. Didn't retest it on Uranus.
+
+Still fairly jittery - noise/gaps cause stabilization to stutter
 
 Made stabilized Voyager 1 Jupiter rotation movie (color)
 

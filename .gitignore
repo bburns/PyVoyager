@@ -14,3 +14,4 @@ test/images/thresholded
 test/images/edges
 test/images/debug/
 kernels
+src/log.txt

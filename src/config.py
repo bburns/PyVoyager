@@ -145,12 +145,11 @@ houghMinDistanceBetweenCircles = 400
 # but if it's too low you'd get too many spurious edges in the edge image
 # houghCannyUpperThreshold = 250 # v0.36 and prior
 houghCannyUpperThreshold = 200 # v0.37 works on dim neptune with noise AND regular jupiter
-# houghCannyUpperThreshold = 150 # v0.42
 
 # houghAccumulatorThreshold = 1 # v0.37
 # houghAccumulatorThreshold = 5 # v0.42
 # houghAccumulatorThreshold = 10 # v0.42
-houghAccumulatorThreshold = 20 # v0.42
+houghAccumulatorThreshold = 20 # v0.42 increased to this and did better because more canny searches
 
 houghRadiusSearchPercent = 10
 

@@ -63,16 +63,8 @@ def vgInitPositions():
     spice.furnsh('kernels/nep016-6.bsp') # neptune satellite data (9mb)
     spice.furnsh('kernels/pck00010.tpc') # planetary constants (radius etc) (120kb)
 
-    #. move to config
-
-#     # these targets aren't in the PCK datafile, but want to try to center on them,
-#     # so write out a record with 0.0 for imageSize
-#     centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
-# Prometheus,Pandora,Calypso,Proteus,Amalthea,Janus,Telesto,Puck,Epimetheus'.split(',')
-
-#     # don't want to center these targets - so don't write a record for them
-#     dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
-# Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
+    # read db into memory
+    targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
     # iterate over all available files
     for row in csvFiles:
@@ -83,6 +75,9 @@ def vgInitPositions():
         target = row[config.filesColTarget] # eg Io
         utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
         instrument = row[config.filesColInstrument] # eg Narrow
+
+        # relabel target field if necessary
+        target = lib.retarget(targetInfo, fileId, target)
 
         # there are a dozen or so UNKNOWN times, all Dark targets, but for one Rhea record
         if utcTime[0]=='U': # UNKNOWN or UNK

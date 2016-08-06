@@ -28,7 +28,7 @@ def vgTarget(volnum, targetPath=None):
     volnum = str(volnum)
 
     # center the volume, if not already there
-    vgCenter.vgCenter(volnum, False, False)
+    vgCenter.vgCenter(volnum, '', False, False)
 
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 

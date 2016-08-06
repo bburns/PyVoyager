@@ -537,7 +537,7 @@ def centerImage(im, boundingBox):
 
 
 def findBoundingBoxByCircle(im, radius):
-    "Find the bounding box enclosing the best circle in image and return it."
+    "Find the bounding box enclosing the best circle in image and return it, or None."
     circle = findCircle(im, radius)
     if not circle is None:
         #. this is supposed to be y,x,r - not sure what's going on
@@ -547,13 +547,14 @@ def findBoundingBoxByCircle(im, radius):
         x2 = x+r
         y1 = y-r
         y2 = y+r
+        boundingBox = [x1,y1,x2,y2]
     else:
         # if no circles just return the whole image
-        x1 = 0
-        x2 = im.shape[1] - 1
-        y1 = 0
-        y2 = im.shape[0] - 1
-    boundingBox = [x1,y1,x2,y2]
+        # x1 = 0
+        # x2 = im.shape[1] - 1
+        # y1 = 0
+        # y2 = im.shape[0] - 1
+        boundingBox = None
     return boundingBox
 
 
@@ -629,7 +630,11 @@ def findBoundingBox(im, radius):
     if radius < config.blobRadiusMax: # eg 10 pixels
         boundingBox = findBoundingBoxByBlob(im)
     else: # use hough to find circle
+        # boundingBox = findBoundingBoxByCircle(im, radius)
         boundingBox = findBoundingBoxByCircle(im, radius)
+        # if couldn't find a circle, just use the blob bounding box for approximate answer
+        if boundingBox is None:
+            boundingBox = findBoundingBoxByBlob(im)
     return boundingBox
 
 

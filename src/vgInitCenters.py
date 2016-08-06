@@ -20,8 +20,8 @@ import libimg
 import log
 
 
-config.drawCrosshairs = True
-config.drawTarget = True
+# config.drawCrosshairs = True
+# config.drawTarget = True
 
 
 def vgInitCenters(volnum, overwrite=False):
@@ -89,7 +89,6 @@ def vgInitCenters(volnum, overwrite=False):
         outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-        # print 'Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile)
         log.log('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 
@@ -111,14 +110,12 @@ def vgInitCenters(volnum, overwrite=False):
             if lastImageRecord:
                 fixedfile = lastImageRecord[0]
                 ntimesused = lastImageRecord[1]
-                # lastRadius = lastImageRecord[2]
                 lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-                log.log('aligning to', fixedfile)
+                # log.log('aligning to', fixedfile)
             else:
                 fixedfile = None
                 ntimesused = 0
-                # lastRadius = 0
-                log.log('no image to align to yet for',targetKey)
+                # log.log('no image to align to yet for',targetKey)
 
             # get expected radius
             rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
@@ -132,25 +129,17 @@ def vgInitCenters(volnum, overwrite=False):
             # find center of target using blob and hough, then align to fixedimage.
             # lastRadius and radiusFound are used to determine if it has changed 'too much'.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            # x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-            #                                                 lastRadius, x,y,foundRadius,
-            #                                                 targetRadius)
-            # x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-            #                                                 x,y,foundRadius, targetRadius)
             x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius, x,y,foundRadius)
             # remember first image in sequence
             if fixedfile is None:
                 fixedfile = outfile
-                # log.log('first fixed frame', fixedfile, 'radius', foundRadius)
-                log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
-                # lastImageInTargetSequence[targetKey] = [fixedfile, 0, foundRadius]
+                # log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
             # if image was successfully stabilized, remember it
             if stabilizationOk and ntimesused >= config.stabilizeNTimesToUseFixedFrame:
                 fixedfile = outfile
-                log.log('new fixed frame', fixedfile)
-                # lastImageInTargetSequence[targetKey] = [fixedfile, 0, foundRadius]
+                # log.log('new fixed frame', fixedfile)
                 lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
             # write x,y,radius to newcenters file

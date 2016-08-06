@@ -167,7 +167,8 @@ houghRadiusSearchPercent = 10
 # but still filter out large jumps, so a bit tricky
 #. should be a percentage?
 # stabilizeMaxRadiusDifference = 20 # v0.40 uranus
-stabilizeMaxRadiusDifference = 50 # v0.41 jupiter
+# stabilizeMaxRadiusDifference = 50 # v0.41 jupiter
+stabilizeMaxRadiusDifference = 800 # v0.42 see if will work with uncentered targets - #.. almost - need to get rough center using blob, the let stabilizer handle the rest
 
 # ECC parameters
 #. try reducing these to speed it up - images shouldn't have shifted very much.
@@ -189,8 +190,8 @@ stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
 # stabilizeMaxDeltaPosition = 18 # v0.40 uranus
 # stabilizeMaxDeltaPosition = 20
 # stabilizeMaxDeltaPosition = 30
-stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
-# stabilizeMaxDeltaPosition = 800
+# stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
+stabilizeMaxDeltaPosition = 800 # v0.42 let it try to shift uncentered targets also
 
 # how many times to use fixed frame before getting new one
 # if this is 1 the target may drift off to the left

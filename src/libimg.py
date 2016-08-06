@@ -47,17 +47,21 @@ def resizeImage(im, w, h):
 
 
 
-def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius):
+# def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius):
+# def stabilizeImageFile(infile, outfile, x,y,foundRadius, targetRadius):
+def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
     """
-    stabilize infile against fixedfile and write to outfile.
+    stabilize infile edges against target circle and write to outfile.
+    returns newx,newy,stabilizationOk
     foundRadius is the radius of the infile, in pixels
     targetRadius is the expected radius, in pixels
     """
     # if no file to stabilize to, must be the first image in the sequence,
     # so just say it's stabilized
-    if not fixedfile:
-        stabilizationOk = True
-    else: # if given a fixedfile try to stabilize against that
+    # if not fixedfile:
+        # stabilizationOk = True
+    # else: # if given a fixedfile try to stabilize against that
+    if True:
         stabilizationOk = False
         # this helps prevent stabilizing to badly centered images
         #. should be a percentage
@@ -66,8 +70,23 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
                     (foundRadius, targetRadius, config.stabilizeMaxRadiusDifference))
         else:
             stabilizationOk = True
-            imFixed = cv2.imread(fixedfile,0)#.param
-            imOut = cv2.imread(outfile,0)#.param
+
+            # get fixed image of target circle
+            # imFixed = cv2.imread(fixedfile,0)#.param
+            imFixed = np.zeros((800,800), np.uint8) #.params
+            circle = (399,399,targetRadius) #.params
+            # drawCircle(imFixed, circle, color = 255) # outline
+            # drawCircle(imFixed, circle, color = 255, thickness = -1) # filled
+            cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # filled
+
+            # get edges for infile
+            im = cv2.imread(infile,0)#.param
+            # upper = 200 #. pass this in
+            # lower = upper/2
+            # imIn = cv2.Canny(im, lower, upper)
+            imIn = im
+
+
             szFixed = imFixed.shape
             warp_mode = cv2.MOTION_TRANSLATION
             warp_matrix = np.eye(2, 3, dtype=np.float32) #. paramnames?
@@ -78,7 +97,7 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
             # run the ECC algorithm - the results are stored in warp_matrix
             # throws an error if doesn't converge, so catch it
             try:
-                cc, warp_matrix = cv2.findTransformECC(imFixed, imOut, warp_matrix,
+                cc, warp_matrix = cv2.findTransformECC(imFixed, imIn, warp_matrix,
                                                        warp_mode, criteria)
             except:
                 # if can't find solution, images aren't close enough in similarity
@@ -97,7 +116,7 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
                             (deltax, deltay, config.stabilizeMaxDeltaPosition))
                     stabilizationOk = False
                 else:
-                    im = cv2.warpAffine(imOut, warp_matrix, (szFixed[1],szFixed[0]),
+                    im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
                                         flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
                     if config.drawCrosshairs:
                         im[399, 0:799] = 64 #.params
@@ -266,7 +285,6 @@ def combineChannels(channels):
         if weight!=1.0: im = cv2.multiply(im,weight)
         # if canvas needs to be enlarged, do so
         if enlarged:
-            # canvas = np.zeros((w,h), np.uint8) # 0-255
             canvas = np.zeros((h,w), np.uint8) # 0-255
             x = row[colX] if len(row)>colX else 0
             y = row[colY] if len(row)>colY else 0

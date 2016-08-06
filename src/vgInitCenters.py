@@ -135,8 +135,9 @@ def vgInitCenters(volnum, overwrite=False):
             # x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
             #                                                 lastRadius, x,y,foundRadius,
             #                                                 targetRadius)
-            x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-                                                            x,y,foundRadius, targetRadius)
+            # x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
+            #                                                 x,y,foundRadius, targetRadius)
+            x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius, x,y,foundRadius)
             # remember first image in sequence
             if fixedfile is None:
                 fixedfile = outfile

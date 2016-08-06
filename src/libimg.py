@@ -47,21 +47,12 @@ def resizeImage(im, w, h):
 
 
 
-# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
-# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius, targetRadius):
-# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,foundRadius, targetRadius):
 def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius):
     """
     stabilize infile against fixedfile and write to outfile.
-
-    #. rename these
-    # lastRadius is the found radius of the target in the fixedfile,
-    foundRadius is the radius of the infile
+    foundRadius is the radius of the infile, in pixels
     targetRadius is the expected radius, in pixels
     """
-
-    #..... maybe compare foundradius with targetradius, not lastradius...
-
     # if no file to stabilize to, must be the first image in the sequence,
     # so just say it's stabilized
     if not fixedfile:
@@ -69,28 +60,17 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
     else: # if given a fixedfile try to stabilize against that
         stabilizationOk = False
         # this helps prevent stabilizing to badly centered images
-        #. should be a percentage?
-        # if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
-        # if abs(foundRadius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
+        #. should be a percentage
         if abs(foundRadius-targetRadius)>config.stabilizeMaxRadiusDifference: # eg 20
-            # print
-            # print 'max radius delta exceeded', radius, lastRadius
-            # log.log('max radius delta exceeded', radius, lastRadius)
-            # log.log('max radius delta exceeded - radius %d, lastRadius %d, deltamax %d' %
-                    # (foundRadius, lastRadius, config.stabilizeMaxRadiusDifference))
             log.log('max radius delta exceeded - foundRadius %d, targetRadius %d, deltamax %d' %
                     (foundRadius, targetRadius, config.stabilizeMaxRadiusDifference))
         else:
             stabilizationOk = True
-            # imFixed = cv2.imread(fixedfile)
-            # imOut = cv2.imread(outfile)
-            # imFixedGray = cv2.cvtColor(imFixed, cv2.COLOR_BGR2GRAY)
-            # imOutGray = cv2.cvtColor(imOut, cv2.COLOR_BGR2GRAY)
-            imFixedGray = cv2.imread(fixedfile,0)#.param
-            imOutGray = cv2.imread(outfile,0)#.param
-            szFixed = imFixedGray.shape
+            imFixed = cv2.imread(fixedfile,0)#.param
+            imOut = cv2.imread(outfile,0)#.param
+            szFixed = imFixed.shape
             warp_mode = cv2.MOTION_TRANSLATION
-            warp_matrix = np.eye(2, 3, dtype=np.float32)
+            warp_matrix = np.eye(2, 3, dtype=np.float32) #. paramnames?
             number_of_iterations = config.stabilizeECCIterations
             termination_eps = config.stabilizeECCTerminationEpsilon
             criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
@@ -98,7 +78,7 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
             # run the ECC algorithm - the results are stored in warp_matrix
             # throws an error if doesn't converge, so catch it
             try:
-                cc, warp_matrix = cv2.findTransformECC(imFixedGray, imOutGray, warp_matrix,
+                cc, warp_matrix = cv2.findTransformECC(imFixed, imOut, warp_matrix,
                                                        warp_mode, criteria)
             except:
                 # if can't find solution, images aren't close enough in similarity
@@ -113,12 +93,11 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
                 # if image shifted too much, assume something went wrong
                 if abs(deltax) > config.stabilizeMaxDeltaPosition or \
                    abs(deltay) > config.stabilizeMaxDeltaPosition:
-                    # log.log('max delta position exceeded', deltax, deltay)
                     log.log('max delta position exceeded - x,y %d,%d - max delta %d' %
                             (deltax, deltay, config.stabilizeMaxDeltaPosition))
                     stabilizationOk = False
                 else:
-                    im = cv2.warpAffine(imOutGray, warp_matrix, (szFixed[1],szFixed[0]),
+                    im = cv2.warpAffine(imOut, warp_matrix, (szFixed[1],szFixed[0]),
                                         flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
                     if config.drawCrosshairs:
                         im[399, 0:799] = 64 #.params
@@ -128,9 +107,6 @@ def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius
                         circle = (399,399,targetRadius) #.params
                         drawCircle(im, circle, color = (0,255,255))
                     cv2.imwrite(outfile, im)
-                    #. will this help with leftward drift?
-                    # x += int(deltax)
-                    # y += int(deltay)
                     x += round(deltax)
                     y += round(deltay)
     return x,y,stabilizationOk

@@ -47,14 +47,21 @@ def resizeImage(im, w, h):
 
 
 
-def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
+# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
+# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius, targetRadius):
+# def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,foundRadius, targetRadius):
+def stabilizeImageFile(infile, outfile, fixedfile, x,y,foundRadius, targetRadius):
     """
     stabilize infile against fixedfile and write to outfile.
 
     #. rename these
-    lastRadius is the radius of the target in the fixedfile,
-    radius is the radius of the infile
+    # lastRadius is the found radius of the target in the fixedfile,
+    foundRadius is the radius of the infile
+    targetRadius is the expected radius, in pixels
     """
+
+    #..... maybe compare foundradius with targetradius, not lastradius...
+
     # if no file to stabilize to, must be the first image in the sequence,
     # so just say it's stabilized
     if not fixedfile:
@@ -63,17 +70,25 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
         stabilizationOk = False
         # this helps prevent stabilizing to badly centered images
         #. should be a percentage?
-        if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
+        # if abs(radius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
+        # if abs(foundRadius-lastRadius)>config.stabilizeMaxRadiusDifference: # eg 20
+        if abs(foundRadius-targetRadius)>config.stabilizeMaxRadiusDifference: # eg 20
             # print
             # print 'max radius delta exceeded', radius, lastRadius
-            log.log('max radius delta exceeded', radius, lastRadius)
+            # log.log('max radius delta exceeded', radius, lastRadius)
+            # log.log('max radius delta exceeded - radius %d, lastRadius %d, deltamax %d' %
+                    # (foundRadius, lastRadius, config.stabilizeMaxRadiusDifference))
+            log.log('max radius delta exceeded - foundRadius %d, targetRadius %d, deltamax %d' %
+                    (foundRadius, targetRadius, config.stabilizeMaxRadiusDifference))
         else:
             stabilizationOk = True
-            im1 = cv2.imread(fixedfile)
-            im2 = cv2.imread(outfile)
-            im1_gray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-            im2_gray = cv2.cvtColor(im2, cv2.COLOR_BGR2GRAY)
-            sz = im1.shape
+            # imFixed = cv2.imread(fixedfile)
+            # imOut = cv2.imread(outfile)
+            # imFixedGray = cv2.cvtColor(imFixed, cv2.COLOR_BGR2GRAY)
+            # imOutGray = cv2.cvtColor(imOut, cv2.COLOR_BGR2GRAY)
+            imFixedGray = cv2.imread(fixedfile,0)#.param
+            imOutGray = cv2.imread(outfile,0)#.param
+            szFixed = imFixedGray.shape
             warp_mode = cv2.MOTION_TRANSLATION
             warp_matrix = np.eye(2, 3, dtype=np.float32)
             number_of_iterations = config.stabilizeECCIterations
@@ -83,8 +98,8 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
             # run the ECC algorithm - the results are stored in warp_matrix
             # throws an error if doesn't converge, so catch it
             try:
-                cc, warp_matrix = cv2.findTransformECC (im1_gray, im2_gray, warp_matrix,
-                                                        warp_mode, criteria)
+                cc, warp_matrix = cv2.findTransformECC(imFixedGray, imOutGray, warp_matrix,
+                                                       warp_mode, criteria)
             except:
                 # if can't find solution, images aren't close enough in similarity
                 stabilizationOk = False
@@ -98,19 +113,26 @@ def stabilizeImageFile(infile, outfile, fixedfile, lastRadius, x,y,radius):
                 # if image shifted too much, assume something went wrong
                 if abs(deltax) > config.stabilizeMaxDeltaPosition or \
                    abs(deltay) > config.stabilizeMaxDeltaPosition:
-                    # print
-                    # print 'max delta position exceeded', deltax, deltay
-                    log.log('max delta position exceeded', deltax, deltay)
+                    # log.log('max delta position exceeded', deltax, deltay)
+                    log.log('max delta position exceeded - x,y %d,%d - max delta %d' %
+                            (deltax, deltay, config.stabilizeMaxDeltaPosition))
                     stabilizationOk = False
                 else:
-                    im2_aligned = cv2.warpAffine(im2, warp_matrix, (sz[1],sz[0]),
-                                                 flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP);
-                    cv2.imwrite(outfile, im2_aligned)
+                    im = cv2.warpAffine(imOutGray, warp_matrix, (szFixed[1],szFixed[0]),
+                                        flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+                    if config.drawCrosshairs:
+                        im[399, 0:799] = 64 #.params
+                        im[0:799, 399] = 64
+                    if config.drawTarget:
+                        im = gray2rgb(im)
+                        circle = (399,399,targetRadius) #.params
+                        drawCircle(im, circle, color = (0,255,255))
+                    cv2.imwrite(outfile, im)
+                    #. will this help with leftward drift?
                     # x += int(deltax)
                     # y += int(deltay)
                     x += round(deltax)
                     y += round(deltay)
-    # return x,y,radius,stabilizationOk
     return x,y,stabilizationOk
 
 
@@ -128,37 +150,42 @@ def centerImageFileAt(infile, outfile, x, y):
     cv2.imwrite(outfile, im)
 
 
-def centerImageFile(infile, outfile, radius=None):
+def centerImageFile(infile, outfile, targetRadius=None):
     """
     Center the given image file on a target and save it to outfile.
-    Returns x,y,radius
+    Returns x,y,foundRadius
     """
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
-    #......
+    #. will be part of vg denoise
     # im = im[0:798,0:798] # trim last 3 pixels
     # im = im[0:796,0:796] # trim last 3 pixels
 
-
-    boundingBox = [0,0,799,799]
+    boundingBox = [0,0,799,799] #.param
 
     # find the bounding box of biggest object
-    boundingBox = findBoundingBox(im, radius)
+    # either a blob or a circle
+    boundingBox = findBoundingBox(im, targetRadius)
 
     # center the image on the target
     im = centerImage(im, boundingBox)
 
-    if config.drawCrosshairs:
-        im[399, 0:799] = 64
-        im[0:799, 399] = 64
+    # can't do these here because stabilization happens afterwards
+    # if config.drawCrosshairs:
+    #     im[399, 0:799] = 64 #.params
+    #     im[0:799, 399] = 64
+    # if config.drawTarget:
+    #     im = gray2rgb(im)
+    #     circle = (399,399,radius) #.params
+    #     drawCircle(im, circle, color = (0,255,255))
 
     cv2.imwrite(outfile, im)
 
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
     #. this is kind of cheating, but works so far
-    radius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
-    return x, y, radius
+    foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
+    return x, y, foundRadius
 
 
 def img2png(srcdir, filespec, destdir, img2pngOptions):
@@ -495,7 +522,9 @@ def centerImage(im, boundingBox):
 
     # make a bigger canvas to place image im on
     newsize = (imheight * 2, imwidth * 2)
-    canvas = np.zeros(newsize)
+    # canvas = np.zeros(newsize) # defaults to float
+    # canvas = np.zeros(newsize, dtype='uint8')
+    canvas = np.zeros(newsize, np.uint8)
 
     # put image on canvas centered on bounding box
     # eg canvas[800-cx:1600-cx, 800-cy:1600-cy] = np.array(im)
@@ -642,7 +671,8 @@ def drawMatches(img1, kp1, img2, kp2, matches):
     rows2 = img2.shape[0]
     cols2 = img2.shape[1]
 
-    out = np.zeros((max([rows1,rows2]),cols1+cols2,3), dtype='uint8')
+    # out = np.zeros((max([rows1,rows2]),cols1+cols2,3), dtype='uint8')
+    out = np.zeros((max([rows1,rows2]),cols1+cols2,3), np.uint8)
 
     # Place the first image to the left
     out[:rows1,:cols1,:] = np.dstack([img1, img1, img1])

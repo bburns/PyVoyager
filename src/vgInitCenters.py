@@ -20,6 +20,10 @@ import libimg
 import log
 
 
+config.drawCrosshairs = True
+config.drawTarget = True
+
+
 def vgInitCenters(volnum, overwrite=False):
     "Build centered images for given volume and write x,y,radius to centers.csv"
 
@@ -95,7 +99,7 @@ def vgInitCenters(volnum, overwrite=False):
         doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
 
         if doCenter==False:
-            x,y = 399,399
+            x,y = 399,399 #.params
         else:
 
             # print
@@ -107,15 +111,13 @@ def vgInitCenters(volnum, overwrite=False):
             if lastImageRecord:
                 fixedfile = lastImageRecord[0]
                 ntimesused = lastImageRecord[1]
-                lastRadius = lastImageRecord[2]
+                # lastRadius = lastImageRecord[2]
                 lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-                # print 'aligning to', fixedfile
                 log.log('aligning to', fixedfile)
             else:
                 fixedfile = None
                 ntimesused = 0
-                lastRadius = 0
-                # print 'no image to align to yet for',targetKey
+                # lastRadius = 0
                 log.log('no image to align to yet for',targetKey)
 
             # get expected radius
@@ -123,33 +125,35 @@ def vgInitCenters(volnum, overwrite=False):
             if rowPositions:
                 # fraction of frame
                 imageFraction = float(rowPositions[config.positionsColImageFraction])
-                radius = int(400*imageFraction) #.param
+                targetRadius = int(400*imageFraction) #.param
             else:
-                radius = None
+                targetRadius = 0 # just rhea
 
-            # find center of target using blob and hough, then align to fixedimage
-            # x,y,radius = libimg.centerImageFile(infile, outfile)
-            x,y,radiusFound = libimg.centerImageFile(infile, outfile, radius)
+            # find center of target using blob and hough, then align to fixedimage.
+            # lastRadius and radiusFound are used to determine if it has changed 'too much'.
+            x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
+            # x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
+            #                                                 lastRadius, x,y,foundRadius,
+            #                                                 targetRadius)
             x,y,stabilizationOk = libimg.stabilizeImageFile(infile, outfile, fixedfile,
-                                                            lastRadius, x,y,radiusFound)
-
+                                                            x,y,foundRadius, targetRadius)
+            # remember first image in sequence
             if fixedfile is None:
                 fixedfile = outfile
-                # print 'first fixed frame', fixedfile
-                log.log('first fixed frame', fixedfile)
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
+                # log.log('first fixed frame', fixedfile, 'radius', foundRadius)
+                log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
+                # lastImageInTargetSequence[targetKey] = [fixedfile, 0, foundRadius]
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0]
+
             # if image was successfully stabilized, remember it
-            # lastRadius and radius are used to determine if it has changed 'too much'
-            # if stabilizationOk and ntimesused>10:
-            if stabilizationOk and ntimesused>config.stabilizeNTimesToUseFixedFrame:
+            if stabilizationOk and ntimesused >= config.stabilizeNTimesToUseFixedFrame:
                 fixedfile = outfile
-                # print 'new fixed frame', fixedfile
                 log.log('new fixed frame', fixedfile)
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0, radiusFound]
+                # lastImageInTargetSequence[targetKey] = [fixedfile, 0, foundRadius]
+                lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
             # write x,y,radius to newcenters file
-            # rowNew = [volume, fileId, x, y, radius]
-            rowNew = [fileId, volume, x, y, radiusFound]
+            rowNew = [fileId, volume, x, y, foundRadius]
             csvNewCenters.writerow(rowNew)
 
     fPositions.close()

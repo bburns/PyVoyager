@@ -199,7 +199,9 @@ stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
 # stabilizeNTimesToUseFixedFrame = 10 # v0.41 jupiter
 # stabilizeNTimesToUseFixedFrame = 100 # v0.42 try for uranus - still glitchy
 # stabilizeNTimesToUseFixedFrame = 400 # v0.42 try for neptune
-stabilizeNTimesToUseFixedFrame = 9999 # v0.42 try for jupiter - ie turn off, with round instead of int - see if fixes leftward drift
+# stabilizeNTimesToUseFixedFrame = 9999 # v0.42 try for jupiter - ie turn off, with round instead of int - see if fixes leftward drift. oops - trying to align to first frame all the time -> jitters
+stabilizeNTimesToUseFixedFrame = 1 # v0.42 try jupiter - align to previous frame, using round instead of int, try to fix leftward drift
+
 
 
 # suffix for centered filenames
@@ -217,6 +219,7 @@ drawEdges = False # save canny edges image ~ used by hough circle detector
 drawCircle = False # save image with best detected hough circle
 drawCircles = False # save image with all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
+drawTarget = False # draw expected target size/location with yellow circle
 
 
 # Composite

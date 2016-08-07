@@ -20,8 +20,8 @@ import libimg
 import log
 
 
-# config.drawCrosshairs = True
-# config.drawTarget = True
+config.drawCrosshairs = True
+config.drawTarget = True
 
 
 def vgInitCenters(volnum, overwrite=False):
@@ -97,9 +97,7 @@ def vgInitCenters(volnum, overwrite=False):
         # do we actually need to center this image?
         doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
 
-        if doCenter==False:
-            x,y = 399,399 #.params
-        else:
+        if doCenter:
 
             # print
             # print 'currentimage',volume,fileId,filter,targetKey
@@ -129,7 +127,8 @@ def vgInitCenters(volnum, overwrite=False):
             # find center of target using blob and hough, then align to fixedimage.
             # lastRadius and radiusFound are used to determine if it has changed 'too much'.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius, x,y,foundRadius)
+            x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
+                                                            targetRadius, x,y,foundRadius)
             # remember first image in sequence
             if fixedfile is None:
                 fixedfile = outfile

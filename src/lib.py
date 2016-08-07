@@ -25,6 +25,50 @@ import config
 
 
 
+
+def loadPreviousStep(targetPathParts, fn):
+    """
+    load previous build step by determining volumes needed for the given target path.
+    calls fn with fn(volume, '', False, False)
+    """
+
+    # what does the user want to focus on?
+    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
+
+    # load small db into memory
+    targetInfo = readCsv(config.retargetingdb) # remapping listed targets
+
+    volumes = {}
+
+    # collect volumes needed, call the given fn with those volumes
+    csvFiles, fFiles = openCsvReader(config.filesdb)
+    for rowFiles in csvFiles:
+        volume = rowFiles[config.filesColVolume]
+        fileId = rowFiles[config.filesColFileId]
+        filter = rowFiles[config.filesColFilter]
+        system = rowFiles[config.filesColPhase]
+        craft = rowFiles[config.filesColCraft]
+        target = rowFiles[config.filesColTarget]
+        camera = rowFiles[config.filesColInstrument]
+
+        # relabel target field if necessary
+        target = retarget(targetInfo, fileId, target)
+
+        addImage = True
+        if (pathSystem and pathSystem!=system): addImage = False
+        if (pathCraft and pathCraft!=craft): addImage = False
+        if (pathTarget and pathTarget!=target): addImage = False
+        if (pathCamera and pathCamera!=camera): addImage = False
+        # if target in config.clipsIgnoreTargets: addImage = False
+        if addImage:
+            volumes[volume] = True
+    fFiles.close()
+
+    # call the given fn for the needed volumes
+    for volume in volumes.keys():
+        fn(volume, '', False, False)
+
+
 def fileContainsString(filename, s):
     "Return True if file contains the given string"
     containsString = False
@@ -39,6 +83,7 @@ def fileContainsString(filename, s):
 
 def removeLinesFromFile(filename, s):
     "Remove lines containing the given string from the file, unless line is a comment"
+    # copy filename to filename_new, leaving out the specified lines
     f = open(filename,'rt')
     f2 = open(filename+'_new','wb')
     for line in f:
@@ -48,8 +93,11 @@ def removeLinesFromFile(filename, s):
             f2.write(line)
     f2.close()
     f.close()
+    # replace existing file with new version
+    os.remove(filename+'_old') # in case still there
     os.rename(filename, filename+'_old')
     os.rename(filename+'_new', filename)
+    os.remove(filename+'_old')
 
 
 def dataLines(lines):
@@ -73,7 +121,7 @@ def dataLines(lines):
 def centerThisImageQ(centeringInfo, targetKey, fileId, target):
     """
     Should this image be centered? Checks with centering.csv and config.dontCenterTargets.
-    Used by vgCenter and vgInitCenters
+    Used by vgCenter and vgInitCenters and vgClips
     """
     centeringInfoRecord = centeringInfo.get(targetKey)
     if centeringInfoRecord:

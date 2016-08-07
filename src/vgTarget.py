@@ -22,9 +22,6 @@ import vgCenter
 def vgTarget(volnum, targetPath=None):
     "Copy images in given volume to target subfolders"
 
-    # iterate down files.csv
-    # if target path matches row, copy that image to target subfolder
-
     volnum = str(volnum)
 
     # center the volume, if not already there
@@ -32,42 +29,14 @@ def vgTarget(volnum, targetPath=None):
 
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
-    # f = open(config.filesdb, 'rt')
-    # reader = csv.reader(f)
+    # iterate down files.csv
+    # if target path matches row, copy that image to target subfolder
     reader, f = lib.openCsvReader(config.filesdb)
     for row in reader:
         volume = row[config.filesColVolume]
         if volume==volnum:
             fileId = row[config.filesColFileId]
             filter = row[config.filesColFilter]
-
-            # # get subfolder, eg data/step04_centers/VGISS_5101
-            # # sourceFolder = config.centersFolder + 'VGISS_' + volume + '/'
-
-            # # get source filename and path
-            # # eg C1327321_RAW_Orange_centered.png
-            # # eg data/step04_centers/VGISS_5101/C1327321_RAW_Orange_centered.png
-            # # sourceFilename = config.centersPrefix + fileId + '_' + \
-
-            # #. what if targetname ~
-            # # C1372372_adjusted_Orange.png
-            # # C1372362_centered_Orange.png?
-            # # C1372372_composite.png
-            # # C1372372_mosaic.png
-            # # then would all sort together
-            # # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.centersSuffix + '.png'
-            # # sourceFilename = lib.getCenteredFilename(fileId, filter)
-            # # sourceFilepath = sourceFolder + sourceFilename
-            # sourceFilepath = lib.getCenteredFilepath(fileId, filter)
-
-            # # if centered file doesn't exist, grab the adjusted image instead
-            # if not os.path.isfile(sourceFilepath):
-            #     # sourceFolder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-            #     # sourceFilename = config.adjustmentsPrefix + fileId + '_' + \
-            #     # sourceFilename = fileId + '_' + config.imageType + '_' + filter + config.adjustmentsSuffix + '.png'
-            #     # sourceFilename = lib.getAdjustedFilename(fileId, filter)
-            #     # sourceFilepath = sourceFolder + sourceFilename
-            #     sourceFilepath = lib.getAdjustedFilepath(fileId, filter)
 
             # get image properties
             phase = row[config.filesColPhase]
@@ -76,11 +45,7 @@ def vgTarget(volnum, targetPath=None):
             instrument = row[config.filesColInstrument]
 
             # relabel target field if necessary - see db/targets.csv for more info
-            targetInfoRecord = targetInfo.get(fileId)
-            if targetInfoRecord:
-                # make sure old target matches what we have
-                if targetInfoRecord['oldTarget']==target:
-                    target = targetInfoRecord['newTarget']
+            target = lib.retarget(targetInfo, fileId, target)
 
             # ignore targets like Sky, Dark
             addImage = True
@@ -92,7 +57,7 @@ def vgTarget(volnum, targetPath=None):
                 targetFolder = config.targetsFolder + subfolder
                 lib.mkdir_p(targetFolder)
 
-                print 'Volume %s copying %s       \r' % (volume, fileId),
+                print 'Volume %s copying %s         \r' % (volume, fileId),
 
                 # copy adjusted file
                 src = lib.getAdjustedFilepath(volume, fileId, filter)

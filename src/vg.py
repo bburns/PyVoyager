@@ -12,7 +12,7 @@ PyVoyager commands
   vg center <volnums>               - center images
   vg composite <volnums>            - create color images
   vg target <volnums>               - copy images into target subfolders
-  vg clips bw|color [<targetpath>]  - create bw or color clips
+  vg clips [<targetpath>] -bw|color - create bw or color clips
   vg movies                         - create movies from clips
   vg list                           - show status of local datasets
   vg test                           - run centering tests
@@ -84,12 +84,17 @@ else:
 
 # pick out options from argument list
 overwrite = False
+bw = False
+color = False
 options = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
 for option in options:
     if option=='-y':
         overwrite = True
-
+    elif option=='-bw':
+        bw = True
+    elif option=='-color':
+        color = True
 
 
 if cmd=="download":
@@ -175,19 +180,23 @@ elif cmd=="retarget":
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
 elif cmd=="clips":
-    log.start()
-    bwOrColor = None
-    target = None
-    if nargs>=2:
-        bwOrColor = args.pop(0)
-    if nargs==3:
-        targetpath = args.pop(0)
-    if bwOrColor=='bw' or bwOrColor=='color':
-        vgClips.vgClips(bwOrColor, targetpath)
+    if bw==False and color==False:
+        print 'Must specify -bw or -color'
     else:
-        cmd="help"
-    log.stop()
-    lib.beep()
+        bwOrColor = 'bw' if bw else 'color'
+        # target = None
+        # if nargs>=2:
+        #     bwOrColor = args.pop(0)
+        # if nargs==3:
+        #     targetpath = args.pop(0)
+        # if bwOrColor=='bw' or bwOrColor=='color':
+        #     vgClips.vgClips(bwOrColor, targetpath)
+        # else:
+        #     cmd="help"
+        # if nargs==2:
+        targetpath = args.pop(0)
+        vgClips.vgClips(bwOrColor, targetpath)
+        lib.beep()
 
 elif cmd=="segments":
     log.start()

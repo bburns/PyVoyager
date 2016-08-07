@@ -108,7 +108,8 @@ def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
                             (deltax, deltay, config.stabilizeMaxDeltaPosition))
                     stabilizationOk = False
                 else:
-                    im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
+                    # im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
+                    im = cv2.warpAffine(imIn, warp_matrix, (szFixed[1],szFixed[0]),
                                         flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
                     if config.drawCrosshairs:
                         im[399, 0:799] = 64 #.params

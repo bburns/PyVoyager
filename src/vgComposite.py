@@ -22,20 +22,20 @@ import libimg
 import vgCenter
 
 
-def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
+def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
 
     Walks over records in composites.csv, merges channel images, writes to composites folder
     eg
-    composites.csv:
-    volume,compositeId,centerId,filter,weight,x,y
-    VGISS_5103,C1537728,C1537728,Blue
-    VGISS_5103,C1537728,C1537730,Orange,0.8
-    VGISS_5103,C1537728,C1537732,Green,1,10,3
-    =>
-    step05_composites/VGISS_5103/C1537728_composite.jpg
-    Note: weight and x,y are optional - default to 1,0,0
+        composites.csv:
+        volume,compositeId,centerId,filter,weight,x,y
+        VGISS_5103,C1537728,C1537728,Blue
+        VGISS_5103,C1537728,C1537730,Orange,0.8
+        VGISS_5103,C1537728,C1537732,Green,1,10,3
+        =>
+        step05_composites/VGISS_5103/C1537728_composite.jpg
+        Note: weight and x,y are optional - default to 1,0,0
     """
 
     buildVolnum = str(buildVolnum)
@@ -43,7 +43,8 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False):
     buildCompositeId = buildCompositeId.upper() # always capital C
 
     if os.path.isdir(compositesSubfolder) and overwrite==False:
-        print "Composites folder exists: " + compositesSubfolder
+        if directCall:
+            print "Composites folder exists: " + compositesSubfolder
     else:
         # build the centered images for the volume, if not already there
         if buildVolnum!='':

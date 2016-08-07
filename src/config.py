@@ -10,8 +10,17 @@
 # use jpegs for faster development time
 useJpegs = True
 # useJpegs = False
-
 extension = '.jpg' if useJpegs else '.png'
+
+
+# use regular (CALIB) or geometrically corrected images (GEOMED)?
+# can't do it this way - we'll have to do our own geometric corrections at some point,
+# because denoising and dereseauing will need the original images.
+# useGeometricallyCorrectedImages = True
+# useGeometricallyCorrectedImages = False
+# imageType = 'GEOMED' if useGeometricallyCorrectedImages else 'CALIB'
+# pixels = 1000 if useGeometricallyCorrectedImages else 800
+
 
 
 logfile = 'log.txt'

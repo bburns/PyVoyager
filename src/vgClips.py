@@ -1,15 +1,14 @@
 
 """
-vg clip command
-build clips associated with target subfolders,
-eg Jupiter/Voyager1/Io/Narrow
+vg clips command
 
-this must be run in an admin console because mklink requires elevated privileges
+Build clips associated with target subfolders, eg
+> vg clips Jupiter/Voyager1/Io/Narrow
 
+This must be run in an admin console because mklink requires elevated privileges.
 """
 
 #. need to build clips for planet/system titles and all.mp4 titlepage
-#. and postscript titlepages
 
 
 import csv
@@ -19,6 +18,9 @@ import os.path
 import config
 import lib
 
+
+import vgCenter
+import vgComposite
 import vgTitles
 
 
@@ -45,34 +47,24 @@ def stageFiles(bwOrColor, targetPathParts):
     ncopiesPerImage = 1 # default
     ncopiesPerImageMemory = {} # keyed on planet-spacecraft-target-camera
 
+    # open positions.csv file for target angular size info (used to control effective framerate)
+    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+
     # iterate through all available images
-    # f = open(config.filesdb, 'rt')
-    # reader = csv.reader(f)
     reader, f = lib.openCsvReader(config.filesdb)
-    lastVolume=''
     for row in reader:
+
         # read file info
         volume = row[config.filesColVolume]
         fileId = row[config.filesColFileId]
         filter = row[config.filesColFilter]
-
-        # show progress
-        # if volume!=lastVolume:
-            # print 'Volume %s    \r' % volume,
-            # lastVolume = volume
-
         system = row[config.filesColPhase]
         craft = row[config.filesColCraft]
         target = row[config.filesColTarget]
         camera = row[config.filesColInstrument]
 
-        #. make lib fn
         # relabel target field if necessary - see db/targets.csv for more info
-        targetInfoRecord = targetInfo.get(fileId)
-        if targetInfoRecord:
-            # make sure old target matches what we have
-            if targetInfoRecord['oldTarget']==target:
-                target = targetInfoRecord['newTarget']
+        target = lib.retarget(targetInfo, fileId, target)
 
         # does this image match the target path the user specified on the cmdline?
         addImage = True
@@ -86,30 +78,35 @@ def stageFiles(bwOrColor, targetPathParts):
             # build a key
             targetKey = system + '-' + craft + '-' + target + '-' + camera
 
-            # how many copies of this file should we stage?
-            framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
-            if framerateInfoRecord:
-                # eg ncopies = 3 = 3x slowdown
-                ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
-                # remember it for future also
-                # eg key Uranus-Voyager2-Arial-Narrow
-                key = framerateInfoRecord['planetCraftTargetCamera']
-                ncopiesPerImageMemory[key] = ncopiesPerImage
+            # get expected angular size
+            rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+            if rowPositions:
+                # fraction of frame
+                imageFraction = float(rowPositions[config.positionsColImageFraction])
             else:
-                # lookup where we left off for this target, or 1x speed if not seen before
-                ncopiesPerImage = ncopiesPerImageMemory.get(targetKey) or 1
+                imageFraction = 0
+            ncopiesPerImage = int(60 * imageFraction) + 1
+            if ncopiesPerImage > 30: ncopiesPerImage = 30
+
+            # how many copies of this file should we stage?
+            # framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
+            # if framerateInfoRecord:
+            #     # eg ncopies = 3 = 3x slowdown
+            #     ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
+            #     # remember it for future also
+            #     # eg key Uranus-Voyager2-Arial-Narrow
+            #     key = framerateInfoRecord['planetCraftTargetCamera']
+            #     ncopiesPerImageMemory[key] = ncopiesPerImage
+            # else:
+            #     # lookup where we left off for this target, or 1x speed if not seen before
+            #     ncopiesPerImage = ncopiesPerImageMemory.get(targetKey) or 1
+
+
+            # do we need to center this image?
+            doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
 
             # get image source path
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-            #. make this a fn - duplicated elsewhere
-            centeringInfoRecord = centeringInfo.get(targetKey)
-            if centeringInfoRecord:
-                centeringOff = centeringInfoRecord['centeringOff']
-                centeringOn = centeringInfoRecord['centeringOn']
-                doCenter = (fileId < centeringOff) or (fileId > centeringOn)
-            else: # if no info for this target just center it
-                doCenter = True
-
             # if centering for this image is turned off, let's assume for now that
             # that means we don't want the color image, since it'd be misaligned anyway.
             #. this is true for moons like miranda, e.g.,
@@ -170,6 +167,7 @@ def stageFiles(bwOrColor, targetPathParts):
                 nfile += ncopiesPerImage
                 nfilesInTargetDir[targetKey] = nfile
 
+    fPositions.close()
     f.close()
     print
 
@@ -180,6 +178,12 @@ def vgClips(bwOrColor, targetPath=None):
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
+
+    # make sure we have the necessary images
+    if bwOrColor=='bw':
+        lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
+    else:
+        lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
 
     # make sure we have some titles
     vgTitles.vgTitles(targetPath)

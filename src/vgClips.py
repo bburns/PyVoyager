@@ -78,6 +78,9 @@ def stageFiles(bwOrColor, targetPathParts):
             # build a key
             targetKey = system + '-' + craft + '-' + target + '-' + camera
 
+            # frameRateConstant = 60 # default
+            d = {'Jupiter':1,'Saturn':1,'Uranus':1,'Neptune':1}
+            frameRateConstant = d.get(target) or 60
             # get expected angular size
             rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
             if rowPositions:
@@ -85,7 +88,8 @@ def stageFiles(bwOrColor, targetPathParts):
                 imageFraction = float(rowPositions[config.positionsColImageFraction])
             else:
                 imageFraction = 0
-            ncopiesPerImage = int(60 * imageFraction) + 1
+            # ncopiesPerImage = int(60 * imageFraction) + 1
+            ncopiesPerImage = int(frameRateConstant * imageFraction) + 1
             if ncopiesPerImage > 30: ncopiesPerImage = 30
 
             # how many copies of this file should we stage?
@@ -154,6 +158,9 @@ def stageFiles(bwOrColor, targetPathParts):
                                           nfile, ntitleCopies)
                     nfile += ntitleCopies
 
+                # print "Volume %s frame: %s              \r" % (volume, imageFilepath),
+                print "Volume %s frame: %s x %d           \r" % (volume, imageId, ncopiesPerImage),
+
                 # link to file
                 # note: mklink requires admin privileges,
                 # so must run this script in an admin console
@@ -161,7 +168,6 @@ def stageFiles(bwOrColor, targetPathParts):
                 # need to get out of the target dir
                 imagePathRelative = '../../../../../../../../' + imageFilepath
                 lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
-                print "Volume %s frame: %s              \r" % (volume, imageFilepath),
 
                 # increment the file number for the target folder
                 nfile += ncopiesPerImage
@@ -172,25 +178,30 @@ def stageFiles(bwOrColor, targetPathParts):
     print
 
 
-def vgClips(bwOrColor, targetPath=None):
+def vgClips(bwOrColor, targetPath=None, keepLinks=False):
     "Build bw or color clips associated with the given target path (eg //Io)"
     # eg vgClips('bw', 'Jupiter/Voyager1')
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
 
-    # make sure we have the necessary images
-    if bwOrColor=='bw':
-        lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
-    else:
-        lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
+    if keepLinks==False:
 
-    # make sure we have some titles
-    vgTitles.vgTitles(targetPath)
+        # make sure we have the necessary images
+        if bwOrColor=='bw':
+            lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
+        else:
+            lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
 
-    # stage images for ffmpeg
-    lib.rmdir(config.clipsStageFolder)
-    stageFiles(bwOrColor, targetPathParts)
+        # make sure we have some titles
+        vgTitles.vgTitles(targetPath)
+
+        # stage images for ffmpeg
+        # lib.rmdir(config.clipsStageFolder)
+        # os.rmdir(config.clipsStageFolder)
+        import shutil
+        shutil.rmtree(config.clipsStageFolder)
+        stageFiles(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',

@@ -82,19 +82,23 @@ if nargs==0:
 else:
     cmd = args.pop(0) # first item
 
+
 # pick out options from argument list
-overwrite = False
-bw = False
-color = False
+optionOverwrite = False
+optionBw = False
+optionColor = False
+optionKeepLinks = False
 options = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
 for option in options:
     if option=='-y':
-        overwrite = True
+        optionOverwrite = True
     elif option=='-bw':
-        bw = True
+        optionBw = True
     elif option=='-color':
-        color = True
+        optionColor = True
+    elif option=='-keeplinks':
+        optionKeepLinks = True
 
 
 if cmd=="download":
@@ -102,36 +106,40 @@ if cmd=="download":
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgDownload.vgDownload(volnum, overwrite)
+        vgDownload.vgDownload(volnum, optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="unzip":
     log.start()
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgUnzip.vgUnzip(volnum, overwrite)
+        vgUnzip.vgUnzip(volnum, optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="convert":
     log.start()
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgConvert.vgConvert(volnum, overwrite)
+        vgConvert.vgConvert(volnum, optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="adjust":
     log.start()
     vols = args.pop(0)
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
-        vgAdjust.vgAdjust(volnum, overwrite)
+        vgAdjust.vgAdjust(volnum, optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="center":
     log.start()
@@ -144,9 +152,10 @@ elif cmd=="center":
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            vgCenter.vgCenter(volnum, '', overwrite)
+            vgCenter.vgCenter(volnum, '', optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="composite":
     log.start()
@@ -159,9 +168,10 @@ elif cmd=="composite":
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            vgComposite.vgComposite(volnum, '', overwrite)
+            vgComposite.vgComposite(volnum, '', optionOverwrite)
     log.stop()
     lib.beep()
+
 
 elif cmd=="target":
     log.start()
@@ -174,29 +184,22 @@ elif cmd=="target":
     log.stop()
     lib.beep()
 
+
 elif cmd=="retarget":
     oldTarget = args.pop(0)
     newTarget = args.pop(0)
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
+
 elif cmd=="clips":
-    if bw==False and color==False:
+    if optionBw==False and optionColor==False:
         print 'Must specify -bw or -color'
     else:
-        bwOrColor = 'bw' if bw else 'color'
-        # target = None
-        # if nargs>=2:
-        #     bwOrColor = args.pop(0)
-        # if nargs==3:
-        #     targetpath = args.pop(0)
-        # if bwOrColor=='bw' or bwOrColor=='color':
-        #     vgClips.vgClips(bwOrColor, targetpath)
-        # else:
-        #     cmd="help"
-        # if nargs==2:
+        bwOrColor = 'bw' if optionBw else 'color'
         targetpath = args.pop(0)
-        vgClips.vgClips(bwOrColor, targetpath)
+        vgClips.vgClips(bwOrColor, targetpath, optionKeepLinks)
         lib.beep()
+
 
 elif cmd=="segments":
     log.start()
@@ -205,20 +208,25 @@ elif cmd=="segments":
     log.stop()
     lib.beep()
 
+
 elif cmd=="movies":
     log.start()
     vgMovies.vgMovies()
     log.stop()
     lib.beep()
 
+
 elif cmd=="list":
     vgList.vgList()
+
 
 elif cmd=="test":
     vgTest.vgTest()
 
+
 elif cmd=="grab":
     vgGrab.vgGrab()
+
 
 # elif cmd=="uncenter":
 #     vols = args.pop(0)
@@ -226,6 +234,7 @@ elif cmd=="grab":
 #     for volnum in volnums:
 #         vgUncenter.vgUncenter(volnum)
 #     beep()
+
 
 elif cmd=="init":
     log.start()
@@ -236,7 +245,7 @@ elif cmd=="init":
         vols = args.pop(0)
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
-            vgInitCenters.vgInitCenters(volnum, overwrite)
+            vgInitCenters.vgInitCenters(volnum, optionOverwrite)
     elif subject=='composites':
         vgInitComposites.vgInitComposites()
     elif subject=='positions':
@@ -246,12 +255,14 @@ elif cmd=="init":
     log.stop()
     lib.beep()
 
+
 elif cmd=="help":
     pass
 else:
     print
     print "Command not recognized."
     cmd = 'help'
+
 
 if cmd=="help":
     print __doc__

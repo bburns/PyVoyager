@@ -103,7 +103,8 @@ for option in options:
 
 if cmd=="download":
     log.start()
-    vols = args.pop(0)
+    # vols = args.pop(0)
+    vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgDownload.vgDownload(volnum, optionOverwrite)
@@ -113,7 +114,8 @@ if cmd=="download":
 
 elif cmd=="unzip":
     log.start()
-    vols = args.pop(0)
+    # vols = args.pop(0)
+    vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgUnzip.vgUnzip(volnum, optionOverwrite)
@@ -123,7 +125,8 @@ elif cmd=="unzip":
 
 elif cmd=="convert":
     log.start()
-    vols = args.pop(0)
+    # vols = args.pop(0)
+    vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgConvert.vgConvert(volnum, optionOverwrite)
@@ -133,7 +136,8 @@ elif cmd=="convert":
 
 elif cmd=="adjust":
     log.start()
-    vols = args.pop(0)
+    # vols = args.pop(0)
+    vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgAdjust.vgAdjust(volnum, optionOverwrite)
@@ -143,7 +147,8 @@ elif cmd=="adjust":
 
 elif cmd=="center":
     log.start()
-    arg = args.pop(0)
+    # arg = args.pop(0)
+    arg = args[0]
     if arg[0].lower()=='c':
         imageIds = lib.getImageIds(arg)
         for imageId in imageIds:
@@ -158,8 +163,9 @@ elif cmd=="center":
 
 
 elif cmd=="composite":
-    log.start()
-    arg = args.pop(0)
+    # log.start()
+    # arg = args.pop(0)
+    arg = args[0]
     if arg[0].lower()=='c':
         compositeIds = lib.getImageIds(arg)
         for compositeId in compositeIds:
@@ -169,25 +175,31 @@ elif cmd=="composite":
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
             vgComposite.vgComposite(volnum, '', optionOverwrite)
-    log.stop()
+    # log.stop()
     lib.beep()
 
 
 elif cmd=="target":
-    log.start()
-    vols = args.pop(0)
-    volnums = lib.getVolumeNumbers(vols)
-    for volnum in volnums:
-        vgTarget.vgTarget(volnum)
-    # targetPath = args.pop(0)
-    # vg.buildTargets(targetPath)
-    log.stop()
+    # log.start()
+    # vols = args.pop(0)
+    arg = args[0]
+    if arg[0] in '0123456789':
+        vols = arg
+        volnums = lib.getVolumeNumbers(vols)
+        for volnum in volnums:
+            vgTarget.vgTarget(volnum, '')
+    else:
+        targetPath = arg
+        vgTarget.vgTarget('', targetPath)
+    # log.stop()
     lib.beep()
 
 
 elif cmd=="retarget":
-    oldTarget = args.pop(0)
-    newTarget = args.pop(0)
+    # oldTarget = args.pop(0)
+    # newTarget = args.pop(0)
+    oldTarget = args[0]
+    newTarget = args[1]
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
 
@@ -196,23 +208,25 @@ elif cmd=="clips":
         print 'Must specify -bw or -color'
     else:
         bwOrColor = 'bw' if optionBw else 'color'
-        targetpath = args.pop(0)
+        # targetpath = args.pop(0)
+        targetpath = args[0]
         vgClips.vgClips(bwOrColor, targetpath, optionKeepLinks)
         lib.beep()
 
 
 elif cmd=="segments":
-    log.start()
-    targetpath = args.pop(0)
+    # log.start()
+    # targetpath = args.pop(0)
+    targetpath = args[0]
     vgSegments.vgSegments(targetpath)
-    log.stop()
+    # log.stop()
     lib.beep()
 
 
 elif cmd=="movies":
-    log.start()
+    # log.start()
     vgMovies.vgMovies()
-    log.stop()
+    # log.stop()
     lib.beep()
 
 

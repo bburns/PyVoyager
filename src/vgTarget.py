@@ -19,63 +19,68 @@ import vgCenter
 
 
 #. handle targetPath
-def vgTarget(volnum, targetPath=None):
+def vgTarget(volnum='', targetPath=''):
     "Copy images in given volume to target subfolders"
 
     volnum = str(volnum)
 
+    # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    targetPathParts = lib.parseTargetPath(targetPath)
+
     # center the volume, if not already there
     vgCenter.vgCenter(volnum, '', False, False)
 
+    # read small db into memory
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
     # iterate down files.csv
     # if target path matches row, copy that image to target subfolder
-    reader, f = lib.openCsvReader(config.filesdb)
-    for row in reader:
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    for row in csvFiles:
+
+        # get image properties
         volume = row[config.filesColVolume]
-        if volume==volnum:
-            fileId = row[config.filesColFileId]
-            filter = row[config.filesColFilter]
+        fileId = row[config.filesColFileId]
+        filter = row[config.filesColFilter]
+        system = row[config.filesColPhase]
+        craft = row[config.filesColCraft]
+        target = row[config.filesColTarget]
+        camera = row[config.filesColInstrument]
 
-            # get image properties
-            phase = row[config.filesColPhase]
-            craft = row[config.filesColCraft]
-            target = row[config.filesColTarget]
-            instrument = row[config.filesColInstrument]
+        # relabel target field if necessary - see db/targets.csv for more info
+        target = lib.retarget(targetInfo, fileId, target)
 
-            # relabel target field if necessary - see db/targets.csv for more info
-            target = lib.retarget(targetInfo, fileId, target)
-
-            # ignore targets like Sky, Dark
+        addImage = False
+        if volnum!='' and volume==volnum: addImage = True
+        if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
-            if target in config.targetsIgnore: addImage = False
-            if addImage:
+        if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
+        if addImage:
 
-                # create subfolder
-                subfolder = phase + '/' + craft + '/' + target +'/' + instrument + '/'
-                targetFolder = config.targetsFolder + subfolder
-                lib.mkdir_p(targetFolder)
+            # create subfolder
+            subfolder = system + '/' + craft + '/' + target +'/' + camera + '/'
+            targetFolder = config.targetsFolder + subfolder
+            lib.mkdir_p(targetFolder)
 
-                print 'Volume %s copying %s         \r' % (volume, fileId),
+            print 'Volume %s copying %s         \r' % (volume, fileId),
 
-                # copy adjusted file
-                src = lib.getAdjustedFilepath(volume, fileId, filter)
-                lib.cp(src, targetFolder)
+            # copy adjusted file
+            src = lib.getAdjustedFilepath(volume, fileId, filter)
+            lib.cp(src, targetFolder)
 
-                # copy centered file
-                src = lib.getCenteredFilepath(volume, fileId, filter)
-                lib.cp(src, targetFolder)
+            # copy centered file
+            src = lib.getCenteredFilepath(volume, fileId, filter)
+            lib.cp(src, targetFolder)
 
-                # copy composite file
-                src = lib.getCompositeFilepath(volume, fileId)
-                lib.cp(src, targetFolder)
+            # copy composite file
+            src = lib.getCompositeFilepath(volume, fileId)
+            lib.cp(src, targetFolder)
 
-                # # copy mosaic file
-                # src = lib.getMosaicFilepath(fileId, filter)
-                # shutil.copy(src, targetFolder)
+            # # copy mosaic file
+            # src = lib.getMosaicFilepath(fileId, filter)
+            # shutil.copy(src, targetFolder)
 
-    f.close()
+    fFiles.close()
     print
 
 

@@ -7,8 +7,6 @@ Any experimenting with settings should be done in centerImageFile or config sett
 """
 
 import cv2
-import matplotlib.image as mpim # for imread, imsave
-import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 import os
 
 # import sys; sys.path.append('../src') # so can import from main src folder

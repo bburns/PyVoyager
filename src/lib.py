@@ -371,19 +371,40 @@ def rmdir(folder):
         pass
 
 
+def targetMatches(targetPathParts, system, craft, target, camera):
+    """
+    Does the given target path match the given values?
+    Where target path part is None, don't filter that value.
+    eg if targetPathParts=[None,None,None,None], will always return True.
+    """
+    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
+    matches = True
+    if (pathSystem and pathSystem!=system): matches = False
+    if (pathCraft and pathCraft!=craft): matches = False
+    if (pathTarget and pathTarget!=target): matches = False
+    if (pathCamera and pathCamera!=camera): matches = False
+    return matches
+
+
 def parseTargetPath(targetPath):
-    "parse a target path, like 'Jupiter/Voyager1' into parts and return as an array [system,craft,target,camera], with None for unspecified parts."
-    # then can take apart result with something like -
-    # pathparts = parseTargetPath(targetPath)
-    # pathSystem, pathCraft, pathTarget, pathCamera = pathparts
-    pathparts = targetPath.split('/')
-    # make sure we have 4 parts, even if blank
-    while len(pathparts)<4:
-        pathparts.append('')
-    # trim,convert blanks to None
-    pathparts = [pathpart.strip() for pathpart in pathparts]
-    pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
-    return pathparts
+    """
+    Parse a target path, like 'Jupiter/Voyager1' into parts and return as an array.
+    Returns [system,craft,target,camera], with None for unspecified parts.
+    Then can take apart result with something like -
+        pathparts = parseTargetPath(targetPath)
+        pathSystem, pathCraft, pathTarget, pathCamera = pathparts
+    Returns None if targetPath is empty or None
+    """
+    if targetPath:
+        pathparts = targetPath.split('/')
+        # make sure we have 4 parts, even if blank
+        while len(pathparts)<4:
+            pathparts.append('')
+        # trim,convert blanks to None
+        pathparts = [pathpart.strip() for pathpart in pathparts]
+        pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
+        return pathparts
+    return None
 
 
 def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):

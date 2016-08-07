@@ -159,7 +159,7 @@ def stageFiles(bwOrColor, targetPathParts):
                     nfile += ntitleCopies
 
                 # print "Volume %s frame: %s              \r" % (volume, imageFilepath),
-                print "Volume %s frame: %s x %d           \r" % (volume, imageId, ncopiesPerImage),
+                print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopiesPerImage),
 
                 # link to file
                 # note: mklink requires admin privileges,

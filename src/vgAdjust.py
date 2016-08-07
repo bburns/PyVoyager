@@ -20,6 +20,8 @@ import libimg
 import vgConvert
 
 
+#. handle indiv images also
+
 def vgAdjust(volnum, overwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 

@@ -351,7 +351,9 @@ Next steps
 
 Version 0.43 (2016-08)
 ----------------------------------------
-
+- `vg target` can take a targetpath or volume range
+- `vg clips` framerate depends on angular size of target and target-specific constant 
+- Return `vg center` to previous role - will just append new center information to `centers.csv` for now
 
 Version 0.42 (2016-08-06)
 ----------------------------------------

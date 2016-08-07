@@ -147,12 +147,11 @@ elif cmd=="adjust":
 
 elif cmd=="center":
     log.start()
-    # arg = args.pop(0)
     arg = args[0]
     if arg[0].lower()=='c':
         imageIds = lib.getImageIds(arg)
         for imageId in imageIds:
-            vgCenter.vgCenter('', imageId, True)
+            vgCenter.vgCenter('', imageId, optionOverwrite)
     else:
         vols = arg
         volnums = lib.getVolumeNumbers(vols)
@@ -255,11 +254,11 @@ elif cmd=="init":
     subject = args.pop(0)
     if subject=='files':
         vgInitFiles.vgInitFiles()
-    elif subject=='centers':
-        vols = args.pop(0)
-        volnums = lib.getVolumeNumbers(vols)
-        for volnum in volnums:
-            vgInitCenters.vgInitCenters(volnum, optionOverwrite)
+    # elif subject=='centers':
+    #     vols = args.pop(0)
+    #     volnums = lib.getVolumeNumbers(vols)
+    #     for volnum in volnums:
+    #         vgInitCenters.vgInitCenters(volnum, optionOverwrite)
     elif subject=='composites':
         vgInitComposites.vgInitComposites()
     elif subject=='positions':

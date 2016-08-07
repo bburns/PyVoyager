@@ -352,8 +352,10 @@ Next steps
 Version 0.43 (2016-08)
 ----------------------------------------
 - `vg target` can take a targetpath or volume range
-- `vg clips` framerate depends on angular size of target and target-specific constant 
+- `vg clips` framerate depends on angular size of target and target-specific constant
 - Return `vg center` to previous role - will just append new center information to `centers.csv` for now
+- `vg center` - don't try to center image if target size is larger than some threshold (replaces existing `centering.csv` file)
+- `vg center` - use new `centering.csv` file to turn off centering for specific images (e.g. ring and satellite searches)
 
 Version 0.42 (2016-08-06)
 ----------------------------------------

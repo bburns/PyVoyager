@@ -69,8 +69,8 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
-    # iterate through all available images, filter on desired volume
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    # open positions.csv file for target angular size info
+    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
 
     # open centers_new.csv file to write any new records to
     csvNewCenters, fNewCenters = lib.openCsvWriter(config.newcentersdb)
@@ -78,16 +78,13 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     # dictionary to keep track of last image file in target sequence (eg for Ariel flyby)
     lastImageInTargetSequence = {}
 
-    # open positions.csv file for target angular size info
-    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
-
+    # iterate through all available images, filter on desired volume or image
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
     nfile = 1
     for rowFiles in csvFiles:
         volume = rowFiles[config.filesColVolume]
         fileId = rowFiles[config.filesColFileId]
         
-        # if volume!=volnum: continue # filter to given volume
-        # if volume==buildVolnum or fileId==buildImageId:
         if volume!=buildVolnum and fileId!=buildImageId: continue # filter to given volume/image
 
         # get image properties
@@ -108,11 +105,21 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 
-        targetKey = system + '-' + craft + '-' + target + '-' + camera
+        # get expected target size and radius
+        rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+        if rowPositions:
+            # fraction of image frame taken up by target
+            imageFraction = float(rowPositions[config.positionsColImageFraction])
+        else:
+            imageFraction = 0 # just rhea
+        targetRadius = int(400*imageFraction) #.param
 
         # do we actually need to center this image?
-        doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-
+        # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
+        doCenter = (imageFraction < config.imageFractionCenteringThreshold)
+        # if doCenter==False:
+            # log.log('imageFraction',imageFraction,' - no need to center')
+        
         if doCenter:
 
             # print
@@ -120,6 +127,7 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
 
             # for this target sequence (eg ariel flyby), what was the last good image?
             # use that as a fixed image against which we try to align the current image.
+            targetKey = system + '-' + craft + '-' + target + '-' + camera
             lastImageRecord = lastImageInTargetSequence.get(targetKey)
             if lastImageRecord:
                 fixedfile = lastImageRecord[0]
@@ -130,15 +138,6 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
                 fixedfile = None
                 ntimesused = 0
                 # log.log('no image to align to yet for',targetKey)
-
-            # get expected radius
-            rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
-            if rowPositions:
-                # fraction of frame
-                imageFraction = float(rowPositions[config.positionsColImageFraction])
-                targetRadius = int(400*imageFraction) #.param
-            else:
-                targetRadius = 0 # just rhea
 
             # find center of target using blob and hough, then align to fixedimage.
             # lastRadius and radiusFound are used to determine if it has changed 'too much'.

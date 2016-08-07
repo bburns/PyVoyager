@@ -93,7 +93,7 @@ debugImageTitle = None
 # to see how they affect the test images
 
 # fraction of image which needs to be taken up by target before centering is turned off
-# centerImageFractionThreshold = 0.8
+imageFractionCenteringThreshold = 1.2
 
 # don't want to center these targets
 dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
@@ -104,6 +104,8 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
 #. if necessary could give them values here
 centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
 Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
+
+
 
 
 # blob detection

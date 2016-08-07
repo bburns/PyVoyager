@@ -32,7 +32,7 @@ def stageFiles(bwOrColor, targetPathParts):
     print 'Making links from source files'
 
     # what does the user want to focus on?
-    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
+    # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
@@ -67,44 +67,43 @@ def stageFiles(bwOrColor, targetPathParts):
         target = lib.retarget(targetInfo, fileId, target)
 
         # does this image match the target path the user specified on the cmdline?
-        addImage = True
-        if (pathSystem and pathSystem!=system): addImage = False
-        if (pathCraft and pathCraft!=craft): addImage = False
-        if (pathTarget and pathTarget!=target): addImage = False
-        if (pathCamera and pathCamera!=camera): addImage = False
+        # addImage = True
+        # if (pathSystem and pathSystem!=system): addImage = False
+        # if (pathCraft and pathCraft!=craft): addImage = False
+        # if (pathTarget and pathTarget!=target): addImage = False
+        # if (pathCamera and pathCamera!=camera): addImage = False
+        addImage = False
+        if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
         if addImage:
 
-            # build a key
-            targetKey = system + '-' + craft + '-' + target + '-' + camera
-
-            # frameRateConstant = 60 # default
-            d = {'Jupiter':1,'Saturn':1,'Uranus':1,'Neptune':1}
-            frameRateConstant = d.get(target) or 60
-            # get expected angular size
+            # get expected angular size (as fraction of frame)
             rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
             if rowPositions:
-                # fraction of frame
                 imageFraction = float(rowPositions[config.positionsColImageFraction])
             else:
                 imageFraction = 0
-            # ncopiesPerImage = int(60 * imageFraction) + 1
+
+            # how many copies of this image do we want?
+            #. put d in targets.csv? or configpy?
+            d = {
+                'Jupiter':1,
+                'Saturn':1,
+                'Uranus':1,
+                'Neptune':1,
+                'Triton':30,
+            }
+            frameRateConstant = d.get(target) or 60  #. default param
             ncopiesPerImage = int(frameRateConstant * imageFraction) + 1
             if ncopiesPerImage > 30: ncopiesPerImage = 30
 
-            # how many copies of this file should we stage?
-            # framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
-            # if framerateInfoRecord:
-            #     # eg ncopies = 3 = 3x slowdown
-            #     ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
-            #     # remember it for future also
-            #     # eg key Uranus-Voyager2-Arial-Narrow
-            #     key = framerateInfoRecord['planetCraftTargetCamera']
-            #     ncopiesPerImageMemory[key] = ncopiesPerImage
-            # else:
-            #     # lookup where we left off for this target, or 1x speed if not seen before
-            #     ncopiesPerImage = ncopiesPerImageMemory.get(targetKey) or 1
+            # check for framerate overrides
+            framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
+            if framerateInfoRecord:
+                ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
 
+            # build a key
+            targetKey = system + '-' + craft + '-' + target + '-' + camera
 
             # do we need to center this image?
             doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
@@ -197,10 +196,10 @@ def vgClips(bwOrColor, targetPath=None, keepLinks=False):
         vgTitles.vgTitles(targetPath)
 
         # stage images for ffmpeg
-        # lib.rmdir(config.clipsStageFolder)
+        lib.rmdir(config.clipsStageFolder)
         # os.rmdir(config.clipsStageFolder)
-        import shutil
-        shutil.rmtree(config.clipsStageFolder)
+        # import shutil
+        # shutil.rmtree(config.clipsStageFolder)
         stageFiles(bwOrColor, targetPathParts)
 
     # build mp4 files from all staged images

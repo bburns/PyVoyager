@@ -119,8 +119,8 @@ def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
                         circle = (399,399,targetRadius) #.params
                         drawCircle(im, circle, color = (0,255,255))
                     cv2.imwrite(outfile, im)
-                    x += round(deltax)
-                    y += round(deltay)
+                    x += int(round(deltax))
+                    y += int(round(deltay))
     return x,y,stabilizationOk
 
 

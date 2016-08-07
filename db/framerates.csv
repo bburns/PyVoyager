@@ -4,15 +4,18 @@
 # nframesPerImage is the number of frames to repeat each image -
 # the default is 1, anything higher slows the movie down that amount.
 # must be an integer.
-# each segment starts with default of 1 frame per image
 
 # main frame rate is set in config.py - movieFrameRate
-
 # these values are all based on a frame rate of 20fps
 
-#. should be possible to ditch the second column, yes? just have the code find it?
+# this file does NOT need to be sorted, since it's all read into a dictionary at the moment
 
-fileId,planetCraftTargetCamera,nframesPerImage
+fileId,nframesPerImage
+
+
+#... convert these from start imageIds to single imageIds
+
+
 
 # Jupiter
 # ----------------------------------------
@@ -21,108 +24,115 @@ fileId,planetCraftTargetCamera,nframesPerImage
 # C1638131,diffmoonlet?,20
 
 # amalthea
-C1637732,Jupiter-Voyager1-Amalthea-Narrow,8
-C1638149,Jupiter-Voyager1-Amalthea-Narrow,20
+# C1637732,8
+# C1638149,20
 
 # callisto
 # lots of black frames at the end
-C1639944,Jupiter-Voyager1-Callisto-Narrow,20
-C1642626,Jupiter-Voyager1-Callisto-Narrow,1
-C1642141,Jupiter-Voyager1-Callisto-Wide,20
+# C1639944,20
+# C1642626,1
+# C1642141,20
 
 # europa
-#. can't use C0! must be unique key
-C0,Jupiter-Voyager1-Europa-Narrow,2
-C1635212,Jupiter-Voyager1-Europa-Narrow,8
+# C1635212,8
 
 # ganymede
-C1460413,Jupiter-Voyager1-Ganymede-Narrow,6
-C1624522,Jupiter-Voyager1-Ganymede-Narrow,8
-C1633443,Jupiter-Voyager1-Ganymede-Narrow,10
-# C1640132,Jupiter-Voyager1-Ganymede-Narrow,12
+# C1460413,6
+# C1624522,8
+# C1633443,10
 # pause longer on nice images
-C1640202,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640204,Jupiter-Voyager1-Ganymede-Narrow,12
-C1640322,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640324,Jupiter-Voyager1-Ganymede-Narrow,12
-C1640352,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640354,Jupiter-Voyager1-Ganymede-Narrow,12
-C1640502,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640504,Jupiter-Voyager1-Ganymede-Narrow,12
-C1640528,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640530,Jupiter-Voyager1-Ganymede-Narrow,12
-C1640542,Jupiter-Voyager1-Ganymede-Narrow,24
-C1640544,Jupiter-Voyager1-Ganymede-Narrow,12
+# C1640202,24
+# C1640204,12
+# C1640322,24
+# C1640324,12
+# C1640352,24
+# C1640354,12
+# C1640502,24
+# C1640504,12
+# C1640528,24
+# C1640530,12
+# C1640542,24
+# C1640544,12
+# C1640741,2
 
-
-C1640741,Jupiter-Voyager1-Ganymede-Narrow,2
-
-C1627348,Jupiter-Voyager1-Ganymede-Wide,4
-C1640315,Jupiter-Voyager1-Ganymede-Wide,8
-
+# ganymede wide
+# C1627348,4
+# C1640315,8
 
 
 # io
-C1636826,Jupiter-Voyager1-Io-Narrow,10
+# C1636826,10
 
 
 
 # Uranus
 # ----------------------------------------
 
-C2672949,Uranus-Voyager2-Uranus-Narrow,10
-C2673007,Uranus-Voyager2-Uranus-Narrow,1
+#.. fix these
 
+# uranus
+C2672949,10
+C2673007,1
 # cool moon sequences
-C2577621,Uranus-Voyager2-Uranus-Wide,2
-C2600321,Uranus-Voyager2-Uranus-Wide,1
-C2604520,Uranus-Voyager2-Uranus-Wide,2
-C2604942,Uranus-Voyager2-Uranus-Wide,1
-
+C2577621,2
+C2600321,1
+C2604520,2
+C2604942,1
 # rings - some need to be shifted
-C2672831,Uranus-Voyager2-Uranus-Wide,4
-C2672901,Uranus-Voyager2-Uranus-Wide,1
-C2679143,Uranus-Voyager2-Uranus-Wide,4
-C2679443,Uranus-Voyager2-Uranus-Wide,1
-C2682426,Uranus-Voyager2-Uranus-Wide,10
-C2682617,Uranus-Voyager2-Uranus-Wide,1
-C2684450,Uranus-Voyager2-Uranus-Wide,4
-C2684726,Uranus-Voyager2-Uranus-Wide,1
-C2685214,Uranus-Voyager2-Uranus-Wide,10
-C2686212,Uranus-Voyager2-Uranus-Wide,1
+C2672831,4
+C2672901,1
+C2679143,4
+C2679443,1
+C2682426,10
+C2682617,1
+C2684450,4
+C2684726,1
+C2685214,10
+C2686212,1
 
 # ariel
-C2531132,Uranus-Voyager2-Ariel-Narrow,4
-C2681743,Uranus-Voyager2-Ariel-Narrow,25
-C2684338,Uranus-Voyager2-Ariel-Narrow,25
-C2690305,Uranus-Voyager2-Ariel-Narrow,8
+# C2531132,4
+# C2681743,25
+# C2684338,25
+# C2690305,8
 
 # miranda
-C2564729,Uranus-Voyager2-Miranda-Narrow,4
-C2681429,Uranus-Voyager2-Miranda-Narrow,12
-C2684409,Uranus-Voyager2-Miranda-Narrow,25
-C2690737,Uranus-Voyager2-Miranda-Narrow,4
+# C2564729,4
+# C2681429,12
+# C2684409,25
+# C2690737,4
 
 # oberon
-C2465854,Uranus-Voyager2-Oberon-Narrow,4
-C2683623,Uranus-Voyager2-Oberon-Narrow,25
-C2690421,Uranus-Voyager2-Oberon-Narrow,10
+# C2465854,4
+# C2683623,25
+# C2690421,10
 
 # puck is only one frame - show for a while
-C2683716,Uranus-Voyager2-Puck-Narrow,44
+C2683716,50
 
 # titania
-C2465905,Uranus-Voyager2-Titania-Narrow,6
-C2683039,Uranus-Voyager2-Titania-Narrow,30
-C2690508,Uranus-Voyager2-Titania-Narrow,8
+# C2465905,Uranus-Voyager2-Titania-Narrow,6
+# C2683039,Uranus-Voyager2-Titania-Narrow,30
+# C2690508,Uranus-Voyager2-Titania-Narrow,8
 
 # umbriel
-C2465918,Uranus-Voyager2-Umbriel-Narrow,4
-C2684004,Uranus-Voyager2-Umbriel-Narrow,40
-C2690340,Uranus-Voyager2-Umbriel-Narrow,4
+# C2465918,Uranus-Voyager2-Umbriel-Narrow,4
+# C2684004,Uranus-Voyager2-Umbriel-Narrow,40
+# C2690340,Uranus-Voyager2-Umbriel-Narrow,4
 
 
 # Neptune
 # ----------------------------------------
 
+# kind of more annoying when it slows down like this
 # triton
+# C1139255,40
+# C1139307,40
+# C1139315,50
+# C1139340,50
+# C1139350,50
+# C1139411,40
+# C1139509,40
+# C1139515,40
+# C1139627,40
+

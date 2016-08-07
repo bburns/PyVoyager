@@ -377,12 +377,13 @@ def targetMatches(targetPathParts, system, craft, target, camera):
     Where target path part is None, don't filter that value.
     eg if targetPathParts=[None,None,None,None], will always return True.
     """
+    # targetPathParts = [s.title() for s in targetPathParts if s]
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
     matches = True
-    if (pathSystem and pathSystem!=system): matches = False
-    if (pathCraft and pathCraft!=craft): matches = False
-    if (pathTarget and pathTarget!=target): matches = False
-    if (pathCamera and pathCamera!=camera): matches = False
+    if (pathSystem and pathSystem.title()!=system): matches = False
+    if (pathCraft and pathCraft.title()!=craft): matches = False
+    if (pathTarget and pathTarget.title()!=target): matches = False
+    if (pathCamera and pathCamera.title()!=camera): matches = False
     return matches
 
 

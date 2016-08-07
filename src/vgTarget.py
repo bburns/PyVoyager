@@ -50,6 +50,7 @@ def vgTarget(volnum='', targetPath=''):
         # relabel target field if necessary - see db/targets.csv for more info
         target = lib.retarget(targetInfo, fileId, target)
 
+        # should we add this image?
         addImage = False
         if volnum!='' and volume==volnum: addImage = True
         if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera):

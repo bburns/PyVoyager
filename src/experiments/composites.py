@@ -4,6 +4,8 @@
 import cv2
 import numpy as np
 
+# import sys; sys.path.append('..') # so can import from main src folder
+# import config
 
 # this works
 

@@ -10,7 +10,7 @@ This is a large project, so it's designed to be split up among different people 
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore.
+There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore!
 
 You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
 
@@ -44,8 +44,8 @@ What you can do
 
 Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required - 
 
-- Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command.
-- Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`. 
+<!-- - Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command. -->
+<!-- - Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`.  -->
 - Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file.
 - Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
 - Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
@@ -355,7 +355,8 @@ Version 0.43 (2016-08)
 - `vg clips` framerate depends on angular size of target and target-specific constant
 - Return `vg center` to previous role - will just append new center information to `centers.csv` for now
 - `vg center` - don't try to center image if target size is larger than some threshold (replaces existing `centering.csv` file)
-- `vg center` - use new `centering.csv` file to turn off centering for specific images (e.g. ring and satellite searches)
+- `vg center` - use new `centering.csv` file to turn off centering for specific images
+- `vg center` - don't center image if includes 'search' in NOTE field - avoids centering ring/satellite searches
 
 Version 0.42 (2016-08-06)
 ----------------------------------------

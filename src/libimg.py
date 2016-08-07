@@ -42,86 +42,83 @@ def resizeImage(im, w, h):
     return canvas
 
 
-
-def stabilizeImageFile(infile, outfile, targetRadius, x,y,foundRadius):
+def getImageAlignment(imFixed, im):
     """
-    stabilize infile edges against target circle and write to outfile.
-    returns newx,newy,stabilizationOk
-    foundRadius is the radius of the infile, in pixels
+    Get alignment between images using ECC maximization algorithm.
+    Returns dx,dy,alignmentOk
+    If unable to align images returns 0,0,False
+    """
+    warp_mode = cv2.MOTION_TRANSLATION
+    warp_matrix = np.eye(2, 3, dtype=np.float32) #. paramnames?
+    number_of_iterations = config.stabilizeECCIterations
+    termination_eps = config.stabilizeECCTerminationEpsilon
+    criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
+                number_of_iterations,  termination_eps)
+
+    # run the ECC algorithm - the results are stored in warp_matrix
+    # throws an error if doesn't converge, so catch it
+    try:
+        cc, warp_matrix = cv2.findTransformECC(imFixed, im, warp_matrix,
+                                               warp_mode, criteria)
+    except:
+        # if can't find solution, images aren't close enough in similarity
+        dx = 0
+        dy = 0
+        alignmentOk = False
+    else:
+        # print warp_matrix
+        # [[ 1.          0.          1.37005 ]
+        #  [ 0.          1.          0.485788]]
+        # note: x and y are reversed
+        dy = warp_matrix[0][2]
+        dx = warp_matrix[1][2]
+        alignmentOk = True
+    return dx,dy,alignmentOk
+
+
+def stabilizeImageFile(infile, outfile, targetRadius):
+    """
+    Stabilize infile against target disc of radius targetRadius and write to outfile.
+    Returns dx,dy,stabilizationOk
     targetRadius is the expected radius, in pixels
     """
-    # if no file to stabilize to, must be the first image in the sequence,
-    # so just say it's stabilized
-    # if not fixedfile:
-        # stabilizationOk = True
-    # else: # if given a fixedfile try to stabilize against that
-    if True:
-        stabilizationOk = False
-        # this helps prevent stabilizing to badly centered images
-        #. should be a percentage
-        if abs(foundRadius-targetRadius)>config.stabilizeMaxRadiusDifference: # eg 20
-            log.log('max radius delta exceeded - foundRadius %d, targetRadius %d, deltamax %d' %
-                    (foundRadius, targetRadius, config.stabilizeMaxRadiusDifference))
-        else:
-            stabilizationOk = True
 
-            # get fixed image of target disc
-            imFixed = np.zeros((800,800), np.uint8) #.params
-            cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # filled
+    # get fixed image of filled target disc
+    imFixed = np.zeros((800,800), np.uint8) #.params
+    cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
 
-            # get input file
-            imIn = cv2.imread(infile,0)#.param
+    # get input file
+    im = cv2.imread(infile,0) #.param
 
-            # # get edges for infile
-            # im = cv2.imread(infile,0)#.param
-            # # upper = 200 #. pass this in
-            # # lower = upper/2
-            # # imIn = cv2.Canny(im, lower, upper)
-            # imIn = im
+    dx, dy, alignmentOk = getImageAlignment(imFixed, im)
+    if alignmentOk:
+        szFixed = imFixed.shape
+        # this is just a translation
+        warp_matrix = np.array([[1,0,dy],[0,1,dx]])
+        # print warp_matrix
+        im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
+                            flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        # this doesn't work as precisely, and it's about same speed, so just use warp
+        # im = translateImage(im, dx, dy)
+    if config.drawCrosshairs:
+        drawCrosshairs(im)
+    if config.drawTarget:
+        im = gray2rgb(im)
+        circle = (399,399,targetRadius) #.params
+        drawCircle(im, circle, color = (0,255,255)) # yellow circle
+    cv2.imwrite(outfile, im)
+    return dx,dy,alignmentOk
 
-            szFixed = imFixed.shape
-            warp_mode = cv2.MOTION_TRANSLATION
-            warp_matrix = np.eye(2, 3, dtype=np.float32) #. paramnames?
-            number_of_iterations = config.stabilizeECCIterations
-            termination_eps = config.stabilizeECCTerminationEpsilon
-            criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-                        number_of_iterations,  termination_eps)
-            # run the ECC algorithm - the results are stored in warp_matrix
-            # throws an error if doesn't converge, so catch it
-            try:
-                cc, warp_matrix = cv2.findTransformECC(imFixed, imIn, warp_matrix,
-                                                       warp_mode, criteria)
-            except:
-                # if can't find solution, images aren't close enough in similarity
-                stabilizationOk = False
-            else:
-                # print warp_matrix
-                # [[ 1.          0.          1.37005 ]
-                #  [ 0.          1.          0.485788]]
-                # note: x and y are reversed!
-                deltay = warp_matrix[0][2]
-                deltax = warp_matrix[1][2]
-                # if image shifted too much, assume something went wrong
-                if abs(deltax) > config.stabilizeMaxDeltaPosition or \
-                   abs(deltay) > config.stabilizeMaxDeltaPosition:
-                    log.log('max delta position exceeded - x,y %d,%d - max delta %d' %
-                            (deltax, deltay, config.stabilizeMaxDeltaPosition))
-                    stabilizationOk = False
-                else:
-                    # im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
-                    im = cv2.warpAffine(imIn, warp_matrix, (szFixed[1],szFixed[0]),
-                                        flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
-                    if config.drawCrosshairs:
-                        im[399, 0:799] = 64 #.params
-                        im[0:799, 399] = 64
-                    if config.drawTarget:
-                        im = gray2rgb(im)
-                        circle = (399,399,targetRadius) #.params
-                        drawCircle(im, circle, color = (0,255,255))
-                    cv2.imwrite(outfile, im)
-                    x += int(round(deltax))
-                    y += int(round(deltay))
-    return x,y,stabilizationOk
+
+def translateImage(im, deltax, deltay):
+    "translate an image by the given delta x,y, keeping same image size"
+    cx = int(im.shape[1]/2)
+    cy = int(im.shape[0]/2)
+    x = int(cx - deltax)
+    y = int(cy - deltay)
+    boundingBox = [x,y,x,y]
+    im = centerImage(im, boundingBox)
+    return im
 
 
 def centerImageFileAt(infile, outfile, x, y):
@@ -133,8 +130,7 @@ def centerImageFileAt(infile, outfile, x, y):
     boundingBox = [x,y,x,y]
     im = centerImage(im, boundingBox)
     if config.drawCrosshairs:
-        im[399, 0:799] = 64
-        im[0:799, 399] = 64
+        drawCrosshairs(im)
     cv2.imwrite(outfile, im)
 
 
@@ -159,6 +155,17 @@ def centerImageFile(infile, outfile, targetRadius=None):
     # this is pretty approximate when it's just a blob
     foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
     return x, y, foundRadius
+
+
+def drawCrosshairs(im):
+    "draw crosshairs on given image"
+    color = 64
+    xmax = im.shape[1]
+    ymax = im.shape[0]
+    cx = int(xmax/2)
+    cy = int(ymax/2)
+    im[cy, 0:xmax-1] = color
+    im[0:ymax-1, cx] = color
 
 
 def img2png(srcdir, filespec, destdir, img2pngOptions):
@@ -486,22 +493,16 @@ def centerImage(im, boundingBox):
     cx = int((x1+x2)/2.0)
     cy = int((y1+y2)/2.0)
 
-    #. reverse these
-    # imwidth = im.shape[0]
-    # imheight = im.shape[1]
+    # reverse these
     imwidth = im.shape[1]
     imheight = im.shape[0]
 
     # make a bigger canvas to place image im on
     newsize = (imheight * 2, imwidth * 2)
-    # canvas = np.zeros(newsize) # defaults to float
-    # canvas = np.zeros(newsize, dtype='uint8')
-    canvas = np.zeros(newsize, np.uint8)
+    canvas = np.zeros(newsize, np.uint8) # defaults to float
 
     # put image on canvas centered on bounding box
     # eg canvas[800-cx:1600-cx, 800-cy:1600-cy] = np.array(im)
-    # canvas[imwidth-cx : imwidth-cx+imwidth, imheight-cy : imheight-cy+imheight] = np.array(im)
-    # canvas[imheight-cy : imheight-cy+imheight, imwidth-cx : imwidth-cx+imwidth] = np.array(im)
     canvas[imheight-cy : imheight-cy+imheight, imwidth-cx : imwidth-cx+imwidth] = im
 
     # crop canvas to original image size

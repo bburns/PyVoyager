@@ -60,7 +60,8 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     # if we're building an entire volume, remove the existing directory first
     if buildVolnum!='':
         lib.rmdir(centersSubfolder)
-        lib.mkdir(centersSubfolder)
+        # lib.mkdir(centersSubfolder)
+        os.mkdir(centersSubfolder)
 
     # get number of files to process
     nfiles = len(os.listdir(adjustmentsSubfolder))
@@ -93,6 +94,7 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         craft = rowFiles[config.filesColCraft]
         target = rowFiles[config.filesColTarget]
         camera = rowFiles[config.filesColInstrument]
+        note = rowFiles[config.filesColNote]
 
         # relabel target field if necessary
         target = lib.retarget(targetInfo, fileId, target)
@@ -119,6 +121,12 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         doCenter = (imageFraction < config.imageFractionCenteringThreshold)
         # if doCenter==False:
             # log.log('imageFraction',imageFraction,' - no need to center')
+
+        # don't center image if it's listed in centering.csv
+        if fileId in centeringInfo: doCenter = False
+        
+        # don't center image if has 'search' in note field - satellite/ring searches don't need it
+        if 'search' in note.lower(): doCenter = False
         
         if doCenter:
 
@@ -142,8 +150,14 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
             # find center of target using blob and hough, then align to fixedimage.
             # lastRadius and radiusFound are used to determine if it has changed 'too much'.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
-                                                            targetRadius, x,y,foundRadius)
+            # x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
+                                                            # targetRadius, x,y,foundRadius)
+            deltax,deltay,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
+                                                                      targetRadius)
+            if stabilizationOk:
+                x += int(round(deltax))
+                y += int(round(deltay))
+            
             # remember first image in sequence
             if fixedfile is None:
                 fixedfile = outfile

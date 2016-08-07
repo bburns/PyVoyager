@@ -100,12 +100,14 @@ def stabilizeImageFile(infile, outfile, targetRadius):
                             flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
         # this doesn't work as precisely, and it's about same speed, so just use warp
         # im = translateImage(im, dx, dy)
-    if config.drawCrosshairs:
-        drawCrosshairs(im)
-    if config.drawTarget:
-        im = gray2rgb(im)
-        circle = (399,399,targetRadius) #.params
-        drawCircle(im, circle, color = (0,255,255)) # yellow circle
+    #. weird bug - these flags kept getting set to True, but where?
+    # # print config.drawCrosshairs, config.drawTarget
+    # if config.drawCrosshairs:
+    #     drawCrosshairs(im)
+    # if config.drawTarget:
+    #     im = gray2rgb(im)
+    #     circle = (399,399,targetRadius) #.params
+    #     drawCircle(im, circle, color = (0,255,255)) # yellow circle
     cv2.imwrite(outfile, im)
     return dx,dy,alignmentOk
 

@@ -106,7 +106,9 @@ def stageFiles(bwOrColor, targetPathParts):
             targetKey = system + '-' + craft + '-' + target + '-' + camera
 
             # do we need to center this image?
-            doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
+            #. this is out of date - just base it on whether centered file exists
+            # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
+
 
             # get image source path
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
@@ -114,21 +116,21 @@ def stageFiles(bwOrColor, targetPathParts):
             # that means we don't want the color image, since it'd be misaligned anyway.
             #. this is true for moons like miranda, e.g.,
             # but for jupiter i like the psychedelic colors
-            if doCenter==False:
-                imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            elif bwOrColor=='bw':
-                imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            else:
-                imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # if doCenter==False:
+            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            # elif bwOrColor=='bw':
+            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # else:
+            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
 
             # i think for more control we'll need something like segments.csv
             # use composite image if available, otherwise the centered or adjusted image
-            # if bwOrColor=='color':
-            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            # if not os.path.isfile(imageFilepath):
-            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            # if not os.path.isfile(imageFilepath):
-            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            if bwOrColor=='color':
+                imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            if not os.path.isfile(imageFilepath):
+                imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            if not os.path.isfile(imageFilepath):
+                imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
             if os.path.isfile(imageFilepath):

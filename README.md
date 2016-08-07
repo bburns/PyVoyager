@@ -241,32 +241,11 @@ Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
 
-After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on blob detection and Hough circle detection. This works for most cases, but there is still some jitter on frames where it doesn't work very well, so this has room for improvement.
+After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
 
-There are several cases that need to be handled:
+The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv`. This helps with the Hough circle detection, and is used to help stabilize the image. 
 
-1. small/point-like targets
-2. 'normal' full-circle targets
-3. targets with gaps
-4. targets with centers outside of the image
-5. crescents
-6. targets larger than the field of view
-7. edge defects which the blob detector picks up need to be ignored
-
-The small/point-like targets are handled fairly well by the blob detection routine. Where the area is larger than some small value though, eg 15x15 pixels, the detection is better handled by the Hough circle detector, which works well on the 'normal' circular targets and targets with gaps.
-
-But the Hough detector doesn't handle targets with centers outside of the image, as it assumes otherwise, and it also doesn't work too well with crescents, as they are basically two partial circles, so there can be some jitters in the movies. Those two cases are not well-accounted for at the moment.
-
-Targets larger than the field of view must be handled specially, as the blob and Hough detectors will pick up spurious features to center on. So a file `db/centering.csv` is set up to tell the centering routine when to turn centering off then back on after closest approach, based on the image name. This must be set up manually, and looks like this -
-
-    planetCraftTargetCamera,centeringOff,centeringOn
-    Neptune-Voyager2-Neptune-Narrow,C1127459,C1152407
-    Neptune-Voyager2-Neptune-Wide,C1137509,C1140815
-    Neptune-Voyager2-Triton-Narrow,C1139255,C1140614
-
-The alternative would be to base this more automatically on distance from the planet and angular radius, but that might be a future enhancement - it would also allow for a gradual slow-down around closest approach.
-
-The Hough circle detector is not sensitive enough to produce very stable movies, so another step is performed to stabilize each frame with respect to the last stable frame. The technique is called ECC Maximization [13]. This step is part of the `vg center` command.
+Centering is turned off at closest approach by determining when the target size is over some threshold. The target size is also used to control the speed of the movie, slowing down when the target is closer. 
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
 
@@ -287,9 +266,9 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
     5104,C1541422,C1541424,Orange
     5104,C1541422,C1541426,Green
 
-This file is used by the `vg composites <volume>` command to generate the color frames.
+This file is used by the `vg composite <volume>` command to generate the color frames.
 
-The clips are generated with the `vg clips bw|color [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
+The clips are generated with the `vg clips [targetpath] -bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
 
 Here is how black and white vs color clips are generated -
 
@@ -318,7 +297,7 @@ That's about it!
 Testing
 ----------------------------------------
 
-Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testfiles.csv`. You can run the tests on them with `cd test` and `python testCentering.py`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can put the original image into the images folder and add a record to testfiles.csv.
+Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testFiles.csv`. You can run the tests on them with `vg test`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can put the original image into the images folder and add a record to `testFiles.csv`.
 
 
 Issues
@@ -351,12 +330,12 @@ Next steps
 
 Version 0.43 (2016-08)
 ----------------------------------------
-- `vg target` can take a targetpath or volume range
 - `vg clips` framerate depends on angular size of target and target-specific constant
 - Return `vg center` to previous role - will just append new center information to `centers.csv` for now
 - `vg center` - don't try to center image if target size is larger than some threshold (replaces existing `centering.csv` file)
-- `vg center` - use new `centering.csv` file to turn off centering for specific images
 - `vg center` - don't center image if includes 'search' in NOTE field - avoids centering ring/satellite searches
+- `vg center` - use new `centering.csv` file to turn off centering for specific images
+- `vg target` can take a targetpath or volume range
 
 Version 0.42 (2016-08-06)
 ----------------------------------------

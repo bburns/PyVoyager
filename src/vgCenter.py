@@ -20,11 +20,10 @@ import log
 import vgAdjust
 
 
-config.drawCrosshairs = True
-config.drawTarget = True
+# config.drawCrosshairs = True
+# config.drawTarget = True
 
 
-# def vgCenter(volnum, overwrite=False, directCall=True):
 def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     "Build centered and stabilized images for given volume and write x,y,radius to centers.csv"
 
@@ -117,58 +116,51 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         targetRadius = int(400*imageFraction) #.param
 
         # do we actually need to center this image?
+        #. put into fn?
         # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
         doCenter = (imageFraction < config.imageFractionCenteringThreshold)
-        # if doCenter==False:
-            # log.log('imageFraction',imageFraction,' - no need to center')
-
         # don't center image if it's listed in centering.csv
         if fileId in centeringInfo: doCenter = False
-        
         # don't center image if has 'search' in note field - satellite/ring searches don't need it
         if 'search' in note.lower(): doCenter = False
-        
+        # don't center some targets, eg Sky, Dark
+        if target in config.dontCenterTargets: doCenter = False
+            
         if doCenter:
 
-            # print
-            # print 'currentimage',volume,fileId,filter,targetKey
+            # # for this target sequence (eg ariel flyby), what was the last good image?
+            # # use that as a fixed image against which we try to align the current image.
+            # targetKey = system + '-' + craft + '-' + target + '-' + camera
 
-            # for this target sequence (eg ariel flyby), what was the last good image?
-            # use that as a fixed image against which we try to align the current image.
-            targetKey = system + '-' + craft + '-' + target + '-' + camera
-            lastImageRecord = lastImageInTargetSequence.get(targetKey)
-            if lastImageRecord:
-                fixedfile = lastImageRecord[0]
-                ntimesused = lastImageRecord[1]
-                lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-                # log.log('aligning to', fixedfile)
-            else:
-                fixedfile = None
-                ntimesused = 0
-                # log.log('no image to align to yet for',targetKey)
+            # lastImageRecord = lastImageInTargetSequence.get(targetKey)
+            # if lastImageRecord:
+            #     fixedfile = lastImageRecord[0]
+            #     ntimesused = lastImageRecord[1]
+            #     lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
+            #     # log.log('aligning to', fixedfile)
+            # else:
+            #     fixedfile = None
+            #     ntimesused = 0
+            #     # log.log('no image to align to yet for',targetKey)
 
-            # find center of target using blob and hough, then align to fixedimage.
-            # lastRadius and radiusFound are used to determine if it has changed 'too much'.
+            # find center of target using blob and hough, then alignment to fixedimage.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            # x,y,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
-                                                            # targetRadius, x,y,foundRadius)
-            deltax,deltay,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile,
-                                                                      targetRadius)
+            dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
             if stabilizationOk:
-                x += int(round(deltax))
-                y += int(round(deltay))
+                x += int(round(dx))
+                y += int(round(dy))
             
-            # remember first image in sequence
-            if fixedfile is None:
-                fixedfile = outfile
-                # log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0]
+            # # remember first image in sequence
+            # if fixedfile is None:
+            #     fixedfile = outfile
+            #     # log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
+            #     lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
-            # if image was successfully stabilized, remember it
-            if stabilizationOk and ntimesused >= config.stabilizeNTimesToUseFixedFrame:
-                fixedfile = outfile
-                # log.log('new fixed frame', fixedfile)
-                lastImageInTargetSequence[targetKey] = [fixedfile, 0]
+            # # if image was successfully stabilized, remember it
+            # if stabilizationOk and ntimesused >= config.stabilizeNTimesToUseFixedFrame:
+            #     fixedfile = outfile
+            #     # log.log('new fixed frame', fixedfile)
+            #     lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
             # write x,y,radius to newcenters file
             rowNew = [fileId, volume, x, y, foundRadius]

@@ -121,7 +121,7 @@ def dataLines(lines):
 def centerThisImageQ(centeringInfo, targetKey, fileId, target):
     """
     Should this image be centered? Checks with centering.csv and config.dontCenterTargets.
-    Used by vgCenter and vgInitCenters and vgClips
+    Used by vgCenter and vgClips
     """
     centeringInfoRecord = centeringInfo.get(targetKey)
     if centeringInfoRecord:

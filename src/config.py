@@ -169,8 +169,8 @@ houghAccumulatorThreshold = 20 # v0.42 increased to this and did better because 
 houghRadiusSearchPercent = 10
 
 
-
-# Stabilization
+# stabilization
+# --------------------
 
 # if radius of target in image is too different from previous frame,
 # assume there's an error and don't try to stabilize the image.
@@ -179,7 +179,7 @@ houghRadiusSearchPercent = 10
 #. should be a percentage?
 # stabilizeMaxRadiusDifference = 20 # v0.40 uranus
 # stabilizeMaxRadiusDifference = 50 # v0.41 jupiter
-stabilizeMaxRadiusDifference = 800 # v0.42 see if will work with uncentered targets - #.. almost - need to get rough center using blob, the let stabilizer handle the rest
+# stabilizeMaxRadiusDifference = 800 # v0.42 see if will work with uncentered targets - #.. almost - need to get rough center using blob, the let stabilizer handle the rest
 
 # ECC parameters
 #. try reducing these to speed it up - images shouldn't have shifted very much.
@@ -188,21 +188,23 @@ stabilizeMaxRadiusDifference = 800 # v0.42 see if will work with uncentered targ
 # stabilizeECCIterations = 5000 # v0.40 uranus
 # stabilizeECCIterations = 4000
 # stabilizeECCIterations = 2000
-stabilizeECCIterations = 1000 # v0.41 jupiter
-# stabilizeECCIterations = 500
+# stabilizeECCIterations = 1000 # v0.41 jupiter
+stabilizeECCIterations = 500 # v0.43 uranus
+
 # stabilizeECCTerminationEpsilon = 1e-12
 # stabilizeECCTerminationEpsilon = 1e-11
 # stabilizeECCTerminationEpsilon = 1e-10 # v0.40 uranus
 # stabilizeECCTerminationEpsilon = 1e-9
 # stabilizeECCTerminationEpsilon = 1e-8
-stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
+# stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
+stabilizeECCTerminationEpsilon = 1e-5 # v0.43 uranus
 
 # if image needs to shift too much, assume something is wrong - don't shift it
 # stabilizeMaxDeltaPosition = 18 # v0.40 uranus
 # stabilizeMaxDeltaPosition = 20
 # stabilizeMaxDeltaPosition = 30
 # stabilizeMaxDeltaPosition = 40 # v0.41 jupiter
-stabilizeMaxDeltaPosition = 800 # v0.42 let it try to shift uncentered targets also
+# stabilizeMaxDeltaPosition = 800 # v0.42 let it try to shift uncentered targets also
 
 # how many times to use fixed frame before getting new one
 # if this is 1 the target may drift off to the left
@@ -212,7 +214,7 @@ stabilizeMaxDeltaPosition = 800 # v0.42 let it try to shift uncentered targets a
 # stabilizeNTimesToUseFixedFrame = 100 # v0.42 try for uranus - still glitchy
 # stabilizeNTimesToUseFixedFrame = 400 # v0.42 try for neptune
 # stabilizeNTimesToUseFixedFrame = 9999 # v0.42 try for jupiter - ie turn off, with round instead of int - see if fixes leftward drift. oops - trying to align to first frame all the time -> jitters
-stabilizeNTimesToUseFixedFrame = 1 # v0.42 try jupiter - align to previous frame, using round instead of int, try to fix leftward drift
+# stabilizeNTimesToUseFixedFrame = 1 # v0.42 try jupiter - align to previous frame, using round instead of int, try to fix leftward drift
 
 
 

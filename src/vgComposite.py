@@ -115,16 +115,16 @@ def processChannels(channelRows):
         fileId = row[config.compositesColFileId]
         volume = row[config.compositesColVolume]
         filter = row[config.compositesColFilter]
-        weight = row[config.compositesColWeight] if len(row)>config.compositesColWeight else 1.0
-        x = row[config.compositesColX] if len(row)>config.compositesColX else 0
-        y = row[config.compositesColY] if len(row)>config.compositesColY else 0
+        weight = float(row[config.compositesColWeight]) if len(row)>config.compositesColWeight else 1.0
+        x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
+        y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
         #. may use imageSource to know adjusted vs centered
         # get centered filepath
         channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
         # if don't have a centered file, use the adjusted file
         if not os.path.isfile(channelfilepath):
             channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-        channel = [filter,channelfilepath,float(weight),int(x),int(y)]
+        channel = [filter,channelfilepath,weight,x,y]
         channels.append(channel)
 
     outfilepath = lib.getCompositeFilepath(volume, compositeId)

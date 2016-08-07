@@ -35,8 +35,9 @@ def stageFiles(bwOrColor, targetPathParts):
     # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
-    framerateInfo = lib.readCsv(config.frameratesdb) # change framerates
+    retargetingInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
+    targetInfo = lib.readCsv(config.targetdb) # change framerates per target
+    framerateInfo = lib.readCsv(config.frameratesdb) # change framerates per image
     centeringInfo = lib.readCsv(config.centeringdb) # turn centering on/off
 
     # keep track of number of files in each target subfolder,
@@ -64,7 +65,7 @@ def stageFiles(bwOrColor, targetPathParts):
         camera = row[config.filesColInstrument]
 
         # relabel target field if necessary - see db/targets.csv for more info
-        target = lib.retarget(targetInfo, fileId, target)
+        target = lib.retarget(retargetingInfo, fileId, target)
 
         # does this image match the target path the user specified on the cmdline?
         # addImage = True
@@ -85,17 +86,23 @@ def stageFiles(bwOrColor, targetPathParts):
                 imageFraction = 0
 
             # how many copies of this image do we want?
-            #. put d in targets.csv? or configpy?
-            d = {
-                'Jupiter':1,
-                'Saturn':1,
-                'Uranus':1,
-                'Neptune':1,
-                'Triton':30,
-            }
-            frameRateConstant = d.get(target) or 60  #. default param
+            # put d in targets.csv
+            # d = {
+                # 'Jupiter':1,
+                # 'Saturn':1,
+                # 'Uranus':1,
+                # 'Neptune':1,
+                # 'Triton':30,
+            # }
+            # frameRateConstant = d.get(target) or config.clipsDefaultFrameRateConstant
+            targetInfoRecord = targetInfo.get(target)
+            if targetInfoRecord:
+                frameRateConstant = int(targetInfoRecord['frameRateConstant'])
+            else:
+                frameRateConstant = config.clipsDefaultFrameRateConstant
             ncopiesPerImage = int(frameRateConstant * imageFraction) + 1
-            if ncopiesPerImage > 30: ncopiesPerImage = 30
+            if ncopiesPerImage > config.clipsMaxFrameRateConstant:
+                ncopiesPerImage = config.clipsMaxFrameRateConstant
 
             # check for framerate overrides
             framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv

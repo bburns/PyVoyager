@@ -312,6 +312,14 @@ clipsIgnoreTargets = dontCenterTargets
 # centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
 # Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
+# used to determine nframes per image - this multiplied by imageFraction,
+# so slows down when closer to target
+clipsDefaultFrameRateConstant = 60
+
+# the slowest the movie can go
+clipsMaxFrameRateConstant = 30
+
+
 
 # Movies
 # ----------------------------------------
@@ -409,6 +417,7 @@ frameratesdb = dbFolder + 'framerates.csv'
 segmentsdb = dbFolder + 'segments.csv'
 positionsdb = dbFolder + 'positions.csv'
 erratadb = dbFolder + 'errata.csv'
+targetdb = dbFolder + 'targets.csv'
 
 
 #. rename all these to colFilesVolume etc

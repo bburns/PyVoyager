@@ -1,0 +1,14 @@
+
+# this file controls the frame rate for different targets
+# the default frameRateConstant is set in config.frameRateConstant, e.g. 60
+# frame rate is calculated as nframes = frameRateConstant * imageFraction
+# so gets slower as get closer to target
+
+target,frameRateConstant
+
+Jupiter,1
+Saturn,1
+Uranus,1
+Neptune,1
+Triton,30
+

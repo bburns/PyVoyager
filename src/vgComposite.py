@@ -61,15 +61,15 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall
         os.mkdir(compositesSubfolder)
 
         # iterate over composites.csv records
-        reader, f = lib.openCsvReader(config.compositesdb)
+        csvComposites, fComposites = lib.openCsvReader(config.compositesdb)
         startId = ''
         startVol = ''
         channelRows = []
         nfile = 0
-        for row in reader:
+        for row in csvComposites:
             compositeId = row[config.compositesColCompositeId]
-            vol = row[config.compositesColVolume]
-            if vol==buildVolnum or compositeId==buildCompositeId:
+            volume = row[config.compositesColVolume]
+            if volume==buildVolnum or compositeId==buildCompositeId:
                 # gather image filenames into channelRows so can merge them
                 # buildComposite(compositeId)
                 # print compositeId
@@ -77,35 +77,19 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall
                     channelRows.append(row)
                 else:
                     # we're seeing a new compositeId, so process all the gathered channels
-                    # if len(channelRows)>0:
-                    # nchannels = len(channelRows)
-                    # if nchannels>0:
-                        # print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
-                            # % (vol,nfile,startVol,startId),
-                        # print 'Volume %s compositing %d: %s (%d channels)    \r' \
-                            # % (vol,nfile,startId,nchannels),
-                        # processChannels(channelRows)
-                    processChannels(channelRows)
+                    processChannels(channelRows,volume,nfile,startId)
                     startId = compositeId
-                    startVol = vol
+                    startVol = volume
                     channelRows = [row]
                     nfile += 1
         # do the last leftover group
-        # # if len(channelRows)>0:
-        # nchannels = len(channelRows)
-        # if nchannels>0:
-        #     # print 'Volume %s compositing %d: VGISS_%s/%s     \r' % \
-        #           # (buildVolnum,nfile,startVol,startId),
-        #     # print 'Volume %s compositing %d: %s     \r' \
-        #         # % (vol,nfile,startId),
-        #     print 'Volume %s compositing %d: %s (%d channels)    \r' \
-        #         % (vol,nfile,startId,nchannels),
-        #     processChannels(channelRows)
-        processChannels(channelRows)
+        processChannels(channelRows,volume,nfile,startId)
         print
+        fComposites.close()
 
 
-def processChannels(channelRows):
+# def processChannels(channelRows):
+def processChannels(channelRows, volume, nfile, startId):
     #. could also have zoom factor, warp info, rotate
     """
     Combine channel images into new file.
@@ -117,16 +101,14 @@ def processChannels(channelRows):
       ['C434823','C434825','5101','Blue','0.8','42','18']
       ['C434823','C434827','5101','Green','1','-50','83']
       ]
-    they are combined and written to a file in the composites folder, step05_composites
+    they are combined and written to a file in the composites folder, step05_composites.
+    Other parameters are just for status update.
     """
     # print channelRows
     nchannels = len(channelRows)
+    print 'Volume %s compositing %d: %s (%d channels)    \r' % \
+          (volume,nfile,startId,nchannels),
     if nchannels>0:
-        # print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
-            # % (vol,nfile,startVol,startId),
-        print 'Volume %s compositing %d: %s (%d channels)    \r' \
-            % (vol,nfile,startId,nchannels),
-        # processChannels(channelRows)
         volume = ''
         compositeId = ''
         channels = []
@@ -135,7 +117,8 @@ def processChannels(channelRows):
             fileId = row[config.compositesColFileId]
             volume = row[config.compositesColVolume]
             filter = row[config.compositesColFilter]
-            weight = float(row[config.compositesColWeight]) if len(row)>config.compositesColWeight else 1.0
+            weight = float(row[config.compositesColWeight]) \
+                     if len(row)>config.compositesColWeight else 1.0
             x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
             y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
             #. may use imageSource to know adjusted vs centered

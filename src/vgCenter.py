@@ -116,16 +116,7 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         targetRadius = int(400*imageFraction) #.param
 
         # do we actually need to center this image?
-        #. put into fn?
-        # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-        doCenter = (imageFraction < config.imageFractionCenteringThreshold)
-        # don't center image if it's listed in centering.csv
-        if fileId in centeringInfo: doCenter = False
-        # don't center image if has 'search' in note field - satellite/ring searches don't need it
-        if 'search' in note.lower(): doCenter = False
-        # don't center some targets, eg Sky, Dark
-        if target in config.dontCenterTargets: doCenter = False
-            
+        doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
         if doCenter:
 
             # # for this target sequence (eg ariel flyby), what was the last good image?

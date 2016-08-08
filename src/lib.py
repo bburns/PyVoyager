@@ -118,20 +118,37 @@ def dataLines(lines):
             i += 1
 
 
-def centerThisImageQ(centeringInfo, targetKey, fileId, target):
+# def centerThisImageQ(centeringInfo, targetKey, fileId, target):
+def centerThisImageQ(imageFraction, centeringInfo, fileId, note, target):
     """
     Should this image be centered? Checks with centering.csv and config.dontCenterTargets.
-    Used by vgCenter and vgClips
+    Used by vgCenter and vgClips.
     """
-    centeringInfoRecord = centeringInfo.get(targetKey)
-    if centeringInfoRecord:
-        centeringOff = centeringInfoRecord['centeringOff']
-        centeringOn = centeringInfoRecord['centeringOn']
-        doCenter = (fileId < centeringOff) or (fileId > centeringOn)
-    else: # if no info for this target just center it
-        doCenter = True
-    if target in config.dontCenterTargets: # eg Sky, Dark
-        doCenter = False
+    # centeringInfoRecord = centeringInfo.get(targetKey)
+    # if centeringInfoRecord:
+    #     centeringOff = centeringInfoRecord['centeringOff']
+    #     centeringOn = centeringInfoRecord['centeringOn']
+    #     doCenter = (fileId < centeringOff) or (fileId > centeringOn)
+    # else: # if no info for this target just center it
+    #     doCenter = True
+    # if target in config.dontCenterTargets: # eg Sky, Dark
+    #     doCenter = False
+    # return doCenter
+
+    doCenter = (imageFraction < config.imageFractionCenteringThreshold)
+
+    # don't center some targets, eg Sky, Dark
+    if target in config.dontCenterTargets: doCenter = False
+
+    # don't center image if has 'search' in note field - satellite/ring searches don't need it
+    if 'search' in note.lower(): doCenter = False
+
+    # don't center image if it's listed in centering.csv
+    # if fileId in centeringInfo: doCenter = False
+    centeringRecord = centeringInfo.get(fileId)
+    if centeringRecord:
+        doCenter = True if centeringRecord['centerImage']=='y' else False
+
     return doCenter
 
 
@@ -263,23 +280,33 @@ def getCompositeFilepath(volume, fileId):
     return filepath
 
 
-def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate):
-    "Build mp4 videos using ffmpeg on sequentially numbered image files"
-    # eg data/step09_clips/stage/
+def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
+    """
+    Build mp4 videos using ffmpeg on sequentially numbered image files.
+    stageFolder contains the sequentially number files, eg data/step10_clips/stage/.
+    outputFolder is where the mp4 clips will go.
+    filespec describes the filenames, eg 'foo%04d.png'.
+    frameRate is in fps
+    minFrames is the minimum number of frames needed to build a video.
+    """
     print 'Making mp4 clips using ffmpeg'
     for root, dirs, files in os.walk(stageFolder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
-            print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
-            stageFolderPath = os.path.abspath(root)
-            # get target file path relative to staging folder,
-            # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
-            targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
-            targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-            videoTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-            # videoPath = '../../../../../../' + videoTitle
-            videoPath = outputFolder + videoTitle
-            imagesToMp4(stageFolderPath, filespec, videoPath, frameRate)
+            nfiles = len(files)
+            if nfiles >= minFrames:
+                # root = eg data/step10_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
+                print 'Directory', root
+                stageFolderPath = os.path.abspath(root)
+                # get target file path relative to staging folder,
+                # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
+                targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
+                targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
+                # videoTitle eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+                videoTitle = '-'.join(targetPath) + '.mp4'
+                # videoPath = '../../../../../../' + videoTitle
+                videoPath = outputFolder + videoTitle
+                imagesToMp4(stageFolderPath, filespec, videoPath, frameRate)
 
 # def makeClipFiles():
 #     "Build mp4 clips using ffmpeg on sequentially numbered image files"

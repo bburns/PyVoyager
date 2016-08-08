@@ -51,7 +51,7 @@ def logr(*args):
     s = ' '.join(sargs)
     f.write(s + '\n')
     f.close()
-    print s + '                                 \r', # echo to stdout
+    print s + '                                 \r',
 
 
 

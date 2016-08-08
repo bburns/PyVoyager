@@ -300,7 +300,8 @@ videoFfmpegOptions = "-y -loglevel warning"
 # videoFfmpegOutputOptions = "-c:v libx264 -crf 23"
 #. get warning: deprecated pixel format used, make sure you did set range correctly
 # how get rid of it?
-videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj420p -crf 23" #. try this? mjpeg? (note J)
 # videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p color_range 3 -crf 23" # nowork
 
 
@@ -322,6 +323,9 @@ clipsDefaultFrameRateConstant = 60
 # the slowest the movie can go
 clipsMaxFrameRateConstant = 30
 
+# minimum number of frames for a clip to be generated
+# (otherwise get lots of 0:00 movies)
+clipsMinFrames = 20
 
 
 # Movies

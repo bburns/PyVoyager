@@ -25,9 +25,26 @@ import vgTitles
 
 
 
+def getNCopies(targetInfo, target, imageFraction):
+    """
+    how many copies of the given target do we need, given the image size?
+    uses information in targets.csv
+    """
+    targetInfoRecord = targetInfo.get(target)
+    if targetInfoRecord:
+        frameRateConstant = int(targetInfoRecord['frameRateConstant'])
+    else:
+        frameRateConstant = config.clipsDefaultFrameRateConstant
+    ncopies = int(frameRateConstant * imageFraction) + 1
+    if ncopies > config.clipsMaxFrameRateConstant:
+        ncopies = config.clipsMaxFrameRateConstant
+    return ncopies
+
 
 def stageFiles(bwOrColor, targetPathParts):
-    """Make links from source files (centers or composites) to clip stage folders"""
+    """
+    Make links from source files (centers or composites) to clip stage folders.
+    """
 
     print 'Making links from source files'
 
@@ -45,15 +62,15 @@ def stageFiles(bwOrColor, targetPathParts):
     nfilesInTargetDir = {}
 
     # how many times should we duplicate the images?
-    ncopiesPerImage = 1 # default
-    ncopiesPerImageMemory = {} # keyed on planet-spacecraft-target-camera
+    ncopies = 1 # default
+    ncopiesMemory = {} # keyed on planet-spacecraft-target-camera
 
     # open positions.csv file for target angular size info (used to control effective framerate)
     csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
 
     # iterate through all available images
-    reader, f = lib.openCsvReader(config.filesdb)
-    for row in reader:
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    for row in csvFiles:
 
         # read file info
         volume = row[config.filesColVolume]
@@ -67,55 +84,44 @@ def stageFiles(bwOrColor, targetPathParts):
         # relabel target field if necessary - see db/targets.csv for more info
         target = lib.retarget(retargetingInfo, fileId, target)
 
+        # get expected angular size (as fraction of frame)
+        rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+        if rowPositions:
+            imageFraction = float(rowPositions[config.positionsColImageFraction])
+        else:
+            imageFraction = 0
+
+        # build a key
+        targetKey = system + '-' + craft + '-' + target + '-' + camera
+
+        # how many copies of this image do we want?
+        # note: we need to do this even if we don't add this image,
+        # because need to keep track of sticky overrides from framerates.csv.
+        # get ncopies as function of imageFraction and targets.csv
+        ncopies = getNCopies(targetInfo, target, imageFraction)
+        # check for previous sticky setting override
+        if ncopiesMemory.get(targetKey):
+            ncopies = ncopiesMemory[targetKey]
+        # check for 'sticky' overrides from framerates.csv
+        framerateInfoRecord = framerateInfo.get(fileId + '+')
+        if framerateInfoRecord:
+            ncopies = int(framerateInfoRecord['nframesPerImage'])
+            ncopiesMemory[targetKey] = ncopies # remember it
+        # check for overrides from framerates.csv
+        framerateInfoRecord = framerateInfo.get(fileId)
+        if framerateInfoRecord:
+            ncopies = int(framerateInfoRecord['nframesPerImage'])
+            ncopiesMemory[targetKey] = None # reset the sticky setting
+
         # does this image match the target path the user specified on the cmdline?
-        # addImage = True
-        # if (pathSystem and pathSystem!=system): addImage = False
-        # if (pathCraft and pathCraft!=craft): addImage = False
-        # if (pathTarget and pathTarget!=target): addImage = False
-        # if (pathCamera and pathCamera!=camera): addImage = False
         addImage = False
         if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
         if addImage:
 
-            # get expected angular size (as fraction of frame)
-            rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
-            if rowPositions:
-                imageFraction = float(rowPositions[config.positionsColImageFraction])
-            else:
-                imageFraction = 0
-
-            # how many copies of this image do we want?
-            # put d in targets.csv
-            # d = {
-                # 'Jupiter':1,
-                # 'Saturn':1,
-                # 'Uranus':1,
-                # 'Neptune':1,
-                # 'Triton':30,
-            # }
-            # frameRateConstant = d.get(target) or config.clipsDefaultFrameRateConstant
-            targetInfoRecord = targetInfo.get(target)
-            if targetInfoRecord:
-                frameRateConstant = int(targetInfoRecord['frameRateConstant'])
-            else:
-                frameRateConstant = config.clipsDefaultFrameRateConstant
-            ncopiesPerImage = int(frameRateConstant * imageFraction) + 1
-            if ncopiesPerImage > config.clipsMaxFrameRateConstant:
-                ncopiesPerImage = config.clipsMaxFrameRateConstant
-
-            # check for framerate overrides
-            framerateInfoRecord = framerateInfo.get(fileId) # record from framerates.csv
-            if framerateInfoRecord:
-                ncopiesPerImage = int(framerateInfoRecord['nframesPerImage'])
-
-            # build a key
-            targetKey = system + '-' + craft + '-' + target + '-' + camera
-
             # do we need to center this image?
             #. this is out of date - just base it on whether centered file exists
             # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-
 
             # get image source path
             # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
@@ -130,7 +136,6 @@ def stageFiles(bwOrColor, targetPathParts):
             # else:
             #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
 
-            # i think for more control we'll need something like segments.csv
             # use composite image if available, otherwise the centered or adjusted image
             if bwOrColor=='color':
                 imageFilepath = lib.getCompositeFilepath(volume, fileId)
@@ -167,7 +172,7 @@ def stageFiles(bwOrColor, targetPathParts):
                     nfile += ntitleCopies
 
                 # print "Volume %s frame: %s              \r" % (volume, imageFilepath),
-                print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopiesPerImage),
+                print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 
                 # link to file
                 # note: mklink requires admin privileges,
@@ -175,14 +180,14 @@ def stageFiles(bwOrColor, targetPathParts):
                 # eg imagePath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 # need to get out of the target dir
                 imagePathRelative = '../../../../../../../../' + imageFilepath
-                lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopiesPerImage)
+                lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
 
                 # increment the file number for the target folder
-                nfile += ncopiesPerImage
+                nfile += ncopies
                 nfilesInTargetDir[targetKey] = nfile
 
     fPositions.close()
-    f.close()
+    fFiles.close()
     print
 
 
@@ -213,7 +218,8 @@ def vgClips(bwOrColor, targetPath=None, keepLinks=False):
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
-                                  config.videoFilespec, config.videoFrameRate)
+                                  config.videoFilespec, config.videoFrameRate,
+                                  config.clipsMinFrames)
 
 
 if __name__ == '__main__':

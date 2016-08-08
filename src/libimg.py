@@ -412,7 +412,7 @@ def findCircle(im, radius=None):
             canny_threshold = int(canny_threshold / 2)
             # print 'reducing canny threshold to',canny_threshold
             log.log('reducing canny threshold to',canny_threshold)
-            if canny_threshold < 20:
+            if canny_threshold < 20: #. param
                 break
 
     # need largish acc threshold for this to get triggered
@@ -465,7 +465,7 @@ def findCircle(im, radius=None):
     # draw canny edges
     if config.debugImageTitle:
         upper = canny_threshold
-        lower = upper / 2
+        lower = upper / 2 # this is what HoughCircles uses
         imedges = cv2.Canny(im, lower, upper)
         cv2.imwrite(config.debugImageTitle + '_cannyedges.jpg', imedges)
 

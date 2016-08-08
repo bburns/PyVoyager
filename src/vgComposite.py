@@ -72,23 +72,36 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall
             if vol==buildVolnum or compositeId==buildCompositeId:
                 # gather image filenames into channelRows so can merge them
                 # buildComposite(compositeId)
+                # print compositeId
                 if compositeId == startId:
                     channelRows.append(row)
                 else:
                     # we're seeing a new compositeId, so process all the gathered channels
-                    if len(channelRows)>0:
-                        print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
-                            % (vol,nfile,startVol,startId),
-                        processChannels(channelRows)
+                    # if len(channelRows)>0:
+                    # nchannels = len(channelRows)
+                    # if nchannels>0:
+                        # print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
+                            # % (vol,nfile,startVol,startId),
+                        # print 'Volume %s compositing %d: %s (%d channels)    \r' \
+                            # % (vol,nfile,startId,nchannels),
+                        # processChannels(channelRows)
+                    processChannels(channelRows)
                     startId = compositeId
                     startVol = vol
                     channelRows = [row]
                     nfile += 1
         # do the last leftover group
-        if len(channelRows)>0:
-            print 'Volume %s compositing %d: VGISS_%s/%s     \r' % \
-                  (buildVolnum,nfile,startVol,startId),
-            processChannels(channelRows)
+        # # if len(channelRows)>0:
+        # nchannels = len(channelRows)
+        # if nchannels>0:
+        #     # print 'Volume %s compositing %d: VGISS_%s/%s     \r' % \
+        #           # (buildVolnum,nfile,startVol,startId),
+        #     # print 'Volume %s compositing %d: %s     \r' \
+        #         # % (vol,nfile,startId),
+        #     print 'Volume %s compositing %d: %s (%d channels)    \r' \
+        #         % (vol,nfile,startId,nchannels),
+        #     processChannels(channelRows)
+        processChannels(channelRows)
         print
 
 
@@ -107,29 +120,36 @@ def processChannels(channelRows):
     they are combined and written to a file in the composites folder, step05_composites
     """
     # print channelRows
-    volume = ''
-    compositeId = ''
-    channels = []
-    for row in channelRows:
-        compositeId = row[config.compositesColCompositeId]
-        fileId = row[config.compositesColFileId]
-        volume = row[config.compositesColVolume]
-        filter = row[config.compositesColFilter]
-        weight = float(row[config.compositesColWeight]) if len(row)>config.compositesColWeight else 1.0
-        x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
-        y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
-        #. may use imageSource to know adjusted vs centered
-        # get centered filepath
-        channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
-        # if don't have a centered file, use the adjusted file
-        if not os.path.isfile(channelfilepath):
-            channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-        channel = [filter,channelfilepath,weight,x,y]
-        channels.append(channel)
+    nchannels = len(channelRows)
+    if nchannels>0:
+        # print 'Volume %s compositing %d: VGISS_%s/%s     \r' \
+            # % (vol,nfile,startVol,startId),
+        print 'Volume %s compositing %d: %s (%d channels)    \r' \
+            % (vol,nfile,startId,nchannels),
+        # processChannels(channelRows)
+        volume = ''
+        compositeId = ''
+        channels = []
+        for row in channelRows:
+            compositeId = row[config.compositesColCompositeId]
+            fileId = row[config.compositesColFileId]
+            volume = row[config.compositesColVolume]
+            filter = row[config.compositesColFilter]
+            weight = float(row[config.compositesColWeight]) if len(row)>config.compositesColWeight else 1.0
+            x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
+            y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
+            #. may use imageSource to know adjusted vs centered
+            # get centered filepath
+            channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # if don't have a centered file, use the adjusted file
+            if not os.path.isfile(channelfilepath):
+                channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            channel = [filter,channelfilepath,weight,x,y]
+            channels.append(channel)
 
-    outfilepath = lib.getCompositeFilepath(volume, compositeId)
-    im = libimg.combineChannels(channels)
-    cv2.imwrite(outfilepath, im)
+        outfilepath = lib.getCompositeFilepath(volume, compositeId)
+        im = libimg.combineChannels(channels)
+        cv2.imwrite(outfilepath, im)
 
 
 if __name__ == '__main__':

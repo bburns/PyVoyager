@@ -101,7 +101,7 @@ def stabilizeImageFile(infile, outfile, targetRadius):
         # this doesn't work as precisely, and it's about same speed, so just use warp
         # im = translateImage(im, dx, dy)
     #. weird bug - these flags kept getting set to True, but where?
-    # # print config.drawCrosshairs, config.drawTarget
+    # print config.drawCrosshairs, config.drawTarget
     # if config.drawCrosshairs:
     #     drawCrosshairs(im)
     # if config.drawTarget:

@@ -1,8 +1,9 @@
 
 """
 vg titles command
-build title pages for different targets
-called by vg clips command
+
+Build title pages for different targets.
+Called by the vg clips command.
 """
 
 #. need to build titles for planets/systems and all.mp4 also
@@ -20,16 +21,16 @@ def vgTitles(targetPath=None):
     "Make titles for specified targetpaths"
 
     # what does the user want to focus on?
-    pathparts = lib.parseTargetPath(targetPath)
-    pathSystem, pathCraft, pathTarget, pathCamera = pathparts
+    targetPathParts = lib.parseTargetPath(targetPath)
+    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
-    print 'Making titles for', pathparts
+    print 'Making titles for', targetPathParts
 
-    targetpathsSeen = {}
+    targetPathSeen = {}
 
     # iterate through all available images
-    reader, f = lib.openCsvReader(config.filesdb)
-    for row in reader:
+    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    for row in csvFiles:
         volume = row[config.filesColVolume]
         fileId = row[config.filesColFileId]
         filter = row[config.filesColFilter]
@@ -40,17 +41,19 @@ def vgTitles(targetPath=None):
         camera = row[config.filesColInstrument]
 
         # is this an image the user wants to see?
-        do = True
-        if (pathSystem and pathSystem!=system): do = False
-        if (pathCraft and pathCraft!=craft): do = False
-        if (pathTarget and pathTarget!=target): do = False
-        if (pathCamera and pathCamera!=camera): do = False
-        if do:
+        # doTarget = True
+        # if (pathSystem and pathSystem!=system): doTarget = False
+        # if (pathCraft and pathCraft!=craft): doTarget = False
+        # if (pathTarget and pathTarget!=target): doTarget = False
+        # if (pathCamera and pathCamera!=camera): doTarget = False
+        doTarget = lib.targetMatches(targetPathParts, system, craft, target, camera)
+
+        if doTarget:
 
             # get current file number in that folder, or start at 0
             planetCraftTargetCamera = system + craft + target + camera
-            seen = targetpathsSeen.get(planetCraftTargetCamera)
-            if not seen:
+            targetSeen = targetPathSeen.get(planetCraftTargetCamera)
+            if not targetSeen:
 
                 # get subfolder and make sure it exists
                 # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
@@ -75,9 +78,9 @@ def vgTitles(targetPath=None):
                 img.save(titlefilepath)
 
                 # remember this targetpath
-                targetpathsSeen[planetCraftTargetCamera] = True
+                targetPathSeen[planetCraftTargetCamera] = True
 
-    f.close()
+    fFiles.close()
     print
 
 

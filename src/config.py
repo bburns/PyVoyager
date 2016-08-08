@@ -298,7 +298,10 @@ videoFfmpegOptions = "-y -loglevel warning"
 # videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
 # videoFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
 # videoFfmpegOutputOptions = "-c:v libx264 -crf 23"
+#. get warning: deprecated pixel format used, make sure you did set range correctly
+# how get rid of it?
 videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
+# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p color_range 3 -crf 23" # nowork
 
 
 # Clips

@@ -77,13 +77,13 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall
                     channelRows.append(row)
                 else:
                     # we're seeing a new compositeId, so process all the gathered channels
-                    processChannels(channelRows,volume,nfile,startId)
+                    processChannels(channelRows,startVol,nfile,startId)
                     startId = compositeId
                     startVol = volume
                     channelRows = [row]
                     nfile += 1
         # do the last leftover group
-        processChannels(channelRows,volume,nfile,startId)
+        processChannels(channelRows,startVol,nfile,startId)
         print
         fComposites.close()
 

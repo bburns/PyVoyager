@@ -28,29 +28,26 @@ def vgConvert(volnum, overwrite=False, directCall=True):
         lib.rmdir(imagesSubfolder)
         datadir = unzippedSubfolder + 'DATA/'
         print "Converting imgs to pngs for " + datadir
-        if int(volnum)==0:
-            print '    (nothing to do - test volume 0 - manually populated)'
-        else:
-            lib.mkdir(imagesSubfolder) # create dest folder
-            # for each subdir in datadir, cd subdir, run img2png on all img files in it
-            i = 1
-            for root, dirs, files in os.walk(datadir):
-                ndirs = len(dirs)
-                for subdir in dirs:
-                    subdir = os.path.join(root, subdir)
-                    subdirabsolute = os.path.abspath(subdir)
-                    print 'Directory %d/%d: %s          \r' % (i,ndirs,subdirabsolute),
-                    # for filespec in config.imageFilespecs: # eg ['*CALIB.IMG']
-                        # libimg.img2png(subdirabsolute, filespec, imagesSubfolder,
-                                       # config.img2pngOptions)
-                    libimg.img2png(subdirabsolute, config.imageFilespec,
-                                   imagesSubfolder, config.img2pngOptions)
-                    i += 1
-            print
+        lib.mkdir(imagesSubfolder) # create dest folder
+        # for each subdir in datadir, cd subdir, run img2png on all img files in it
+        i = 1
+        for root, dirs, files in os.walk(datadir):
+            ndirs = len(dirs)
+            for subdir in dirs:
+                subdir = os.path.join(root, subdir)
+                subdirabsolute = os.path.abspath(subdir)
+                print 'Directory %d/%d: %s          \r' % (i,ndirs,subdirabsolute),
+                # for filespec in config.imageFilespecs: # eg ['*CALIB.IMG']
+                    # libimg.img2png(subdirabsolute, filespec, imagesSubfolder,
+                                   # config.img2pngOptions)
+                libimg.img2png(subdirabsolute, config.imageFilespec,
+                               imagesSubfolder, config.img2pngOptions)
+                i += 1
+        print
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgConvert(0)
+    # vgConvert(0)
     print 'done'
 

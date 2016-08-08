@@ -4,6 +4,7 @@
 
 
 
+
 # Global settings
 # ----------------------------------------
 
@@ -13,18 +14,12 @@ useJpegs = True
 extension = '.jpg' if useJpegs else '.png'
 
 
-# use regular (CALIB) or geometrically corrected images (GEOMED)?
-# can't do it this way - we'll have to do our own geometric corrections at some point,
-# because denoising and dereseauing will need the original images.
-# useGeometricallyCorrectedImages = True
-# useGeometricallyCorrectedImages = False
-# imageType = 'GEOMED' if useGeometricallyCorrectedImages else 'CALIB'
-# pixels = 1000 if useGeometricallyCorrectedImages else 800
-
-
-
 logfile = 'log.txt'
 
+
+# include titles in clips?
+includeTitles = True
+# includeTitles = False
 
 
 # Voyager
@@ -259,9 +254,6 @@ targetsIgnore = dontCenterTargets
 # Titles
 # ----------------------------------------
 
-# includeTitles = True
-includeTitles = False
-
 # titleSecondsToShow = 5
 titleSecondsToShow = 4
 
@@ -281,8 +273,8 @@ videoFilespec = 'img%05d' + extension
 # videoFrameRate = 10
 # videoFrameRate = 12 # good for triton flyby
 # videoFrameRate = 15
-videoFrameRate = 20
-# videoFrameRate = 25
+# videoFrameRate = 20 # up to v0.43
+videoFrameRate = 25 # v0.43 needs to be a bit faster, for uranus
 # videoFrameRate = 30
 
 # ffmpeg options
@@ -318,10 +310,12 @@ clipsIgnoreTargets = dontCenterTargets
 
 # used to determine nframes per image - this multiplied by imageFraction,
 # so slows down when closer to target
+# this can be overridden in targets.csv
 clipsDefaultFrameRateConstant = 60
 
-# the slowest the movie can go
-clipsMaxFrameRateConstant = 30
+# the max number of copies for each frame (higher=slower movie)
+# clipsMaxFrameRateConstant = 30 # v0.43 uranus
+clipsMaxFrameRateConstant = 20 # v0.43 jupiter
 
 # minimum number of frames for a clip to be generated
 # (otherwise get lots of 0:00 movies)

@@ -21,7 +21,6 @@ import vgConvert
 
 
 #. handle indiv images also
-
 def vgAdjust(volnum, overwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 
@@ -46,11 +45,9 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
         nfiles = len(os.listdir(imagesSubfolder))
 
         # iterate through all available images, filter on desired volume
-        # f = open(config.filesdb, 'rt')
-        # reader = csv.reader(f)
-        reader, f = lib.openCsvReader(config.filesdb)
+        csvFiles, fFiles = lib.openCsvReader(config.filesdb)
         nfile = 1
-        for row in reader:
+        for row in csvFiles:
             volume = row[config.filesColVolume]
             if volume==volnum:
                 fileId = row[config.filesColFileId]
@@ -70,7 +67,7 @@ def vgAdjust(volnum, overwrite=False, directCall=True):
                 else:
                     print 'Warning: missing image file', infile
                 nfile += 1
-        f.close()
+        fFiles.close()
         print
 
 if __name__ == '__main__':

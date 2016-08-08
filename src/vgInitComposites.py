@@ -6,10 +6,9 @@ Build composites.csv, which will attempt to describe how to combine image channe
 based on time, filter, target, camera, NOTE field.
 (right now just filter, target, camera fields)
 
-
-the best way to understand this algorithm is to look at some sample data and
+The best way to understand this algorithm is to look at some sample data and
 understand that it's grouping records together by looking for repeating patterns.
-or at the moment, just repeated filters for the same target/camera.
+Or at the moment, just repeated filters for the same target/camera.
 #. could extend it to try to look for more specific repeating patterns,
 but it seems to work fairly well like this.
 eg
@@ -38,10 +37,9 @@ volume,compositeId,centerId,filter
 
 ie when it catches the repeated Uv filter, it writes out the intervening records as a group -
 a composite record.
-different targets and cameras are sometimes interleaved in files.csv,
+Different targets and cameras are sometimes interleaved in files.csv,
 but it can disentangle them because it keeps different circular buffers
 for each target/camera combination.
-
 """
 
 #. also need to look at the time to make sure they're all within a certain range -

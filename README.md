@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.43 inprogress
+Version 0.43
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -20,8 +20,11 @@ Example Movies
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
 
-https://www.youtube.com/watch?v=JuL3hSbp7Yc  
-Voyager 2 Uranus system flyby in color and black and white v0.40 (5 mins)
+https://www.youtube.com/watch?v=_YT4XINDxjk  
+Voyager 2 Uranus system flyby in color and black and white v0.43
+
+http://imgur.com/LO7Dnww  
+Voyager 2 Io approach v0.43
 
 https://www.youtube.com/watch?v=rAGWBo3-J2E  
 Voyager 1 Jupiter rotation movie color v0.41
@@ -160,15 +163,15 @@ or do all of these steps automatically (performs all missing steps)
 
 Then you can make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
-    > vg clips bw|color [targetpath]
+    > vg clips [targetpath] -bw|color
 
 e.g.
 
-    > vg clips bw //Triton
+    > vg clips //Triton -color
 
 to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
 
-    > vg clips color
+    > vg clips -color
 
 to generate all available color movies.
 
@@ -192,25 +195,7 @@ Use the `vg list` command to keep track of what stages different volumes are at:
 Parameters
 ----------------------------------------
 
-All configuration settings are stored in `config.py` - the goal is for the same set of parameters to work across all datasets and avoid adding more specification files, though it might be necessary to specify some parameters per volume. 
-
-There are 12 parameters that control the centering and stabilization routines - 
-
-    blobThreshold = 4
-    blobAreaCutoff = 30*30
-    
-    cannyUpperThreshold = 60
-    
-    houghParameterSpace = 1
-    houghAccumulatorThreshold = 200
-    houghMinRadius = 1
-    houghMaxRadius = 2
-
-    stabilizeMaxRadiusDifference = 20
-    stabilizeMaxDeltaPosition = 18
-    stabilizeECCIterations = 5000
-    stabilizeECCTerminationEpsilon = 1e-10
-    stabilizeNTimesFixedFrameUsed = 10
+All configuration settings are stored in `config.py` - the goal is for the same set of parameters to work across all datasets as much as possible.
 
 
 How it works
@@ -244,6 +229,12 @@ Ideally the RAW images would be used with a better reseau removal algorithm, but
 After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
 
 The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv`. This helps with the Hough circle detection, and is used to help stabilize the image. 
+
+Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
+
+http://imgur.com/ikp6W17
+
+http://imgur.com/VstnxI7
 
 Centering is turned off at closest approach by determining when the target size is over some threshold. The target size is also used to control the speed of the movie, slowing down when the target is closer. 
 
@@ -328,14 +319,20 @@ Next steps
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
 
 
-Version 0.43 (2016-08)
+Version 0.43 (2016-08-08)
 ----------------------------------------
-- `vg clips` framerate depends on angular size of target and target-specific constant
-- Return `vg center` to previous role - will just append new center information to `centers.csv` for now
-- `vg center` - don't try to center image if target size is larger than some threshold (replaces existing `centering.csv` file)
-- `vg center` - don't center image if includes 'search' in NOTE field - avoids centering ring/satellite searches
-- `vg center` - use new `centering.csv` file to turn off centering for specific images
+- `vg center`:
+  - return to previous role - will append new center information to `centers.csv` for now
+  - don't try to center image if target size is larger than some threshold (replaces existing `centering.csv` file)
+  - don't center image if includes 'search' in NOTE field - avoids centering ring/satellite searches
+  - use new `centering.csv` file to turn centering on/off for specific images - overrides above settings
+  - use `framerates.csv` to change frame rates per image - can use sticky ID to set it for a target until it's changed
+- `vg clips` framerate depends on angular size of target and target-specific constant, set in `targets.csv`
 - `vg target` can take a targetpath or volume range
+
+Jupiter rotation movie is still a bit unstable - needs another pass. But Uranus looks fairly good. 
+
+Made Io approach clip, Uranus system movie. 
 
 Version 0.42 (2016-08-06)
 ----------------------------------------

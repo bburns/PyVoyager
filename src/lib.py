@@ -24,8 +24,6 @@ from PIL import ImageDraw
 import config
 
 
-
-
 def loadPreviousStep(targetPathParts, fn):
     """
     load previous build step by determining volumes needed for the given target path.
@@ -38,9 +36,8 @@ def loadPreviousStep(targetPathParts, fn):
     # load small db into memory
     targetInfo = readCsv(config.retargetingdb) # remapping listed targets
 
-    volumes = {}
-
     # collect volumes needed, call the given fn with those volumes
+    volumes = {}
     csvFiles, fFiles = openCsvReader(config.filesdb)
     for rowFiles in csvFiles:
         volume = rowFiles[config.filesColVolume]

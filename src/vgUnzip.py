@@ -2,7 +2,7 @@
 """
 vg unzip command
 
-unzip a specified Voyager archive volume
+Unzip the specified Voyager archive volume.
 """
 
 import os.path
@@ -29,14 +29,11 @@ def vgUnzip(volnum, overwrite=False, directCall=True):
 
         print "Unzipping " + zipfilepath
         print "       to " + unzippedfolder
-        if int(volnum)==0:
-            print "       (nothing to do - test volume 0)"
-        else:
-            lib.rmdir(unzippedfolder)
-            lib.unzipFile(zipfilepath, unzippedfolder)
+        lib.rmdir(unzippedfolder)
+        lib.unzipFile(zipfilepath, unzippedfolder)
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgUnzip(0)
+    # vgUnzip(0)
     print 'done'

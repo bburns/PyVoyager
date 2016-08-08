@@ -32,7 +32,7 @@ def getNCopies(targetInfo, target, imageFraction):
     """
     targetInfoRecord = targetInfo.get(target)
     if targetInfoRecord:
-        frameRateConstant = int(targetInfoRecord['frameRateConstant'])
+        frameRateConstant = int(float(targetInfoRecord['frameRateConstant']))
     else:
         frameRateConstant = config.clipsDefaultFrameRateConstant
     ncopies = int(frameRateConstant * imageFraction) + 1
@@ -100,24 +100,28 @@ def stageFiles(bwOrColor, targetPathParts):
         # get ncopies as function of imageFraction and targets.csv
         ncopies = getNCopies(targetInfo, target, imageFraction)
         # check for previous sticky setting override
-        if ncopiesMemory.get(targetKey):
+        if not ncopiesMemory.get(targetKey) is None:
             ncopies = ncopiesMemory[targetKey]
-        # check for 'sticky' overrides from framerates.csv
+            # print 'remembering sticky framerate',fileId, ncopies
+        # check for 'sticky' override from framerates.csv
         framerateInfoRecord = framerateInfo.get(fileId + '+')
-        if framerateInfoRecord:
+        if not framerateInfoRecord is None:
             ncopies = int(framerateInfoRecord['nframesPerImage'])
             ncopiesMemory[targetKey] = ncopies # remember it
-        # check for overrides from framerates.csv
+            # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+        # check for single image override from framerates.csv
         framerateInfoRecord = framerateInfo.get(fileId)
-        if framerateInfoRecord:
+        if not framerateInfoRecord is None:
             ncopies = int(framerateInfoRecord['nframesPerImage'])
-            ncopiesMemory[targetKey] = None # reset the sticky setting
+            # ncopiesMemory[targetKey] = None # reset the sticky setting
+            ncopiesMemory.pop(targetKey, None) # remove the sticky setting
+            # print 'got single framerate',fileId,ncopies,ncopiesMemory
 
         # does this image match the target path the user specified on the cmdline?
         addImage = False
         if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
-        if addImage:
+        if addImage and ncopies>0:
 
             # do we need to center this image?
             #. this is out of date - just base it on whether centered file exists
@@ -139,10 +143,10 @@ def stageFiles(bwOrColor, targetPathParts):
             # use composite image if available, otherwise the centered or adjusted image
             if bwOrColor=='color':
                 imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            if not os.path.isfile(imageFilepath):
+            elif bwOrColor=='bw':
                 imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            if not os.path.isfile(imageFilepath):
-                imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
             if os.path.isfile(imageFilepath):
@@ -171,8 +175,8 @@ def stageFiles(bwOrColor, targetPathParts):
                                           nfile, ntitleCopies)
                     nfile += ntitleCopies
 
-                # print "Volume %s frame: %s              \r" % (volume, imageFilepath),
                 print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
+                # print "Volume %s frame: %s x %d           " % (volume, fileId, ncopies)
 
                 # link to file
                 # note: mklink requires admin privileges,
@@ -192,8 +196,10 @@ def stageFiles(bwOrColor, targetPathParts):
 
 
 def vgClips(bwOrColor, targetPath=None, keepLinks=False):
-    "Build bw or color clips associated with the given target path (eg //Io)"
-    # eg vgClips('bw', 'Jupiter/Voyager1')
+    """
+    Build bw or color clips associated with the given target path (eg //Io).
+    eg vgClips('bw', 'Jupiter/Voyager1')
+    """
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)

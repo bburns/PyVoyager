@@ -227,7 +227,11 @@ elif cmd=="list":
 
 
 elif cmd=="test":
-    vgTest.vgTest()
+    subject = args[0]
+    if subject=='center':
+        vgTestCenter.vgTestCenter()
+    elif subject=='denoise':
+        vgTestDenoise.vgTestDenoise()
 
 
 elif cmd=="grab":

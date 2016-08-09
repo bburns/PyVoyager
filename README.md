@@ -320,6 +320,9 @@ Next steps
 
 Version 0.44 (2016-08)
 ----------------------------------------
+- Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
+
+Make Uranus system movie with denoised images
 
 
 Version 0.43 (2016-08-08)

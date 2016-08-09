@@ -77,20 +77,7 @@ def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True)
         # print 'Volume %s denoising %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         log.logr('Volume %s denoising %d/%d: %s' % (volume,nfile,nfiles,infile))
         
-        # just copy file for now
-        # lib.cp(infile, outfile)
-        im = cv2.imread(infile)
-
-        # blank out bottom 3 pixels
-        im[-3:,:] = 0
-        
-        # blank out right 3 pixels
-        im[:,-3:] = 0
-        
-        # libimg.show(im)
-        
-        cv2.imwrite(outfile, im)
-        
+        libimg.denoiseImageFile(infile, outfile)
         
         nfile += 1
 

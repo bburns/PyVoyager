@@ -367,8 +367,8 @@ grabbedFolder       = onlineFolder  + "grabbed/"
 
 # test images go here
 testFolder    = 'test/'
-testImagesdb = testFolder + 'testImages.csv'
-testImagesFolder = testFolder + 'images/'
+testCenterdb = testFolder + 'testCenters.csv'
+testCenterImagesFolder = testFolder + 'images/'
 
 
 # database folder

@@ -1,6 +1,6 @@
 
 """
-vg test command
+vg test center command
 
 Test of centering routines.
 Any experimenting with settings should be done in centerImageFile or config settings.
@@ -9,13 +9,12 @@ Any experimenting with settings should be done in centerImageFile or config sett
 import cv2
 import os
 
-# import sys; sys.path.append('../src') # so can import from main src folder
 import config
 import lib
 import libimg
 
 
-def vgTest():
+def vgTestCenter():
 
     print 'Running centering tests...'
     
@@ -28,8 +27,8 @@ def vgTest():
     # config.drawCircle = True
     config.drawCrosshairs = True
 
-    centeredFolder = config.testImagesFolder + 'centered/'
-    debugFolder = config.testImagesFolder + 'debug/'
+    centeredFolder = config.testCenterImagesFolder + 'centered/'
+    debugFolder = config.testCenterImagesFolder + 'debug/'
 
     #. fix this weird issue with access denied
     lib.rmdir(centeredFolder)
@@ -44,11 +43,11 @@ def vgTest():
     csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
     
     # read in small csv file
-    results = lib.readCsv(config.testImagesdb) # test/testImages.csv
+    results = lib.readCsv(config.testCenterdb) # test/testCenters.csv
     ntests = len(results)
     ntestsok = 0
 
-    for root, dirs, files in os.walk(config.testImagesFolder): # test/images
+    for root, dirs, files in os.walk(config.testCenterImagesFolder): # test/center
         for filename in files:
 
             ext = filename[-4:].lower()
@@ -56,7 +55,7 @@ def vgTest():
 
                 fileId = filename[:8] # eg C1328423
                 fileTitle = filename[:-4] # eg C1328423_neptune_dim
-                infile = config.testImagesFolder + filename
+                infile = config.testCenterImagesFolder + filename
                 centeredFile = centeredFolder + filename
                 debugTitle = debugFolder + fileTitle
                 config.debugImageTitle = debugTitle
@@ -112,6 +111,6 @@ def vgTest():
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgTest()
+    vgTestCenter()
     print 'done'
 

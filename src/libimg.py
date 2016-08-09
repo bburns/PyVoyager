@@ -2,7 +2,7 @@
 """
 Image processing routines
 
-not reusable - many are specific to PyVoyager
+Not reusable - most/many are specific to PyVoyager
 """
 
 import os
@@ -16,6 +16,25 @@ import random
 
 import config
 import log
+
+
+
+
+def denoiseImageFile(infile, outfile):
+    ""
+    im = cv2.imread(infile)
+
+    # blank out bottom 3 pixels
+    im[-3:,:] = 0
+
+    # blank out right 3 pixels
+    im[:,-3:] = 0
+
+    # fill in single pixel horizontal lines
+    # first identify horizontal segments - then get avg of above and below pixels
+    #
+
+    cv2.imwrite(outfile, im)
 
 
 def resizeImage(im, w, h):

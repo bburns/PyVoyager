@@ -22,23 +22,28 @@ def resizeImage(im, w, h):
     "Resize image, keeping aspect ratio, filling in gaps with black, return new image."
 
     oldH, oldW = im.shape[:2]
-    # print oldH, oldW
+    print oldH, oldW #950,885
     aspectRatio = float(oldW) / float(oldH)
-    # print aspectRatio
+    print aspectRatio #0.93
     if aspectRatio > 1: # width>height
         newW = w
         newH = int(newW / aspectRatio)
     else:
         newH = h
         newW = int(newH * aspectRatio)
-    # print newH, newW
-    im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
+    print newH, newW #800,745
+    # confusing - this takes w,h not h,w?
+    # im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
+    im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
-    canvas = np.zeros(im.shape, np.uint8)
+    canvas = np.zeros((h,w,3), np.uint8)
     x = int((w-newW)/2)
     y = int((h-newH)/2)
+    print x,y #27,0
+    # ValueError: could not broadcast input array from shape (745,800,3) into shape (800,745,3)
     canvas[y:y+newH, x:x+newW] = im
+    # canvas[x:x+newW, y:y+newH] = im
     return canvas
 
 
@@ -234,11 +239,16 @@ def combineChannels(channels):
       ['Blue','composites/blue.png',0.9,50,66],
     ]
     """
+    print channels
+
+    # define input columns
     colFilter = 0
     colFilename = 1
     colWeight = 2
-    colX = 4 # note: x and y are reversed, due to numpy's matrices being like matlab
-    colY = 3
+    # colX = 4 # note: x and y are reversed, due to numpy's matrices being like matlab
+    # colY = 3
+    colX = 3
+    colY = 4
     colIm = -1
 
     # if just one channel then return a bw image
@@ -248,7 +258,7 @@ def combineChannels(channels):
         return gray
 
     # find size of canvas that will contain all images
-    xmin = 0; xmax = 799; ymin = 0; ymax = 799
+    xmin = 0; xmax = 799; ymin = 0; ymax = 799 #.params
     for row in channels:
         x = row[colX] if len(row)>colX else 0
         y = row[colY] if len(row)>colY else 0
@@ -280,6 +290,7 @@ def combineChannels(channels):
             # canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
             canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
             im = canvas
+            show(im)
         row.append(im)
         # now assign the row to one of the available channels
         # eventually would like something more accurate than just rgb
@@ -292,20 +303,20 @@ def combineChannels(channels):
             rowBlue = row
 
     # assign a blank image if missing a channel
-    # blank = np.zeros((w,h), np.uint8)
     blank = np.zeros((h,w), np.uint8)
     imRed = rowRed[colIm] if rowRed else blank
     imGreen = rowGreen[colIm] if rowGreen else blank
     imBlue = rowBlue[colIm] if rowBlue else blank
 
     # merge channels - BGR for cv2
-    # print imBlue.shape
-    # print imGreen.shape
-    # print imRed.shape
+    print imBlue.shape
+    print imGreen.shape
+    print imRed.shape
     # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
     # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
     # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
+    show(im)
 
     # scale image to 800x800
     if enlarged:

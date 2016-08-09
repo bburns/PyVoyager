@@ -39,53 +39,51 @@ def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall
     """
 
     buildVolnum = str(buildVolnum)
-    compositesSubfolder = config.compositesFolder + 'VGISS_' + buildVolnum + '/'
     buildCompositeId = buildCompositeId.upper() # always capital C
 
-    if os.path.isdir(compositesSubfolder) and overwrite==False:
-        if directCall:
-            print "Composites folder exists: " + compositesSubfolder
-    else:
-        # build the centered images for the volume, if not already there
-        if buildVolnum!='':
-            vgCenter.vgCenter(buildVolnum, '', False, False)
+    if buildVolnum!='':
+        compositesSubfolder = config.compositesFolder + 'VGISS_' + buildVolnum + '/'
 
-        # get centering info - will use to get files from either adjusted or centered folders
-        # centeringInfo = lib.readCsv(config.centeringdb)
+        if os.path.isdir(compositesSubfolder) and overwrite==False:
+            if directCall: print "Composites folder exists: " + compositesSubfolder
+            return
+
+        # build the centered images for the volume, if not already there
+        vgCenter.vgCenter(buildVolnum, '', False, False)
 
         # print 'Building composites for', compositesSubfolder
 
         # if we're building an entire volume, remove the existing directory first
-        if buildVolnum!='':
-            lib.rmdir(compositesSubfolder)
-        os.mkdir(compositesSubfolder)
+        lib.rmdir(compositesSubfolder)
+        lib.mkdir(compositesSubfolder)
 
-        # iterate over composites.csv records
-        csvComposites, fComposites = lib.openCsvReader(config.compositesdb)
-        startId = ''
-        startVol = ''
-        channelRows = []
-        nfile = 0
-        for row in csvComposites:
-            compositeId = row[config.compositesColCompositeId]
-            volume = row[config.compositesColVolume]
-            if volume==buildVolnum or compositeId==buildCompositeId:
-                # gather image filenames into channelRows so can merge them
-                # buildComposite(compositeId)
-                # print compositeId
-                if compositeId == startId:
-                    channelRows.append(row)
-                else:
-                    # we're seeing a new compositeId, so process all the gathered channels
-                    processChannels(channelRows,startVol,nfile,startId)
-                    startId = compositeId
-                    startVol = volume
-                    channelRows = [row]
-                    nfile += 1
-        # do the last leftover group
-        processChannels(channelRows,startVol,nfile,startId)
-        print
-        fComposites.close()
+    # get centering info - will use to get files from either adjusted or centered folders
+    # centeringInfo = lib.readCsv(config.centeringdb)
+
+    # iterate over composites.csv records
+    csvComposites, fComposites = lib.openCsvReader(config.compositesdb)
+    startId = ''
+    startVol = ''
+    channelRows = []
+    nfile = 0
+    for row in csvComposites:
+        compositeId = row[config.compositesColCompositeId]
+        volume = row[config.compositesColVolume]
+        if volume==buildVolnum or compositeId==buildCompositeId:
+            # gather image filenames into channelRows so can merge them
+            if compositeId == startId:
+                channelRows.append(row)
+            else:
+                # we're seeing a new compositeId, so process all the gathered channels
+                processChannels(channelRows,startVol,nfile,startId)
+                startId = compositeId
+                startVol = volume
+                channelRows = [row]
+                nfile += 1
+    # do the last leftover group
+    processChannels(channelRows,startVol,nfile,startId)
+    print
+    fComposites.close()
 
 
 # def processChannels(channelRows):
@@ -108,7 +106,7 @@ def processChannels(channelRows, volume, nfile, startId):
     nchannels = len(channelRows)
     print 'Volume %s compositing %d: %s (%d channels)    \r' % \
           (volume,nfile,startId,nchannels),
-    if nchannels>0:
+    if nchannels > 0:
         volume = ''
         compositeId = ''
         channels = []
@@ -124,6 +122,7 @@ def processChannels(channelRows, volume, nfile, startId):
             #. may use imageSource to know adjusted vs centered
             # get centered filepath
             channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # channelfilepath = ''
             # if don't have a centered file, use the adjusted file
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
@@ -142,16 +141,16 @@ if __name__ == '__main__':
     # vgComposite('','c1617245')
 
     # ariel - works
-    # vgComposite('','c2684338',True)
-    # filename = lib.getCompositeFilepath('7206','c2684338')
-    # im = cv2.imread(filename)
-    # libimg.show(im)
-
-    # uranus
-    vgComposite('','C2656801',True)
-    filename = lib.getCompositeFilepath('7205','C2656801')
+    vgComposite('','c2684338',True)
+    filename = lib.getCompositeFilepath('7206','c2684338')
     im = cv2.imread(filename)
     libimg.show(im)
+
+    # uranus
+    # vgComposite('','C2656801',True)
+    # filename = lib.getCompositeFilepath('7205','C2656801')
+    # im = cv2.imread(filename)
+    # libimg.show(im)
 
     print 'done'
 

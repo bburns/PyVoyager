@@ -4,11 +4,19 @@
 # frame rate is calculated as nframes = frameRateConstant * imageFraction
 # so gets slower as get closer to target
 
+#. might need separate ones for wide/narrow
+
 target,frameRateConstant
 
-Jupiter,1
+Jupiter,0.5
+Callisto,15
+Europa,15
+Ganymede,15
+Io,15
+
 Saturn,1
+
 Uranus,1
+
 Neptune,1
 Triton,30
-

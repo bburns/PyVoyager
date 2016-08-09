@@ -10,12 +10,14 @@
 
 # this file does NOT need to be sorted, since it's all read into a dictionary at the moment
 
+# can set 'sticky' overrides by appending a '+' to the imageId -
+# the frame rate will stick for that target until set explicitly otherwise.
+# eg
+# c1238432+,4
+# c1239382,1
+
+
 fileId,nframesPerImage
-
-
-#... convert these from start imageIds to single imageIds
-
-
 
 # Jupiter
 # ----------------------------------------
@@ -28,7 +30,6 @@ fileId,nframesPerImage
 # C1638149,20
 
 # callisto
-# lots of black frames at the end
 # C1639944,20
 # C1642626,1
 # C1642141,20
@@ -41,24 +42,16 @@ fileId,nframesPerImage
 # C1624522,8
 # C1633443,10
 # pause longer on nice images
-# C1640202,24
-# C1640204,12
-# C1640322,24
-# C1640324,12
-# C1640352,24
-# C1640354,12
-# C1640502,24
-# C1640504,12
-# C1640528,24
-# C1640530,12
-# C1640542,24
-# C1640544,12
-# C1640741,2
+C1640202,40
+C1640322,40
+C1640352,40
+C1640502,40
+C1640528,40
+C1640542,40
 
 # ganymede wide
 # C1627348,4
 # C1640315,8
-
 
 # io
 # C1636826,10
@@ -68,35 +61,63 @@ fileId,nframesPerImage
 # Uranus
 # ----------------------------------------
 
-#.. fix these
-
 # uranus
-C2672949,10
-C2673007,1
+
+# first frame - hide the start sequence - too long
+C2447705+,0
+
+# C2672949+,10
+# C2673007, 1
+
 # cool moon sequences
-C2577621,2
+C2577621+,3
 C2600321,1
-C2604520,2
+C2604520+,2
 C2604942,1
+
+# uhoh, it says search in it...
+# C2679143,7205,Uranus,Voyager2,Uranus,1986-01-22T21:04:46,Wide,Clear,ONE OF 16 SAT SEARCH FRAMES IMAGING ARIEL'S ORBIT AND REGION INTERIOR
+
 # rings - some need to be shifted
-C2672831,4
+C2672831+,8
 C2672901,1
-C2679143,4
+C2679143+,8
 C2679443,1
-C2682426,10
+C2682426+,10
+C2682456,1
 C2682617,1
-C2684450,4
+C2684450+,10
 C2684726,1
-C2685214,10
+C2685214+,10
 C2686212,1
+
 
 # ariel
 # C2531132,4
 # C2681743,25
 # C2684338,25
 # C2690305,8
+# two medium size images before closeups
+C2681743,20
+C2681749,20
+# nice views
+C2684338,40
+C2684533,40
+C2684535,40
+C2684539,40
 
 # miranda
+C2681643,20
+C2684409,40
+# blurry
+C2684415,0
+C2684611,40
+C2684614,40
+C2684617,40
+C2684620,40
+C2684626,40
+C2684629,40
+
 # C2564729,4
 # C2681429,12
 # C2684409,25
@@ -106,6 +127,8 @@ C2686212,1
 # C2465854,4
 # C2683623,25
 # C2690421,10
+# nicest image
+C2683625,40
 
 # puck is only one frame - show for a while
 C2683716,50
@@ -114,11 +137,17 @@ C2683716,50
 # C2465905,Uranus-Voyager2-Titania-Narrow,6
 # C2683039,Uranus-Voyager2-Titania-Narrow,30
 # C2690508,Uranus-Voyager2-Titania-Narrow,8
+C2683649,30
+C2683655,30
+C2684313,30
+
 
 # umbriel
 # C2465918,Uranus-Voyager2-Umbriel-Narrow,4
 # C2684004,Uranus-Voyager2-Umbriel-Narrow,40
 # C2690340,Uranus-Voyager2-Umbriel-Narrow,4
+#. this has a bad composite image, which i'm deleting manually
+C2684006,40
 
 
 # Neptune

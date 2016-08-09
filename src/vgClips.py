@@ -68,11 +68,14 @@ def stageFiles(bwOrColor, targetPathParts):
     # open positions.csv file for target angular size info (used to control effective framerate)
     csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
 
+    # open additions.csv for additional images to insert into sequence
+    csvAdditions, fAdditions = lib.openCsvReader(config.additionsdb)
+
     # iterate through all available images
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
     for row in csvFiles:
 
-        # read file info
+        # get file info
         volume = row[config.filesColVolume]
         fileId = row[config.filesColFileId]
         filter = row[config.filesColFilter]
@@ -98,6 +101,7 @@ def stageFiles(bwOrColor, targetPathParts):
         # note: we need to do this even if we don't add this image,
         # because need to keep track of sticky overrides from framerates.csv.
         # get ncopies as function of imageFraction and targets.csv
+        #. add all to the fn? might have 7 parameters but would encapsulate this code
         ncopies = getNCopies(targetInfo, target, imageFraction)
         # check for previous sticky setting override
         if not ncopiesMemory.get(targetKey) is None:
@@ -181,7 +185,7 @@ def stageFiles(bwOrColor, targetPathParts):
                 # link to file
                 # note: mklink requires admin privileges,
                 # so must run this script in an admin console
-                # eg imagePath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
+                # eg imageFilepath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 # need to get out of the target dir
                 imagePathRelative = '../../../../../../../../' + imageFilepath
                 lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
@@ -190,6 +194,41 @@ def stageFiles(bwOrColor, targetPathParts):
                 nfile += ncopies
                 nfilesInTargetDir[targetKey] = nfile
 
+        # check for additional images
+        rowAdditions = lib.getJoinRow(csvAdditions, config.additionsColFileId, fileId)
+        if rowAdditions:
+            additionId = rowAdditions[config.additionsColAdditionId] # eg C2684338_composite
+            nframes = int(rowAdditions[additionsColNFrames])
+
+            # get imagePath
+
+            #. how get volume? should the addition col have the whole filepath?
+            #. and filter?
+            # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
+            # but that ties the data structure down too much
+            # or else include volume, filter, fileId, but then it's not as general purpose,
+            # eg for including extraneous images
+
+            # one possibility would be to lookup the volume based on the imageId boundaries (fast),
+            # and then grab whatever image started with the given additionId so don't need filter.
+            # other extraneous images would have a special prefix, eg 'file:'.
+
+            # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
+
+            # if '_composite':
+            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # elif '_centered':
+            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # elif '_adjusted':
+            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            # need to insert the additional image here
+            # add nframes into stage
+
+
+
+
+
+    fAdditions.close()
     fPositions.close()
     fFiles.close()
     print

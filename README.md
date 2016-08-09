@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.43
+Version 0.44 inprogress
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -259,7 +259,7 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
 
 This file is used by the `vg composite <volume>` command to generate the color frames.
 
-The clips are generated with the `vg clips [targetpath] -bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), renumbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
+The clips are generated with the `vg clips [targetpath] -bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
 
 Here is how black and white vs color clips are generated -
 
@@ -317,6 +317,9 @@ Next steps
 <!-- - Add `vg segments` command to build movie segments with more editorial control -->
 <!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
 <!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
+
+Version 0.44 (2016-08)
+----------------------------------------
 
 
 Version 0.43 (2016-08-08)

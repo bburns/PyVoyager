@@ -1,4 +1,10 @@
-volume,fileId,x,y,radius
-5104,C1540822,320,356,215
-5104,C1540858,287,296,213
+
+# test
+# this file would be used to correct any mis-centered images
+# a cmd could remove records when the autocentering algo improves enough to duplicate them
+# program will check here first for a match, then centers.csv
+
+fileId,volume,x,y,radius
+C1540822,5104,320,356,215
+C1540858,5104,290,290,213
 

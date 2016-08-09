@@ -419,7 +419,7 @@ segmentsdb = dbFolder + 'segments.csv'
 positionsdb = dbFolder + 'positions.csv'
 erratadb = dbFolder + 'errata.csv'
 targetdb = dbFolder + 'targets.csv'
-
+additionsdb = dbFolder + 'additions.csv'
 
 #. rename all these to colFilesVolume etc
 
@@ -477,6 +477,14 @@ segmentsColAnnotation = 4
 positionsColFileId = 0
 positionsColDistanceKm = 1
 positionsColImageFraction = 2
+
+
+# additions.csv columns
+additionsColFileId = 0
+additionsColAdditionId = 1
+additionsColNFrames = 2
+
+
 
 
 

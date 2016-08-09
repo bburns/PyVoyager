@@ -1,17 +1,100 @@
 
-# this file contains images which don't need to be centered,
-# but their target is still small enough to be automatically centered
+# centering overrides for images
+# turn centering on/off for specified images
 
-fileId
+# put y or n for centerImage
+
+# this file does NOT need to be sorted, as it's all read into a dictionary
+
+# see the fn lib.centerThisImageQ for details
+# will automatically exclude image from centering if NOTE includes 'search'
+# so here you can turn it on for certain images
+
+#. definitely need sticky fileIds here as well
+
+
+fileId,centerImage
+
 
 # Uranus
 
+#. want to center SOME of the ring search, ie override the default in places
+# eg the frames showing the ring around the planet quadrants
 
-# will automatically exclude image from centering if NOTE includes 'search'
+C2672831,y
+C2672837,y
+C2672843,y
+C2672849,y
+C2672855,y
+
+C2679143,y
+C2679149,y
+C2679155,y
+C2679201,y
+C2679207,y
+C2679213,y
+C2679219,y
+C2679225,y
+C2679231,y
+C2679237,y
+C2679243,y
+C2679255,y
+C2679301,y
+C2679307,y
+C2679313,y
+C2679319,y
+C2679325,y
+C2679331,y
+C2679337,y
+C2679343,y
+C2679349,y
+C2679355,y
+C2679401,y
+C2679407,y
+C2679413,y
+C2679419,y
+C2679428,y
+C2679434,y
+
+C2682426,y
+C2682432,y
+C2682438,y
+C2682444,y
+C2682450,y
+C2682456,y
+C2682506,y
+C2682512,y
+C2682518,y
+C2682524,y
+C2682529,y
+C2682534,y
+C2682539,y
+C2682545,y
+C2682551,y
+C2682557,y
+C2682603,y
+
+C2684501,y
+C2684505,y
+C2684644,y
+C2684646,y
+C2684648,y
+C2684650,y
+C2684718,y
+C2684722,y
+C2684726,y
+
+C2685215,y
+C2685219,y
+C2685224,y
+
+
+
+# these had been turned off here, but then i turned off centering for all files with 'search' in NOTE
 
 # # ring search
 # # ONE OF 12 SAT SEARCH FRAMES IMAGING SPACE BETWEEN RINGS AND MIRANDA'S ORBIT
-# C2666007
+# C2666007,n
 # C2666019
 # C2666031
 # C2666043
@@ -68,3 +151,11 @@ fileId
 # C2667015
 # C2667021
 # C2667027
+
+
+# ariel
+
+C2684338,n
+C2684340,n
+C2684342,n
+

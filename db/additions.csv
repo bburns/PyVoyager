@@ -1,0 +1,15 @@
+
+# list images to include after the given imageId
+
+# this file needs to be sorted so can be joined with files.csv
+
+
+fileId,additionId,nframes
+
+# ariel composite
+C2684342,C2684338_composite,40
+
+# this is actually the last image in the sequence, but it's blurry so had set its framerate to 0.
+# should be okay to just put it here though.
+# C2684344,C2684338_composite
+

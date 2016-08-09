@@ -17,7 +17,8 @@ import lib
 import libimg
 import log
 
-import vgAdjust
+# import vgAdjust
+import vgDenoise
 
 
 # config.drawCrosshairs = True
@@ -43,27 +44,31 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
     #         print 'Centers.csv already contains volume ' + volnum + ' - run with -y to overwrite'
     #         return
 
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + buildVolnum + '/'
+    # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + buildVolnum + '/'
+    denoisedSubfolder = config.denoisedFolder + 'VGISS_' + buildVolnum + '/'
     centersSubfolder = config.centersFolder + 'VGISS_' + buildVolnum + '/'
 
-    if buildVolnum!='' and os.path.isdir(centersSubfolder) and overwrite==False:
-        if directCall:
-            print "Folder exists - skipping vg center step: " + centersSubfolder
-        return
+    if buildVolnum!='':
+        if os.path.isdir(centersSubfolder) and overwrite==False:
+            if directCall:
+                print "Folder exists - skipping vg center step: " + centersSubfolder
+            return
 
-    # build the adjusted images for the volume, if not already there
-    #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-    if buildVolnum!='':
-        vgAdjust.vgAdjust(buildVolnum, False, False)
+        # build the adjusted images for the volume, if not already there
+        #. handle indiv images also - could lookup volume by fileid, call vgadjust here
+        # if buildVolnum!='':
+        # vgAdjust.vgAdjust(buildVolnum, False, False)
+        vgDenoise.vgDenoise(buildVolnum, '', False, False)
         
-    # if we're building an entire volume, remove the existing directory first
-    if buildVolnum!='':
+        # if we're building an entire volume, remove the existing directory first
+        # if buildVolnum!='':
         lib.rmdir(centersSubfolder)
         # lib.mkdir(centersSubfolder)
         os.mkdir(centersSubfolder)
 
     # get number of files to process
-    nfiles = len(os.listdir(adjustmentsSubfolder))
+    # nfiles = len(os.listdir(adjustmentsSubfolder))
+    nfiles = len(os.listdir(denoisedSubfolder))
 
     # read small dbs into memory
     centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
@@ -99,7 +104,8 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         target = lib.retarget(targetInfo, fileId, target)
 
         # get filenames
-        infile = lib.getAdjustedFilepath(volume, fileId, filter)
+        # infile = lib.getAdjustedFilepath(volume, fileId, filter)
+        infile = lib.getDenoisedFilepath(volume, fileId, filter)
         outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),

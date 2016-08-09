@@ -76,6 +76,12 @@ img2pngOptions = "-fnamefilter -loglevel0"
 adjustmentsSuffix = '_adjusted'
 
 
+# Denoised
+# ----------------------------------------
+
+denoisedSuffix = '_denoised'
+
+
 # Center
 # ----------------------------------------
 
@@ -344,15 +350,16 @@ downloadsFolder     = offlineFolder + "step01_downloads/"
 unzipsFolder        = offlineFolder + "step02_unzips/"
 imagesFolder        = onlineFolder  + "step03_images/"
 adjustmentsFolder   = onlineFolder  + "step04_adjustments/"
-centersFolder       = onlineFolder  + "step05_centers/"
-compositesFolder    = onlineFolder  + "step06_composites/"
-mosaicsFolder       = onlineFolder  + "step07_mosaics/"
-targetsFolder       = onlineFolder  + "step08_targets/"
-titlesFolder        = onlineFolder  + "step09_titles/"
-clipsFolder         = onlineFolder  + "step10_clips/"
+denoisedFolder      = onlineFolder  + "step05_denoised/"
+centersFolder       = onlineFolder  + "step06_centers/"
+compositesFolder    = onlineFolder  + "step07_composites/"
+mosaicsFolder       = onlineFolder  + "step08_mosaics/"
+targetsFolder       = onlineFolder  + "step09_targets/"
+titlesFolder        = onlineFolder  + "step10_titles/"
+clipsFolder         = onlineFolder  + "step11_clips/"
 clipsStageFolder    = clipsFolder   + 'stage/'
-segmentsFolder      = onlineFolder  + "step11_segments/"
-segmentsStageFolder = segmentsFolder + 'stage/'
+# segmentsFolder      = onlineFolder  + "step12_segments/"
+# segmentsStageFolder = segmentsFolder + 'stage/'
 moviesFolder        = onlineFolder  + "step12_movies/"
 
 grabFolder          = onlineFolder  + "grab/"

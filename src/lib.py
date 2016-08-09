@@ -238,27 +238,36 @@ def cp(src, dst):
         return False
 
 
-#. might only need the Filepath variants
-def getAdjustedFilename(fileId, filter):
-    "get the filename for the adjusted image specified"
-    filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
-    return filename
+# #. might only need the Filepath variants
+# def getAdjustedFilename(fileId, filter):
+#     "get the filename for the adjusted image specified"
+#     filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+#     return filename
 
-def getCenteredFilename(fileId, filter):
-    "get the filename for the centered image specified"
-    filename = fileId + config.centersSuffix + '_' + filter + config.extension
-    return filename
+# def getCenteredFilename(fileId, filter):
+#     "get the filename for the centered image specified"
+#     filename = fileId + config.centersSuffix + '_' + filter + config.extension
+#     return filename
 
-def getCompositeFilename(fileId, filter):
-    "get the filename for the composite image specified"
-    filename = fileId + config.compositesSuffix + config.extension
-    return filename
+# def getCompositeFilename(fileId, filter):
+#     "get the filename for the composite image specified"
+#     filename = fileId + config.compositesSuffix + config.extension
+#     return filename
 
+
+#. merge all these to one fn
 
 def getAdjustedFilepath(volume, fileId, filter):
     "get the filepath for the adjusted image specified"
     folder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
     filetitle = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+    filepath = folder + filetitle
+    return filepath
+
+def getDenoisedFilepath(volume, fileId, filter):
+    "get the filepath for the denoised image specified"
+    folder = config.denoisedFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.denoisedSuffix + '_' + filter + config.extension
     filepath = folder + filetitle
     return filepath
 

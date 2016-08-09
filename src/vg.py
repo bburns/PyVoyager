@@ -9,6 +9,7 @@ PyVoyager commands
   vg unzip <volnums>                - unzip volume(s)
   vg convert <volnums>              - convert IMGs to PNGs
   vg adjust <volnums>               - adjust images (rotate and enhance)
+  vg denoise <volnums>              - remove noise from images
   vg center <volnums>               - center images
   vg composite <volnums>            - create color images
   vg target <volnums>               - copy images into target subfolders
@@ -33,7 +34,7 @@ where
   <target>     = Jupiter|Io|Europa|, etc.
   <camera>     = Narrow|Wide
 
-e.g. vg clips bw //Triton
+e.g. vg clips bw //triton
 
 You can also add `-y` to a command to have it overwrite any existing data.
 """
@@ -53,6 +54,7 @@ import vgDownload
 import vgUnzip
 import vgConvert
 import vgAdjust
+import vgDenoise
 import vgCenter
 import vgComposite
 import vgMosaic
@@ -102,46 +104,43 @@ for option in options:
 
 
 if cmd=="download":
-    log.start()
-    # vols = args.pop(0)
     vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgDownload.vgDownload(volnum, optionOverwrite)
-    log.stop()
     lib.beep()
 
 
 elif cmd=="unzip":
-    log.start()
-    # vols = args.pop(0)
     vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgUnzip.vgUnzip(volnum, optionOverwrite)
-    log.stop()
     lib.beep()
 
 
 elif cmd=="convert":
-    log.start()
-    # vols = args.pop(0)
     vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgConvert.vgConvert(volnum, optionOverwrite)
-    log.stop()
     lib.beep()
 
 
 elif cmd=="adjust":
-    log.start()
-    # vols = args.pop(0)
     vols = args[0]
     volnums = lib.getVolumeNumbers(vols)
     for volnum in volnums:
         vgAdjust.vgAdjust(volnum, optionOverwrite)
-    log.stop()
+    lib.beep()
+
+
+elif cmd=="denoise":
+    #. handle indiv images
+    vols = args[0]
+    volnums = lib.getVolumeNumbers(vols)
+    for volnum in volnums:
+        vgDenoise.vgDenoise(volnum, '', optionOverwrite)
     lib.beep()
 
 
@@ -162,8 +161,6 @@ elif cmd=="center":
 
 
 elif cmd=="composite":
-    # log.start()
-    # arg = args.pop(0)
     arg = args[0]
     if arg[0].lower()=='c':
         compositeIds = lib.getImageIds(arg)
@@ -174,13 +171,10 @@ elif cmd=="composite":
         volnums = lib.getVolumeNumbers(vols)
         for volnum in volnums:
             vgComposite.vgComposite(volnum, '', optionOverwrite)
-    # log.stop()
     lib.beep()
 
 
 elif cmd=="target":
-    # log.start()
-    # vols = args.pop(0)
     arg = args[0]
     if arg[0] in '0123456789':
         vols = arg
@@ -190,7 +184,6 @@ elif cmd=="target":
     else:
         targetPath = arg
         vgTarget.vgTarget('', targetPath)
-    # log.stop()
     lib.beep()
 
 

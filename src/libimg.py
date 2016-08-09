@@ -32,7 +32,6 @@ def denoiseImageFile(infile, outfile):
 
     # fill in single pixel horizontal lines
     # first identify horizontal segments - then get avg of above and below pixels
-    #
 
     cv2.imwrite(outfile, im)
 

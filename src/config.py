@@ -368,7 +368,8 @@ grabbedFolder       = onlineFolder  + "grabbed/"
 # test images go here
 testFolder    = 'test/'
 testCenterdb = testFolder + 'testCenters.csv'
-testCenterImagesFolder = testFolder + 'images/'
+testCenterImagesFolder = testFolder + 'center/'
+testDenoiseImagesFolder = testFolder + 'denoise/'
 
 
 # database folder

@@ -16,7 +16,8 @@ PyVoyager commands
   vg clips [<targetpath>] -bw|color - create bw or color clips
   vg movies                         - create movies from clips
   vg list                           - show status of local datasets
-  vg test                           - run centering tests
+  vg test center                    - run centering tests
+  vg test denoise                   - run denoising tests
 
 where
 
@@ -63,7 +64,8 @@ import vgClips
 import vgSegments
 import vgMovies
 import vgList
-import vgTest
+import vgTestCenter
+import vgTestDenoise
 import vgGrab
 import vgInitFiles
 import vgInitCenters

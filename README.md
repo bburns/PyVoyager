@@ -300,6 +300,7 @@ Version 0.44 (2016-08)
 ----------------------------------------
 - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
 - Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
+- Add `vg annotate` step - annotate images with information (to help with editing clips, at the moment)
 
 Make Uranus system movie with denoised images
 

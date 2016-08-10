@@ -24,29 +24,58 @@ import vgTitles
 
 
 
-def getNCopies(targetInfo, target, imageFraction):
+def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
+               framerateInfo, fileId):
     """
-    how many copies of the given target do we need, given the image size?
-    uses information in targets.csv.
+    how many copies of the given target do we need?
+    uses imageFraction, information in targets.csv, framerates.csv, etc.
     """
+
+    # ncopies is proportional to imageFraction
     targetInfoRecord = targetInfo.get(target)
     if targetInfoRecord:
         frameRateConstant = int(float(targetInfoRecord['frameRateConstant']))
     else:
         frameRateConstant = config.clipsDefaultFrameRateConstant
     ncopies = int(frameRateConstant * imageFraction) + 1
+
+    # don't let it go too slowly
     if ncopies > config.clipsMaxFrameRateConstant:
         ncopies = config.clipsMaxFrameRateConstant
+
+    # check for previous sticky setting override in framerates.csv
+    if not ncopiesMemory.get(targetKey) is None:
+        ncopies = ncopiesMemory[targetKey]
+        # print 'remembering sticky framerate',fileId, ncopies
+
+    # check for 'sticky' override from framerates.csv
+    framerateInfoRecord = framerateInfo.get(fileId + '+')
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframesPerImage'])
+        ncopiesMemory[targetKey] = ncopies # remember it
+        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+
+    # check for single image override from framerates.csv
+    framerateInfoRecord = framerateInfo.get(fileId)
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframesPerImage'])
+        # ncopiesMemory[targetKey] = None # reset the sticky setting
+        ncopiesMemory.pop(targetKey, None) # remove the sticky setting
+        # print 'got single framerate',fileId,ncopies,ncopiesMemory
+
     return ncopies
 
 
 # def stageFiles(bwOrColor, targetPathParts):
-def stageFiles(targetPathParts):
+# def stageFiles(targetPathParts):
+def stageFiles(volnums, targetPathParts):
     """
     Make links from source files (centers or composites) to clip stage folders.
     """
 
     print 'Making links from source files'
+
+    print volnums, targetPathParts
 
     # what does the user want to focus on?
     # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
@@ -100,35 +129,21 @@ def stageFiles(targetPathParts):
         # how many copies of this image do we want?
         # note: we need to do this even if we don't add this image,
         # because need to keep track of sticky overrides from framerates.csv.
-        # get ncopies as function of imageFraction and targets.csv
-        #. add all to the fn? might have 7 parameters but would encapsulate this code
-        ncopies = getNCopies(targetInfo, target, imageFraction)
-        # check for previous sticky setting override
-        if not ncopiesMemory.get(targetKey) is None:
-            ncopies = ncopiesMemory[targetKey]
-            # print 'remembering sticky framerate',fileId, ncopies
-        # check for 'sticky' override from framerates.csv
-        framerateInfoRecord = framerateInfo.get(fileId + '+')
-        if not framerateInfoRecord is None:
-            ncopies = int(framerateInfoRecord['nframesPerImage'])
-            ncopiesMemory[targetKey] = ncopies # remember it
-            # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
-        # check for single image override from framerates.csv
-        framerateInfoRecord = framerateInfo.get(fileId)
-        if not framerateInfoRecord is None:
-            ncopies = int(framerateInfoRecord['nframesPerImage'])
-            # ncopiesMemory[targetKey] = None # reset the sticky setting
-            ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-            # print 'got single framerate',fileId,ncopies,ncopiesMemory
+        ncopies = getNCopies(targetInfo, target, imageFraction, ncopiesMemory,
+                             targetKey, framerateInfo, fileId)
 
         # does this image match the target path the user specified on the cmdline?
         addImage = False
-        if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
+        # if volume in volnums: addImage = True
+        # if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
+        if (volume in volnums) and \
+           lib.targetMatches(targetPathParts, system, craft, target, camera):
+            addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
-        if addImage and ncopies>0:
+        if addImage and ncopies > 0:
 
             # do we need to center this image?
-            #. this is out of date - just base it on whether centered file exists
+            # this is out of date - just base it on whether centered file exists
             # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
 
             # get image source path
@@ -196,35 +211,35 @@ def stageFiles(targetPathParts):
                 nfile += ncopies
                 nfilesInTargetDir[targetKey] = nfile
 
-        # check for additional images
-        rowAdditions = lib.getJoinRow(csvAdditions, config.additionsColFileId, fileId)
-        if rowAdditions:
-            additionId = rowAdditions[config.additionsColAdditionId] # eg C2684338_composite
-            nframes = int(rowAdditions[additionsColNFrames])
+        # # check for additional images
+        # rowAdditions = lib.getJoinRow(csvAdditions, config.additionsColFileId, fileId)
+        # if rowAdditions:
+        #     additionId = rowAdditions[config.additionsColAdditionId] # eg C2684338_composite
+        #     nframes = int(rowAdditions[config.additionsColNFrames])
 
-            # get imagePath
+        #     # get imagePath
 
-            #. how get volume? should the addition col have the whole filepath?
-            #. and filter?
-            # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
-            # but that ties the data structure down too much
-            # or else include volume, filter, fileId, but then it's not as general purpose,
-            # eg for including extraneous images
+        #     #. how get volume? should the addition col have the whole filepath?
+        #     #. and filter?
+        #     # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
+        #     # but that ties the data structure down too much
+        #     # or else include volume, filter, fileId, but then it's not as general purpose,
+        #     # eg for including extraneous images
 
-            # one possibility would be to lookup the volume based on the imageId boundaries (fast),
-            # and then grab whatever image started with the given additionId so don't need filter.
-            # other extraneous images would have a special prefix, eg 'file:'.
+        #     # one possibility would be to lookup the volume based on the imageId boundaries (fast),
+        #     # and then grab whatever image started with the given additionId so don't need filter.
+        #     # other extraneous images would have a special prefix, eg 'file:'.
 
-            # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
+        #     # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
 
-            # if '_composite':
-            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            # elif '_centered':
-            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            # elif '_adjusted':
-            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            # need to insert the additional image here
-            # add nframes into stage
+        #     # if '_composite':
+        #     #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+        #     # elif '_centered':
+        #     #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+        #     # elif '_adjusted':
+        #     #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+        #     # need to insert the additional image here
+        #     # add nframes into stage
 
     fAdditions.close()
     fPositions.close()
@@ -232,9 +247,11 @@ def stageFiles(targetPathParts):
     print
 
 
-def vgClips(targetPath=None, keepLinks=False):
+# def vgClips(targetPath=None, keepLinks=False):
+# def vgClips(volnums=[], imageIds=[], targetPath=None, keepLinks=False):
+def vgClips(volnums=None, imageIds=None, targetPath=None, keepLinks=False):
     """
-    Build clips associated with the given target path (eg '//Io').
+    Build clips associated with the given volumes and target path (eg '//Io').
     """
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
@@ -258,7 +275,8 @@ def vgClips(targetPath=None, keepLinks=False):
         # import shutil
         # shutil.rmtree(config.clipsStageFolder)
         # stageFiles(bwOrColor, targetPathParts)
-        stageFiles(targetPathParts)
+        # stageFiles(targetPathParts)
+        stageFiles(volnums, targetPathParts)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',

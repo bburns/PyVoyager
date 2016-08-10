@@ -26,7 +26,8 @@ def parseFilenames(folder, section, grid):
 
 
 # def vgList(pVolume=None, pImageId=None, pTargetPath=None):
-def vgList(volnums=None, imageIds=None, targetPath=None):
+# def vgList(volnums=None, imageIds=None, targetPath=None):
+def vgList(volnums):
     "Get a listing of volumes and what stages they are at"
 
     # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }

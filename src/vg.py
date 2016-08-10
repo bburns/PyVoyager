@@ -23,6 +23,7 @@ PyVoyager commands
 where most commands can be followed by <filter>, where
 
   <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
+                 (all are anded together)
   <volnums>    = 5101..5120 Voyager 1 Jupiter
                  6101..6121 Voyager 1 Saturn
                  5201..5214 Voyager 2 Jupiter
@@ -37,7 +38,7 @@ where most commands can be followed by <filter>, where
   <target>     = Jupiter|Io|Europa|, etc.
   <camera>     = Narrow|Wide
 
-e.g. vg clips //triton
+e.g. vg clips 8205 //triton
 
 You can also add `-y` to a command to have it overwrite any existing data.
 """
@@ -110,27 +111,42 @@ for option in options:
 # parse remaining <filter> arguments
 
 
+volnums = None
+# volnums = config.volumes
+# imageIds = []
+imageIds = None
+targetPath = None
+for arg in args:
+    if arg[0] in '0123456789':
+        volnums = lib.getVolumeNumbers(arg)
+    elif arg[0].lower()=='c':
+        imageIds = lib.getImageIds(arg)
+    else:
+        targetPath = arg
+
 def callCommand(fn):
     "call a command function with <filter> parameters"
-    volnums = None
-    imageIds = None
-    targetPath = None
-    for arg in args:
-        if arg[0] in '0123456789':
-            volnums = lib.getVolumeNumbers(arg)
-        elif arg[0].lower()=='c':
-            imageIds = lib.getImageIds(arg)
-        else:
-            targetPath = arg
-    fn(volnums, imageIds, targetPath)
-    # if volnums:
-        # for volnum in volnums:
-            # fn(volnum, None, None)
-    # if imageIds:
-        # for imageId in imageIds:
-            # fn(None, imageId, None)
-    # if targetPath:
-        # fn(None, None, targetPath)
+    # volnums = None
+    # # volnums = config.volumes
+    # # imageIds = []
+    # imageIds = None
+    # targetPath = None
+    # for arg in args:
+    #     if arg[0] in '0123456789':
+    #         volnums = lib.getVolumeNumbers(arg)
+    #     elif arg[0].lower()=='c':
+    #         imageIds = lib.getImageIds(arg)
+    #     else:
+    #         targetPath = arg
+    # fn(volnums, imageIds, targetPath)
+    if volnums:
+        for volnum in volnums:
+            fn(volnum, None, None)
+    if imageIds:
+        for imageId in imageIds:
+            fn(None, imageId, None)
+    if targetPath:
+        fn(None, None, targetPath)
 
 
 if cmd=="download":
@@ -252,7 +268,8 @@ elif cmd=="movies":
 
 
 elif cmd=="list":
-    callCommand(vgList.vgList)
+    # callCommand(vgList.vgList)
+    vgList.vgList(volnums)
 
 
 elif cmd=="test":

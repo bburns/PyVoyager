@@ -1,6 +1,9 @@
 
-# vg download command
-# download tar.gz archives from PDS ring site at seti.org
+"""
+vg download command
+
+Download tar.gz archives from PDS ring site at seti.org
+"""
 
 import os
 import os.path
@@ -9,7 +12,7 @@ import config
 import lib
 
 
-def vgDownload(volnum, overwrite=False, directCall=True):
+def vgDownload(volnum, imageId, targetPath, overwrite=False, directCall=True):
     "Download the given volume number, if it doesn't exist yet."
 
     # url eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz

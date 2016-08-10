@@ -506,6 +506,7 @@ voyager2neptune = range(8201,8210+1)
 
 # list of all volumes
 volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + voyager2uranus + voyager2neptune
+volumes = [str(volume) for volume in volumes]
 
 # flybys = {
 #     # 51: voyager1jupiter,

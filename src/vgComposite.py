@@ -22,7 +22,8 @@ import libimg
 import vgCenter
 
 
-def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall=True):
+# def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall=True):
+def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
 

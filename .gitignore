@@ -15,7 +15,7 @@ src/experiments/images/out
 
 test/center/centered/
 test/center/debug/
-test/denoise/denoised/
+test/denoise/*denoised.jpg
 
 db/centers_new.csv
 

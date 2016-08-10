@@ -19,10 +19,10 @@ import log
 
 
 
-
 def denoiseImageFile(infile, outfile):
-    ""
-    im = cv2.imread(infile)
+    "attempt to remove noise from the given image file and save to outfile"
+
+    im = cv2.imread(infile, 0) #.param
 
     # blank out bottom 3 pixels
     im[-3:,:] = 0
@@ -30,8 +30,48 @@ def denoiseImageFile(infile, outfile):
     # blank out right 3 pixels
     im[:,-3:] = 0
 
+    # im2 = im + 30
+    # im2 = im + 100
+    # im2 = im + 100
+    # im2 = im - 100
+    im2 = im
+
     # fill in single pixel horizontal lines
     # first identify horizontal segments - then get avg of above and below pixels
+    linesToFill = []
+    for j in xrange(0,800):
+        rowMiddle = im[j,:]
+        # rowAbove = im[j-1,:] if j>0 else np.zeros(800,np.uint8)
+        # rowBelow = im[j+1,:] if j<799 else np.zeros(800,np.uint8)
+        rowAbove = im2[j-1,:] if j>0 else np.zeros(800,np.uint8)
+        rowBelow = im2[j+1,:] if j<799 else np.zeros(800,np.uint8)
+        maxlen = 0
+        seglen = 0
+        for i in xrange(0,800):
+            above = rowAbove[i]
+            middle = rowMiddle[i]
+            below = rowBelow[i]
+            # d1 = middle-above
+            # d2 = middle-below
+            # if (middle>above and middle>below) or (middle<above and middle<below):
+            # eps=30
+            # above = above + eps
+            # below = below + eps
+            if (middle>above and middle>below):
+                seglen += 1
+                if seglen>maxlen:
+                    maxlen = seglen
+            else:
+                seglen = 0
+        # if maxlen > 20: #.param
+        if maxlen > 30: #.param
+            linesToFill.append(j)
+
+    for line in linesToFill:
+        rowAbove = im[line-1,:] if line>0 else np.zeros(800,np.uint8)
+        rowBelow = im[line+1,:] if line<799 else np.zeros(800,np.uint8)
+        # im[line,:] = 0
+        im[line,:] = (rowAbove+rowBelow)/2
 
     cv2.imwrite(outfile, im)
 

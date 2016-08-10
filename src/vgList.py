@@ -25,7 +25,8 @@ def parseFilenames(folder, section, grid):
         del dirnames[:] # don't recurse
 
 
-def vgList(pVolume=None, pImageId=None, pTargetPath=None):
+# def vgList(pVolume=None, pImageId=None, pTargetPath=None):
+def vgList(volnums=None, imageIds=None, targetPath=None):
     "Get a listing of volumes and what stages they are at"
 
     # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
@@ -49,7 +50,9 @@ def vgList(pVolume=None, pImageId=None, pTargetPath=None):
     headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments',
                'Denoised', 'Centers', 'Composites']
     rows = []
-    for vol in config.volumes:
+    # for vol in config.volumes:
+    volumes = volnums or config.volumes
+    for vol in volumes:
         # only include a row if it has some data
         svol = str(vol)
         gridrow = grid.get(svol)

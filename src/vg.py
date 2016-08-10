@@ -122,14 +122,15 @@ def callCommand(fn):
             imageIds = lib.getImageIds(arg)
         else:
             targetPath = arg
-    if volnums:
-        for volnum in volnums:
-            fn(volnum, None, None)
-    if imageIds:
-        for imageId in imageIds:
-            fn(None, imageId, None)
-    if targetPath:
-        fn(None, None, targetPath)
+    fn(volnums, imageIds, targetPath)
+    # if volnums:
+        # for volnum in volnums:
+            # fn(volnum, None, None)
+    # if imageIds:
+        # for imageId in imageIds:
+            # fn(None, imageId, None)
+    # if targetPath:
+        # fn(None, None, targetPath)
 
 
 if cmd=="download":
@@ -251,7 +252,7 @@ elif cmd=="movies":
 
 
 elif cmd=="list":
-    vgList.vgList()
+    callCommand(vgList.vgList)
 
 
 elif cmd=="test":

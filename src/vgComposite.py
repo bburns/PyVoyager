@@ -76,8 +76,8 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
     nfile = 0
     for row in csvComposites:
 
-        volume = row[config.compositesColVolume]
-        compositeId = row[config.compositesColCompositeId]
+        volume = row[config.colCompositesVolume]
+        compositeId = row[config.colCompositesCompositeId]
 
         # filter on volume or composite id
         # if volume==filterVolume or compositeId==filterCompositeId:
@@ -126,14 +126,14 @@ def processChannels(channelRows, volume, nfile, startId):
         compositeId = ''
         channels = []
         for row in channelRows:
-            compositeId = row[config.compositesColCompositeId]
-            fileId = row[config.compositesColFileId]
-            volume = row[config.compositesColVolume]
-            filter = row[config.compositesColFilter]
-            weight = float(row[config.compositesColWeight]) \
-                     if len(row)>config.compositesColWeight else 1.0
-            x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
-            y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
+            compositeId = row[config.colCompositesCompositeId]
+            fileId = row[config.colCompositesFileId]
+            volume = row[config.colCompositesVolume]
+            filter = row[config.colCompositesFilter]
+            weight = float(row[config.colCompositesWeight]) \
+                     if len(row)>config.colCompositesWeight else 1.0
+            x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
+            y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
             #. may use imageSource to know adjusted vs centered?
             # get centered filepath
             # channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)

@@ -60,10 +60,10 @@ def vgTestCenter():
                 debugTitle = debugFolder + fileTitle
                 config.debugImageTitle = debugTitle
 
-                rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+                rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
                 if rowPositions:
                     # fraction of frame
-                    imageFraction = float(rowPositions[config.positionsColImageFraction]) 
+                    imageFraction = float(rowPositions[config.colPositionsImageFraction]) 
                     radius = int(400*imageFraction) #.param
                 else:
                     radius = None

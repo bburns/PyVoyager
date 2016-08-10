@@ -108,21 +108,21 @@ def stageFiles(filterVolumes, targetPathParts):
     for row in csvFiles:
 
         # get file info
-        volume = row[config.filesColVolume]
-        fileId = row[config.filesColFileId]
-        filter = row[config.filesColFilter]
-        system = row[config.filesColPhase]
-        craft = row[config.filesColCraft]
-        target = row[config.filesColTarget]
-        camera = row[config.filesColInstrument]
+        volume = row[config.colFilesVolume]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
 
         # relabel target field if necessary - see db/targets.csv for more info
         target = lib.retarget(retargetingInfo, fileId, target)
 
         # get expected angular size (as fraction of frame)
-        rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+        rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
         if rowPositions:
-            imageFraction = float(rowPositions[config.positionsColImageFraction])
+            imageFraction = float(rowPositions[config.colPositionsImageFraction])
         else:
             imageFraction = 0
 
@@ -224,10 +224,10 @@ def stageFiles(filterVolumes, targetPathParts):
                 nfilesInTargetDir[targetKey] = nfile
 
         # # check for additional images
-        # rowAdditions = lib.getJoinRow(csvAdditions, config.additionsColFileId, fileId)
+        # rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
         # if rowAdditions:
-        #     additionId = rowAdditions[config.additionsColAdditionId] # eg C2684338_composite
-        #     nframes = int(rowAdditions[config.additionsColNFrames])
+        #     additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
+        #     nframes = int(rowAdditions[config.colAdditionsNFrames])
 
         #     # get imagePath
 

@@ -35,13 +35,13 @@ def loadPreviousStep(targetPathParts, fn):
     volumes = {}
     csvFiles, fFiles = openCsvReader(config.dbFiles)
     for rowFiles in csvFiles:
-        volume = rowFiles[config.filesColVolume]
-        fileId = rowFiles[config.filesColFileId]
-        filter = rowFiles[config.filesColFilter]
-        system = rowFiles[config.filesColPhase]
-        craft = rowFiles[config.filesColCraft]
-        target = rowFiles[config.filesColTarget]
-        camera = rowFiles[config.filesColInstrument]
+        volume = rowFiles[config.colFilesVolume]
+        fileId = rowFiles[config.colFilesFileId]
+        filter = rowFiles[config.colFilesFilter]
+        system = rowFiles[config.colFilesSystem]
+        craft = rowFiles[config.colFilesCraft]
+        target = rowFiles[config.colFilesTarget]
+        camera = rowFiles[config.colFilesCamera]
 
         # relabel target field if necessary
         target = retarget(targetInfo, fileId, target)

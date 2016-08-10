@@ -55,7 +55,7 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         # join on centers.csv file
         csvCenters, fCenters = lib.openCsvReader(config.dbCenters)
         csvCenters.next() # skip header row #. brittle
-        # fileIdCenters = lib.nextRow(csvCenters, config.centersColFileId)
+        # fileIdCenters = lib.nextRow(csvCenters, config.colCentersFileId)
 
         # join on centersOverride.csv file
         csvCentersOverride, fCentersOverride = lib.openCsvReader(config.dbCentersOverride)
@@ -63,17 +63,17 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
 
         nfile = 1
         for rowFiles in csvFiles:
-            volume = rowFiles[config.filesColVolume]
-            fileId = rowFiles[config.filesColFileId]
+            volume = rowFiles[config.colFilesVolume]
+            fileId = rowFiles[config.colFilesFileId]
 
             if volume==buildVolnum or fileId==buildImageId:
 
                 # get image properties
-                filter = rowFiles[config.filesColFilter]
-                system = rowFiles[config.filesColPhase]
-                craft = rowFiles[config.filesColCraft]
-                target = rowFiles[config.filesColTarget]
-                camera = rowFiles[config.filesColInstrument]
+                filter = rowFiles[config.colFilesFilter]
+                system = rowFiles[config.colFilesSystem]
+                craft = rowFiles[config.colFilesCraft]
+                target = rowFiles[config.colFilesTarget]
+                camera = rowFiles[config.colFilesCamera]
 
                 # relabel target field if necessary
                 target = lib.retarget(targetInfo, fileId, target)
@@ -95,21 +95,21 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
                 if doCenter:
                     # get x,y = from joined file
                     rowCentersOverride = lib.getJoinRow(csvCentersOverride,
-                                                        config.centersColFileId, fileId)
+                                                        config.colCentersFileId, fileId)
                     if rowCentersOverride:
                         print 'found centers override record - using x,y from that'
                         print rowCentersOverride
-                        x = int(rowCentersOverride[config.centersColX])
-                        y = int(rowCentersOverride[config.centersColY])
-                        # radius = int(rowCentersOverride[config.centersColRadius])
+                        x = int(rowCentersOverride[config.colCentersX])
+                        y = int(rowCentersOverride[config.colCentersY])
+                        # radius = int(rowCentersOverride[config.colCentersRadius])
                     else:
                         rowCenters = lib.getJoinRow(csvCenters,
-                                                    config.centersColFileId, fileId)
+                                                    config.colCentersFileId, fileId)
                         if rowCenters:
                             # print 'found centers record - using that'
                             # print rowCenters
-                            x = int(rowCenters[config.centersColX])
-                            y = int(rowCenters[config.centersColY])
+                            x = int(rowCenters[config.colCentersX])
+                            y = int(rowCenters[config.colCentersY])
                         else:
                             print 'record not found'
                 # center image file (if x,y==399,399 will just copy the file to center folder)

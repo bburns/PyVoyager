@@ -34,13 +34,13 @@ def vgTitles(targetPath=None):
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     for row in csvFiles:
 
-        volume = row[config.filesColVolume]
-        fileId = row[config.filesColFileId]
-        filter = row[config.filesColFilter]
-        system = row[config.filesColPhase]
-        craft = row[config.filesColCraft]
-        target = row[config.filesColTarget]
-        camera = row[config.filesColInstrument]
+        volume = row[config.colFilesVolume]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
 
         # is this an image the user wants to see?
         doTarget = lib.targetMatches(targetPathParts, system, craft, target, camera)

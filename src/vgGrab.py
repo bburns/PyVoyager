@@ -24,8 +24,8 @@ def getVolume(fileId):
     reader, f = lib.openCsvReader(config.dbFiles)
     volume = ''
     for row in reader:
-        if fileId==row[config.filesColFileId]:
-            volume = row[config.filesColVolume] # eg '5101'
+        if fileId==row[config.colFilesFileId]:
+            volume = row[config.colFilesVolume] # eg '5101'
             break
     f.close()
     return volume

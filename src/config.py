@@ -94,11 +94,8 @@ suffixes = {
 # ----------------------------------------
 
 
-
-# Denoised
+# Denoise
 # ----------------------------------------
-
-
 
 
 # Center
@@ -124,8 +121,6 @@ Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.sp
 #. if necessary could give them values here
 centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Helene,\
 Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
-
-
 
 
 # blob detection
@@ -258,13 +253,9 @@ drawTarget = False # draw expected target size/location with yellow circle
 # Composite
 # ----------------------------------------
 
-# suffix for composite filenames
-
 
 # Mosaic
 # ----------------------------------------
-
-# suffix for mosaic filenames
 
 
 # Annotate
@@ -283,7 +274,6 @@ targetsIgnore = dontCenterTargets
 # Titles
 # ----------------------------------------
 
-# titleSecondsToShow = 5
 titleSecondsToShow = 4
 
 titleFont = "c:/windows/fonts/!futura-light.ttf"
@@ -360,7 +350,7 @@ clipsMinFrames = 20
 
 
 # Files and folders
-# ----------------------------------------
+# --------------------------------------------------------------------------------
 
 # convention: all folders should end with /
 
@@ -368,23 +358,6 @@ clipsMinFrames = 20
 # use offline folder for large datasets (multi gigabyte)
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
-
-# downloadsFolder     = offlineFolder + "step01_downloads/"
-# unzipsFolder        = offlineFolder + "step02_unzips/"
-# imagesFolder        = onlineFolder  + "step03_images/"
-# adjustmentsFolder   = onlineFolder  + "step04_adjustments/"
-# denoisedFolder      = onlineFolder  + "step05_denoised/"
-# centersFolder       = onlineFolder  + "step06_centers/"
-# compositesFolder    = onlineFolder  + "step07_composites/"
-# mosaicsFolder       = onlineFolder  + "step08_mosaics/"
-# annotationsFolder   = onlineFolder  + "step09_annotations/"
-# targetsFolder       = onlineFolder  + "step10_targets/"
-# titlesFolder        = onlineFolder  + "step11_titles/"
-# clipsFolder         = onlineFolder  + "step12_clips/"
-# moviesFolder        = onlineFolder  + "step13_movies/"
-
-grabFolder          = onlineFolder  + "grab/"
-grabbedFolder       = onlineFolder  + "grabbed/"
 
 folders = {
     'download':   offlineFolder + 'step01_downloads/',
@@ -404,11 +377,12 @@ folders = {
 
 clipsStageFolder    = folders['clips'] + 'stage/'
 
-
-
+# grab folders - see vg grab
+grabFolder = onlineFolder  + "grab/"
+grabbedFolder = onlineFolder  + "grabbed/"
 
 # test images go here
-testFolder    = 'test/'
+testFolder = 'test/'
 testCenterdb = testFolder + 'testCenters.csv'
 testCenterImagesFolder = testFolder + 'center/'
 testDenoiseImagesFolder = testFolder + 'denoise/'
@@ -417,23 +391,40 @@ testDenoiseImagesFolder = testFolder + 'denoise/'
 # database folder
 dbFolder = 'db/'
 
-# index folder
+# csv file databases
+dbFiles           = dbFolder + 'files.csv'
+dbCentering       = dbFolder + 'centering.csv'
+dbCenters         = dbFolder + 'centers.csv'
+dbCentersOverride = dbFolder + 'centersOverride.csv'
+dbCentersNew      = dbFolder + 'centersNew.csv'
+dbComposites      = dbFolder + 'composites.csv'
+dbMosaics         = dbFolder + 'mosaics.csv'
+dbMovies          = dbFolder + 'movies.csv'
+dbRetargeting     = dbFolder + 'retargeting.csv'
+dbFramerates      = dbFolder + 'framerates.csv'
+dbSegments        = dbFolder + 'segments.csv'
+dbPositions       = dbFolder + 'positions.csv'
+dbErrata          = dbFolder + 'errata.csv'
+dbTarget          = dbFolder + 'targets.csv'
+dbAdditions       = dbFolder + 'additions.csv'
+
+# index file folder
 indexFolder = 'db/index/'
 
 # useful columns in the index files
 # (see db/index/readme.md)
 # indexfile     = 'data/index/rawimages.tab'
-indexFileColVolume = 0 # eg VGISS_5101
-indexFileColFilename = 2 # eg C1389407_GEOMED.IMG
-indexFileColFiletype = 3 # eg CALIBRATED_IMAGE
-indexFileColCraft = 4 # eg VOYAGER 1
-indexFileColPhase = 5 # eg JUPITER ENCOUNTER
-indexFileColTarget = 6 # eg IO
-indexFileColTime = 9 # eg 1979-03-05T15:32:56
-indexFileColTimeReceived = 10 # eg 1979-03-05T15:32:56
-indexFileColInstrument = 11 # eg WIDE ANGLE CAMERA
-indexFileColFilter = 16 # eg ORANGE
-indexFileColNote = 19 # eg 3 COLOR ROTATION MOVIE
+colIndexVolume       = 0 # eg VGISS_5101
+colIndexFilename     = 2 # eg C1389407_GEOMED.IMG
+colIndexFiletype     = 3 # eg CALIBRATED_IMAGE
+colIndexCraft        = 4 # eg VOYAGER 1
+colIndexPhase        = 5 # eg JUPITER ENCOUNTER
+colIndexTarget       = 6 # eg IO
+colIndexTime         = 9 # eg 1979-03-05T15:32:56
+colIndexTimeReceived = 10 # eg 1979-03-05T15:32:56
+colIndexInstrument   = 11 # eg WIDE ANGLE CAMERA
+colIndexFilter       = 16 # eg ORANGE
+colIndexNote         = 19 # eg 3 COLOR ROTATION MOVIE
 
 # index field value translations
 # see vgInitFiles.py
@@ -453,87 +444,42 @@ indexTranslations = {
     }
 
 
-# csv file databases
-dbFiles           = dbFolder + 'files.csv'
-dbCentering       = dbFolder + 'centering.csv'
-dbCenters         = dbFolder + 'centers.csv'
-dbCentersOverride = dbFolder + 'centersOverride.csv'
-dbCentersNew      = dbFolder + 'centersNew.csv'
-dbComposites      = dbFolder + 'composites.csv'
-dbMosaics         = dbFolder + 'mosaics.csv'
-dbMovies          = dbFolder + 'movies.csv'
-dbRetargeting     = dbFolder + 'retargeting.csv'
-dbFramerates      = dbFolder + 'framerates.csv'
-dbSegments        = dbFolder + 'segments.csv'
-dbPositions       = dbFolder + 'positions.csv'
-dbErrata          = dbFolder + 'errata.csv'
-dbTarget          = dbFolder + 'targets.csv'
-dbAdditions       = dbFolder + 'additions.csv'
-
-#. rename all these to colFilesVolume etc
-
 # files.csv columns
-# keep in synch with vgInitFiles.py, etc
-# filesColVolume = 0
-# filesColFileId = 1
-filesColFileId = 0
-filesColVolume = 1
-filesColPhase = 2
-filesColCraft = 3
-filesColTarget = 4
-filesColTime = 5
-filesColInstrument = 6
-filesColFilter = 7
-filesColNote = 8
-
+colFilesFileId = 0
+colFilesVolume = 1
+colFilesSystem = 2
+colFilesCraft  = 3
+colFilesTarget = 4
+colFilesTime   = 5
+colFilesCamera = 6
+colFilesFilter = 7
+colFilesNote   = 8
 
 # centers.csv columns
-# centersColVolume = 0
-# centersColFileId = 1
-centersColFileId = 0
-centersColVolume = 1
-centersColX = 2
-centersColY = 3
-centersColRadius = 4 # not sure yet
-
+colCentersFileId = 0
+colCentersVolume = 1
+colCentersX      = 2
+colCentersY      = 3
+colCentersRadius = 4 # not sure yet
 
 # composites.csv columns
-# keep in synch with vgBuildComposites.py
-# compositesColVolume = 0
-# compositesColCompositeId = 1
-compositesColCompositeId = 0
-compositesColFileId = 1
-compositesColVolume = 2
-compositesColFilter = 3
-compositesColWeight = 4
-compositesColX = 5
-compositesColY = 6
-
-
-# segments.csv columns
-# keep in synch with vgBuildSegments.py
-# segmentId,fileIds,source,nframes,annotation
-segmentsColSegmentId = 0
-segmentsColImageIds = 1
-segmentsColImageSource = 2
-segmentsColNFrames = 3
-segmentsColAnnotation = 4
-
+colCompositesCompositeId = 0
+colCompositesFileId      = 1
+colCompositesVolume      = 2
+colCompositesFilter      = 3
+colCompositesWeight      = 4
+colCompositesX           = 5
+colCompositesY           = 6
 
 # positions.csv columns
-# keep in synch with vgBuildCenters.py and vgInitPositions.py
-# fileId,distance(km),imageSize
-positionsColFileId = 0
-positionsColDistance = 1
-positionsColImageFraction = 2
-
+colPositionsFileId        = 0
+colPositionsDistance      = 1
+colPositionsImageFraction = 2
 
 # additions.csv columns
-additionsColFileId = 0
-additionsColAdditionId = 1
-additionsColNFrames = 2
-
-
+colAdditionsFileId     = 0
+colAdditionsAdditionId = 1
+colAdditionsNFrames    = 2
 
 
 
@@ -550,8 +496,7 @@ volumes = voyager1jupiter + voyager1saturn + voyager2jupiter + voyager2saturn + 
 volumes = [str(volume) for volume in volumes]
 
 # flybys = {
-#     # 51: voyager1jupiter,
-#     51: [5104,5105],
+#     51: voyager1jupiter,
 #     61: voyager1saturn,
 #     52: voyager2jupiter,
 #     62: voyager2saturn,

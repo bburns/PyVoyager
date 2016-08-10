@@ -70,11 +70,11 @@ def vgInitPositions():
     for row in csvFiles:
         # get field values
         # volume,fileid,phase,craft,target,time,instrument,filter,note
-        fileId = row[config.filesColFileId] # eg C1385455
-        craft = row[config.filesColCraft] # eg Voyager1
-        target = row[config.filesColTarget] # eg Io
-        utcTime = row[config.filesColTime] # eg 1978-12-11T01:03:29
-        instrument = row[config.filesColInstrument] # eg Narrow
+        fileId = row[config.colFilesFileId] # eg C1385455
+        craft = row[config.colFilesCraft] # eg Voyager1
+        target = row[config.colFilesTarget] # eg Io
+        utcTime = row[config.colFilesTime] # eg 1978-12-11T01:03:29
+        instrument = row[config.colFilesCamera] # eg Narrow
 
         # relabel target field if necessary
         target = lib.retarget(targetInfo, fileId, target)

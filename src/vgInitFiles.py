@@ -42,15 +42,15 @@ def vgInitFiles():
             row = [field.strip() for field in row]
 
             # get field values
-            volume = row[config.indexFileColVolume] # eg VGISS_5101
-            filename = row[config.indexFileColFilename] # eg C1385455_RAW.IMG
-            craft = row[config.indexFileColCraft] # eg VOYAGER 1
-            phase = row[config.indexFileColPhase] # eg JUPITER ENCOUNTER
-            target = row[config.indexFileColTarget] # eg N RINGS
-            time = row[config.indexFileColTime] # eg 1979-03-05T15:32:56
-            instrument = row[config.indexFileColInstrument] # eg NARROW ANGLE CAMERA
-            filter = row[config.indexFileColFilter] # eg ORANGE
-            note = row[config.indexFileColNote]
+            volume = row[config.colIndexVolume] # eg VGISS_5101
+            filename = row[config.colIndexFilename] # eg C1385455_RAW.IMG
+            craft = row[config.colIndexCraft] # eg VOYAGER 1
+            phase = row[config.colIndexPhase] # eg JUPITER ENCOUNTER
+            target = row[config.colIndexTarget] # eg N RINGS
+            time = row[config.colIndexTime] # eg 1979-03-05T15:32:56
+            instrument = row[config.colIndexInstrument] # eg NARROW ANGLE CAMERA
+            filter = row[config.colIndexFilter] # eg ORANGE
+            note = row[config.colIndexNote]
 
             # translate where needed
             volume = volume[-4:] # eg 5101

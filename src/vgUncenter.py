@@ -35,14 +35,14 @@ def vgUncenter(filterVolume):
     # iterate through all available images, filter on desired volume
     reader, f = lib.openCsvReader(config.dbFiles)
     for row in reader:
-        volume = row[config.filesColVolume]
+        volume = row[config.colFilesVolume]
         if volume==filterVolume:
-            fileId = row[config.filesColFileId]
-            filter = row[config.filesColFilter]
-            system = row[config.filesColPhase]
-            craft = row[config.filesColCraft]
-            target = row[config.filesColTarget]
-            camera = row[config.filesColInstrument]
+            fileId = row[config.colFilesFileId]
+            filter = row[config.colFilesFilter]
+            system = row[config.colFilesSystem]
+            craft = row[config.colFilesCraft]
+            target = row[config.colFilesTarget]
+            camera = row[config.colFilesCamera]
 
             # get the centering info, if any
             # info includes planetCraftTargetCamera,centeringOff,centeringOn

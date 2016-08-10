@@ -83,14 +83,14 @@ def vgInitComposites():
     for row in csvFiles:
         # get field values
         # volume,fileId,phase,craft,target,time,instrument,filter,note
-        fileId = row[config.filesColFileId] # eg C1385455
-        volume = row[config.filesColVolume] # eg 5101
-        phase = row[config.filesColPhase] # eg Jupiter
-        craft = row[config.filesColCraft] # eg Voyager1
-        target = row[config.filesColTarget] # eg Io
-        instrument = row[config.filesColInstrument] # eg Narrow
-        filter = row[config.filesColFilter] # eg Orange
-        # note = row[config.filesColNote]
+        fileId = row[config.colFilesFileId] # eg C1385455
+        volume = row[config.colFilesVolume] # eg 5101
+        phase = row[config.colFilesSystem] # eg Jupiter
+        craft = row[config.colFilesCraft] # eg Voyager1
+        target = row[config.colFilesTarget] # eg Io
+        instrument = row[config.colFilesCamera] # eg Narrow
+        filter = row[config.colFilesFilter] # eg Orange
+        # note = row[config.colFilesNote]
         # print volume, fileId, phase, craft, target, instrument, filter
         if debug: print 'row',row[:-1] # skip note
 
@@ -112,12 +112,12 @@ def vgInitComposites():
             else:
                 if debug: print 'bufferrow',bufferRow[:-1]
                 # we know the target and instrument are the same, so can skip them
-                bufferVolume = bufferRow[config.filesColVolume] # eg 5101
-                bufferFileId = bufferRow[config.filesColFileId] # eg C1385455
-                bufferPhase = bufferRow[config.filesColPhase] # eg Jupiter
-                bufferCraft = bufferRow[config.filesColCraft] # eg Voyager1
-                bufferFilter = bufferRow[config.filesColFilter] # eg Orange
-                # bufferNote = bufferRow[config.filesColNote]
+                bufferVolume = bufferRow[config.colFilesVolume] # eg 5101
+                bufferFileId = bufferRow[config.colFilesFileId] # eg C1385455
+                bufferPhase = bufferRow[config.colFilesSystem] # eg Jupiter
+                bufferCraft = bufferRow[config.colFilesCraft] # eg Voyager1
+                bufferFilter = bufferRow[config.colFilesFilter] # eg Orange
+                # bufferNote = bufferRow[config.colFilesNote]
                 if filter==bufferFilter:
                     if debug: print 'filters match - check other values'
                     # if phase==bufferPhase and craft==bufferCraft and
@@ -128,7 +128,7 @@ def vgInitComposites():
                         # so dump non-empty buffer rows into composites.csv, clear buffer"
                         # print buffer
                         # pprint.pprint(buffer)
-                        # print [row[config.filesColFilter] for row in buffer]
+                        # print [row[config.colFilesFilter] for row in buffer]
                         # print buffer.join('\n')
                         # bug - had used 'row' for this variable,
                         # but it's not local! overwrote existing row variable
@@ -136,11 +136,11 @@ def vgInitComposites():
                         outCompositeId = None
                         for nonemptyRow in nonemptyRows:
                             # volume,compositeId,centerId,filter
-                            outVolume = nonemptyRow[config.filesColVolume]
+                            outVolume = nonemptyRow[config.colFilesVolume]
                             if outCompositeId == None:
-                                outCompositeId = nonemptyRow[config.filesColFileId]
-                            outFileId = nonemptyRow[config.filesColFileId]
-                            outFilter = nonemptyRow[config.filesColFilter]
+                                outCompositeId = nonemptyRow[config.colFilesFileId]
+                            outFileId = nonemptyRow[config.colFilesFileId]
+                            outFilter = nonemptyRow[config.colFilesFilter]
                             # if just a single row, write it out as a clear image
                             # so shows up as b&w
                             # no, that messes things up

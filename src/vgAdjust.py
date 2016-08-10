@@ -59,15 +59,15 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for row in csvFiles:
-        volume = row[config.filesColVolume]
+        volume = row[config.colFilesVolume]
         if volume!=filterVolume: continue # filter on desired volume
 
-        fileId = row[config.filesColFileId]
-        filter = row[config.filesColFilter]
-        system = row[config.filesColPhase]
-        craft = row[config.filesColCraft]
-        target = row[config.filesColTarget]
-        camera = row[config.filesColInstrument]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
 
         # adjust the file
         # pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'

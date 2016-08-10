@@ -87,19 +87,19 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for rowFiles in csvFiles:
-        volume = rowFiles[config.filesColVolume]
-        fileId = rowFiles[config.filesColFileId]
+        volume = rowFiles[config.colFilesVolume]
+        fileId = rowFiles[config.colFilesFileId]
         
         # filter to given volume/image
         if volume!=filterVolume and fileId!=filterImageId: continue 
 
         # get image properties
-        filter = rowFiles[config.filesColFilter]
-        system = rowFiles[config.filesColPhase]
-        craft = rowFiles[config.filesColCraft]
-        target = rowFiles[config.filesColTarget]
-        camera = rowFiles[config.filesColInstrument]
-        note = rowFiles[config.filesColNote]
+        filter = rowFiles[config.colFilesFilter]
+        system = rowFiles[config.colFilesSystem]
+        craft = rowFiles[config.colFilesCraft]
+        target = rowFiles[config.colFilesTarget]
+        camera = rowFiles[config.colFilesCamera]
+        note = rowFiles[config.colFilesNote]
 
         # relabel target field if necessary
         target = lib.retarget(targetInfo, fileId, target)
@@ -119,9 +119,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # get expected target size and radius
         # imageFraction = fraction of image frame taken up by target
-        rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
+        rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
         if rowPositions:
-            imageFraction = float(rowPositions[config.positionsColImageFraction])
+            imageFraction = float(rowPositions[config.colPositionsImageFraction])
         else:
             imageFraction = 0 # just rhea
         targetRadius = int(400*imageFraction) #.param

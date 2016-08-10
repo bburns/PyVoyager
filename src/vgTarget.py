@@ -37,13 +37,13 @@ def vgTarget(filterVolume='', targetPath=''):
     for row in csvFiles:
 
         # get image properties
-        volume = row[config.filesColVolume]
-        fileId = row[config.filesColFileId]
-        filter = row[config.filesColFilter]
-        system = row[config.filesColPhase]
-        craft = row[config.filesColCraft]
-        target = row[config.filesColTarget]
-        camera = row[config.filesColInstrument]
+        volume = row[config.colFilesVolume]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
 
         # relabel target field if necessary - see db/targets.csv for more info
         target = lib.retarget(targetInfo, fileId, target)

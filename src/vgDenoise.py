@@ -61,19 +61,19 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
     nfile = 1
     for rowFiles in csvFiles:
         
-        volume = rowFiles[config.filesColVolume]
-        fileId = rowFiles[config.filesColFileId]
+        volume = rowFiles[config.colFilesVolume]
+        fileId = rowFiles[config.colFilesFileId]
         
         # if volume!=volnum and fileId!=buildImageId: continue # filter to given volume/image
         if volume!=volnum: continue # filter to given volume
 
         # get image properties
-        filter = rowFiles[config.filesColFilter]
-        system = rowFiles[config.filesColPhase]
-        craft = rowFiles[config.filesColCraft]
-        target = rowFiles[config.filesColTarget]
-        camera = rowFiles[config.filesColInstrument]
-        note = rowFiles[config.filesColNote]
+        filter = rowFiles[config.colFilesFilter]
+        system = rowFiles[config.colFilesSystem]
+        craft = rowFiles[config.colFilesCraft]
+        target = rowFiles[config.colFilesTarget]
+        camera = rowFiles[config.colFilesCamera]
+        note = rowFiles[config.colFilesNote]
 
         # relabel target field if necessary
         # target = lib.retarget(targetInfo, fileId, target)

@@ -31,8 +31,8 @@ def vgInitErrata():
     for row in csvFiles:
         # get field values
         # volume,fileid,phase,craft,target,time,instrument,filter,note
-        fileId = row[config.filesColFileId] # eg C1385455
-        time = row[config.filesColTime] # eg UNKNOWN
+        fileId = row[config.colFilesFileId] # eg C1385455
+        time = row[config.colFilesTime] # eg UNKNOWN
         # if debug: print 'row',row[:-1] # skip note
 
         outRow = None

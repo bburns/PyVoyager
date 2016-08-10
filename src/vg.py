@@ -109,8 +109,6 @@ for arg in args:
         filterImageIds = lib.getImageIds(arg)
     else:
         filterTargetPath = arg
-# print args
-# print filterVolumes
 
 # handle commands
 if cmd=="download":
@@ -177,21 +175,9 @@ elif cmd=="target":
     lib.beep()
 
 elif cmd=="clips":
-    # if optionBw==False and optionColor==False:
-    #     print 'Must specify -bw or -color'
-    # else:
-    #     bwOrColor = 'bw' if optionBw else 'color'
-    #     # filterTargetPath = args.pop(0)
-    #     filterTargetPath = args[0]
-    #     vgClips.vgClips(bwOrColor, filterTargetPath, optionKeepLinks)
-    #     lib.beep()
-    # filterTargetPath = args[0]
-    # vgClips.vgClips(filterTargetPath, optionKeepLinks)
     if filterVolumes is None:
         filterVolumes = config.volumes
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
-    # vgClips.vgClips(filterVolumes, filterTargetPath, options)
-    # vgClips.vgClips(filterVolumes, filterTargetPath, options)
     lib.beep()
 
 elif cmd=="movies":

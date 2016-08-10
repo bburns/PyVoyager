@@ -45,15 +45,18 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         return
 
     # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + filterVolume + '/'
-    denoisedSubfolder = config.denoisedFolder + 'VGISS_' + filterVolume + '/'
-    centersSubfolder = config.centersFolder + 'VGISS_' + filterVolume + '/'
+    # denoisedSubfolder = config.denoisedFolder + 'VGISS_' + filterVolume + '/'
+    # centersSubfolder = config.centersFolder + 'VGISS_' + filterVolume + '/'
+    inputSubfolder = lib.getSubfolder('denoise', filterVolume)
+    outputSubfolder = lib.getSubfolder('center', filterVolume)
 
     if filterVolume!='':
         
         # quit if volume folder exists
-        if os.path.isdir(centersSubfolder) and optionOverwrite==False:
+        # if os.path.isdir(centersSubfolder) and optionOverwrite==False:
+        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall:
-                print "Folder exists - skipping vg center step: " + centersSubfolder
+                print "Folder exists - skipping vg center step: " + outputSubfolder
             return
 
         # build the denoised images for the volume, if not already there
@@ -61,12 +64,11 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
-        lib.rmdir(centersSubfolder)
-        # lib.mkdir(centersSubfolder)
-        os.mkdir(centersSubfolder)
+        lib.mkdir(outputSubfolder)
 
     # get number of files to process
-    nfiles = len(os.listdir(denoisedSubfolder))
+    # nfiles = len(os.listdir(denoisedSubfolder))
+    nfiles = len(os.listdir(inputSubfolder))
 
     # read small dbs into memory
     centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
@@ -88,7 +90,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         volume = rowFiles[config.filesColVolume]
         fileId = rowFiles[config.filesColFileId]
         
-        if volume!=filterVolume and fileId!=filterImageId: continue # filter to given volume/image
+        # filter to given volume/image
+        if volume!=filterVolume and fileId!=filterImageId: continue 
 
         # get image properties
         filter = rowFiles[config.filesColFilter]
@@ -102,10 +105,13 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(targetInfo, fileId, target)
 
         # get filenames
-        infile = lib.getDenoisedFilepath(volume, fileId, filter)
+        # infile = lib.getDenoisedFilepath(volume, fileId, filter)
+        infile = lib.getFilepath('denoise', volume, fileId, filter)
         if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
-            infile = lib.getAdjustedFilepath(volume, fileId, filter)
-        outfile = lib.getCenteredFilepath(volume, fileId, filter)
+            # infile = lib.getAdjustedFilepath(volume, fileId, filter)
+            infile = lib.getFilepath('adjust', volume, fileId, filter)
+        # outfile = lib.getCenteredFilepath(volume, fileId, filter)
+        outfile = lib.getFilepath('center', volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))

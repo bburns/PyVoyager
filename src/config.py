@@ -40,16 +40,17 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # Convert
 # ----------------------------------------
 
-# imagetype to extract using img2png
+# imagetype for main processing
 # RAW images can have overly bright backgrounds.
 # CLEANED images have the riseau marks removed, but not very well.
 # CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageType = 'RAW'
-# imageType = 'CALIB'
+imageType = 'CALIB'
 # imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespec = "*" # do all image types
 
+# image types to extract using img2png
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
 # imageTypes = ['RAW', 'CLEANED', 'CALIB']
 # imageTypes = ['CLEANED', 'CALIB']
@@ -71,16 +72,39 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 
 
+
+suffixes = {
+    # 'adjusted': '_adjusted',
+    # 'denoised': '_denoised',
+    # 'centered': '_centered',
+    # 'composites': '_composite',
+    # 'mosaics': '_mosaic',
+    # 'annotated': '_annotated',
+    'adjust':    '_adjusted',
+    'denoise':   '_denoised',
+    'center':    '_centered',
+    'composite': '_composite',
+    'mosaic':    '_mosaic',
+    'annotate':  '_annotated',
+    }
+
+# adjustmentsSuffix = '_adjusted'
+# denoisedSuffix = '_denoised'
+# centersSuffix = '_centered'
+# compositesSuffix = '_composite'
+# mosaicsSuffix = '_mosaic'
+# annotationsSuffix = "_annotated"
+
+
 # Adjust
 # ----------------------------------------
 
-adjustmentsSuffix = '_adjusted'
 
 
 # Denoised
 # ----------------------------------------
 
-denoisedSuffix = '_denoised'
+
 
 
 # Center
@@ -242,20 +266,17 @@ drawTarget = False # draw expected target size/location with yellow circle
 # ----------------------------------------
 
 # suffix for composite filenames
-compositesSuffix = '_composite'
 
 
 # Mosaic
 # ----------------------------------------
 
 # suffix for mosaic filenames
-mosaicsSuffix = '_mosaic'
 
 
 # Annotate
 # ----------------------------------------
 
-annotationsSuffix = "_annotated"
 annotationsFont = "c:/windows/fonts/!futura-light.ttf"
 annotationsFontsize = 18
 
@@ -373,6 +394,25 @@ clipsStageFolder    = clipsFolder   + 'stage/'
 
 grabFolder          = onlineFolder  + "grab/"
 grabbedFolder       = onlineFolder  + "grabbed/"
+
+folders = {
+    'download':   offlineFolder + 'step01_downloads/',
+    'unzip':      offlineFolder + 'step02_unzips/',
+    'convert':    onlineFolder  + "step03_images/",
+    'adjust':     onlineFolder  + "step04_adjustments/",
+    'denoise':    onlineFolder  + "step05_denoised/",
+    'center':     onlineFolder  + "step06_centers/",
+    'composite':  onlineFolder  + "step07_composites/",
+    'mosaic':     onlineFolder  + "step08_mosaics/",
+    'annotate':   onlineFolder  + "step09_annotations/",
+    'target':     onlineFolder  + "step10_targets/",
+    'titles':     onlineFolder  + "step11_titles/",
+    'clips':      onlineFolder  + "step12_clips/",
+    'movies':     onlineFolder  + "step13_movies/",
+    }
+
+
+
 
 # test images go here
 testFolder    = 'test/'

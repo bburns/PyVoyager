@@ -29,14 +29,18 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
     volnum = str(volnum) # eg '5101'
     # buildImageId = buildImageId.upper() # always capital C
     # overwrite = options.get('overwrite') # True or None
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
-    denoisedSubfolder = config.denoisedFolder + 'VGISS_' + volnum + '/'
+    # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
+    # denoisedSubfolder = config.denoisedFolder + 'VGISS_' + volnum + '/'
+    inputSubfolder = lib.getSubfolder('adjust', filterVolume)
+    outputSubfolder = lib.getSubfolder('denoise', filterVolume)
 
     if volnum!='':
         # quit if volume folder exists
-        if os.path.isdir(denoisedSubfolder) and overwrite==False:
+        # if os.path.isdir(denoisedSubfolder) and overwrite==False:
+        if os.path.isdir(outputSubfolder) and overwrite==False:
             if directCall:
-                print "Folder exists - skipping vg denoise step: " + denoisedSubfolder
+                # print "Folder exists - skipping vg denoise step: " + denoisedSubfolder
+                print "Folder exists - skipping vg denoise step: " + outputSubfolder
             return
 
         # build the adjusted images for the volume, if not already there
@@ -44,12 +48,13 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
         vgAdjust.vgAdjust(volnum, False, False) # not a direct call by user
         
         # make folder
-        lib.rmdir(denoisedSubfolder)
-        os.mkdir(denoisedSubfolder)
+        # lib.rmdir(denoisedSubfolder)
+        # os.mkdir(denoisedSubfolder)
+        lib.mkdir(outputSubfolder)
 
 
     # get number of files to process
-    nfiles = len(os.listdir(adjustmentsSubfolder))
+    nfiles = len(os.listdir(inputSubfolder))
 
     # iterate through all available images, filter on desired volume or image
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
@@ -74,8 +79,10 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
         # target = lib.retarget(targetInfo, fileId, target)
 
         # get filenames
-        infile = lib.getAdjustedFilepath(volume, fileId, filter)
-        outfile = lib.getDenoisedFilepath(volume, fileId, filter)
+        # infile = lib.getAdjustedFilepath(volume, fileId, filter)
+        # outfile = lib.getDenoisedFilepath(volume, fileId, filter)
+        infile = lib.getFilepath('adjust', volume, fileId, filter)
+        outfile = lib.getFilepath('denoise', volume, fileId, filter)
 
         # print 'Volume %s denoising %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         log.logr('Volume %s denoising %d/%d: %s' % (volume,nfile,nfiles,infile))

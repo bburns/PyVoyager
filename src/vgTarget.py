@@ -28,9 +28,6 @@ def vgTarget(filterVolume='', targetPath=''):
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
 
-    # center the volume, if not already there
-    vgCenter.vgCenter(filterVolume, '', False, False)
-
     # read small db into memory
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
 
@@ -66,21 +63,24 @@ def vgTarget(filterVolume='', targetPath=''):
 
             print 'Volume %s copying %s         \r' % (volume, fileId),
 
-            # copy adjusted file
-            src = lib.getAdjustedFilepath(volume, fileId, filter)
-            lib.cp(src, targetFolder)
+            #. at diff times might want diff sources - maybe specify as a cmdline option
 
-            # copy centered file
-            src = lib.getCenteredFilepath(volume, fileId, filter)
-            lib.cp(src, targetFolder)
+            # # copy adjusted file
+            # src = lib.getFilepath('adjust', volume, fileId, filter)
+            # lib.cp(src, targetFolder)
+
+            # # copy centered file
+            # src = lib.getFilepath('center', volume, fileId, filter)
+            # lib.cp(src, targetFolder)
 
             # copy composite file
-            src = lib.getCompositeFilepath(volume, fileId)
+            src = lib.getFilepath('composite', volume, fileId)
             lib.cp(src, targetFolder)
 
             # # copy mosaic file
-            # src = lib.getMosaicFilepath(fileId, filter)
-            # shutil.copy(src, targetFolder)
+            # src = lib.getFilepath('mosaic', volume, fileId)
+            # lib.cp(src, targetFolder)
+
 
     fFiles.close()
     print

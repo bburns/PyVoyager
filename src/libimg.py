@@ -320,14 +320,14 @@ def drawCrosshairs(im):
     im[0:ymax-1, cx] = color
 
 
-def img2png(srcdir, filespec, destdir, img2pngOptions):
+def img2png(srcdir, filespec, destdir):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
 
     # first convert img's to png's, then move them to the dest dir
     savedir = os.getcwd()
     os.chdir(srcdir)
     # eg "img2png *CALIB.img -fnamefilter > nul"
-    cmd = "img2png " + filespec + " " + img2pngOptions + " > nul"
+    cmd = "img2png " + filespec + " " + config.img2pngOptions + " > nul"
     # print cmd
     os.system(cmd)
 

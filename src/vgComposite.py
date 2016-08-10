@@ -45,11 +45,14 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
 
     if filterVolume!='':
 
-        compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
+        # compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
+        inputSubfolder = lib.getSubfolder('center', filterVolume)
+        outputSubfolder = lib.getSubfolder('composite', filterVolume)
 
         # quit if volume folder exists
-        if os.path.isdir(compositesSubfolder) and optionOverwrite==False:
-            if directCall: print "Composites folder exists: " + compositesSubfolder
+        # if os.path.isdir(compositesSubfolder) and optionOverwrite==False:
+        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
+            if directCall: print "Composites folder exists: " + outputSubfolder
             return
 
         # build the centered images for the volume, if not already there
@@ -58,8 +61,9 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
         # print 'Building composites for', compositesSubfolder
 
         # make folder
-        lib.rmdir(compositesSubfolder)
-        lib.mkdir(compositesSubfolder)
+        # lib.rmdir(compositesSubfolder)
+        # lib.mkdir(compositesSubfolder)
+        lib.mkdir(outputSubfolder)
 
     # get centering info - will use to get files from either adjusted or centered folders
     # centeringInfo = lib.readCsv(config.centeringdb)
@@ -132,10 +136,12 @@ def processChannels(channelRows, volume, nfile, startId):
             y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
             #. may use imageSource to know adjusted vs centered?
             # get centered filepath
-            channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             # if don't have a centered file, use the adjusted file
             if not os.path.isfile(channelfilepath):
-                channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+                # channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+                channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
             channel = [filter,channelfilepath,weight,x,y]
             channels.append(channel)
 

@@ -26,26 +26,34 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
     "Build adjusted images for given volume, if they don't exist yet"
 
     filterVolume = str(filterVolume) # eg '5101'
-    imagesSubfolder = config.imagesFolder + 'VGISS_' + filterVolume + '/'
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + filterVolume + '/'
-
-    # quit if volume folder exists
-    if os.path.isdir(adjustmentsSubfolder) and optionOverwrite==False:
-        if directCall:
-            print "Folder exists - skipping vg images step: " + centersubfolder
-        return
+    # imagesSubfolder = config.imagesFolder + 'VGISS_' + filterVolume + '/'
+    # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + filterVolume + '/'
+    # imagesSubfolder = lib.getSubfolder('convert', filterVolume)
+    # adjustmentsSubfolder = lib.getSubfolder('adjust', filterVolume)
+    inputSubfolder = lib.getSubfolder('convert', filterVolume)
+    outputSubfolder = lib.getSubfolder('adjust', filterVolume)
 
     if filterVolume!='':
+
+        # quit if volume folder exists
+        # if os.path.isdir(adjustmentsSubfolder) and optionOverwrite==False:
+        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
+            if directCall:
+                print "Folder exists - skipping vg adjust step: " + outputSubfolder
+            return
 
         # build the plain images for the volume, if not already there
         vgConvert.vgConvert(filterVolume, optionOverwrite=False, directCall=False)
 
         # make new folder
-        lib.rmdir(adjustmentsSubfolder)
-        lib.mkdir(adjustmentsSubfolder)
+        # lib.rmdir(adjustmentsSubfolder)
+        # lib.mkdir(adjustmentsSubfolder)
+        # lib.rmdir(adjustmentsSubfolder)
+        lib.mkdir(outputSubfolder)
 
     # get number of files to process
-    nfiles = len(os.listdir(imagesSubfolder))
+    # nfiles = len(os.listdir(imagesSubfolder))
+    nfiles = len(os.listdir(inputSubfolder))
 
     # iterate through all available images
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
@@ -62,9 +70,11 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
         camera = row[config.filesColInstrument]
 
         # adjust the file
-        pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-        infile = imagesSubfolder + pngFilename
-        outfile = lib.getAdjustedFilepath(volume, fileId, filter)
+        # pngFilename = fileId + '_' + config.imageType + '_' + filter + '.png'
+        # infile = imagesSubfolder + pngFilename
+        # outfile = lib.getAdjustedFilepath(volume, fileId, filter)
+        infile = lib.getFilepath('convert', volume, fileId, filter)
+        outfile = lib.getFilepath('adjust', volume, fileId, filter)
         print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         if os.path.isfile(infile):
             libimg.adjustImageFile(infile, outfile)
@@ -79,7 +89,5 @@ if __name__ == '__main__':
     os.chdir('..')
     vgAdjust(5101)
     print 'done'
-
-
 
 

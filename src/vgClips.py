@@ -202,7 +202,6 @@ def stageFiles(filterVolumes, targetPathParts):
                     titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
                                          config.extension
                     # need to get out of the target dir - we're always this deep
-                    # titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
                     titleImagePathRelative = '../../../../../../../' + titleImageFilepath
                     ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
                     lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
@@ -217,7 +216,6 @@ def stageFiles(filterVolumes, targetPathParts):
                 # so must run this script in an admin console
                 # eg imageFilepath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 # need to get out of the target dir
-                # imagePathRelative = '../../../../../../../../' + imageFilepath
                 imagePathRelative = '../../../../../../../' + imageFilepath
                 lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
 
@@ -297,7 +295,6 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
         # stageFiles(filterVolume, targetPathParts)
 
     # build mp4 files from all staged images
-    # lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',
                                   config.videoFilespec, config.videoFrameRate,
                                   config.clipsMinFrames)

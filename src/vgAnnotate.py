@@ -26,16 +26,18 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
 
     filterVolume = str(filterVolume) # eg '5101'
     # mosaicsSubfolder = config.mosaicsFolder + 'VGISS_' + filterVolume + '/'
-    compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
-    annotationsSubfolder = config.annotationsFolder + 'VGISS_' + filterVolume + '/'
+    # compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
+    # annotationsSubfolder = config.annotationsFolder + 'VGISS_' + filterVolume + '/'
+    inputSubfolder = lib.getSubfolder('composite', filterVolume)
+    outputSubfolder = lib.getSubfolder('annotate', filterVolume)
 
     # build the plain mosaic for the volume, if not already there
     if filterVolume!='':
         
         # quit if volume folder exists
-        if os.path.isdir(annotationsSubfolder) and optionOverwrite==False:
+        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall:
-                print "Folder exists - skipping vg annotate step: " + annotationsSubfolder
+                print "Folder exists - skipping vg annotate step: " + outputSubfolder
             return
 
         # build the mosaics if not already there
@@ -43,13 +45,10 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
         # vgMosaic.vgMosaic(filterVolume, optionOverwrite=False, directCall=False)
 
         # make new folder
-        lib.rmdir(annotationsSubfolder)
-        lib.mkdir(annotationsSubfolder)
+        lib.mkdir(outputSubfolder)
 
     # get number of files to process
-    # nfiles = len(os.listdir(mosaicsSubfolder))
-    #. for now
-    nfiles = len(os.listdir(compositesSubfolder))
+    nfiles = len(os.listdir(inputSubfolder))
 
     # open positions.csv file for target distance
     csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
@@ -72,10 +71,11 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
         note = row[config.filesColNote].title()
 
         # annotate the file
-        infile = lib.getMosaicFilepath(volume, fileId)
+        infile = lib.getFilepath('mosaic', volume, fileId)
         if not os.path.isfile(infile):
-            infile = lib.getCompositeFilepath(volume, fileId)
-        outfile = lib.getAnnotatedFilepath(volume, fileId)
+            infile = lib.getFilepath('composite', volume, fileId)
+            
+        outfile = lib.getFilepath('annotate', volume, fileId)
         
         if os.path.isfile(infile):
             

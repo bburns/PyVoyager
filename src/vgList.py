@@ -12,7 +12,7 @@ import config
 
 
 def parseFilenames(folder, section, grid):
-    "parse filenames in the given folder, add x to grid dictionary for volumes present"
+    "parse dir+filenames in the given folder, add x to grid dictionary for volumes present"
     for root, dirnames, filenames in os.walk(folder):
         itemnames = dirnames
         itemnames.extend(filenames)

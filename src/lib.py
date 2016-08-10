@@ -18,6 +18,7 @@ import more_itertools
 import config
 
 
+#. split into two fns
 def loadPreviousStep(targetPathParts, fn):
     """
     load previous build step by determining volumes needed for the given target path.
@@ -250,49 +251,69 @@ def cp(src, dst):
 
 
 
+def getSubfolder(step, volume):
+    "get a volume subfolder, eg ('adjust','5101') -> 'data/step03_adjusted/VGISS_5101/'"
+    folder = config.folders[step]
+    subfolder = folder + 'VGISS_' + volume + '/'
+    return subfolder
+
+
 #. merge all these to one fn
 
-def getAdjustedFilepath(volume, fileId, filter):
-    "get the filepath for the adjusted image specified"
-    folder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
-    filepath = folder + filetitle
+def getFilepath(step, volume, fileId, filter=None):
+    "Get the filepath for the image specified, relative to the main PyVoyager folder."
+    folder = config.folders[step] # eg 'adjust' -> 'data/step04_adjusted/'
+    suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
+    subfolder = folder + 'VGISS_' + volume + '/'
+    if filter:
+        filetitle = fileId + suffix + '_' + filter + config.extension
+    else:
+        filetitle = fileId + suffix + config.extension
+    filepath = subfolder + filetitle
     return filepath
 
-def getDenoisedFilepath(volume, fileId, filter):
-    "get the filepath for the denoised image specified"
-    folder = config.denoisedFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.denoisedSuffix + '_' + filter + config.extension
-    filepath = folder + filetitle
-    return filepath
 
-def getCenteredFilepath(volume, fileId, filter):
-    "get the filepath for the centered image specified"
-    folder = config.centersFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
-    filepath = folder + filetitle
-    return filepath
+# def getAdjustedFilepath(volume, fileId, filter):
+#     "get the filepath for the adjusted image specified"
+#     folder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
+#     filepath = folder + filetitle
+#     return filepath
 
-def getCompositeFilepath(volume, fileId):
-    "get the filepath for the composite image specified"
-    folder = config.compositesFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.compositesSuffix + config.extension
-    filepath = folder + filetitle
-    return filepath
+# def getDenoisedFilepath(volume, fileId, filter):
+#     "get the filepath for the denoised image specified"
+#     folder = config.denoisedFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.denoisedSuffix + '_' + filter + config.extension
+#     filepath = folder + filetitle
+#     return filepath
 
-def getMosaicFilepath(volume, fileId):
-    "get the filepath for the mosaic image specified"
-    folder = config.mosaicsFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.mosaicsSuffix + config.extension
-    filepath = folder + filetitle
-    return filepath
+# def getCenteredFilepath(volume, fileId, filter):
+#     "get the filepath for the centered image specified"
+#     folder = config.centersFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
+#     filepath = folder + filetitle
+#     return filepath
 
-def getAnnotatedFilepath(volume, fileId):
-    "get the filepath for the annotated image specified"
-    folder = config.annotationsFolder + 'VGISS_' + volume + '/'
-    filetitle = fileId + config.annotationsSuffix + config.extension
-    filepath = folder + filetitle
-    return filepath
+# def getCompositeFilepath(volume, fileId):
+#     "get the filepath for the composite image specified"
+#     folder = config.compositesFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.compositesSuffix + config.extension
+#     filepath = folder + filetitle
+#     return filepath
+
+# def getMosaicFilepath(volume, fileId):
+#     "get the filepath for the mosaic image specified"
+#     folder = config.mosaicsFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.mosaicsSuffix + config.extension
+#     filepath = folder + filetitle
+#     return filepath
+
+# def getAnnotatedFilepath(volume, fileId):
+#     "get the filepath for the annotated image specified"
+#     folder = config.annotationsFolder + 'VGISS_' + volume + '/'
+#     filetitle = fileId + config.annotationsSuffix + config.extension
+#     filepath = folder + filetitle
+#     return filepath
 
 
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
@@ -484,6 +505,7 @@ def readCsv(filename):
 
 def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
+    rmdir(path) # remove it first
     try:
         os.mkdir(path)
     except WindowsError as exc:

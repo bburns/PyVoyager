@@ -19,6 +19,7 @@ import libimg
 
 
 def vgTitles(targetPath=None):
+
     "Make titles for specified targetpaths"
 
     # what does the user want to focus on?
@@ -32,21 +33,16 @@ def vgTitles(targetPath=None):
     # iterate through all available images
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
     for row in csvFiles:
+
         volume = row[config.filesColVolume]
         fileId = row[config.filesColFileId]
         filter = row[config.filesColFilter]
-
         system = row[config.filesColPhase]
         craft = row[config.filesColCraft]
         target = row[config.filesColTarget]
         camera = row[config.filesColInstrument]
 
         # is this an image the user wants to see?
-        # doTarget = True
-        # if (pathSystem and pathSystem!=system): doTarget = False
-        # if (pathCraft and pathCraft!=craft): doTarget = False
-        # if (pathTarget and pathTarget!=target): doTarget = False
-        # if (pathCamera and pathCamera!=camera): doTarget = False
         doTarget = lib.targetMatches(targetPathParts, system, craft, target, camera)
 
         if doTarget:
@@ -73,7 +69,7 @@ def vgTitles(targetPath=None):
                 img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
 
                 # save it
-                # note: file type must match that of other frames in movie,
+                # note: ffmpeg requires file type to match that of other frames in movie,
                 # so use config.extension here
                 titlefilepath = targetfolder + 'title' + config.extension
                 img.save(titlefilepath)

@@ -100,6 +100,7 @@ Entering `vg` will show the available commands:
       vg download <volnums>             - download volume(s)
       vg unzip <volnums>                - unzip volume(s)
       vg convert <volnums>              - convert IMGs to PNGs
+      vg denoise <volnums>              - remove noise
       vg center <volnums>               - center images
       vg composite <volnums>            - create color images
       vg target <volnums>               - copy images into target subfolders
@@ -207,13 +208,15 @@ The data for each step is put into the following folders in the `data` subfolder
     step02_unzips
     step03_images
     step04_adjustments
-    step05_centers
-    step06_composites
-    step07_mosaics
-    step08_targets
-    step09_titles
-    step10_clips
-    step11_movies
+    step05_denoised
+    step06_centers
+    step07_composites
+    step08_mosaics
+    step09_annotations
+    step10_targets
+    step11_titles
+    step12_clips
+    step13_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 
@@ -300,9 +303,9 @@ Version 0.44 (2016-08)
 ----------------------------------------
 - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
 - Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
-- Add `vg annotate` step - annotate images with information (to help with editing clips, at the moment)
+- Add `vg annotate` step - annotate images with imageId, date/time, distance (km)
 
-Make Uranus system movie with denoised images
+Make Uranus system movie with denoised and annotated images
 
 Version 0.43 (2016-08-08)
 ----------------------------------------

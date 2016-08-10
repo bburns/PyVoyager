@@ -385,7 +385,7 @@ def getVolumeNumbers(s):
     if len(vols)==2:
         vols = [int(vol) for vol in vols]
         volrange = range(vols[0],vols[1]+1)
-        volrange = [str(vol) for vol in vols]
+        volrange = [str(vol) for vol in volrange]
         return volrange # eg ['8201','8202','8203','8204']
 
     # handle invidual volumes or wildcards
@@ -578,7 +578,7 @@ if __name__ == '__main__':
 
     # print getDownloadUrl(5101)
     # print getVolumeNumbers('5104')
-    # print getVolumeNumbers('5104-5108')
+    print getVolumeNumbers('5104-5108')
     # print getVolumeNumbers('51*')
     # print getVolumeNumbers('5*')
     # print getVolumeNumbers('*')
@@ -586,23 +586,24 @@ if __name__ == '__main__':
     # print getImageIds('c1352753')
     # print getImageIds('c1352753-c1352764')
 
-    # test getJoinRow fn
-    data = more_itertools.peekable(iter([[2],[3],[5],[6],[7]]))
-    col = 0
-    row = getJoinRow(data, col, 1)
-    assert row is None
-    assert data.peek()==[2]
-    assert data.peek()==[2]  # doesn't skip ahead
-    row = getJoinRow(data, col, 2)
-    assert row==[2]
-    assert data.peek()==[3]
-    row = getJoinRow(data, col, 4)
-    assert row is None
-    assert data.peek()==[5]
-    row = getJoinRow(data, col, 8)
-    assert row is None
-    row = getJoinRow(data, col, 10)
-    assert row is None
+    # works
+    # # test getJoinRow fn
+    # data = more_itertools.peekable(iter([[2],[3],[5],[6],[7]]))
+    # col = 0
+    # row = getJoinRow(data, col, 1)
+    # assert row is None
+    # assert data.peek()==[2]
+    # assert data.peek()==[2]  # doesn't skip ahead
+    # row = getJoinRow(data, col, 2)
+    # assert row==[2]
+    # assert data.peek()==[3]
+    # row = getJoinRow(data, col, 4)
+    # assert row is None
+    # assert data.peek()==[5]
+    # row = getJoinRow(data, col, 8)
+    # assert row is None
+    # row = getJoinRow(data, col, 10)
+    # assert row is None
 
 
     # print fileContainsString('src/'+__file__, 'fileContainsString')

@@ -109,6 +109,8 @@ for arg in args:
         filterImageIds = lib.getImageIds(arg)
     else:
         filterTargetPath = arg
+# print args
+# print filterVolumes
 
 # handle commands
 if cmd=="download":

@@ -28,7 +28,7 @@ import log
 
 
 
-def annotateImageFile(infile, outfile, imageId, time, distance):
+def annotateImageFile(infile, outfile, imageId, time, distance, note):
 
     "add information to given input file and write to outfile"
 
@@ -39,12 +39,9 @@ def annotateImageFile(infile, outfile, imageId, time, distance):
     # print w,h # 207,53
 
     img = Image.open(infile)
-    if img!='RGB':
-        img = img.convert('RGB')
+    if img!='RGB': img = img.convert('RGB') # else some images cause TypeError on draw text
 
     draw = ImageDraw.Draw(img)
-
-    print img.mode
 
     pos = (50,625)
 
@@ -60,6 +57,11 @@ def annotateImageFile(infile, outfile, imageId, time, distance):
 
     s = distance
     draw.text(pos, s, fgcolor, font=font)
+    pos = (pos[0],pos[1]+int(h*1.5))
+
+    s = note
+    draw.text(pos, s, fgcolor, font=font)
+    pos = (pos[0],pos[1]+int(h*1.5))
 
     img.save(outfile)
 

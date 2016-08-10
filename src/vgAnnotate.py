@@ -88,10 +88,10 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
             else:
                 distance = ''
             
-            # print 'Volume %s annotating %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-            print 'Volume %s annotating %d/%d: %s     ' % (volume,nfile,nfiles,infile)
-            print fileId, time, distance
-            libimg.annotateImageFile(infile, outfile, fileId, time, distance)
+            print 'Volume %s annotating %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+            # print 'Volume %s annotating %d/%d: %s     ' % (volume,nfile,nfiles,infile)
+            # print fileId, time, distance
+            libimg.annotateImageFile(infile, outfile, fileId, time, distance, note)
             nfile += 1
 
     fPositions.close()

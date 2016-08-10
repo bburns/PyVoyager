@@ -33,8 +33,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     filterImageId = filterImageId.upper() # always capital C
 
     #. need to handle indiv imageids - stabilize to the target disc.
-    #. but should fine tune in relation to previous image,
-    # so would want to remember that for the target sequence.
+    #. will eventually also want to fine tune in relation to previous image.
 
     # #. if file contains the given volume, either stop or remove those lines
     # s = ',' + filterVolume + ','
@@ -57,9 +56,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 print "Folder exists - skipping vg center step: " + centersSubfolder
             return
 
-        # build the adjusted images for the volume, if not already there
+        # build the denoised images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        vgDenoise.vgDenoise(filterVolume, False, False) # not a direct call by user
+        vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
         lib.rmdir(centersSubfolder)
@@ -103,8 +102,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(targetInfo, fileId, target)
 
         # get filenames
-        # infile = lib.getAdjustedFilepath(volume, fileId, filter)
         infile = lib.getDenoisedFilepath(volume, fileId, filter)
+        if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
+            infile = lib.getAdjustedFilepath(volume, fileId, filter)
         outfile = lib.getCenteredFilepath(volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
@@ -112,9 +112,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         nfile += 1
 
         # get expected target size and radius
+        # imageFraction = fraction of image frame taken up by target
         rowPositions = lib.getJoinRow(csvPositions, config.positionsColFileId, fileId)
         if rowPositions:
-            # fraction of image frame taken up by target
             imageFraction = float(rowPositions[config.positionsColImageFraction])
         else:
             imageFraction = 0 # just rhea
@@ -124,43 +124,22 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
         if doCenter:
 
-            # # for this target sequence (eg ariel flyby), what was the last good image?
-            # # use that as a fixed image against which we try to align the current image.
-            # targetKey = system + '-' + craft + '-' + target + '-' + camera
-
-            # lastImageRecord = lastImageInTargetSequence.get(targetKey)
-            # if lastImageRecord:
-            #     fixedfile = lastImageRecord[0]
-            #     ntimesused = lastImageRecord[1]
-            #     lastImageInTargetSequence[targetKey][1] += 1 # ntimes used
-            #     # log.log('aligning to', fixedfile)
-            # else:
-            #     fixedfile = None
-            #     ntimesused = 0
-            #     # log.log('no image to align to yet for',targetKey)
-
             # find center of target using blob and hough, then alignment to fixedimage.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
             dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
             if stabilizationOk:
                 x += int(round(dx))
                 y += int(round(dy))
-            
-            # # remember first image in sequence
-            # if fixedfile is None:
-            #     fixedfile = outfile
-            #     # log.log('first fixed frame', fixedfile, 'targetRadius', targetRadius)
-            #     lastImageInTargetSequence[targetKey] = [fixedfile, 0]
-
-            # # if image was successfully stabilized, remember it
-            # if stabilizationOk and ntimesused >= config.stabilizeNTimesToUseFixedFrame:
-            #     fixedfile = outfile
-            #     # log.log('new fixed frame', fixedfile)
-            #     lastImageInTargetSequence[targetKey] = [fixedfile, 0]
 
             # write x,y,radius to newcenters file
             rowNew = [fileId, volume, x, y, foundRadius]
             csvNewCenters.writerow(rowNew)
+            
+        else: # don't need to center image, so just copy as is
+            
+            #. should outfile keep the _denoised or _adjusted tag?
+            lib.cp(infile, outfile)
+            
 
     fPositions.close()
     fNewCenters.close()

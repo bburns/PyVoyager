@@ -261,25 +261,6 @@ This file is used by the `vg composite <volume>` command to generate the color f
 
 The clips are generated with the `vg clips [targetpath] -bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
 
-Here is how black and white vs color clips are generated -
-
-    Adjusted   Centered     Composite    Notes
-    ------------------------------------------------------------------
-    [ ]        [ ]\         [ ]          centered 3 color composite
-    [ ]        [ ] |-------/
-    [ ]        [ ]/
-    [ ]        [ ]----------[ ]          centered bw
-    [ ]        [ ]\_________[ ]          centered 2 color composite
-    [ ]        [ ]/
-    [ ]---------------------[ ]          uncentered bw
-    [ ]\                    [ ]          uncentered 3 color composite
-    [ ] -------------------/
-    [ ]/
-    [ ]        [ ]----------[ ]          centered bw
-    [ ]        [ ]----------[ ]          centered bw
-    \------------/           |
-       bw clips         color clips
-
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
 That's about it!
@@ -288,7 +269,9 @@ That's about it!
 Testing
 ----------------------------------------
 
-Some test images are included in the `test/images` folder, and their correct bounding box values, where known, in `test/testFiles.csv`. You can run the tests on them with `vg test`. The goal is to include some easy targets and lots of edge cases to test the centering routines. If you find a frame that doesn't center correctly you can put the original image into the images folder and add a record to `testFiles.csv`.
+Some centering test images are included in the `test/center` folder, and their correct center values in `test/testCenterFiles.csv`. You can run the tests on them with `vg test center`. The goal is to include some easy targets and lots of edge cases to test the centering/stabilizing routines.
+
+Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
 
 
 Issues
@@ -305,25 +288,20 @@ Next steps
 * Add audio
 * Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
 * Build mosaics with hand-annotated information, include in movies
-* Host mp4s on a server for better quality (YouTube downgrades some to 360p)
+* Host mp4s on a server for better quality (YouTube downgrades some to 360p). Or Vimeo?
 * Option to make b&w movies using one filter, to reduce flickering
 * Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
 
 
-<!-- Later -->
-<!-- ---------------------------------------- -->
-<!-- - improve stabilization parameters -->
-<!-- - (make ariel movie with override centers, aligned composite, mosaic - test crowdsourcing aspects) -->
-<!-- - Add `vg segments` command to build movie segments with more editorial control -->
-<!-- - Add `vg init positions` to initialize positions.csv, which has angular size of target / camera FOV -->
-<!-- - Update `vg centers` to use positions.csv to know when to turn centering on/off - remove centering.csv -->
+History
+----------------------------------------
 
 Version 0.44 (2016-08)
 ----------------------------------------
 - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
+- Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
 
 Make Uranus system movie with denoised images
-
 
 Version 0.43 (2016-08-08)
 ----------------------------------------

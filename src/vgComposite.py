@@ -71,8 +71,11 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
     channelRows = []
     nfile = 0
     for row in csvComposites:
+
         volume = row[config.compositesColVolume]
         compositeId = row[config.compositesColCompositeId]
+
+        # filter on volume or composite id
         # if volume==filterVolume or compositeId==filterCompositeId:
         if volume!=filterVolume and compositeId!=filterCompositeId: continue
 
@@ -87,7 +90,7 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
             channelRows = [row]
             nfile += 1
 
-    # do the last leftover group
+    # process the last leftover group
     processChannels(channelRows,startVol,nfile,startId)
     print
     fComposites.close()
@@ -107,6 +110,7 @@ def processChannels(channelRows, volume, nfile, startId):
       ['C434823','C434827','5101','Green','1','-50','83']
       ]
     they are combined and written to a file in the composites folder, step05_composites.
+    Can have single channel groups.
     Other parameters are just for status update.
     """
     # print channelRows
@@ -126,10 +130,9 @@ def processChannels(channelRows, volume, nfile, startId):
                      if len(row)>config.compositesColWeight else 1.0
             x = int(row[config.compositesColX]) if len(row)>config.compositesColX else 0
             y = int(row[config.compositesColY]) if len(row)>config.compositesColY else 0
-            #. may use imageSource to know adjusted vs centered
+            #. may use imageSource to know adjusted vs centered?
             # get centered filepath
             channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            # channelfilepath = ''
             # if don't have a centered file, use the adjusted file
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)

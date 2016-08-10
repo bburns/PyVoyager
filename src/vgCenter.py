@@ -18,13 +18,14 @@ import libimg
 import log
 
 import vgDenoise
+# import vgAdjust
 
 
 # config.drawCrosshairs = True
 # config.drawTarget = True
 
 
-# def vgCenter(buildVolnum='', buildImageId='', targetPath=None, overwrite=False, directCall=True):
+#. handle target
 def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True):
     
     "Build centered and stabilized images for given volume and write x,y,radius to centers.csv"
@@ -44,23 +45,21 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         print 'Centers.csv already contains volume ' + filterVolume + ' - run with -y to optionOverwrite'
     #         return
 
-    # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + filterVolume + '/'
-    # denoisedSubfolder = config.denoisedFolder + 'VGISS_' + filterVolume + '/'
-    # centersSubfolder = config.centersFolder + 'VGISS_' + filterVolume + '/'
     inputSubfolder = lib.getSubfolder('denoise', filterVolume)
+    # inputSubfolder = lib.getSubfolder('adjust', filterVolume)
     outputSubfolder = lib.getSubfolder('center', filterVolume)
 
     if filterVolume!='':
         
         # quit if volume folder exists
-        # if os.path.isdir(centersSubfolder) and optionOverwrite==False:
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall: print "Folder exists: " + outputSubfolder
             return
 
-        # build the denoised images for the volume, if not already there
+        # build the previous images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
+        vgAdjust.vgAdjust(filterVolume, optionOverwrite=False, directCall=False)
+        # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
         lib.mkdir(outputSubfolder)
@@ -104,12 +103,10 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(targetInfo, fileId, target)
 
         # get filenames
-        # infile = lib.getDenoisedFilepath(volume, fileId, filter)
         infile = lib.getFilepath('denoise', volume, fileId, filter)
         if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
-            # infile = lib.getAdjustedFilepath(volume, fileId, filter)
             infile = lib.getFilepath('adjust', volume, fileId, filter)
-        # outfile = lib.getCenteredFilepath(volume, fileId, filter)
+        # infile = lib.getFilepath('adjust', volume, fileId, filter)
         outfile = lib.getFilepath('center', volume, fileId, filter)
 
         # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
@@ -155,7 +152,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         lib.concatFiles(config.dbCenters, config.dbCentersNew)
         lib.rm(config.dbCentersNew)
         print
-        print 'New records appended to centers.csv file - please make sure any older records are removed and the file is sorted before committing it to git'
+        print 'New records appended to centers.csv file - please make sure any ' + \
+              'older records are removed and the file is sorted before committing it to git'
     else:
         print
 

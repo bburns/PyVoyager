@@ -95,42 +95,47 @@ Usage
 
 Entering `vg` will show the available commands:
 
-    Voyager commands
+    PyVoyager commands
 
-      vg download <volnums>             - download volume(s)
-      vg unzip <volnums>                - unzip volume(s)
-      vg convert <volnums>              - convert IMGs to PNGs
-      vg denoise <volnums>              - remove noise
-      vg center <volnums>               - center images
-      vg composite <volnums>            - create color images
-      vg target <volnums>               - copy images into target subfolders
-      vg list                           - show status of local datasets
-      vg clips bw|color [<targetpath>]  - create bw or color movies of flybys
-      vg movies                         - combine clips into movies
+      vg download       - download volume(s)
+      vg unzip          - unzip volume(s)
+      vg convert        - convert IMGs to PNGs
+      vg adjust         - adjust images (rotate and enhance)
+      vg denoise        - remove noise from images
+      vg center         - center images
+      vg composite      - create color images
+      vg target         - copy images into target subfolders
+      vg clips          - create bw or color clips
+      vg movies         - create movies from clips
+      vg list           - show status of local datasets
 
-    where
+      vg test center    - run centering tests
+      vg test denoise   - run denoising tests
 
-      <volnums> = 5101..5120 Voyager 1 Jupiter
-                  6101..6121 Voyager 1 Saturn
-                  5201..5214 Voyager 2 Jupiter
-                  6201..6215 Voyager 2 Saturn
-                  7201..7207 Voyager 2 Uranus
-                  8201..8210 Voyager 2 Neptune
-                  (ranges and wildcards like 5101-5104 or 51* are ok)
+    where most commands can be followed by <filter> and <options>, where
 
+      <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
+                     (all are anded together)
+      <volnums>    = 5101..5120 Voyager 1 Jupiter
+                     6101..6121 Voyager 1 Saturn
+                     5201..5214 Voyager 2 Jupiter
+                     6201..6215 Voyager 2 Saturn
+                     7201..7207 Voyager 2 Uranus
+                     8201..8210 Voyager 2 Neptune
+                     (ranges and wildcards like 5101-5104 or 51* are ok)
+      <imageIds>   = imageId or range, like C1234567, C1234567-C1234569
       <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
       <system>     = Jupiter|Saturn|Uranus|Neptune
       <spacecraft> = Voyager1|Voyager2
       <target>     = Jupiter|Io|Europa|, etc.
       <camera>     = Narrow|Wide
+      <options>    = -y overwrite existing volume data
 
-    e.g. vg movies bw //Triton
+    e.g. vg clips 8205 //triton
 
-    You can also add `-y` to a command to have it overwrite any existing data.
+Most commands will fill in any missing intermediate steps, so for example, to download, denoise, center, composite, mosaic, and annotate all the Uranus images (which might take a while - there are 7 volumes of 1-3GB each), enter
 
-Most commands will fill in any missing intermediate steps, so for example, to download and composite all the Uranus images (might take a while - there are 7 volumes of 1-3GB each), enter
-
-    > vg composite 7*
+    > vg annotate 7*
 
 Or you can be more explicit and run them individually, as folllows -
 
@@ -150,6 +155,10 @@ Adjust the contrast levels and rotate the images
 
     > vg adjust 5101
 
+Remove noise where possible
+
+    > vg denoise 5101
+
 Center the images on the main body in the images
 
     > vg center 5101
@@ -158,21 +167,21 @@ Colorize the images
 
     > vg composite 5101
 
-or do all of these steps automatically (performs all missing steps)
+Annotate the images
 
-    > vg composite 5101
+    > vg annotate 5101
 
-Then you can make b&w or color movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
+Then you can make short movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
 
-    > vg clips [targetpath] -bw|color
+    > vg clips [targetpath]
 
 e.g.
 
-    > vg clips //Triton -color
+    > vg clips //triton/narrow
 
-to generate the Triton flyby movies (both Narrow and Wide angle cameras), or
+to generate the narrow angle Triton flyby movies, or
 
-    > vg clips -color
+    > vg clips
 
 to generate all available color movies.
 
@@ -180,17 +189,17 @@ Then these clips can be assembled into movies (one per system and then one overa
 
     > vg movies
 
-Use the `vg list` command to keep track of what stages different volumes are at:
+Use the `vg list [volnums]` command to keep track of what stages different volumes are at, e.g.:
 
-      Volume  Downloads    Unzips    Images    Adjustments    Centers    Composites
-    --------  -----------  --------  --------  -------------  ---------  ------------
-        5101  x            x         x
-        5102  x            x         x
-        5103  x            x         x
-        5201  x            x         x         x              x          x
-        6201  x            x
-        7201  x            x
-        7202  x            x
+      Volume  Download    Unzip    Convert   Adjust    Center    Composite
+    --------  ----------  -------  --------  --------  --------  -----------
+        5101  x           x        x
+        5102  x           x        x
+        5103  x           x        x
+        5201  x           x        x         x         x         x
+        6201  x           x
+        7201  x           x
+        7202  x           x
 
 
 Parameters
@@ -229,9 +238,9 @@ Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
 
-After downloading the tar files, unzipping them, and extracting the PNGs, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
+After downloading the tar files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
 
-The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv`. This helps with the Hough circle detection, and is used to help stabilize the image. 
+The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv` (included in the distribution). This helps with the Hough circle detection, and also to stabilize the image. 
 
 Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
 
@@ -241,7 +250,7 @@ http://imgur.com/VstnxI7
 
 Centering is turned off at closest approach by determining when the target size is over some threshold. The target size is also used to control the speed of the movie, slowing down when the target is closer. 
 
-The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`) looks like this:
+The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`, included with the distribution) looks like this:
 
     volume,fileid,phase,craft,target,time,instrument,filter,note
     5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
@@ -262,11 +271,9 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
 
 This file is used by the `vg composite <volume>` command to generate the color frames.
 
-The clips are generated with the `vg clips [targetpath] -bw|color` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
+The clips are generated with the `vg clips [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
 
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
-
-That's about it!
 
 
 Testing
@@ -302,8 +309,8 @@ History
 Version 0.44 (2016-08)
 ----------------------------------------
 - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
-- Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
 - Add `vg annotate` step - annotate images with imageId, date/time, distance (km)
+- Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
 
 Make Uranus system movie with denoised and annotated images
 

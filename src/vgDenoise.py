@@ -15,39 +15,32 @@ import libimg
 import log
 
 import vgAdjust
+# import vgCenter
 
 
 
 #. handle indiv imageids
-# def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
-# def vgDenoise(buildVolnum='', buildImageId='', targetPath=None, overwrite=False, directCall=True):
-# def vgDenoise(buildVolnum='', buildImageId='', targetPath=None, options={}, directCall=True):
 def vgDenoise(volnum='', overwrite=False, directCall=True):
     
     "remove noise from images in given volume"
 
     volnum = str(volnum) # eg '5101'
-    # buildImageId = buildImageId.upper() # always capital C
-    # overwrite = options.get('overwrite') # True or None
-    # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
-    # denoisedSubfolder = config.denoisedFolder + 'VGISS_' + volnum + '/'
-    inputSubfolder = lib.getSubfolder('adjust', filterVolume)
-    outputSubfolder = lib.getSubfolder('denoise', filterVolume)
+    # inputSubfolder = lib.getSubfolder('center', volnum)
+    inputSubfolder = lib.getSubfolder('adjust', volnum)
+    outputSubfolder = lib.getSubfolder('denoise', volnum)
 
     if volnum!='':
         # quit if volume folder exists
-        # if os.path.isdir(denoisedSubfolder) and overwrite==False:
         if os.path.isdir(outputSubfolder) and overwrite==False:
             if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the adjusted images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
+        # vgCenter.vgCenter(volnum, False, False) # not a direct call by user
         vgAdjust.vgAdjust(volnum, False, False) # not a direct call by user
         
         # make folder
-        # lib.rmdir(denoisedSubfolder)
-        # os.mkdir(denoisedSubfolder)
         lib.mkdir(outputSubfolder)
 
 
@@ -76,15 +69,19 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
         # relabel target field if necessary
         # target = lib.retarget(targetInfo, fileId, target)
 
+        #. join on positions.csv to get expected target size
+        
+        
         # get filenames
-        # infile = lib.getAdjustedFilepath(volume, fileId, filter)
-        # outfile = lib.getDenoisedFilepath(volume, fileId, filter)
         infile = lib.getFilepath('adjust', volume, fileId, filter)
+        # infile = lib.getFilepath('center', volume, fileId, filter)
         outfile = lib.getFilepath('denoise', volume, fileId, filter)
 
         # print 'Volume %s denoising %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         log.logr('Volume %s denoising %d/%d: %s' % (volume,nfile,nfiles,infile))
         
+        # denoise the image
+        #. pass expected target size
         libimg.denoiseImageFile(infile, outfile)
         
         nfile += 1

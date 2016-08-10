@@ -104,8 +104,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
 
 
 
-
-
+#. take targetRadius also
 def denoiseImageFile(infile, outfile):
     "attempt to remove noise from the given image file and save to outfile"
 
@@ -117,48 +116,67 @@ def denoiseImageFile(infile, outfile):
     # blank out right 3 pixels
     im[:,-3:] = 0
 
-    # im2 = im + 30
-    # im2 = im + 100
-    # im2 = im + 100
-    # im2 = im - 100
-    im2 = im
+    # remove salt and pepper noise, and thin lines
+    # works pretty well, but blurs some nice images - jupiter, triton ice
+    # im = cv2.medianBlur(im, 5)
 
-    # fill in single pixel horizontal lines
-    # first identify horizontal segments - then get avg of above and below pixels
-    linesToFill = []
-    for j in xrange(0,800):
-        rowMiddle = im[j,:]
-        # rowAbove = im[j-1,:] if j>0 else np.zeros(800,np.uint8)
-        # rowBelow = im[j+1,:] if j<799 else np.zeros(800,np.uint8)
-        rowAbove = im2[j-1,:] if j>0 else np.zeros(800,np.uint8)
-        rowBelow = im2[j+1,:] if j<799 else np.zeros(800,np.uint8)
-        maxlen = 0
-        seglen = 0
-        for i in xrange(0,800):
-            above = rowAbove[i]
-            middle = rowMiddle[i]
-            below = rowBelow[i]
-            # d1 = middle-above
-            # d2 = middle-below
-            # if (middle>above and middle>below) or (middle<above and middle<below):
-            # eps=30
-            # above = above + eps
-            # below = below + eps
-            if (middle>above and middle>below):
-                seglen += 1
-                if seglen>maxlen:
-                    maxlen = seglen
-            else:
-                seglen = 0
-        # if maxlen > 20: #.param
-        if maxlen > 30: #.param
-            linesToFill.append(j)
+    # what if applied it only in area outside the target?
+    # would need to know location of target
+    # ie do AFTER the centering step
+    # but we want to reduce noise BEFORE centering step
 
-    for line in linesToFill:
-        rowAbove = im[line-1,:] if line>0 else np.zeros(800,np.uint8)
-        rowBelow = im[line+1,:] if line<799 else np.zeros(800,np.uint8)
-        # im[line,:] = 0
-        im[line,:] = (rowAbove+rowBelow)/2
+    # so try just removing noise near sharp edges
+    # the larger C is, the less noise will be removed
+    mask = cv2.adaptiveThreshold(im, maxValue=255,
+                                 adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                 thresholdType=cv2.THRESH_BINARY_INV,
+                                 blockSize=3,
+                                 # C=2) # ends up blurring triton
+                                 # C=5) # leaves too much noise
+                                 C=4) # good compromise
+    kernel = np.ones((5,1),np.uint8) # expand edges horizontally
+    mask = cv2.dilate(mask, kernel, iterations = 1) # expand edge mask
+    mask = cv2.medianBlur(mask, 5) # remove dots from mask
+    imblurred = cv2.medianBlur(im, 5) # remove noise from image
+    im = im + ((imblurred - im) & mask) # combine image with blurred version
+
+    # nowork
+    # # fill in single pixel horizontal lines
+    # # first identify horizontal segments - then get avg of above and below pixels
+    # linesToFill = []
+    # im2 = im
+    # for j in xrange(0,800):
+    #     rowMiddle = im[j,:]
+    #     # rowAbove = im[j-1,:] if j>0 else np.zeros(800,np.uint8)
+    #     # rowBelow = im[j+1,:] if j<799 else np.zeros(800,np.uint8)
+    #     rowAbove = im2[j-1,:] if j>0 else np.zeros(800,np.uint8)
+    #     rowBelow = im2[j+1,:] if j<799 else np.zeros(800,np.uint8)
+    #     maxlen = 0
+    #     seglen = 0
+    #     for i in xrange(0,800):
+    #         above = rowAbove[i]
+    #         middle = rowMiddle[i]
+    #         below = rowBelow[i]
+    #         # d1 = middle-above
+    #         # d2 = middle-below
+    #         # if (middle>above and middle>below) or (middle<above and middle<below):
+    #         # eps=30
+    #         # above = above + eps
+    #         # below = below + eps
+    #         if (middle>above and middle>below):
+    #             seglen += 1
+    #             if seglen>maxlen:
+    #                 maxlen = seglen
+    #         else:
+    #             seglen = 0
+    #     # if maxlen > 20: #.param
+    #     if maxlen > 30: #.param
+    #         linesToFill.append(j)
+    # for line in linesToFill:
+    #     rowAbove = im[line-1,:] if line>0 else np.zeros(800,np.uint8)
+    #     rowBelow = im[line+1,:] if line<799 else np.zeros(800,np.uint8)
+    #     # im[line,:] = 0
+    #     im[line,:] = (rowAbove+rowBelow)/2
 
     cv2.imwrite(outfile, im)
 

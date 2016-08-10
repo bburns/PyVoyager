@@ -22,6 +22,7 @@ def vgTestDenoise():
     # lib.rmdir(denoisedFolder)
     # lib.mkdir(denoisedFolder)
     # os.mkdir(denoisedFolder)
+    folder = config.testDenoiseImagesFolder
 
     for root, dirs, files in os.walk(config.testDenoiseImagesFolder): # test/denoise
         for filename in files: # eg C1328423_neptune_dim.jpg
@@ -29,12 +30,12 @@ def vgTestDenoise():
             if (ext=='.jpg' or ext=='.png') and (not 'denoised' in filename):
                 fileId = filename[:8] # eg C1328423
                 fileTitle = filename[:-4] # eg C1328423_neptune_dim
-                infile = config.testDenoiseImagesFolder + filename
-                # denoisedFile = denoisedFolder + fileTitle + '_denoised.jpg'
-                denoisedFile = config.testDenoiseImagesFolder + fileTitle + '_denoised.jpg'
+                infile = folder + filename
+                outfile = folder + fileTitle + '_denoised.jpg'
                 
                 print 'Denoising', filename
-                libimg.denoiseImageFile(infile, denoisedFile)
+                libimg.denoiseImageFile(infile, outfile)
+                
                 
         del dirs[:] # don't recurse
     print 'done'

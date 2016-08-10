@@ -119,3 +119,6 @@ libimg.show(imnet)
 # opening = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
 # erosion = 255-erosion
 # libimg.show(erosion)
+
+
+

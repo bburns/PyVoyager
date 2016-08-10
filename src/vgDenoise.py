@@ -47,6 +47,9 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
     # get number of files to process
     nfiles = len(os.listdir(inputSubfolder))
 
+    # read small dbs into memory
+    denoisingInfo = lib.readCsv(config.dbDenoising) # when to turn denoising on/off
+    
     # iterate through all available images, filter on desired volume or image
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
@@ -69,25 +72,31 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
         # relabel target field if necessary
         # target = lib.retarget(targetInfo, fileId, target)
 
-        #. join on positions.csv to get expected target size
+        # check if we should denoise this image
+        doDenoise = True
+        denoisingRecord = denoisingInfo.get(fileId)
+        if denoisingRecord:
+            if denoisingRecord['denoiseImage']=='n': doDenoise = False
         
-        
-        # get filenames
-        infile = lib.getFilepath('adjust', volume, fileId, filter)
-        # infile = lib.getFilepath('center', volume, fileId, filter)
-        outfile = lib.getFilepath('denoise', volume, fileId, filter)
+        if doDenoise:
 
-        # print 'Volume %s denoising %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-        log.logr('Volume %s denoising %d/%d: %s' % (volume,nfile,nfiles,infile))
-        
-        # denoise the image
-        #. pass expected target size
-        libimg.denoiseImageFile(infile, outfile)
-        
-        nfile += 1
+            # get filenames
+            infile = lib.getFilepath('adjust', volume, fileId, filter)
+            # infile = lib.getFilepath('center', volume, fileId, filter)
+            outfile = lib.getFilepath('denoise', volume, fileId, filter)
+
+            # print 'Volume %s denoising %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+            log.logr('Volume %s denoising %d/%d: %s' % (volume,nfile,nfiles,infile))
+
+            # denoise the image
+            #. pass expected target size
+            libimg.denoiseImageFile(infile, outfile)
+
+            nfile += 1
 
     fFiles.close()
-
+    print
+    
 
 if __name__ == '__main__':
     os.chdir('..')

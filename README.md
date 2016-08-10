@@ -294,6 +294,7 @@ Next steps
 ----------------------------------------
 
 * Improve stabilization/centering routines - handle off-screen centers and crescents
+* Remove noise
 * Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
 * Add audio
 * Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
@@ -309,7 +310,8 @@ History
 Version 0.44 (2016-08)
 ----------------------------------------
 - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
-- Add `vg annotate` step - annotate images with imageId, date/time, distance (km)
+- Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings)
+- Add `vg annotate` step - annotate images with imageId, date/time, distance (km), NOTE field text
 - Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
 
 Make Uranus system movie with denoised and annotated images

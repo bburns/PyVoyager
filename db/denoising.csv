@@ -1,0 +1,16 @@
+
+# denoising overrides for images
+# turn denoising on/off for specified images
+
+# put y or n for centerImage
+
+# this file does NOT need to be sorted, as it's all read into a dictionary
+
+#. need sticky ids
+
+fileId,denoiseImage
+
+
+
+
+

@@ -69,7 +69,8 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
 # def stageFiles(targetPathParts):
 # def stageFiles(volnums, targetPathParts):
 # def stageFiles(volnum, targetPathParts):
-def stageFiles(filterVolume, targetPathParts):
+# def stageFiles(filterVolume, targetPathParts):
+def stageFiles(filterVolumes, targetPathParts):
     """
     Make links from source files (centers or composites) to clip stage folders.
     """
@@ -137,8 +138,7 @@ def stageFiles(filterVolume, targetPathParts):
         addImage = False
         # if volume in filterVolumes: addImage = True
         # if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
-        # if (volume in filterVolumes) and \
-        if (volume==filterVolumes) and \
+        if (volume in filterVolumes) and \
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
@@ -192,7 +192,8 @@ def stageFiles(filterVolume, targetPathParts):
                     titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
                                          config.extension
                     # need to get out of the target dir - we're always this deep
-                    titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
+                    # titleImagePathRelative = '../../../../../../../../' + titleImageFilepath
+                    titleImagePathRelative = '../../../../../../../' + titleImageFilepath
                     ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
                     lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
                                           nfile, ntitleCopies)
@@ -206,7 +207,8 @@ def stageFiles(filterVolume, targetPathParts):
                 # so must run this script in an admin console
                 # eg imageFilepath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
                 # need to get out of the target dir
-                imagePathRelative = '../../../../../../../../' + imageFilepath
+                # imagePathRelative = '../../../../../../../../' + imageFilepath
+                imagePathRelative = '../../../../../../../' + imageFilepath
                 lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
 
                 # increment the file number for the target folder
@@ -253,9 +255,10 @@ def stageFiles(filterVolume, targetPathParts):
 # def vgClips(filterVolumes=[], imageIds=[], targetPath=None, keepLinks=False):
 # def vgClips(filterVolumes=None, imageIds=None, targetPath=None, keepLinks=False):
 # def vgClips(filterVolume=None, imageId=None, targetPath=None, keepLinks=False):
-def vgClips(filterVolume='', filterTargetPath='', keepLinks=False):
+# def vgClips(filterVolume='', filterTargetPath='', keepLinks=False):
+def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     """
-    Build clips associated with the given volume and target path (eg '//Io').
+    Build clips associated with the given volumes AND target path (eg '//Io').
     """
 
     # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
@@ -271,18 +274,19 @@ def vgClips(filterVolume='', filterTargetPath='', keepLinks=False):
         lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
 
         # make sure we have some titles
-        vgTitles.vgTitles(targetPath)
+        vgTitles.vgTitles(filterTargetPath)
 
         # stage images for ffmpeg
         # os.rmdir(config.clipsStageFolder)
         lib.rmdir(config.clipsStageFolder)
         # stageFiles(bwOrColor, targetPathParts)
         # stageFiles(targetPathParts)
-        # stageFiles(filterVolumes, targetPathParts)
-        stageFiles(filterVolume, targetPathParts)
+        stageFiles(filterVolumes, targetPathParts)
+        # stageFiles(filterVolume, targetPathParts)
 
     # build mp4 files from all staged images
-    lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
+    # lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
+    lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',
                                   config.videoFilespec, config.videoFrameRate,
                                   config.clipsMinFrames)
 

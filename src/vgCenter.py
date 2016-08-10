@@ -55,8 +55,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # quit if volume folder exists
         # if os.path.isdir(centersSubfolder) and optionOverwrite==False:
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-            if directCall:
-                print "Folder exists - skipping vg center step: " + outputSubfolder
+            if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the denoised images for the volume, if not already there

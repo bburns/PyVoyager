@@ -16,8 +16,10 @@ import os
 import config
 
 
-def retarget(oldTarget, newTarget):
+def vgRetarget(oldTarget, newTarget):
+
     "for each image in temp directory, print a retargeting record to be added to targets.csv"
+
     print 'imageId,oldTarget,newTarget,x,y'
     # folder = config.grabFolder
     # folder = config.folders['grab']

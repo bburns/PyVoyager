@@ -38,21 +38,16 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
         # quit if volume folder exists
         # if os.path.isdir(adjustmentsSubfolder) and optionOverwrite==False:
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-            if directCall:
-                print "Folder exists - skipping vg adjust step: " + outputSubfolder
+            if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the plain images for the volume, if not already there
         vgConvert.vgConvert(filterVolume, optionOverwrite=False, directCall=False)
 
         # make new folder
-        # lib.rmdir(adjustmentsSubfolder)
-        # lib.mkdir(adjustmentsSubfolder)
-        # lib.rmdir(adjustmentsSubfolder)
         lib.mkdir(outputSubfolder)
 
     # get number of files to process
-    # nfiles = len(os.listdir(imagesSubfolder))
     nfiles = len(os.listdir(inputSubfolder))
 
     # iterate through all available images

@@ -14,7 +14,6 @@ import libimg
 import vgUnzip
 
 
-# def vgConvert(volnum, imageId=None, targetPath=None, overwrite=False, directCall=True):
 def vgConvert(volnum, overwrite=False, directCall=True):
 
     "Convert IMG files to PNG files for the given volume, if png folder doesn't exist yet."
@@ -25,8 +24,7 @@ def vgConvert(volnum, overwrite=False, directCall=True):
 
     # quit if volume folder exists
     if os.path.isdir(outputSubfolder) and overwrite==False:
-        if directCall:
-            print "Images folder exists: " + outputSubfolder
+        if directCall: print "Folder exists: " + outputSubfolder
         return
 
     # unzip the download, if not already there

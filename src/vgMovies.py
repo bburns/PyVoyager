@@ -74,10 +74,8 @@ def vgMovies():
     # repeat until eof
     # should end up with movies for each planet flyby, and one with all of them, all.mp4
 
-    # f = open(config.dbMovies, 'rt')
-    # reader = csv.reader(f)
     reader, f = lib.openCsvReader(config.dbMovies)
-    lastMovieId=''
+    lastMovieId = ''
     clipIds = []
     for row in reader:
         movieId = row[0] # eg Neptune-Voyager2

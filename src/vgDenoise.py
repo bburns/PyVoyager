@@ -38,9 +38,7 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
         # quit if volume folder exists
         # if os.path.isdir(denoisedSubfolder) and overwrite==False:
         if os.path.isdir(outputSubfolder) and overwrite==False:
-            if directCall:
-                # print "Folder exists - skipping vg denoise step: " + denoisedSubfolder
-                print "Folder exists - skipping vg denoise step: " + outputSubfolder
+            if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the adjusted images for the volume, if not already there

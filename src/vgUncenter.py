@@ -7,7 +7,8 @@ this will basically copy the images from the images step into the appropriate ce
 saves the step of recentering all the volumes.
 """
 
-#. renamed from vg update centers command - handle arguments
+#. this is out of date - centering.csv has changed
+
 
 import csv
 import os
@@ -19,9 +20,11 @@ import libimg
 
 
 def vgUncenter(filterVolume):
+
     "Uncenter images for the given volume based on records in db/centering.csv"
 
     filterVolume = str(filterVolume) # eg '5101'
+
     print 'Uncentering images in volume', filterVolume
 
     # imagesubfolder = config.imagesFolder + 'VGISS_' + filterVolume + '/'

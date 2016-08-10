@@ -25,26 +25,17 @@ def parseFilenames(folder, section, grid):
         del dirnames[:] # don't recurse
 
 
-# def vgList(pVolume=None, pImageId=None, pTargetPath=None):
 # def vgList(volnums=None, imageIds=None, targetPath=None):
 def vgList(filterVolumes=''):
+
     "Get a listing of volumes and what stages they are at"
-
-    # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
-    # then convert to an array of arrays and display
-    grid = {}
-    # parseFilenames(config.downloadsFolder, 'Downloads', grid)
-    # parseFilenames(config.unzipsFolder, 'Unzips', grid)
-    # parseFilenames(config.imagesFolder, 'Images', grid)
-    # parseFilenames(config.adjustmentsFolder, 'Adjustments', grid)
-    # parseFilenames(config.denoisedFolder, 'Denoised', grid)
-    # parseFilenames(config.centersFolder, 'Centers', grid)
-    # parseFilenames(config.compositesFolder, 'Composites', grid)
-
 
     headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
                'Denoise', 'Center', 'Composite', 'Mosaic', 'Annotate']
 
+    # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
+    # then convert to an array of arrays and display
+    grid = {}
     for header in headers[1:]:
         parseFilenames(config.folders[header.lower()], header, grid)
 
@@ -55,8 +46,6 @@ def vgList(filterVolumes=''):
     # Alice      24
     # Bob        19
 
-    # headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments',
-               # 'Denoised', 'Centers', 'Composites']
     rows = []
     volumes = filterVolumes or config.volumes
     for volume in volumes:

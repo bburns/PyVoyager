@@ -36,8 +36,7 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
         
         # quit if volume folder exists
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-            if directCall:
-                print "Folder exists - skipping vg annotate step: " + outputSubfolder
+            if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the mosaics if not already there

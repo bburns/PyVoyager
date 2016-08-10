@@ -32,7 +32,6 @@ def vgTarget(filterVolume='', targetPath=''):
     targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
     # iterate down files.csv
-    # if target path matches row, copy that image to target subfolder
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     for row in csvFiles:
 

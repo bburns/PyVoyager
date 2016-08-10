@@ -50,9 +50,8 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
         outputSubfolder = lib.getSubfolder('composite', filterVolume)
 
         # quit if volume folder exists
-        # if os.path.isdir(compositesSubfolder) and optionOverwrite==False:
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-            if directCall: print "Composites folder exists: " + outputSubfolder
+            if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the centered images for the volume, if not already there

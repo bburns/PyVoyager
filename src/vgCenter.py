@@ -37,9 +37,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
     # #. if file contains the given volume, either stop or remove those lines
     # s = ',' + filterVolume + ','
-    # if lib.fileContainsString(config.centersdb, s):
+    # if lib.fileContainsString(config.dbCenters, s):
     #     if optionOverwrite:
-    #         lib.removeLinesFromFile(config.centersdb, s)
+    #         lib.removeLinesFromFile(config.dbCenters, s)
     #     else:
     #         print 'Centers.csv already contains volume ' + filterVolume + ' - run with -y to optionOverwrite'
     #         return
@@ -71,20 +71,20 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     nfiles = len(os.listdir(inputSubfolder))
 
     # read small dbs into memory
-    centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
-    targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
+    centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
+    targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
     # open positions.csv file for target angular size info
-    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+    csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
 
     # open centers_new.csv file to write any new records to
-    csvNewCenters, fNewCenters = lib.openCsvWriter(config.newcentersdb)
+    csvNewCenters, fNewCenters = lib.openCsvWriter(config.dbCentersNew)
 
     # dictionary to keep track of last image file in target sequence (eg for Ariel flyby)
     lastImageInTargetSequence = {}
 
     # iterate through all available images, filter on desired volume or image
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for rowFiles in csvFiles:
         volume = rowFiles[config.filesColVolume]
@@ -152,9 +152,9 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     fFiles.close()
 
     # now append newcenters records to centers file
-    if os.path.isfile(config.newcentersdb):
-        lib.concatFiles(config.centersdb, config.newcentersdb)
-        lib.rm(config.newcentersdb)
+    if os.path.isfile(config.dbCentersNew):
+        lib.concatFiles(config.dbCenters, config.dbCentersNew)
+        lib.rm(config.dbCentersNew)
         print
         print 'New records appended to centers.csv file - please make sure any older records are removed and the file is sorted before committing it to git'
     else:

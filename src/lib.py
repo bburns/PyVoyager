@@ -29,11 +29,11 @@ def loadPreviousStep(targetPathParts, fn):
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # load small db into memory
-    targetInfo = readCsv(config.retargetingdb) # remapping listed targets
+    targetInfo = readCsv(config.dbRetargeting) # remapping listed targets
 
     # collect volumes needed, call the given fn with those volumes
     volumes = {}
-    csvFiles, fFiles = openCsvReader(config.filesdb)
+    csvFiles, fFiles = openCsvReader(config.dbFiles)
     for rowFiles in csvFiles:
         volume = rowFiles[config.filesColVolume]
         fileId = rowFiles[config.filesColFileId]

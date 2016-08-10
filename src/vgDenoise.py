@@ -57,7 +57,7 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
     nfiles = len(os.listdir(inputSubfolder))
 
     # iterate through all available images, filter on desired volume or image
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for rowFiles in csvFiles:
         

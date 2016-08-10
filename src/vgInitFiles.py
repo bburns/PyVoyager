@@ -23,9 +23,9 @@ def vgInitFiles():
 
     # open files.csv for writing
     # IMPORTANT: keep fields in synch with row, below, and config.filesCol*
-    # fileout = open(config.filesdb, 'wb')
+    # fileout = open(config.dbFiles, 'wb')
     # writer = csv.writer(fileout)
-    writer, fileout = lib.openCsvWriter(config.filesdb)
+    writer, fileout = lib.openCsvWriter(config.dbFiles)
     # fields = 'volume,fileid,phase,craft,target,time,instrument,filter,note'.split(',')
     fields = 'fileid,volume,phase,craft,target,time,instrument,filter,note'.split(',')
     writer.writerow(fields)

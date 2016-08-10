@@ -30,10 +30,10 @@ def vgUncenter(filterVolume):
     outputSubfolder = lib.getFolder('center', filterVolume)
 
     # read small db into memory - tells when to turn centering on/off
-    centeringInfo = lib.readCsv(config.centeringdb)
+    centeringInfo = lib.readCsv(config.dbCentering)
 
     # iterate through all available images, filter on desired volume
-    reader, f = lib.openCsvReader(config.filesdb)
+    reader, f = lib.openCsvReader(config.dbFiles)
     for row in reader:
         volume = row[config.filesColVolume]
         if volume==filterVolume:

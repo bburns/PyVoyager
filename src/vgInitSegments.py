@@ -15,13 +15,13 @@ import lib
 
 # hide some of the details of iterating down a single instrument type in files.csv and
 # joining with positions.csv
-# def filesdbOpenJoinPositions(camera):
+# def dbFilesOpenJoinPositions(camera):
 #     ""
 #     return {}
-# def filesdbNext(fdb):
+# def dbFilesNext(fdb):
 #     ""
 #     pass
-# def filesdbClose(fdb):
+# def dbFilesClose(fdb):
 #     ""
 #     pass
 
@@ -30,7 +30,7 @@ def vgInitSegments():
     "initialize segments.csv from files.csv and positions.csv"
 
     # # open segments.csv for writing
-    # fileout = open(config.segmentsdb, 'wb')
+    # fileout = open(config.dbSegments, 'wb')
     # # IMPORTANT: keep fields in synch with row, below, and config.segmentsCol*
     # fields = 'segmentId,fileIds,imageSource,nframes'.split(',')
     # writer = csv.writer(fileout)
@@ -38,8 +38,8 @@ def vgInitSegments():
     # fileout.close()
 
     # # open files.csv for reading
-    # fNarrow = open(config.filesdb, 'rt') # narrowrrow angle
-    # fWide = open(config.filesdb, 'rt') # wide angle
+    # fNarrow = open(config.dbFiles, 'rt') # narrowrrow angle
+    # fWide = open(config.dbFiles, 'rt') # wide angle
     # readerNarrow = csv.reader(fNarrow)
     # readerWide = csv.reader(fWide)
     # row = readerNarrow.next() # read fields row
@@ -54,10 +54,10 @@ def vgInitSegments():
     # fNarrow.close()
 
     # #. using a class might make this easier
-    # fdb1 = filesdbOpenJoinPositions('Narrow')
-    # fdb2 = filesdbOpenJoinPositions('Wide')
-    # row1 = filesdbNext(fdb1)
-    # row2 = filesdbNext(fdb2)
+    # fdb1 = dbFilesOpenJoinPositions('Narrow')
+    # fdb2 = dbFilesOpenJoinPositions('Wide')
+    # row1 = dbFilesNext(fdb1)
+    # row2 = dbFilesNext(fdb2)
     # imageSize1 = row1[config.filesPositionsColImageSize]
     # imageSize2 = row2[config.filesPositionsColImageSize]
 
@@ -71,11 +71,11 @@ def vgInitSegments():
     #     fileId = row2[config.filesColFileId]
     #     imageSource =
     #     row = []
-    # filesdbClose(fdb2)
-    # filesdbClose(fdb1)
+    # dbFilesClose(fdb2)
+    # dbFilesClose(fdb1)
 
-    # fdb1 = new Filesdb('Narrow')
-    # fdb2 = new Filesdb('Wide')
+    # fdb1 = new DbFiles('Narrow')
+    # fdb2 = new DbFiles('Wide')
     # row1 = fdb1.next()
     # row2 = fdb2.next()
     # imageSize1 = row1[config.filesPositionsColImageSize]

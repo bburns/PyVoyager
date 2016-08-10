@@ -31,7 +31,7 @@ def vgTitles(targetPath=None):
     targetPathSeen = {}
 
     # iterate through all available images
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     for row in csvFiles:
 
         volume = row[config.filesColVolume]

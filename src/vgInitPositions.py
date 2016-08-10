@@ -45,10 +45,10 @@ def vgInitPositions():
     "Initialize positions.csv with distances to targets for all images in files.csv"
 
     # open files.csv for reading
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # open positions.csv for writing
-    csvPositions, fPositions = lib.openCsvWriter(config.positionsdb)
+    csvPositions, fPositions = lib.openCsvWriter(config.dbPositions)
     fields = 'imageId,distance(km),imageFraction'.split(',') # keep in synch with below
     csvPositions.writerow(fields)
 
@@ -64,7 +64,7 @@ def vgInitPositions():
     spice.furnsh('kernels/pck00010.tpc') # planetary constants (radius etc) (120kb)
 
     # read db into memory
-    targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
+    targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
     # iterate over all available files
     for row in csvFiles:

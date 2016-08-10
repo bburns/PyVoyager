@@ -40,7 +40,7 @@ def vgTestCenter():
     # os.mkdir(debugFolder)
 
     # open positions file
-    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+    csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
     
     # read in small csv file
     results = lib.readCsv(config.testCenterdb) # test/testCenters.csv

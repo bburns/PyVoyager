@@ -66,10 +66,10 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
         lib.mkdir(outputSubfolder)
 
     # get centering info - will use to get files from either adjusted or centered folders
-    # centeringInfo = lib.readCsv(config.centeringdb)
+    # centeringInfo = lib.readCsv(config.dbCentering)
 
     # iterate over composites.csv records
-    csvComposites, fComposites = lib.openCsvReader(config.compositesdb)
+    csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
     startId = ''
     startVol = ''
     channelRows = []

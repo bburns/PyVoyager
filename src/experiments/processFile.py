@@ -7,7 +7,7 @@ import libimg
 
 
 # switch order of centers.csv columns
-# reader,f = lib.openCsvReader('../../'+ config.centersdb)
+# reader,f = lib.openCsvReader('../../'+ config.dbCenters)
 # writer,fout = lib.openCsvWriter('../../db/foo.csv')
 # for row in reader:
 #     row2 = list(row)
@@ -21,7 +21,7 @@ import libimg
 # switch order of composites.csv columns
 # volume,compositeId,imageId,filter,weight,x,y
 # 5101,C1462321,C1462321,Clear
-reader,f = lib.openCsvReader('../../'+ config.compositesdb)
+reader,f = lib.openCsvReader('../../'+ config.dbComposites)
 writer,fout = lib.openCsvWriter('../../db/foo.csv')
 for row in reader:
     row2 = list(row)

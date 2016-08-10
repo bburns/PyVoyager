@@ -21,12 +21,12 @@ def vgInitErrata():
     "Build the errata.csv file based on known problems with index files"
 
     # open the errata.csv file
-    csvErrata, fErrata = lib.openCsvWriter(config.erratadb)
+    csvErrata, fErrata = lib.openCsvWriter(config.dbErrata)
     fields = 'fileId,fieldname,newvalue'.split(',') # keep in synch with row, below
     csvErrata.writerow(fields)
 
     # iterate over all image files
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     for row in csvFiles:
         # get field values

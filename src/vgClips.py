@@ -84,10 +84,10 @@ def stageFiles(filterVolumes, targetPathParts):
     # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # read some small dbs into memory
-    retargetingInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
-    targetInfo = lib.readCsv(config.targetdb) # change framerates per target
-    framerateInfo = lib.readCsv(config.frameratesdb) # change framerates per image
-    centeringInfo = lib.readCsv(config.centeringdb) # turn centering on/off
+    retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
+    targetInfo = lib.readCsv(config.dbTarget) # change framerates per target
+    framerateInfo = lib.readCsv(config.dbFramerates) # change framerates per image
+    centeringInfo = lib.readCsv(config.dbCentering) # turn centering on/off
 
     # keep track of number of files in each target subfolder,
     # so we can number files appropriately and know when to add titles
@@ -98,13 +98,13 @@ def stageFiles(filterVolumes, targetPathParts):
     ncopiesMemory = {} # keyed on planet-spacecraft-target-camera
 
     # open positions.csv file for target angular size info (used to control effective framerate)
-    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+    csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
 
     # open additions.csv for additional images to insert into sequence
-    csvAdditions, fAdditions = lib.openCsvReader(config.additionsdb)
+    csvAdditions, fAdditions = lib.openCsvReader(config.dbAdditions)
 
     # iterate through all available images
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     for row in csvFiles:
 
         # get file info

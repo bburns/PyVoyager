@@ -51,10 +51,10 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
     nfiles = len(os.listdir(inputSubfolder))
 
     # open positions.csv file for target distance
-    csvPositions, fPositions = lib.openCsvReader(config.positionsdb)
+    csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
     
     # iterate through all available files
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for row in csvFiles:
         volume = row[config.filesColVolume]

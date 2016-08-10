@@ -69,12 +69,12 @@ def vgInitComposites():
     "Build the composites.csv file from likely looking groups of images in files.csv"
 
     # open the composites.csv file
-    csvComposites, fComposites = lib.openCsvWriter(config.compositesdb)
+    csvComposites, fComposites = lib.openCsvWriter(config.dbComposites)
     fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
     csvComposites.writerow(fields)
 
     # iterate over all image files
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # this will store circular buffers with 7 empty lists -
     # the maximum number of filters in a group we're checking for

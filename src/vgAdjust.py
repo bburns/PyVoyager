@@ -56,7 +56,7 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
     nfiles = len(os.listdir(inputSubfolder))
 
     # iterate through all available images
-    csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for row in csvFiles:
         volume = row[config.filesColVolume]

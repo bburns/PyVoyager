@@ -454,22 +454,21 @@ indexTranslations = {
 
 
 # csv file databases
-#. rename to dbFoo
-filesdb = dbFolder + 'files.csv'
-centeringdb = dbFolder + 'centering.csv'
-centersdb = dbFolder + 'centers.csv'
+dbFiles           = dbFolder + 'files.csv'
+dbCentering       = dbFolder + 'centering.csv'
+dbCenters         = dbFolder + 'centers.csv'
 dbCentersOverride = dbFolder + 'centersOverride.csv'
-newcentersdb = dbFolder + 'centers_new.csv'
-compositesdb = dbFolder + 'composites.csv'
-mosaicsdb = dbFolder + 'mosaics.csv'
-moviesdb = dbFolder + 'movies.csv'
-retargetingdb = dbFolder + 'retargeting.csv'
-frameratesdb = dbFolder + 'framerates.csv'
-segmentsdb = dbFolder + 'segments.csv'
-positionsdb = dbFolder + 'positions.csv'
-erratadb = dbFolder + 'errata.csv'
-targetdb = dbFolder + 'targets.csv'
-additionsdb = dbFolder + 'additions.csv'
+dbCentersNew      = dbFolder + 'centersNew.csv'
+dbComposites      = dbFolder + 'composites.csv'
+dbMosaics         = dbFolder + 'mosaics.csv'
+dbMovies          = dbFolder + 'movies.csv'
+dbRetargeting     = dbFolder + 'retargeting.csv'
+dbFramerates      = dbFolder + 'framerates.csv'
+dbSegments        = dbFolder + 'segments.csv'
+dbPositions       = dbFolder + 'positions.csv'
+dbErrata          = dbFolder + 'errata.csv'
+dbTarget          = dbFolder + 'targets.csv'
+dbAdditions       = dbFolder + 'additions.csv'
 
 #. rename all these to colFilesVolume etc
 

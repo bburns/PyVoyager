@@ -46,14 +46,14 @@ def vgCenter(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
         nfiles = len(os.listdir(adjustmentsSubfolder))
 
         # read small dbs into memory
-        centeringInfo = lib.readCsv(config.centeringdb) # when to turn centering on/off
-        targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
+        centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
+        targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
         # iterate through all available images, filter on desired volume
-        csvFiles, fFiles = lib.openCsvReader(config.filesdb)
+        csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
         # join on centers.csv file
-        csvCenters, fCenters = lib.openCsvReader(config.centersdb)
+        csvCenters, fCenters = lib.openCsvReader(config.dbCenters)
         csvCenters.next() # skip header row #. brittle
         # fileIdCenters = lib.nextRow(csvCenters, config.centersColFileId)
 

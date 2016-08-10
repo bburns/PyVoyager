@@ -21,8 +21,10 @@ def concatenateClips(movieId, clipIds):
 
     print 'Generating movie', movieId
     print movieId, clipIds
-    movieFilepath = config.moviesFolder + movieId + '.mp4'
-    movieContentsFilepath = config.moviesFolder + movieId + '.txt'
+    # movieFilepath = config.moviesFolder + movieId + '.mp4'
+    # movieContentsFilepath = config.moviesFolder + movieId + '.txt'
+    movieFilepath = config.folders['movies'] + movieId + '.mp4'
+    movieContentsFilepath = config.folders['movies'] + movieId + '.txt'
     if clipIds != []:
         makeContentsFile(movieContentsFilepath, clipIds)
         # now make the movie
@@ -38,8 +40,10 @@ def makeContentsFile(movieContentsFilepath, clipIds):
     f = open(movieContentsFilepath, 'w')
     for clipId in clipIds:
         print clipId
-        clipFilepath = config.clipsFolder + clipId + '.mp4'
-        movieFilepath = config.moviesFolder + clipId + '.mp4'
+        # clipFilepath = config.clipsFolder + clipId + '.mp4'
+        # movieFilepath = config.moviesFolder + clipId + '.mp4'
+        clipFilepath = config.folders['clips'] + clipId + '.mp4'
+        movieFilepath = config.folders['movies'] + clipId + '.mp4'
         # if file avail, add it
         if os.path.isfile(clipFilepath):
             line = "file '../../" + clipFilepath + "'"

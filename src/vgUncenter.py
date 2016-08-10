@@ -18,14 +18,16 @@ import lib
 import libimg
 
 
-def vgUncenter(volnum):
+def vgUncenter(filterVolume):
     "Uncenter images for the given volume based on records in db/centering.csv"
 
-    volnum = str(volnum) # eg '5101'
-    print 'Uncentering images in volume', volnum
+    filterVolume = str(filterVolume) # eg '5101'
+    print 'Uncentering images in volume', filterVolume
 
-    imagesubfolder = config.imagesFolder + 'VGISS_' + volnum + '/'
-    centersubfolder = config.centersFolder + 'VGISS_' + volnum + '/'
+    # imagesubfolder = config.imagesFolder + 'VGISS_' + filterVolume + '/'
+    # centersubfolder = config.centersFolder + 'VGISS_' + filterVolume + '/'
+    inputSubfolder = lib.getFolder('convert', filterVolume)
+    outputSubfolder = lib.getFolder('center', filterVolume)
 
     # read small db into memory - tells when to turn centering on/off
     centeringInfo = lib.readCsv(config.centeringdb)
@@ -34,7 +36,7 @@ def vgUncenter(volnum):
     reader, f = lib.openCsvReader(config.filesdb)
     for row in reader:
         volume = row[config.filesColVolume]
-        if volume==volnum:
+        if volume==filterVolume:
             fileId = row[config.filesColFileId]
             filter = row[config.filesColFilter]
             system = row[config.filesColPhase]
@@ -57,9 +59,9 @@ def vgUncenter(volnum):
             # uncenter the file if necessary
             if docenter==False:
                 pngfilename = fileId + '_' + config.imageType + '_' + filter + '.png'
-                infile = imagesubfolder + pngfilename
+                infile = inputSubfolder + pngfilename
                 if os.path.isfile(infile):
-                    outfile = centersubfolder + config.centersPrefix + pngfilename
+                    outfile = outputSubfolder + config.centersPrefix + pngfilename
                     print 'Uncentering %s              \r' % (outfile),
                     libimg.adjustImageFile(infile, outfile, docenter)
                 else:

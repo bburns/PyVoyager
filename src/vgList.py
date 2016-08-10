@@ -33,13 +33,20 @@ def vgList(filterVolumes=''):
     # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
     # then convert to an array of arrays and display
     grid = {}
-    parseFilenames(config.downloadsFolder, 'Downloads', grid)
-    parseFilenames(config.unzipsFolder, 'Unzips', grid)
-    parseFilenames(config.imagesFolder, 'Images', grid)
-    parseFilenames(config.adjustmentsFolder, 'Adjustments', grid)
-    parseFilenames(config.denoisedFolder, 'Denoised', grid)
-    parseFilenames(config.centersFolder, 'Centers', grid)
-    parseFilenames(config.compositesFolder, 'Composites', grid)
+    # parseFilenames(config.downloadsFolder, 'Downloads', grid)
+    # parseFilenames(config.unzipsFolder, 'Unzips', grid)
+    # parseFilenames(config.imagesFolder, 'Images', grid)
+    # parseFilenames(config.adjustmentsFolder, 'Adjustments', grid)
+    # parseFilenames(config.denoisedFolder, 'Denoised', grid)
+    # parseFilenames(config.centersFolder, 'Centers', grid)
+    # parseFilenames(config.compositesFolder, 'Composites', grid)
+
+
+    headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
+               'Denoise', 'Center', 'Composite', 'Mosaic', 'Annotate']
+
+    for header in headers[1:]:
+        parseFilenames(config.folders[header.lower()], header, grid)
 
     # tabulate lib works like this -
     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
@@ -48,8 +55,8 @@ def vgList(filterVolumes=''):
     # Alice      24
     # Bob        19
 
-    headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments',
-               'Denoised', 'Centers', 'Composites']
+    # headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments',
+               # 'Denoised', 'Centers', 'Composites']
     rows = []
     volumes = filterVolumes or config.volumes
     for volume in volumes:

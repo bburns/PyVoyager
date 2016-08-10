@@ -25,7 +25,8 @@ def vgDownload(volnum, overwrite=False, directCall=True):
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     url = lib.getDownloadUrl(volnum)
     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-    filepath = config.downloadsFolder + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
+    # filepath = config.downloadsFolder + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
+    filepath = config.folders['download'] + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
 
     # quit if volume folder exists
     if os.path.isfile(filepath) and overwrite==False:

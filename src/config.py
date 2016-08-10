@@ -72,14 +72,8 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 
 
-
+# part of filenames
 suffixes = {
-    # 'adjusted': '_adjusted',
-    # 'denoised': '_denoised',
-    # 'centered': '_centered',
-    # 'composites': '_composite',
-    # 'mosaics': '_mosaic',
-    # 'annotated': '_annotated',
     'adjust':    '_adjusted',
     'denoise':   '_denoised',
     'center':    '_centered',
@@ -243,9 +237,8 @@ stabilizeECCTerminationEpsilon = 1e-5 # v0.43 uranus
 # stabilizeNTimesToUseFixedFrame = 1 # v0.42 try jupiter - align to previous frame, using round instead of int, try to fix leftward drift
 
 
-
 # suffix for centered filenames
-centersSuffix = '_centered'
+# centersSuffix = '_centered'
 
 # rotate image 180 degrees during centering step
 rotateImage = True
@@ -376,21 +369,19 @@ clipsMinFrames = 20
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 
-downloadsFolder     = offlineFolder + "step01_downloads/"
-unzipsFolder        = offlineFolder + "step02_unzips/"
-imagesFolder        = onlineFolder  + "step03_images/"
-adjustmentsFolder   = onlineFolder  + "step04_adjustments/"
-denoisedFolder      = onlineFolder  + "step05_denoised/"
-centersFolder       = onlineFolder  + "step06_centers/"
-compositesFolder    = onlineFolder  + "step07_composites/"
-mosaicsFolder       = onlineFolder  + "step08_mosaics/"
-annotationsFolder   = onlineFolder  + "step09_annotations/"
-targetsFolder       = onlineFolder  + "step10_targets/"
-titlesFolder        = onlineFolder  + "step11_titles/"
-clipsFolder         = onlineFolder  + "step12_clips/"
-moviesFolder        = onlineFolder  + "step13_movies/"
-
-clipsStageFolder    = clipsFolder   + 'stage/'
+# downloadsFolder     = offlineFolder + "step01_downloads/"
+# unzipsFolder        = offlineFolder + "step02_unzips/"
+# imagesFolder        = onlineFolder  + "step03_images/"
+# adjustmentsFolder   = onlineFolder  + "step04_adjustments/"
+# denoisedFolder      = onlineFolder  + "step05_denoised/"
+# centersFolder       = onlineFolder  + "step06_centers/"
+# compositesFolder    = onlineFolder  + "step07_composites/"
+# mosaicsFolder       = onlineFolder  + "step08_mosaics/"
+# annotationsFolder   = onlineFolder  + "step09_annotations/"
+# targetsFolder       = onlineFolder  + "step10_targets/"
+# titlesFolder        = onlineFolder  + "step11_titles/"
+# clipsFolder         = onlineFolder  + "step12_clips/"
+# moviesFolder        = onlineFolder  + "step13_movies/"
 
 grabFolder          = onlineFolder  + "grab/"
 grabbedFolder       = onlineFolder  + "grabbed/"
@@ -410,6 +401,8 @@ folders = {
     'clips':      onlineFolder  + "step12_clips/",
     'movies':     onlineFolder  + "step13_movies/",
     }
+
+clipsStageFolder    = folders['clips'] + 'stage/'
 
 
 

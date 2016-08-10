@@ -14,26 +14,33 @@ import vgDownload
 
 
 def vgUnzip(volnum, overwrite=False, directCall=True):
+
     "Unzip the given volume number, if it doesn't exist yet."
 
-    # get zipfile eg data/step1_downloads/vgiss_5101.tar.gz
-    zipfilepath = config.downloadsFolder + 'VGISS_' + str(volnum) + '.tar.gz'
-    unzippedfolder = config.unzipsFolder + 'VGISS_' + str(volnum) + '/'
+    volnum = str(volnum)
 
+    # get zipfilepath
+    # eg data/step01_downloads/vgiss_5101.tar.gz
+    zipfilepath = config.downloadsFolder + 'VGISS_' + volnum + '.tar.gz'
+    unzippedfolder = config.unzipsFolder + 'VGISS_' + volnum + '/'
+
+    # quit if volume folder exists
     if os.path.isdir(unzippedfolder) and overwrite==False:
         if directCall:
             print "Folder exists - skipping unzip step: " + unzippedfolder
-    else:
-        # download the zip if not already there
-        vgDownload.vgDownload(volnum, False, False)
+        return
 
-        print "Unzipping " + zipfilepath
-        print "       to " + unzippedfolder
-        lib.rmdir(unzippedfolder)
-        lib.unzipFile(zipfilepath, unzippedfolder)
+    # download the zip if not already there
+    vgDownload.vgDownload(volnum, False, False) # not a direct call by the user
+
+    # unzip the file
+    print "Unzipping " + zipfilepath
+    print "       to " + unzippedfolder
+    lib.rmdir(unzippedfolder)
+    lib.unzipFile(zipfilepath, unzippedfolder)
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    # vgUnzip(0)
+    vgUnzip(5101)
     print 'done'

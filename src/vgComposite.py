@@ -23,7 +23,8 @@ import vgCenter
 
 
 # def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall=True):
-def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True):
+# def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True):
+def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
 
@@ -39,22 +40,24 @@ def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True)
         Note: weight and x,y are optional - default to 1,0,0
     """
 
-    buildVolnum = str(buildVolnum)
-    buildCompositeId = buildCompositeId.upper() # always capital C
+    filterVolume = str(filterVolume)
+    filterCompositeId = filterCompositeId.upper() # always capital C
 
-    if buildVolnum!='':
-        compositesSubfolder = config.compositesFolder + 'VGISS_' + buildVolnum + '/'
+    if filterVolume!='':
 
-        if os.path.isdir(compositesSubfolder) and overwrite==False:
+        compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
+
+        # quit if volume folder exists
+        if os.path.isdir(compositesSubfolder) and optionOverwrite==False:
             if directCall: print "Composites folder exists: " + compositesSubfolder
             return
 
         # build the centered images for the volume, if not already there
-        vgCenter.vgCenter(buildVolnum, '', False, False)
+        vgCenter.vgCenter(filterVolume, '', optionOverwite=False, directCall=False)
 
         # print 'Building composites for', compositesSubfolder
 
-        # if we're building an entire volume, remove the existing directory first
+        # make folder
         lib.rmdir(compositesSubfolder)
         lib.mkdir(compositesSubfolder)
 
@@ -68,19 +71,22 @@ def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True)
     channelRows = []
     nfile = 0
     for row in csvComposites:
-        compositeId = row[config.compositesColCompositeId]
         volume = row[config.compositesColVolume]
-        if volume==buildVolnum or compositeId==buildCompositeId:
-            # gather image filenames into channelRows so can merge them
-            if compositeId == startId:
-                channelRows.append(row)
-            else:
-                # we're seeing a new compositeId, so process all the gathered channels
-                processChannels(channelRows,startVol,nfile,startId)
-                startId = compositeId
-                startVol = volume
-                channelRows = [row]
-                nfile += 1
+        compositeId = row[config.compositesColCompositeId]
+        # if volume==filterVolume or compositeId==filterCompositeId:
+        if volume!=filterVolume and compositeId!=filterCompositeId: continue
+
+        # gather image filenames into channelRows so can merge them
+        if compositeId == startId:
+            channelRows.append(row)
+        else:
+            # we're seeing a new compositeId, so process all the gathered channels
+            processChannels(channelRows,startVol,nfile,startId)
+            startId = compositeId
+            startVol = volume
+            channelRows = [row]
+            nfile += 1
+
     # do the last leftover group
     processChannels(channelRows,startVol,nfile,startId)
     print

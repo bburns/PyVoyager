@@ -567,11 +567,11 @@ def downloadFile(url, filepath):
         return True
 
 
-def getDownloadUrl(volnumber):
+def getDownloadUrl(volnum):
     "Get url to download a volume"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
-    volprefix = str(volnumber)[0:1] # first digit (=planet number)
-    url = config.downloadUrl.format(volprefix, volnumber)
+    volprefix = str(volnum)[0:1] # first digit (=planet number)
+    url = config.downloadUrl.format(volprefix, volnum)
     return url
 
 

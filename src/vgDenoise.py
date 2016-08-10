@@ -18,18 +18,22 @@ import vgAdjust
 
 
 
-def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
-    "remove noise from images"
+#. handle indiv imageids
+# def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True):
+# def vgDenoise(buildVolnum='', buildImageId='', targetPath=None, overwrite=False, directCall=True):
+# def vgDenoise(buildVolnum='', buildImageId='', targetPath=None, options={}, directCall=True):
+def vgDenoise(volnum='', overwrite=False, directCall=True):
+    
+    "remove noise from images in given volume"
 
-    buildVolnum = str(buildVolnum) # eg '5101'
-    buildImageId = buildImageId.upper() # always capital C
+    volnum = str(volnum) # eg '5101'
+    # buildImageId = buildImageId.upper() # always capital C
+    # overwrite = options.get('overwrite') # True or None
+    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + volnum + '/'
+    denoisedSubfolder = config.denoisedFolder + 'VGISS_' + volnum + '/'
 
-    #. handle indiv imageids
-
-    adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + buildVolnum + '/'
-    denoisedSubfolder = config.denoisedFolder + 'VGISS_' + buildVolnum + '/'
-
-    if buildVolnum!='':
+    if volnum!='':
+        # quit if volume folder exists
         if os.path.isdir(denoisedSubfolder) and overwrite==False:
             if directCall:
                 print "Folder exists - skipping vg denoise step: " + denoisedSubfolder
@@ -37,9 +41,9 @@ def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True)
 
         # build the adjusted images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        vgAdjust.vgAdjust(buildVolnum, False, False)
+        vgAdjust.vgAdjust(volnum, False, False) # not a direct call by user
         
-        # if we're building an entire volume, remove the existing directory first
+        # make folder
         lib.rmdir(denoisedSubfolder)
         os.mkdir(denoisedSubfolder)
 
@@ -55,7 +59,8 @@ def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True)
         volume = rowFiles[config.filesColVolume]
         fileId = rowFiles[config.filesColFileId]
         
-        if volume!=buildVolnum and fileId!=buildImageId: continue # filter to given volume/image
+        # if volume!=volnum and fileId!=buildImageId: continue # filter to given volume/image
+        if volume!=volnum: continue # filter to given volume
 
         # get image properties
         filter = rowFiles[config.filesColFilter]

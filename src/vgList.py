@@ -27,7 +27,7 @@ def parseFilenames(folder, section, grid):
 
 # def vgList(pVolume=None, pImageId=None, pTargetPath=None):
 # def vgList(volnums=None, imageIds=None, targetPath=None):
-def vgList(volnums):
+def vgList(filterVolumes=''):
     "Get a listing of volumes and what stages they are at"
 
     # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
@@ -51,12 +51,10 @@ def vgList(volnums):
     headers = ['Volume', 'Downloads', 'Unzips', 'Images', 'Adjustments',
                'Denoised', 'Centers', 'Composites']
     rows = []
-    # for vol in config.volumes:
-    volumes = volnums or config.volumes
-    for vol in volumes:
+    volumes = filterVolumes or config.volumes
+    for volume in volumes:
         # only include a row if it has some data
-        svol = str(vol)
-        gridrow = grid.get(svol)
+        gridrow = grid.get(volume)
         if gridrow:
             row = [gridrow.get(header) for header in headers]
             rows.append(row)
@@ -67,7 +65,8 @@ def vgList(volnums):
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgList()
+    # vgList()
+    vgList(['5101','5102','5103'])
     print 'done'
 
 

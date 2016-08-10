@@ -1,11 +1,12 @@
 
 """
 vg target command
-build target subfolders like Jupiter/Voyager1/Io/Narrow
-and copy images to them from a specified volume
 
-symbolic links work, but then can't browse folders with image viewer...
-so just copy them
+Build target subfolders like Jupiter/Voyager1/Io/Narrow,
+and copy images to them from a specified volume.
+
+Symbolic links work, but then can't browse folders with image viewer...
+so just copy them.
 """
 
 import os
@@ -19,16 +20,16 @@ import vgCenter
 
 
 #. handle targetPath
-def vgTarget(volnum='', targetPath=''):
+def vgTarget(filterVolume='', targetPath=''):
     "Copy images in given volume to target subfolders"
 
-    volnum = str(volnum)
+    filterVolume = str(filterVolume)
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(targetPath)
 
     # center the volume, if not already there
-    vgCenter.vgCenter(volnum, '', False, False)
+    vgCenter.vgCenter(filterVolume, '', False, False)
 
     # read small db into memory
     targetInfo = lib.readCsv(config.retargetingdb) # remapping listed targets
@@ -52,7 +53,7 @@ def vgTarget(volnum='', targetPath=''):
 
         # should we add this image?
         addImage = False
-        if volnum!='' and volume==volnum: addImage = True
+        if filterVolume!='' and volume==filterVolume: addImage = True
         if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
@@ -87,6 +88,6 @@ def vgTarget(volnum='', targetPath=''):
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgTarget(8201)
+    vgTarget(5101)
     print 'done'
 

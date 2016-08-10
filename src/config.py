@@ -46,8 +46,8 @@ downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 # CALIB images have darker backgrounds, but can dim the planet too much.
 # GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
 # imageType = 'RAW'
-imageType = 'CALIB'
-imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
+# imageType = 'CALIB'
+# imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageFilespec = "*" # do all image types
 
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
@@ -56,7 +56,8 @@ imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
 # imageTypes = ['CALIB']
-# imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
+imageTypes = ['RAW','CALIB']
+imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
 # -fnamefilter - append filter name, eg _ORANGE

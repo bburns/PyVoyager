@@ -18,7 +18,6 @@ import os.path
 import config
 import lib
 
-# import vgCenter
 import vgComposite
 import vgTitles
 
@@ -68,14 +67,16 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
 
 # def stageFiles(bwOrColor, targetPathParts):
 # def stageFiles(targetPathParts):
-def stageFiles(volnums, targetPathParts):
+# def stageFiles(volnums, targetPathParts):
+# def stageFiles(volnum, targetPathParts):
+def stageFiles(filterVolume, targetPathParts):
     """
     Make links from source files (centers or composites) to clip stage folders.
     """
 
     print 'Making links from source files'
 
-    print volnums, targetPathParts
+    # print filterVolumes, targetPathParts
 
     # what does the user want to focus on?
     # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
@@ -134,9 +135,10 @@ def stageFiles(volnums, targetPathParts):
 
         # does this image match the target path the user specified on the cmdline?
         addImage = False
-        # if volume in volnums: addImage = True
+        # if volume in filterVolumes: addImage = True
         # if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
-        if (volume in volnums) and \
+        # if (volume in filterVolumes) and \
+        if (volume==filterVolumes) and \
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
@@ -248,14 +250,16 @@ def stageFiles(volnums, targetPathParts):
 
 
 # def vgClips(targetPath=None, keepLinks=False):
-# def vgClips(volnums=[], imageIds=[], targetPath=None, keepLinks=False):
-def vgClips(volnums=None, imageIds=None, targetPath=None, keepLinks=False):
+# def vgClips(filterVolumes=[], imageIds=[], targetPath=None, keepLinks=False):
+# def vgClips(filterVolumes=None, imageIds=None, targetPath=None, keepLinks=False):
+# def vgClips(filterVolume=None, imageId=None, targetPath=None, keepLinks=False):
+def vgClips(filterVolume='', filterTargetPath='', keepLinks=False):
     """
-    Build clips associated with the given volumes and target path (eg '//Io').
+    Build clips associated with the given volume and target path (eg '//Io').
     """
 
-    # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
-    targetPathParts = lib.parseTargetPath(targetPath)
+    # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    targetPathParts = lib.parseTargetPath(filterTargetPath)
 
     if keepLinks==False:
 
@@ -270,13 +274,12 @@ def vgClips(volnums=None, imageIds=None, targetPath=None, keepLinks=False):
         vgTitles.vgTitles(targetPath)
 
         # stage images for ffmpeg
-        lib.rmdir(config.clipsStageFolder)
         # os.rmdir(config.clipsStageFolder)
-        # import shutil
-        # shutil.rmtree(config.clipsStageFolder)
+        lib.rmdir(config.clipsStageFolder)
         # stageFiles(bwOrColor, targetPathParts)
         # stageFiles(targetPathParts)
-        stageFiles(volnums, targetPathParts)
+        # stageFiles(filterVolumes, targetPathParts)
+        stageFiles(filterVolume, targetPathParts)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',
@@ -291,7 +294,7 @@ if __name__ == '__main__':
     # vgClips('bw', '//Triton')
     # vgClips("Neptune")
     # makeLinks()
-    makeClipFiles()
+    # makeClipFiles()
     print 'done'
 
 

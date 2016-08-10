@@ -20,7 +20,7 @@ PyVoyager commands
   vg test center    - run centering tests
   vg test denoise   - run denoising tests
 
-where most commands can be followed by <filter>, where
+where most commands can be followed by <filter> and <options>, where
 
   <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
                  (all are anded together)
@@ -37,10 +37,9 @@ where most commands can be followed by <filter>, where
   <spacecraft> = Voyager1|Voyager2
   <target>     = Jupiter|Io|Europa|, etc.
   <camera>     = Narrow|Wide
+  <options>    = -y overwrite existing volume data
 
 e.g. vg clips 8205 //triton
-
-You can also add `-y` to a command to have it overwrite any existing data.
 """
 
 import sys
@@ -79,8 +78,6 @@ import vgRetarget
 import vgUncenter
 
 
-
-
 # get command and arguments
 args = sys.argv[1:] # remove command 'vg'
 nargs = len(args)
@@ -89,188 +86,103 @@ if nargs==0:
 else:
     cmd = args.pop(0) # first item
 
-
-# pick out options from argument list
+# pick out and remove options from argument list
 optionOverwrite = False
-# optionBw = False
-# optionColor = False
 optionKeepLinks = False
-options = [arg for arg in args if arg[0]=='-']
+optionList = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
-for option in options:
+for option in optionList:
     if option=='-y':
         optionOverwrite = True
-    # elif option=='-bw':
-        # optionBw = True
-    # elif option=='-color':
-        # optionColor = True
     elif option=='-keeplinks':
         optionKeepLinks = True
 
-
 # parse remaining <filter> arguments
-
-
-volnums = None
-# volnums = config.volumes
-# imageIds = []
-imageIds = None
-targetPath = None
+filterVolumes = None
+filterImageIds = None
+filterTargetPath = None
 for arg in args:
     if arg[0] in '0123456789':
-        volnums = lib.getVolumeNumbers(arg)
+        filterVolumes = lib.getVolumeNumbers(arg)
     elif arg[0].lower()=='c':
-        imageIds = lib.getImageIds(arg)
+        filterImageIds = lib.getImageIds(arg)
     else:
-        targetPath = arg
+        filterTargetPath = arg
 
-def callCommand(fn):
-    "call a command function with <filter> parameters"
-    # volnums = None
-    # # volnums = config.volumes
-    # # imageIds = []
-    # imageIds = None
-    # targetPath = None
-    # for arg in args:
-    #     if arg[0] in '0123456789':
-    #         volnums = lib.getVolumeNumbers(arg)
-    #     elif arg[0].lower()=='c':
-    #         imageIds = lib.getImageIds(arg)
-    #     else:
-    #         targetPath = arg
-    # fn(volnums, imageIds, targetPath)
-    if volnums:
-        for volnum in volnums:
-            fn(volnum, None, None)
-    if imageIds:
-        for imageId in imageIds:
-            fn(None, imageId, None)
-    if targetPath:
-        fn(None, None, targetPath)
-
-
+# handle commands
 if cmd=="download":
-    # vols = args[0]
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-    #     vgDownload.vgDownload(volnum, optionOverwrite)
-    callCommand(vgDownload.vgDownload)
+    for filterVolume in filterVolumes:
+        vgDownload.vgDownload(filterVolume, optionOverwrite)
     lib.beep()
-
 
 elif cmd=="unzip":
-    # vols = args[0]
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-    #     vgUnzip.vgUnzip(volnum, optionOverwrite)
-    callCommand(vgUnzip.vgUnzip)
+    for filterVolume in filterVolumes:
+        vgUnzip.vgUnzip(filterVolume, optionOverwrite)
     lib.beep()
-
 
 elif cmd=="convert":
-    # vols = args[0]
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-    #     vgConvert.vgConvert(volnum, optionOverwrite)
-    callCommand(vgConvert.vgConvert)
+    for filterVolume in filterVolumes:
+        vgConvert.vgConvert(filterVolume, optionOverwrite)
     lib.beep()
-
 
 elif cmd=="adjust":
-    # vols = args[0]
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-    #     vgAdjust.vgAdjust(volnum, optionOverwrite)
-    callCommand(vgAdjust.vgAdjust)
+    for filterVolume in filterVolumes:
+        vgAdjust.vgAdjust(filterVolume, optionOverwrite)
     lib.beep()
-
 
 elif cmd=="denoise":
-    # vols = args[0]
-    # volnums = lib.getVolumeNumbers(vols)
-    # for volnum in volnums:
-    #     vgDenoise.vgDenoise(volnum, '', optionOverwrite)
-    callCommand(vgDenoise.vgDenoise)
+    for filterVolume in filterVolumes:
+        vgDenoise.vgDenoise(filterVolume, optionOverwrite)
     lib.beep()
-
 
 elif cmd=="center":
     log.start()
-    # arg = args[0]
-    # if arg[0].lower()=='c':
-    #     imageIds = lib.getImageIds(arg)
-    #     for imageId in imageIds:
-    #         vgCenter.vgCenter('', imageId, optionOverwrite)
-    # else:
-    #     vols = arg
-    #     volnums = lib.getVolumeNumbers(vols)
-    #     for volnum in volnums:
-    #         vgCenter.vgCenter(volnum, '', optionOverwrite)
-    callCommand(vgCenter.vgCenter)
+    if filterImageIds:
+        for imageId in filterImageIds:
+            vgCenter.vgCenter('', imageId, optionOverwrite)
+    else:
+        for filterVolume in filterVolumes:
+            vgCenter.vgCenter(filterVolume, '', optionOverwrite)
     log.stop()
     lib.beep()
 
-
 elif cmd=="composite":
-    # arg = args[0]
-    # if arg[0].lower()=='c':
-    #     compositeIds = lib.getImageIds(arg)
-    #     for compositeId in compositeIds:
-    #         vgComposite.vgComposite('', compositeId, True)
-    # else:
-    #     vols = arg
-    #     volnums = lib.getVolumeNumbers(vols)
-    #     for volnum in volnums:
-    #         vgComposite.vgComposite(volnum, '', optionOverwrite)
-    callCommand(vgComposite.vgComposite)
+    if filterImageIds:
+        for compositeId in compositeIds:
+            vgComposite.vgComposite('', compositeId, optionOverwrite=True)
+    else:
+        for filterVolume in filterVolumes:
+            vgComposite.vgComposite(filterVolume, '', optionOverwrite)
     lib.beep()
-
 
 elif cmd=="target":
-    # arg = args[0]
-    # if arg[0] in '0123456789':
-    #     vols = arg
-    #     volnums = lib.getVolumeNumbers(vols)
-    #     for volnum in volnums:
-    #         vgTarget.vgTarget(volnum, '')
-    # else:
-    #     targetPath = arg
-    #     vgTarget.vgTarget('', targetPath)
-    callCommand(vgTarget.vgTarget)
+    if filterVolumes:
+        for filterVolume in filterVolumes:
+            vgTarget.vgTarget(filterVolume, '')
+    else:
+        vgTarget.vgTarget('', filterTargetPath)
     lib.beep()
-
 
 elif cmd=="clips":
     # if optionBw==False and optionColor==False:
     #     print 'Must specify -bw or -color'
     # else:
     #     bwOrColor = 'bw' if optionBw else 'color'
-    #     # targetpath = args.pop(0)
-    #     targetpath = args[0]
-    #     vgClips.vgClips(bwOrColor, targetpath, optionKeepLinks)
+    #     # filterTargetPath = args.pop(0)
+    #     filterTargetPath = args[0]
+    #     vgClips.vgClips(bwOrColor, filterTargetPath, optionKeepLinks)
     #     lib.beep()
-    # targetpath = args[0]
-    # vgClips.vgClips(targetpath, optionKeepLinks)
-    callCommand(vgClips.vgClips)
+    # filterTargetPath = args[0]
+    # vgClips.vgClips(filterTargetPath, optionKeepLinks)
+    vgClips.vgClips(filterVolumes, filterTargetPath, options)
     lib.beep()
-
-
-# elif cmd=="segments":
-#     targetpath = args[0]
-#     vgSegments.vgSegments(targetpath)
-#     lib.beep()
-
 
 elif cmd=="movies":
-    # vgMovies.vgMovies()
-    callCommand(vgMovies.vgMovies)
+    vgMovies.vgMovies()
     lib.beep()
 
-
 elif cmd=="list":
-    # callCommand(vgList.vgList)
-    vgList.vgList(volnums)
-
+    vgList.vgList(filterVolumes)
 
 elif cmd=="test":
     subject = args[0]
@@ -279,35 +191,29 @@ elif cmd=="test":
     elif subject=='denoise':
         vgTestDenoise.vgTestDenoise()
 
-
 elif cmd=="grab":
     vgGrab.vgGrab()
 
-
 # elif cmd=="uncenter":
-#     vols = args[0]
-#     volnums = lib.getVolumeNumbers(vols)
-#     for volnum in volnums:
-#         vgUncenter.vgUncenter(volnum)
-#     beep()
-
+#     for filterVolume in filterVolumes:
+#         vgUncenter.vgUncenter(filterVolume)
+#     lib.beep()
 
 elif cmd=="retarget":
     oldTarget = args[0]
     newTarget = args[1]
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
-
 elif cmd=="init":
     log.start()
-    subject = args.pop(0)
+    subject = args[0]
     if subject=='files':
         vgInitFiles.vgInitFiles()
     # elif subject=='centers':
     #     vols = args.pop(0)
-    #     volnums = lib.getVolumeNumbers(vols)
-    #     for volnum in volnums:
-    #         vgInitCenters.vgInitCenters(volnum, optionOverwrite)
+    #     filterVolumes = lib.getVolumeNumbers(vols)
+    #     for filterVolume in filterVolumes:
+    #         vgInitCenters.vgInitCenters(filterVolume, optionOverwrite)
     elif subject=='composites':
         vgInitComposites.vgInitComposites()
     elif subject=='positions':
@@ -317,14 +223,12 @@ elif cmd=="init":
     log.stop()
     lib.beep()
 
-
 elif cmd=="help":
     pass
 else:
     print
     print "Command not recognized."
     cmd = 'help'
-
 
 if cmd=="help":
     print __doc__

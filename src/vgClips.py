@@ -18,7 +18,8 @@ import os.path
 import config
 import lib
 
-import vgComposite
+# import vgComposite
+import vgAnnotate
 import vgTitles
 
 
@@ -168,7 +169,16 @@ def stageFiles(filterVolumes, targetPathParts):
                 # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
                 # if not os.path.isfile(imageFilepath):
                     # imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # imageFilepath = lib.getCompositeFilepath(volume, fileId)
+
+            imageFilepath = lib.getAnnotatedFilepath(volume, fileId)
+            if not os.path.isfile(imageFilepath):
+                imageFilepath = lib.getMosaicFilepath(volume, fileId)
+            if not os.path.isfile(imageFilepath):
+                imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # don't do this or you'll get bw images mixed with the color images
+            # if not os.path.isfile(imageFilepath):
+                # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
             if os.path.isfile(imageFilepath):
@@ -271,7 +281,9 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
             # lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
         # else:
             # lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
-        lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
+        # lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
+        #. fix
+        # lib.loadPreviousStep(targetPathParts, vgAnnotate.vgAnnotate)
 
         # make sure we have some titles
         vgTitles.vgTitles(filterTargetPath)

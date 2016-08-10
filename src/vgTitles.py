@@ -14,6 +14,7 @@ import csv
 
 import config
 import lib
+import libimg
 
 
 
@@ -69,7 +70,7 @@ def vgTitles(targetPath=None):
                 subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
                 subtitle2 = system + " System" # eg Neptune System
                 subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
-                img = lib.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
+                img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
 
                 # save it
                 # note: file type must match that of other frames in movie,

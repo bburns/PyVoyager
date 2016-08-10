@@ -5,8 +5,6 @@ vg adjust command
 Build adjusted images from plain png images.
 
 For now this just means stretching the CALIB images histograms and rotating 180 degrees.
-In future could adjust the RAW images by removing reseau marks and dark current images, etc,
-maybe sharpening.
 """
 
 import csv

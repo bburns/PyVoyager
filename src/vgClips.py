@@ -18,8 +18,7 @@ import os.path
 import config
 import lib
 
-
-import vgCenter
+# import vgCenter
 import vgComposite
 import vgTitles
 
@@ -28,7 +27,7 @@ import vgTitles
 def getNCopies(targetInfo, target, imageFraction):
     """
     how many copies of the given target do we need, given the image size?
-    uses information in targets.csv
+    uses information in targets.csv.
     """
     targetInfoRecord = targetInfo.get(target)
     if targetInfoRecord:
@@ -41,7 +40,8 @@ def getNCopies(targetInfo, target, imageFraction):
     return ncopies
 
 
-def stageFiles(bwOrColor, targetPathParts):
+# def stageFiles(bwOrColor, targetPathParts):
+def stageFiles(targetPathParts):
     """
     Make links from source files (centers or composites) to clip stage folders.
     """
@@ -145,12 +145,13 @@ def stageFiles(bwOrColor, targetPathParts):
             #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
 
             # use composite image if available, otherwise the centered or adjusted image
-            if bwOrColor=='color':
-                imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            elif bwOrColor=='bw':
-                imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-                if not os.path.isfile(imageFilepath):
-                    imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            # if bwOrColor=='color':
+                # imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # elif bwOrColor=='bw':
+                # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+                # if not os.path.isfile(imageFilepath):
+                    # imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            imageFilepath = lib.getCompositeFilepath(volume, fileId)
 
             # if image file exists, create subfolder and link image
             if os.path.isfile(imageFilepath):
@@ -158,8 +159,9 @@ def stageFiles(bwOrColor, targetPathParts):
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
                 subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                targetFolder = config.clipsStageFolder + subfolderPlusColor
+                # subfolderPlusColor = subfolder + bwOrColor.title() + '/'
+                # targetFolder = config.clipsStageFolder + subfolderPlusColor
+                targetFolder = config.clipsStageFolder + subfolder
                 lib.mkdir_p(targetFolder)
 
                 # get current file number in that folder, or start at 0
@@ -224,20 +226,15 @@ def stageFiles(bwOrColor, targetPathParts):
             # need to insert the additional image here
             # add nframes into stage
 
-
-
-
-
     fAdditions.close()
     fPositions.close()
     fFiles.close()
     print
 
 
-def vgClips(bwOrColor, targetPath=None, keepLinks=False):
+def vgClips(targetPath=None, keepLinks=False):
     """
-    Build bw or color clips associated with the given target path (eg //Io).
-    eg vgClips('bw', 'Jupiter/Voyager1')
+    Build clips associated with the given target path (eg '//Io').
     """
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
@@ -246,10 +243,11 @@ def vgClips(bwOrColor, targetPath=None, keepLinks=False):
     if keepLinks==False:
 
         # make sure we have the necessary images
-        if bwOrColor=='bw':
-            lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
-        else:
-            lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
+        # if bwOrColor=='bw':
+            # lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
+        # else:
+            # lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
+        lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
 
         # make sure we have some titles
         vgTitles.vgTitles(targetPath)
@@ -259,7 +257,8 @@ def vgClips(bwOrColor, targetPath=None, keepLinks=False):
         # os.rmdir(config.clipsStageFolder)
         # import shutil
         # shutil.rmtree(config.clipsStageFolder)
-        stageFiles(bwOrColor, targetPathParts)
+        # stageFiles(bwOrColor, targetPathParts)
+        stageFiles(targetPathParts)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../../',

@@ -17,7 +17,6 @@ import lib
 import libimg
 import log
 
-# import vgAdjust
 import vgDenoise
 
 

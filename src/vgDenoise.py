@@ -3,14 +3,11 @@
 vg denoise command
 
 Attempt to remove different types of noise from images.
-
 """
 
 import os
 import os.path
-
 import cv2
-
 
 import config
 import lib
@@ -54,6 +51,7 @@ def vgDenoise(buildVolnum='', buildImageId='', overwrite=False, directCall=True)
     csvFiles, fFiles = lib.openCsvReader(config.filesdb)
     nfile = 1
     for rowFiles in csvFiles:
+        
         volume = rowFiles[config.filesColVolume]
         fileId = rowFiles[config.filesColFileId]
         

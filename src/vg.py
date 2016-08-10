@@ -89,18 +89,18 @@ else:
 
 # pick out options from argument list
 optionOverwrite = False
-optionBw = False
-optionColor = False
+# optionBw = False
+# optionColor = False
 optionKeepLinks = False
 options = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
 for option in options:
     if option=='-y':
         optionOverwrite = True
-    elif option=='-bw':
-        optionBw = True
-    elif option=='-color':
-        optionColor = True
+    # elif option=='-bw':
+        # optionBw = True
+    # elif option=='-color':
+        # optionColor = True
     elif option=='-keeplinks':
         optionKeepLinks = True
 
@@ -198,14 +198,17 @@ elif cmd=="retarget":
 
 
 elif cmd=="clips":
-    if optionBw==False and optionColor==False:
-        print 'Must specify -bw or -color'
-    else:
-        bwOrColor = 'bw' if optionBw else 'color'
-        # targetpath = args.pop(0)
-        targetpath = args[0]
-        vgClips.vgClips(bwOrColor, targetpath, optionKeepLinks)
-        lib.beep()
+    # if optionBw==False and optionColor==False:
+    #     print 'Must specify -bw or -color'
+    # else:
+    #     bwOrColor = 'bw' if optionBw else 'color'
+    #     # targetpath = args.pop(0)
+    #     targetpath = args[0]
+    #     vgClips.vgClips(bwOrColor, targetpath, optionKeepLinks)
+    #     lib.beep()
+    targetpath = args[0]
+    vgClips.vgClips(targetpath, optionKeepLinks)
+    lib.beep()
 
 
 elif cmd=="segments":

@@ -14,8 +14,93 @@ import random
 # import matplotlib.image as mpim # for imread, imsave
 # import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 
+# for makeTitlePage, annotateImageFile
+import PIL
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
+
+
 import config
 import log
+
+
+
+
+
+def annotateImageFile(infile, outfile, imageId, time, distance):
+
+    "add information to given input file and write to outfile"
+
+    font = ImageFont.truetype(config.annotationsFont, config.annotationsFontsize)
+    fgcolor = (200,200,200)
+    # fgcolor = (120,120,120)
+    w,h = font.getsize('M')
+    # print w,h # 207,53
+
+    img = Image.open(infile)
+    if img!='RGB':
+        img = img.convert('RGB')
+
+    draw = ImageDraw.Draw(img)
+
+    print img.mode
+
+    pos = (50,625)
+
+    s = imageId
+    draw.text(pos, s, fgcolor, font=font)
+    pos = (pos[0],pos[1]+int(h*1.5))
+    # print pos
+
+    s = time
+    draw.text(pos, s, fgcolor, font=font)
+    pos = (pos[0],pos[1]+int(h*1.5))
+    # print pos
+
+    s = distance
+    draw.text(pos, s, fgcolor, font=font)
+
+    img.save(outfile)
+
+
+def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
+
+    "draw a title page, return a PIL image"
+
+    font = ImageFont.truetype(config.titleFont, config.titleFontsize)
+
+    imgsize = (800,800)
+    bgcolor = (0,0,0)
+    fgcolor = (200,200,200)
+    pos = (200,300)
+
+    img = Image.new("RGBA", imgsize, bgcolor)
+    draw = ImageDraw.Draw(img)
+
+    s = title
+    draw.text(pos, s, fgcolor, font=font)
+    w,h = font.getsize(s)
+    # print w,h # 207,53
+
+    pos = (pos[0],pos[1]+h*1.5)
+    s = subtitle1
+    fgcolor = (120,120,120)
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = (pos[0],pos[1]+h)
+    s = subtitle2
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = (pos[0],pos[1]+h)
+    s = subtitle3
+    draw.text(pos, s, fgcolor, font=font)
+
+    draw = ImageDraw.Draw(img)
+    # img.save("a_test.png")
+    return img
+
+
 
 
 

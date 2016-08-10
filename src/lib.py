@@ -14,12 +14,6 @@ import csv
 import shutil
 import more_itertools
 
-# for makeTitlePage
-import PIL
-from PIL import ImageFont
-from PIL import Image
-from PIL import ImageDraw
-
 
 import config
 
@@ -255,6 +249,7 @@ def cp(src, dst):
 #     return filename
 
 
+
 #. merge all these to one fn
 
 def getAdjustedFilepath(volume, fileId, filter):
@@ -282,6 +277,20 @@ def getCompositeFilepath(volume, fileId):
     "get the filepath for the composite image specified"
     folder = config.compositesFolder + 'VGISS_' + volume + '/'
     filetitle = fileId + config.compositesSuffix + config.extension
+    filepath = folder + filetitle
+    return filepath
+
+def getMosaicFilepath(volume, fileId):
+    "get the filepath for the mosaic image specified"
+    folder = config.mosaicsFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.mosaicsSuffix + config.extension
+    filepath = folder + filetitle
+    return filepath
+
+def getAnnotatedFilepath(volume, fileId):
+    "get the filepath for the annotated image specified"
+    folder = config.annotationsFolder + 'VGISS_' + volume + '/'
+    filetitle = fileId + config.annotationsSuffix + config.extension
     filepath = folder + filetitle
     return filepath
 
@@ -442,42 +451,6 @@ def parseTargetPath(targetPath):
         pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
         return pathparts
     return None
-
-
-def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
-    "draw a title page, return a PIL image"
-
-    font = ImageFont.truetype(config.titleFont, config.titleFontsize)
-
-    imgsize = (800,800)
-    bgcolor = (0,0,0)
-    fgcolor = (200,200,200)
-    pos = (200,300)
-
-    img = Image.new("RGBA", imgsize, bgcolor)
-    draw = ImageDraw.Draw(img)
-
-    s = title
-    draw.text(pos, s, fgcolor, font=font)
-    w,h = font.getsize(s)
-    # print w,h # 207,53
-
-    pos = (pos[0],pos[1]+h*1.5)
-    s = subtitle1
-    fgcolor = (120,120,120)
-    draw.text(pos, s, fgcolor, font=font)
-
-    pos = (pos[0],pos[1]+h)
-    s = subtitle2
-    draw.text(pos, s, fgcolor, font=font)
-
-    pos = (pos[0],pos[1]+h)
-    s = subtitle3
-    draw.text(pos, s, fgcolor, font=font)
-
-    draw = ImageDraw.Draw(img)
-    # img.save("a_test.png")
-    return img
 
 
 

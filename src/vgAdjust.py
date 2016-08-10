@@ -22,6 +22,7 @@ import vgConvert
 # def vgAdjust(volnum, imageId=None, targetPath=None, overwrite=False, directCall=True):
 # def vgAdjust(volnum, overwrite=False, directCall=True):
 def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
+
     "Build adjusted images for given volume, if they don't exist yet"
 
     filterVolume = str(filterVolume) # eg '5101'
@@ -34,9 +35,10 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
             print "Folder exists - skipping vg images step: " + centersubfolder
         return
 
-    # build the plain images for the volume, if not already there
     if filterVolume!='':
-        vgConvert.vgConvert(filterVolume, False, False)
+
+        # build the plain images for the volume, if not already there
+        vgConvert.vgConvert(filterVolume, optionOverwrite=False, directCall=False)
 
         # make new folder
         lib.rmdir(adjustmentsSubfolder)

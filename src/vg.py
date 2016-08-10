@@ -61,10 +61,11 @@ import vgDenoise
 import vgCenter
 import vgComposite
 import vgMosaic
+import vgAnnotate
 import vgTarget
 import vgClips
-import vgSegments
 import vgMovies
+
 import vgList
 import vgTestCenter
 import vgTestDenoise
@@ -153,6 +154,16 @@ elif cmd=="composite":
     else:
         for filterVolume in filterVolumes:
             vgComposite.vgComposite(filterVolume, '', optionOverwrite)
+    lib.beep()
+
+elif cmd=="mosaic":
+    for filterVolume in filterVolumes:
+        vgMosaic.vgMosaic(filterVolume, optionOverwrite)
+    lib.beep()
+
+elif cmd=="annotate":
+    for filterVolume in filterVolumes:
+        vgAnnotate.vgAnnotate(filterVolume, optionOverwrite)
     lib.beep()
 
 elif cmd=="target":

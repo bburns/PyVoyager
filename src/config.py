@@ -252,6 +252,14 @@ compositesSuffix = '_composite'
 mosaicsSuffix = '_mosaic'
 
 
+# Annotate
+# ----------------------------------------
+
+annotationsSuffix = "_annotated"
+annotationsFont = "c:/windows/fonts/!futura-light.ttf"
+annotationsFontsize = 18
+
+
 # Target
 # ----------------------------------------
 
@@ -355,13 +363,13 @@ denoisedFolder      = onlineFolder  + "step05_denoised/"
 centersFolder       = onlineFolder  + "step06_centers/"
 compositesFolder    = onlineFolder  + "step07_composites/"
 mosaicsFolder       = onlineFolder  + "step08_mosaics/"
-targetsFolder       = onlineFolder  + "step09_targets/"
-titlesFolder        = onlineFolder  + "step10_titles/"
-clipsFolder         = onlineFolder  + "step11_clips/"
+annotationsFolder   = onlineFolder  + "step09_annotations/"
+targetsFolder       = onlineFolder  + "step10_targets/"
+titlesFolder        = onlineFolder  + "step11_titles/"
+clipsFolder         = onlineFolder  + "step12_clips/"
+moviesFolder        = onlineFolder  + "step13_movies/"
+
 clipsStageFolder    = clipsFolder   + 'stage/'
-# segmentsFolder      = onlineFolder  + "step12_segments/"
-# segmentsStageFolder = segmentsFolder + 'stage/'
-moviesFolder        = onlineFolder  + "step12_movies/"
 
 grabFolder          = onlineFolder  + "grab/"
 grabbedFolder       = onlineFolder  + "grabbed/"
@@ -484,7 +492,7 @@ segmentsColAnnotation = 4
 # keep in synch with vgBuildCenters.py and vgInitPositions.py
 # fileId,distance(km),imageSize
 positionsColFileId = 0
-positionsColDistanceKm = 1
+positionsColDistance = 1
 positionsColImageFraction = 2
 
 

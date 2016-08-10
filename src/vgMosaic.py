@@ -1,7 +1,9 @@
 
-# vg mosaic command
-# build mosaic images using records in mosaics.csv
+"""
+vg mosaic command
 
+Build mosaic images using records in mosaics.csv
+"""
 
 def vgMosaic():
     "build mosaic images"

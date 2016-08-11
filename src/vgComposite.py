@@ -131,11 +131,9 @@ def processChannels(channelRows, volume, nfile, startId):
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
             #. may use imageSource to know adjusted vs centered?
             # get centered filepath
-            # channelfilepath = lib.getCenteredFilepath(volume, fileId, filter)
             channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             # if don't have a centered file, use the adjusted file
             if not os.path.isfile(channelfilepath):
-                # channelfilepath = lib.getAdjustedFilepath(volume, fileId, filter)
                 channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
             channel = [filter,channelfilepath,weight,x,y]
             channels.append(channel)

@@ -42,18 +42,14 @@ def getGradientMagnitude(im):
 
 def annotateImageFile(infile, outfile, imageId, time, distance, note):
 
-    "add information to given input file and write to outfile"
+    "Add information to given input file and write to outfile"
 
     font = ImageFont.truetype(config.annotationsFont, config.annotationsFontsize)
-    # fgcolor = (200,200,200)
-    fgcolor = 200
-    # fgcolor = (120,120,120)
+    fgcolor = (200,200,200)
     w,h = font.getsize('M')
-    # print w,h # 207,53
 
     img = Image.open(infile)
-    # if img!='RGB': img = img.convert('RGB') # else some images cause TypeError on draw text
-    if img!='L': img = img.convert('L')
+    if img!='RGB': img = img.convert('RGB') # else some images cause TypeError on draw text
 
     draw = ImageDraw.Draw(img)
 
@@ -62,12 +58,10 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     s = imageId
     draw.text(pos, s, fgcolor, font=font)
     pos = (pos[0],pos[1]+int(h*1.5))
-    # print pos
 
     s = time
     draw.text(pos, s, fgcolor, font=font)
     pos = (pos[0],pos[1]+int(h*1.5))
-    # print pos
 
     s = distance
     draw.text(pos, s, fgcolor, font=font)
@@ -808,10 +802,6 @@ def findBoundingBoxByBlob(im):
             x2 = largestblob[1].stop
             y1 = largestblob[0].start
             y2 = largestblob[0].stop
-            # x1 = largestblob[0].start
-            # x2 = largestblob[0].stop
-            # y1 = largestblob[1].start
-            # y2 = largestblob[1].stop
 
     boundingBox = [x1,y1,x2,y2]
 
@@ -829,7 +819,6 @@ def findBoundingBox(im, radius):
     if radius < config.blobRadiusMax: # eg 10 pixels
         boundingBox = findBoundingBoxByBlob(im)
     else: # use hough to find circle
-        # boundingBox = findBoundingBoxByCircle(im, radius)
         boundingBox = findBoundingBoxByCircle(im, radius)
         # if couldn't find a circle, just use the blob bounding box for approximate answer
         if boundingBox is None:
@@ -838,91 +827,91 @@ def findBoundingBox(im, radius):
 
 
 #. do i need this anymore? was this before upgrading to v3?
-def drawMatches(img1, kp1, img2, kp2, matches):
-    # source: http://stackoverflow.com/questions/11114349/how-to-visualize-descriptor-matching-using-opencv-module-in-python
-    """
-    My own implementation of cv2.drawMatches as OpenCV 2.4.9
-    does not have this function available but it's supported in
-    OpenCV 3.0.0
+# def drawMatches(img1, kp1, img2, kp2, matches):
+#     # source: http://stackoverflow.com/questions/11114349/how-to-visualize-descriptor-matching-using-opencv-module-in-python
+#     """
+#     My own implementation of cv2.drawMatches as OpenCV 2.4.9
+#     does not have this function available but it's supported in
+#     OpenCV 3.0.0
 
-    This function takes in two images with their associated
-    keypoints, as well as a list of DMatch data structure (matches)
-    that contains which keypoints matched in which images.
+#     This function takes in two images with their associated
+#     keypoints, as well as a list of DMatch data structure (matches)
+#     that contains which keypoints matched in which images.
 
-    An image will be produced where a montage is shown with
-    the first image followed by the second image beside it.
+#     An image will be produced where a montage is shown with
+#     the first image followed by the second image beside it.
 
-    Keypoints are delineated with circles, while lines are connected
-    between matching keypoints.
+#     Keypoints are delineated with circles, while lines are connected
+#     between matching keypoints.
 
-    img1,img2 - Grayscale images
-    kp1,kp2 - Detected list of keypoints through any of the OpenCV keypoint
-              detection algorithms
-    matches - A list of matches of corresponding keypoints through any
-              OpenCV keypoint matching algorithm
-    """
+#     img1,img2 - Grayscale images
+#     kp1,kp2 - Detected list of keypoints through any of the OpenCV keypoint
+#               detection algorithms
+#     matches - A list of matches of corresponding keypoints through any
+#               OpenCV keypoint matching algorithm
+#     """
 
-    # Create a new output image that concatenates the two images together
-    # (a.k.a) a montage
-    rows1 = img1.shape[0]
-    cols1 = img1.shape[1]
-    rows2 = img2.shape[0]
-    cols2 = img2.shape[1]
+#     # Create a new output image that concatenates the two images together
+#     # (a.k.a) a montage
+#     rows1 = img1.shape[0]
+#     cols1 = img1.shape[1]
+#     rows2 = img2.shape[0]
+#     cols2 = img2.shape[1]
 
-    # out = np.zeros((max([rows1,rows2]),cols1+cols2,3), dtype='uint8')
-    out = np.zeros((max([rows1,rows2]),cols1+cols2,3), np.uint8)
+#     # out = np.zeros((max([rows1,rows2]),cols1+cols2,3), dtype='uint8')
+#     out = np.zeros((max([rows1,rows2]),cols1+cols2,3), np.uint8)
 
-    # Place the first image to the left
-    out[:rows1,:cols1,:] = np.dstack([img1, img1, img1])
+#     # Place the first image to the left
+#     out[:rows1,:cols1,:] = np.dstack([img1, img1, img1])
 
-    # Place the next image to the right of it
-    out[:rows2,cols1:cols1+cols2,:] = np.dstack([img2, img2, img2])
+#     # Place the next image to the right of it
+#     out[:rows2,cols1:cols1+cols2,:] = np.dstack([img2, img2, img2])
 
-    # For each pair of points we have between both images
-    # draw circles, then connect a line between them
-    for mat in matches:
+#     # For each pair of points we have between both images
+#     # draw circles, then connect a line between them
+#     for mat in matches:
 
-        # Get the matching keypoints for each of the images
-        img1_idx = mat.queryIdx
-        img2_idx = mat.trainIdx
+#         # Get the matching keypoints for each of the images
+#         img1_idx = mat.queryIdx
+#         img2_idx = mat.trainIdx
 
-        # x - columns
-        # y - rows
-        (x1,y1) = kp1[img1_idx].pt
-        (x2,y2) = kp2[img2_idx].pt
+#         # x - columns
+#         # y - rows
+#         (x1,y1) = kp1[img1_idx].pt
+#         (x2,y2) = kp2[img2_idx].pt
 
-        r = random.randint(100,255)
-        g = random.randint(100,255)
-        b = random.randint(100,255)
-        color = (b,g,r)
+#         r = random.randint(100,255)
+#         g = random.randint(100,255)
+#         b = random.randint(100,255)
+#         color = (b,g,r)
 
-        # Draw a small circle at both co-ordinates
-        # radius 4
-        # colour blue
-        # thickness = 1
-        # cv2.circle(out, (int(x1),int(y1)), 4, (255, 0, 0), 1)
-        # cv2.circle(out, (int(x2)+cols1,int(y2)), 4, (255, 0, 0), 1)
-        cv2.circle(out, (int(x1),int(y1)), 4, color, 1)
-        cv2.circle(out, (int(x2)+cols1,int(y2)), 4, color, 1)
+#         # Draw a small circle at both co-ordinates
+#         # radius 4
+#         # colour blue
+#         # thickness = 1
+#         # cv2.circle(out, (int(x1),int(y1)), 4, (255, 0, 0), 1)
+#         # cv2.circle(out, (int(x2)+cols1,int(y2)), 4, (255, 0, 0), 1)
+#         cv2.circle(out, (int(x1),int(y1)), 4, color, 1)
+#         cv2.circle(out, (int(x2)+cols1,int(y2)), 4, color, 1)
 
-        # Draw a line in between the two points
-        # thickness = 1
-        # colour blue
-        # cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), (255, 0, 0), 1)
-        cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), color, 1)
+#         # Draw a line in between the two points
+#         # thickness = 1
+#         # colour blue
+#         # cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), (255, 0, 0), 1)
+#         cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), color, 1)
 
 
-    # Show the image
-    cv2.imshow('Matched Features', out)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+#     # Show the image
+#     cv2.imshow('Matched Features', out)
+#     cv2.waitKey(0)
+#     cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
     import lib
-    orange = '../'+lib.getAdjustedFilepath('7206','C2684338','Clear')
-    green = '../'+lib.getAdjustedFilepath('7206','C2684342','Green')
-    blue = '../'+lib.getAdjustedFilepath('7206','C2684340','Violet')
+    orange = '../'+lib.getFilepath('adjust','7206','C2684338','Clear')
+    green = '../'+lib.getFilepath('adjust','7206','C2684342','Green')
+    blue = '../'+lib.getFilepath('adjust','7206','C2684340','Violet')
     print orange
     channels = [
         ['Orange',orange,0.7,120,-65],

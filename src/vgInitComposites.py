@@ -209,7 +209,7 @@ def vgInitComposites():
     fComposites.write(fields + '\n')
     fComposites.close()
 
-    cmd = "cat %s >> %s" % ("foo.csv", "composites_temp.csv")
+    cmd = "cat %s >> %s" % ("composites_temp.csv", "composites.csv")
     os.system(cmd)
 
     # os.remove("composites_temp.csv")

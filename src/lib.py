@@ -434,18 +434,27 @@ def getVolumeNumbers(s):
 
 def rm(filepath):
     "remove a file, ignore error (eg if doesn't exist)"
-    try:
-        os.remove(filepath)
-    except:
-        pass
+    #. add specific error handlers
+    os.remove(filepath)
+    # try:
+        # os.remove(filepath)
+    # except:
+        # pass
 
 
 def rmdir(folder):
     "remove a folder and its contents, ignoring errors (eg if it doesn't exist)"
+    #. add specific error handlers
+    # shutil.rmtree(folder)
     try:
         shutil.rmtree(folder)
-    except:
-        pass
+    except Exception, e:
+        print e
+        print e.errno
+        # print e.message
+        # print exc
+        # print exc.errno
+        # pass
 
 
 def targetMatches(targetPathParts, system, craft, target, camera):

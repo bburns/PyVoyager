@@ -20,18 +20,15 @@ import vgMosaic
 
 
 #. handle indiv images also
+
 def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
     
     "Build annotated images for given volume, if they don't exist yet"
 
     filterVolume = str(filterVolume) # eg '5101'
-    # mosaicsSubfolder = config.mosaicsFolder + 'VGISS_' + filterVolume + '/'
-    # compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
-    # annotationsSubfolder = config.annotationsFolder + 'VGISS_' + filterVolume + '/'
     inputSubfolder = lib.getSubfolder('composite', filterVolume)
     outputSubfolder = lib.getSubfolder('annotate', filterVolume)
 
-    # build the plain mosaic for the volume, if not already there
     if filterVolume!='':
         
         # quit if volume folder exists
@@ -39,7 +36,7 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
             if directCall: print "Folder exists: " + outputSubfolder
             return
 
-        # build the mosaics if not already there
+        # build previous step if not already there
         #. not yet
         # vgMosaic.vgMosaic(filterVolume, optionOverwrite=False, directCall=False)
 
@@ -101,7 +98,5 @@ if __name__ == '__main__':
     os.chdir('..')
     vgAnnotate(5101)
     print 'done'
-
-
 
 

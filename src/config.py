@@ -407,6 +407,7 @@ dbPositions       = dbFolder + 'positions.csv'
 dbErrata          = dbFolder + 'errata.csv'
 dbTarget          = dbFolder + 'targets.csv'
 dbAdditions       = dbFolder + 'additions.csv'
+dbDenoising       = dbFolder + 'denoising.csv'
 
 # index file folder
 indexFolder = 'db/index/'

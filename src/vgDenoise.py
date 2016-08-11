@@ -20,7 +20,7 @@ import vgAdjust
 
 
 #. handle indiv imageids
-def vgDenoise(volnum='', overwrite=False, directCall=True):
+def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
     
     "remove noise from images in given volume"
 
@@ -31,14 +31,14 @@ def vgDenoise(volnum='', overwrite=False, directCall=True):
 
     if volnum!='':
         # quit if volume folder exists
-        if os.path.isdir(outputSubfolder) and overwrite==False:
+        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall: print "Folder exists: " + outputSubfolder
             return
 
         # build the adjusted images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        # vgCenter.vgCenter(volnum, False, False) # not a direct call by user
-        vgAdjust.vgAdjust(volnum, False, False) # not a direct call by user
+        # vgCenter.vgCenter(volnum, False, False)
+        vgAdjust.vgAdjust(volnum, optionOverwrite=False, directCall=False)
         
         # make folder
         lib.mkdir(outputSubfolder)

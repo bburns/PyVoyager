@@ -58,8 +58,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # build the previous images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        vgAdjust.vgAdjust(filterVolume, optionOverwrite=False, directCall=False)
-        # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
+        # vgAdjust.vgAdjust(filterVolume, optionOverwrite=False, directCall=False)
+        vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
         lib.mkdir(outputSubfolder)

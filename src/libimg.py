@@ -31,6 +31,7 @@ import log
 def getGradientMagnitude(im):
     "Get magnitude of gradient for given image"
     ddepth = cv2.CV_32F
+    # sobel includes gaussian filtering, so may not be ideal for detecting noise?
     dx = cv2.Sobel(im, ddepth, 1, 0)
     dy = cv2.Sobel(im, ddepth, 0, 1)
     dxabs = cv2.convertScaleAbs(dx)
@@ -44,13 +45,15 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     "add information to given input file and write to outfile"
 
     font = ImageFont.truetype(config.annotationsFont, config.annotationsFontsize)
-    fgcolor = (200,200,200)
+    # fgcolor = (200,200,200)
+    fgcolor = 200
     # fgcolor = (120,120,120)
     w,h = font.getsize('M')
     # print w,h # 207,53
 
     img = Image.open(infile)
-    if img!='RGB': img = img.convert('RGB') # else some images cause TypeError on draw text
+    # if img!='RGB': img = img.convert('RGB') # else some images cause TypeError on draw text
+    if img!='L': img = img.convert('L')
 
     draw = ImageDraw.Draw(img)
 
@@ -115,8 +118,8 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
 
 
 
-#. take targetRadius also
 def denoiseImageFile(infile, outfile):
+
     "attempt to remove noise from the given image file and save to outfile"
 
     im = cv2.imread(infile, 0) #.param
@@ -127,32 +130,11 @@ def denoiseImageFile(infile, outfile):
     # blank out right 3 pixels
     im[:,-3:] = 0
 
+    # nowork - blurs some nice images - jupiter, triton ice
     # remove salt and pepper noise, and thin lines
-    # works pretty well, but blurs some nice images - jupiter, triton ice
     # im = cv2.medianBlur(im, 5)
 
-    # what if applied it only in area outside the target?
-    # would need to know location of target
-    # ie do AFTER the centering step
-    # but we want to reduce noise BEFORE centering step
-
-    # so try just removing noise near sharp edges
-    # the larger C is, the less noise will be removed
-    mask = cv2.adaptiveThreshold(im, maxValue=255,
-                                 adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                 thresholdType=cv2.THRESH_BINARY_INV,
-                                 blockSize=3,
-                                 # C=2) # ends up blurring triton
-                                 # C=5) # leaves too much noise
-                                 C=4) # good compromise
-    kernel = np.ones((5,1),np.uint8) # expand edges horizontally
-    mask = cv2.dilate(mask, kernel, iterations = 1) # expand edge mask
-    mask = cv2.medianBlur(mask, 5) # remove dots from mask
-    imblurred = cv2.medianBlur(im, 5) # remove noise from image
-    im = im + ((imblurred - im) & mask) # combine image with blurred version
-
-
-    # nowork
+    # nowork - inpainting doesn't look very good
     # remove larger blocks of noise by inpainting
     # first detect regions with lots of variation
     # mag = getGradientMagnitude(im)
@@ -169,26 +151,37 @@ def denoiseImageFile(infile, outfile):
     # im = cv2.inpaint(im, mask, inpaintRadius=5, flags=cv2.INPAINT_TELEA)
 
 
-
     # black out large blocks of noise
     # detect contours of noisy areas
-    # black out only large ones
-    mag = getGradientMagnitude(im)
     mask = cv2.adaptiveThreshold(im, maxValue=255,
                                  adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                  thresholdType=cv2.THRESH_BINARY_INV,
                                  blockSize=3,
-                                 # C=11)
-                                 C=7)
-    # kernel = np.ones((5,5),np.uint8)
-    kernel = np.ones((5,1),np.uint8)
-    mask = cv2.dilate(mask, kernel, iterations = 1)
-    # find contours and bounding boxes, pick out rectangular ones and black the whole rectangle out
+                                 C=11)
+    kernel = np.ones((2,21), np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # dilate then erode
+    # find contours and bounding boxes, pick out rectangular ones and black whole rectangle out
     im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for contour in contours:
-        x,y,w,h  = cv2.boundingRect(contour)
+        x,y,w,h = cv2.boundingRect(contour)
         if w>100 and w>h*3:
             cv2.rectangle(im, (x,y), (x+w,y+h), 0, -1) # filled black rectangle
+
+
+    # try removing noise near sharp edges (median blur)
+    # the larger C is, the less noise will be removed
+    mask = cv2.adaptiveThreshold(im, maxValue=255,
+                                 adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                 thresholdType=cv2.THRESH_BINARY_INV,
+                                 blockSize=3,
+                                 # C=2) # ends up blurring triton
+                                 # C=5) # leaves too much noise
+                                 C=4) # good compromise
+    kernel = np.ones((5,5), np.uint8) # expand edges horizontally
+    mask = cv2.dilate(mask, kernel, iterations = 1) # expand edge mask
+    mask = cv2.medianBlur(mask, 5) # remove dots from mask
+    imblurred = cv2.medianBlur(im, 5) # remove noise from image
+    im = im + ((imblurred - im) & mask) # combine image with blurred version
 
 
     # nowork

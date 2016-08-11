@@ -55,7 +55,8 @@ def vgTitles(targetPath=None):
                 # get subfolder and make sure it exists
                 # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                targetfolder = config.titlesFolder + subfolder
+                # targetfolder = config.titlesFolder + subfolder
+                targetfolder = config.folders['titles'] + subfolder
                 lib.mkdir_p(targetfolder)
 
                 print subfolder + '                  \r',

@@ -171,11 +171,11 @@ def stageFiles(filterVolumes, targetPathParts):
                     # imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
             # imageFilepath = lib.getCompositeFilepath(volume, fileId)
 
-            imageFilepath = lib.getAnnotatedFilepath(volume, fileId)
+            imageFilepath = lib.getFilepath('annotate', volume, fileId)
             if not os.path.isfile(imageFilepath):
-                imageFilepath = lib.getMosaicFilepath(volume, fileId)
+                imageFilepath = lib.getFilepath('mosaic', volume, fileId)
             if not os.path.isfile(imageFilepath):
-                imageFilepath = lib.getCompositeFilepath(volume, fileId)
+                imageFilepath = lib.getFilepath('composite', volume, fileId)
             # don't do this or you'll get bw images mixed with the color images
             # if not os.path.isfile(imageFilepath):
                 # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
@@ -199,7 +199,8 @@ def stageFiles(filterVolumes, targetPathParts):
                 # add the titlepage image a few times
                 # titlepages are created in the previous step, vgBuildTitles
                 if config.includeTitles and nfile==0:
-                    titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
+                    # titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
+                    titleImageFilepath = config.folders['titles'] + subfolder + 'title' + \
                                          config.extension
                     # need to get out of the target dir - we're always this deep
                     titleImagePathRelative = '../../../../../../../' + titleImageFilepath

@@ -18,8 +18,8 @@ logfile = 'log.txt'
 
 
 # include titles in clips?
-# includeTitles = True
-includeTitles = False
+includeTitles = True
+# includeTitles = False
 
 
 # Voyager
@@ -70,24 +70,6 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 # img2pngOptions = "-fnamefilter -loglevel0 -s10"
 img2pngOptions = "-fnamefilter -loglevel0"
 
-
-
-# part of filenames
-suffixes = {
-    'adjust':    '_adjusted',
-    'denoise':   '_denoised',
-    'center':    '_centered',
-    'composite': '_composite',
-    'mosaic':    '_mosaic',
-    'annotate':  '_annotated',
-    }
-
-# adjustmentsSuffix = '_adjusted'
-# denoisedSuffix = '_denoised'
-# centersSuffix = '_centered'
-# compositesSuffix = '_composite'
-# mosaicsSuffix = '_mosaic'
-# annotationsSuffix = "_annotated"
 
 
 # Adjust
@@ -387,6 +369,16 @@ testCenterdb = testFolder + 'testCenters.csv'
 testCenterImagesFolder = testFolder + 'center/'
 testDenoiseImagesFolder = testFolder + 'denoise/'
 
+
+# parts of filenames
+suffixes = {
+    'adjust':    '_adjusted',
+    'denoise':   '_denoised',
+    'center':    '_centered',
+    'composite': '_composite',
+    'mosaic':    '_mosaic',
+    'annotate':  '_annotated',
+    }
 
 # database folder
 dbFolder = 'db/'

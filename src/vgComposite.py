@@ -24,7 +24,8 @@ import vgCenter
 
 # def vgComposite(buildVolnum='', buildCompositeId='', overwrite=False, directCall=True):
 # def vgComposite(volnums, imageIds, targetPath, overwrite=False, directCall=True):
-def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=True):
+# def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=True):
+def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
 
@@ -45,7 +46,6 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
 
     if filterVolume!='':
 
-        # compositesSubfolder = config.compositesFolder + 'VGISS_' + filterVolume + '/'
         inputSubfolder = lib.getSubfolder('center', filterVolume)
         outputSubfolder = lib.getSubfolder('composite', filterVolume)
 
@@ -55,13 +55,9 @@ def vgComposite(filterVolume, filterImageId, optionOverwrite=False, directCall=T
             return
 
         # build the centered images for the volume, if not already there
-        vgCenter.vgCenter(filterVolume, '', optionOverwite=False, directCall=False)
-
-        # print 'Building composites for', compositesSubfolder
+        vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
 
         # make folder
-        # lib.rmdir(compositesSubfolder)
-        # lib.mkdir(compositesSubfolder)
         lib.mkdir(outputSubfolder)
 
     # get centering info - will use to get files from either adjusted or centered folders
@@ -144,7 +140,8 @@ def processChannels(channelRows, volume, nfile, startId):
             channel = [filter,channelfilepath,weight,x,y]
             channels.append(channel)
 
-        outfilepath = lib.getCompositeFilepath(volume, compositeId)
+        # outfilepath = lib.getCompositeFilepath(volume, compositeId)
+        outfilepath = lib.getFilepath('composite', volume, compositeId)
         im = libimg.combineChannels(channels)
         cv2.imwrite(outfilepath, im)
 

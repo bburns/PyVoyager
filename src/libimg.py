@@ -446,7 +446,7 @@ def combineChannels(channels):
       ['Blue','composites/blue.png',0.9,50,66],
     ]
     """
-    print channels
+    # print channels
 
     # define input columns
     colFilter = 0
@@ -497,7 +497,7 @@ def combineChannels(channels):
             # canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
             canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
             im = canvas
-            show(im)
+            # show(im)
         row.append(im)
         # now assign the row to one of the available channels
         # eventually would like something more accurate than just rgb
@@ -516,14 +516,14 @@ def combineChannels(channels):
     imBlue = rowBlue[colIm] if rowBlue else blank
 
     # merge channels - BGR for cv2
-    print imBlue.shape
-    print imGreen.shape
-    print imRed.shape
+    # print imBlue.shape
+    # print imGreen.shape
+    # print imRed.shape
     # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
     # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
     # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
-    show(im)
+    # show(im)
 
     # scale image to 800x800
     if enlarged:

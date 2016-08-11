@@ -14,7 +14,7 @@ import csv
 import shutil
 import more_itertools
 from datetime import datetime
-from dateutil import dtparser
+from dateutil import parser as dtparser
 
 
 import config

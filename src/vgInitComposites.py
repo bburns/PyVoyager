@@ -64,14 +64,15 @@ import lib
 
 
 #. put in config -
-#. max number of records in a group
-# 7
+# max number of channels in a composite image
+maxRecordsInGroup = 7
 
-# max time delta between all records in a group
-# tdeltamax = 7*5 # mins
+# max time delta between channels in a composite image
+tdeltamax = 6*60 # secs, eg 6 mins at neptune
 
-debug = True
-# debug = False
+
+# debug = True
+debug = False
 
 
 
@@ -105,8 +106,8 @@ def vgInitComposites():
 
     # open the composites.csv file for writing
     csvComposites, fComposites = lib.openCsvWriter(config.dbComposites)
-    fields = 'volume,compositeId,imageId,filter'.split(',') # keep in synch with row, below
-    csvComposites.writerow(fields)
+    # fields = 'compositeId,imageId,volume,filter'.split(',') # keep in synch with row, below
+    # csvComposites.writerow(fields) # don't write till after sorted
 
     # this will store circular buffers with 7 empty lists -
     # the maximum number of filters in a group we're checking for
@@ -129,7 +130,13 @@ def vgInitComposites():
         # note = row[config.colFilesNote]
         if debug: print 'row',row[:-1] # skip note
 
-        nsecs1970 = secondsSince1970(time)
+        # if time[0]!='U': # some are UNKNOWN or UNK
+        try:
+            nsecs1970 = lib.secondsSince1970(time)
+        except:
+            # print 'badtime',time
+            nsecs1970 = 0
+        row.append(nsecs1970) # stick it on the end
 
         # get correct circular buffer
         bufferKey = system + craft + target + camera # eg JupiterVoyager1TritonNarrow
@@ -143,13 +150,18 @@ def vgInitComposites():
         # if tdelta between this and last record in the buffer > threshold,
         # dump the contents of the buffer as a group, reset it to empty
         lastBufferRow = buffer[-1]
-        lastTime = row[config.colFilesTime] # eg 1986-01-18T15:35:10
-        lastNsecs1970 = secondsSince1970(lastTime)
-        if (nsecs1970 - lastNsecs1970) > 6*60: #.param eg 6min at neptune
-            if debug: print 'tdelta>th - dump current buffer as group'
-            dumpBufferAsGroup(csvComposites, buffer)
-            buffer = newBuffer()
-            circbuffers[bufferKey] = buffer
+        if lastBufferRow != []:
+            # lastTime = lastBufferRow[config.colFilesTime] # eg 1986-01-18T15:35:10
+            # lastNsecs1970 = lib.secondsSince1970(lastTime)
+            lastNsecs1970 = lastBufferRow[-1] # stuck onto the end
+            if (nsecs1970 - lastNsecs1970) > tdeltamax: #.param eg 6min at neptune
+                # print 'tdelta>th - dump current buffer as group'
+                # for r in buffer:
+                    # print r
+                # print row
+                dumpBufferAsGroup(csvComposites, buffer)
+                buffer = newBuffer()
+                circbuffers[bufferKey] = buffer
 
         # now iterate over rows in circular buffer, checking for matches
         # if found a match, ASSUME it indicates the end of a cycle,
@@ -175,21 +187,38 @@ def vgInitComposites():
         # now add current row to this buffer
         buffer.pop(0) # remove from front of list
         buffer.append(row) # append item to end of list
-        # buffer.append(row[:-1]) # append item to end of list
-        # if debug: print buffer
 
-    #. write any leftover buffer rows
-    if debug: print 'leftover buffers - ', circbuffers
-
-    # write row
-    # keep in sync with fields, above
-    # row = [volume, fileId, system, craft, target, camera, filter, note]
-    # print row # too slow
-    # writer.writerow(row)
-    # print
+    # write any leftover buffer rows
+    for key in circbuffers:
+        buffer = circbuffers[key]
+        dumpBufferAsGroup(csvComposites, buffer)
 
     fFiles.close()
     fComposites.close()
+
+    # now sort the composites.csv file
+    # (needs to be sorted so can be joined against other files,
+    # and the leftover buffer rows will be all out of sorts)
+
+    os.chdir('db')
+    cmd = "sort %s /o %s" % ("composites.csv", "composites_temp.csv")
+    os.system(cmd)
+
+    fields = 'compositeId,imageId,volume,filter'
+    fComposites = open("composites.csv", 'wb')
+    fComposites.write(fields + '\n')
+    fComposites.close()
+
+    cmd = "cat %s >> %s" % ("foo.csv", "composites_temp.csv")
+    os.system(cmd)
+
+    # os.remove("composites_temp.csv")
+
+    os.chdir('..')
+
+    # need to keep the header row
+    # csvComposites.writerow(fields) # don't write till after sorted
+
 
 
 if __name__ == '__main__':

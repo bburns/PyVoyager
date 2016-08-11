@@ -33,6 +33,7 @@ def vgTarget(filterVolume='', targetPath=''):
 
     # iterate down files.csv
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
+    nfile = 1
     for row in csvFiles:
 
         # get image properties
@@ -57,29 +58,31 @@ def vgTarget(filterVolume='', targetPath=''):
 
             # create subfolder
             subfolder = system + '/' + craft + '/' + target +'/' + camera + '/'
-            targetFolder = config.targetsFolder + subfolder
+            # targetFolder = config.targetsFolder + subfolder
+            targetFolder = config.folders['target'] + subfolder
             lib.mkdir_p(targetFolder)
 
-            print 'Volume %s copying %s         \r' % (volume, fileId),
+            # print 'Volume %s copying %s         \r' % (volume, fileId),
+            print 'Volume %s copying %d: %s         \r' % (volume, nfile, fileId),
 
             #. at diff times might want diff sources - maybe specify as a cmdline option
 
-            # # copy adjusted file
-            # src = lib.getFilepath('adjust', volume, fileId, filter)
-            # lib.cp(src, targetFolder)
+            src = lib.getFilepath('annotate', volume, fileId)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('mosaic', volume, fileId)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('composite', volume, fileId)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('center', volume, fileId, filter)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('denoise', volume, fileId, filter)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('adjust', volume, fileId, filter)
 
-            # # copy centered file
-            # src = lib.getFilepath('center', volume, fileId, filter)
-            # lib.cp(src, targetFolder)
+            if os.path.isfile(src):
+                lib.cp(src, targetFolder)
 
-            # copy composite file
-            src = lib.getFilepath('composite', volume, fileId)
-            lib.cp(src, targetFolder)
-
-            # # copy mosaic file
-            # src = lib.getFilepath('mosaic', volume, fileId)
-            # lib.cp(src, targetFolder)
-
+        nfiles += 1
 
     fFiles.close()
     print

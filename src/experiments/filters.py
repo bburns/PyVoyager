@@ -9,24 +9,89 @@ import libimg
 
 
 
+# filename = 'noise/sky.jpg'
+# filename = 'noise/hline_top.jpg'
 # filename = 'noise/hlines.jpg'
+# filename = 'noise/hlines2.jpg'
 # filename = 'noise/hblock.jpg'
-filename = 'noise/hblock2.jpg'
-# filename = 'noise/hblocks.jpg'
+# filename = 'noise/hblock2.jpg'
+filename = 'noise/hblocks.jpg'
+
 
 im = cv2.imread(filename, 0)
 libimg.show(im)
 
+orig = im.copy()
+blank = np.zeros(im.shape[:2],np.uint8)
+
+
+if 1:
+# if 0:
+    mask = libimg.getGradientMagnitude(im)
+    libimg.show(mask,'gradiant mag')
+
+
+if 1:
+# if 0:
+    # threshold to pick out high regions
+    # C larger means less noise removed
+    mask = cv2.adaptiveThreshold(mask, maxValue=255,
+                               adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                               thresholdType=cv2.THRESH_BINARY_INV,
+                               blockSize=3,
+                               # C=11)
+                               # C=15)
+                               # C=25)
+                               C=30)
+                               # C=9)
+    libimg.show(mask,'thresholded')
+
+# # if 1:
+# if 0:
+#     ret, mask = cv2.threshold(mask, 200, 255, cv2.THRESH_BINARY)
+#     libimg.show(mask,'thresholded2')
+
 
 # if 1:
 if 0:
-    mag = libimg.getGradientMagnitude(im)
-    libimg.show(mag,'gradiant mag')
+    mask = cv2.medianBlur(mask, 3) # remove dots
+    libimg.show(mask,'median blurred')
+
+if 1:
+# if 0:
+    # this extracts any long horizontal segments
+    # hsize = 60
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (120,1));
+    mask = cv2.dilate(mask, kernel)
+    # im = cv2.dilate(mask, kernel)
+    # im = cv2.erode(mask, kernel)
+    libimg.show(mask, "dilated")
+
+if 1:
+# if 0:
+    # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,2));
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,5));
+    mask = cv2.dilate(mask, kernel)
+    mask = cv2.erode(mask, kernel)
+    libimg.show(mask, "erode+dilate")
+
+# if 1:
+if 0:
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,1));
+    mask = cv2.dilate(mask, kernel)
+    libimg.show(mask, "dilate")
+
+if 1:
+# if 0:
+    out = cv2.merge((orig,mask,blank))
+    libimg.show(out, 'im+hlines')
+
+    im = im & (255-mask)
+    libimg.show(im, 'im-mask')
 
 
-if True:
-# if False:
-
+# if 1:
+if 0:
     # threshold to pick out high regions
     # mask = cv2.adaptiveThreshold(mag, maxValue=255,
     mask = cv2.adaptiveThreshold(im, maxValue=255,
@@ -75,8 +140,8 @@ if True:
     # libimg.show(im)
 
 
-if True:
-# if 0:
+# if 1:
+if 0:
 
     # try removing noise near sharp edges (median blur)
     # the larger C is, the less noise will be removed
@@ -119,3 +184,22 @@ if True:
 
     # im, contours,kk hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     # mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # erode then dilate
+
+
+#------------------------
+
+
+    im = getGradientMagnitude(im)
+    im = cv2.adaptiveThreshold(im, maxValue=255,
+                               adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                               thresholdType=cv2.THRESH_BINARY_INV,
+                               blockSize=3,
+                               C=15)
+    # this extracts any long horizontal segments
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (120,1));
+    im = cv2.dilate(im, kernel)
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,5));
+    im = cv2.dilate(im, kernel)
+    im = cv2.erode(im, kernel)
+

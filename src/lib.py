@@ -13,9 +13,20 @@ import re # for findall
 import csv
 import shutil
 import more_itertools
+from datetime import datetime
+from dateutil import dtparser
 
 
 import config
+
+
+def secondsSince1970(sDatetime, epoch=datetime(1970,1,1)):
+    "convert a datetime string to seconds since 1970-01-01"
+    # eg "1986-01-18T15:35:10" -> 506446510.0
+    dt = dtparser.parse(sDatetime)
+    td = dt - epoch
+    # return (td.microseconds + (td.seconds + td.days * 86400) * 10**6) / 10**6
+    return td.total_seconds()
 
 
 #. split into two fns

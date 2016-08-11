@@ -31,13 +31,28 @@ import log
 def getGradientMagnitude(im):
     "Get magnitude of gradient for given image"
     ddepth = cv2.CV_32F
-    # sobel includes gaussian filtering, so may not be ideal for detecting noise?
-    dx = cv2.Sobel(im, ddepth, 1, 0)
-    dy = cv2.Sobel(im, ddepth, 0, 1)
+
+    # sobel includes gaussian filtering, so may not be ideal for detecting noise
+    # dx = cv2.Sobel(im, ddepth, 1, 0)
+    # dy = cv2.Sobel(im, ddepth, 0, 1)
+
+    kernel = np.zeros((1,3))
+    kernel[0][0]=-1
+    kernel[0][1]=0
+    kernel[0][2]=1
+    dx = cv2.filter2D(im, ddepth, kernel)
     dxabs = cv2.convertScaleAbs(dx)
+
+    kernel = np.zeros((3,1))
+    kernel[0][0]=-1
+    kernel[1][0]=0
+    kernel[2][0]=1
+    dy = cv2.filter2D(im, ddepth, kernel)
     dyabs = cv2.convertScaleAbs(dy)
+
     mag = cv2.addWeighted(dxabs, 0.5, dyabs, 0.5, 0)
     return mag
+
 
 
 def annotateImageFile(infile, outfile, imageId, time, distance, note):
@@ -146,20 +161,38 @@ def denoiseImageFile(infile, outfile):
 
 
     # black out large blocks of noise
-    # detect contours of noisy areas
-    mask = cv2.adaptiveThreshold(im, maxValue=255,
-                                 adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                 thresholdType=cv2.THRESH_BINARY_INV,
-                                 blockSize=3,
-                                 C=11)
-    kernel = np.ones((2,21), np.uint8)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # dilate then erode
-    # find contours and bounding boxes, pick out rectangular ones and black whole rectangle out
-    im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    for contour in contours:
-        x,y,w,h = cv2.boundingRect(contour)
-        if w>100 and w>h*3:
-            cv2.rectangle(im, (x,y), (x+w,y+h), 0, -1) # filled black rectangle
+
+    # # detect contours of noisy areas
+    # mask = cv2.adaptiveThreshold(im, maxValue=255,
+    #                              adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    #                              thresholdType=cv2.THRESH_BINARY_INV,
+    #                              blockSize=3,
+    #                              C=11)
+    # kernel = np.ones((2,21), np.uint8)
+    # mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel) # dilate then erode
+    # # find contours and bounding boxes, pick out rectangular ones and black whole rectangle out
+    # im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # for contour in contours:
+    #     x,y,w,h = cv2.boundingRect(contour)
+    #     if w>100 and w>h*3:
+    #         cv2.rectangle(im, (x,y), (x+w,y+h), 0, -1) # filled black rectangle
+
+    #
+    mask = getGradientMagnitude(im)
+    mask = cv2.adaptiveThreshold(mask, maxValue=255,
+                               adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                               thresholdType=cv2.THRESH_BINARY_INV,
+                               blockSize=3,
+                               # C=25)
+                               C=30)
+    # this extracts any long horizontal segments
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (120,1));
+    mask = cv2.dilate(mask, kernel)
+    # this __
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,5));
+    mask = cv2.dilate(mask, kernel)
+    mask = cv2.erode(mask, kernel)
+    im = im & (255-mask)
 
 
     # try removing noise near sharp edges (median blur)

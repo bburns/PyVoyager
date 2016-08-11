@@ -114,7 +114,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         nfile += 1
 
         # get expected target size and radius
-        # imageFraction = fraction of image frame taken up by target
+        # imageFraction is fraction of image frame taken up by target
         rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
         if rowPositions:
             imageFraction = float(rowPositions[config.colPositionsImageFraction])

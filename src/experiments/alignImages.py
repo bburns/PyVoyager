@@ -1,7 +1,7 @@
 
 # align images experiments
 
-
+import os
 import numpy as np
 import cv2
 
@@ -9,6 +9,8 @@ import cv2
 import sys; sys.path.append('..') # so can import from main src folder
 import config
 import libimg
+
+
 
 
 # targetRadius = 100

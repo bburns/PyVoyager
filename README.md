@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.44 inprogress
+Version 0.44
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -307,14 +307,19 @@ Next steps
 History
 ----------------------------------------
 
-Version 0.44 (2016-08)
+<!-- Version 0.45 (2016-08) -->
+<!-- ---------------------------------------- -->
+<!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
+<!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
+
+Version 0.44 (2016-08-12)
 ----------------------------------------
-- Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
-- Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings)
 - Add `vg annotate` step - annotate images with imageId, date/time, distance (km), NOTE field text
+- `vg clips` can include additional images after frames, as specified in `additions.csv` - use to add hand-tuned mosaics, etc
+- `vg adjust` ignores brightest n pixels before doing histogram stretch, to avoid hotspots keeping image dim
 - Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple
 
-Make Uranus system movie with denoised and annotated images
+Make Jupiter system movie with annotated images
 
 Version 0.43 (2016-08-08)
 ----------------------------------------

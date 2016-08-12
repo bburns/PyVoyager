@@ -355,6 +355,7 @@ folders = {
     'titles':     onlineFolder  + "step11_titles/",
     'clips':      onlineFolder  + "step12_clips/",
     'movies':     onlineFolder  + "step13_movies/",
+    'additions':  onlineFolder  + "images/",
     }
 
 clipsStageFolder    = folders['clips'] + 'stage/'

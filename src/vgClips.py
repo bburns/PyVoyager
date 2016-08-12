@@ -178,10 +178,8 @@ def stageFiles(filterVolumes, targetPathParts):
             if os.path.isfile(imageFilepath):
 
                 # get staging subfolder and make sure it exists
-                # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/Bw/
+                # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                # subfolderPlusColor = subfolder + bwOrColor.title() + '/'
-                # targetFolder = config.clipsStageFolder + subfolderPlusColor
                 targetFolder = config.clipsStageFolder + subfolder
                 lib.mkdir_p(targetFolder)
 
@@ -189,9 +187,8 @@ def stageFiles(filterVolumes, targetPathParts):
                 nfile = nfilesInTargetDir.get(targetKey)
                 if not nfile: nfile = 0
 
-                # if we haven't seen this subfolder before,
-                # add the titlepage image a few times
-                # titlepages are created in the previous step, vgBuildTitles
+                # if we haven't seen this subfolder before add titlepage a few times.
+                # titlepages are created in the previous step, vgBuildTitles.
                 if config.includeTitles and nfile==0:
                     # titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
                     titleImageFilepath = config.folders['titles'] + subfolder + 'title' + \
@@ -218,35 +215,49 @@ def stageFiles(filterVolumes, targetPathParts):
                 nfile += ncopies
                 nfilesInTargetDir[targetKey] = nfile
 
-        # # check for additional images
-        # rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
-        # if rowAdditions:
-        #     additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
-        #     nframes = int(rowAdditions[config.colAdditionsNFrames])
+        # check for additional images
+        rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
+        if rowAdditions:
+            print fileId, rowAdditions
+            additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
+            ncopies = int(rowAdditions[config.colAdditionsNFrames])
 
-        #     # get imagePath
+            # get imagePath
 
-        #     #. how get volume? should the addition col have the whole filepath?
-        #     #. and filter?
-        #     # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
-        #     # but that ties the data structure down too much
-        #     # or else include volume, filter, fileId, but then it's not as general purpose,
-        #     # eg for including extraneous images
+            #. how get volume? should the addition col have the whole filepath?
+            #. and filter?
+            # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
+            # but that ties the data structure down too much
+            # or else include volume, filter, fileId, but then it's not as general purpose,
+            # eg for including extraneous images
 
-        #     # one possibility would be to lookup the volume based on the imageId boundaries (fast),
-        #     # and then grab whatever image started with the given additionId so don't need filter.
-        #     # other extraneous images would have a special prefix, eg 'file:'.
+            # one possibility would be to lookup the volume based on the imageId boundaries (fast),
+            # and then grab whatever image started with the given additionId so don't need filter.
+            # other extraneous images would have a special prefix, eg 'file:'.
 
-        #     # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
+            # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
 
-        #     # if '_composite':
-        #     #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-        #     # elif '_centered':
-        #     #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-        #     # elif '_adjusted':
-        #     #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-        #     # need to insert the additional image here
-        #     # add nframes into stage
+            if additionId.startswith('images/'):
+                print 'adding',additionId
+                filetitle = additionId[7:] # trim off images/
+                folder = config.folders['additions']
+                imageFilepath = folder + filetitle
+                print imageFilepath
+                imagePathRelative = '../../../../../../../' + imageFilepath
+                lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
+                # increment the file number for the target folder
+                nfile += ncopies
+                nfilesInTargetDir[targetKey] = nfile
+            else:
+                print 'unhandled addition', additionId
+            # if '_composite':
+            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+            # elif '_centered':
+            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+            # elif '_adjusted':
+            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+            # need to insert the additional image here
+            # add nframes into stage
 
     fAdditions.close()
     fPositions.close()

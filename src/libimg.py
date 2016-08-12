@@ -430,21 +430,9 @@ def img2png(srcdir, filespec, destdir):
     os.system(cmd)
 
 
-def adjustImageFile(infile, outfile):
-    """
-    Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
-    """
-    #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
-
-    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
-
-    # adjust image
-    im = np.rot90(im, 2) # rotate by 180
-
-    # rather do it explicitly though...
-    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-    # im = cv2.equalizeHist(im) # not what we want...
-
+def stretchHistogram(im):
+    "stretch the histogram of the given image, ignoring the n hottest pixels"
+    #. watch out for small moons - maybe pass targetsize in?
     # get histogram
     # see http://docs.opencv.org/3.1.0/d1/db7/tutorial_py_histogram_begins.html
     # eg hist = cv2.calcHist([im],[0],mask,[256],[0,256])
@@ -461,7 +449,7 @@ def adjustImageFile(infile, outfile):
     npixels = im.shape[0] * im.shape[1]
     # pct = 0.001
     # npixelsTop = int(npixels * pct) + 1
-    npixelsTop = 100
+    npixelsTop = 100 #.param
     # print npixels, npixelsTop
     sum = 0
     maxvalue = 255
@@ -474,10 +462,6 @@ def adjustImageFile(infile, outfile):
 
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
-    # ret, mask = cv2.threshold(im, maxvalue, 255, cv2.THRESH_BINARY_INV)
-    # newvalues = (255-mask)
-    # show(mask)
-    # im = (im & mask) + (newvalues)
     np.clip(im, 0, maxvalue, im)
     # show(im)
 
@@ -485,6 +469,29 @@ def adjustImageFile(infile, outfile):
     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
     # show(im)
 
+    return im
+
+
+def adjustImageFile(infile, outfile):
+    """
+    Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
+    """
+    #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
+
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
+
+    # adjust image
+    im = np.rot90(im, 2) # rotate by 180
+
+    # show(im)
+    # im2 = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # show(im2)
+
+    # rather do it explicitly though...
+    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX) # hotspots throw it off
+    # im = cv2.equalizeHist(im) # not what we want...
+    im = stretchHistogram(im)
+    # show(im)
 
     cv2.imwrite(outfile, im)
 

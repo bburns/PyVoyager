@@ -70,6 +70,34 @@ def processChannels(channelRows, volume, nfile, startId):
         cv2.imwrite(outfilepath, im)
 
 
+
+def foo():
+    # don't let it go too slowly
+    if ncopies > config.clipsMaxFrameRateConstant:
+        ncopies = config.clipsMaxFrameRateConstant
+
+    # check for previous sticky setting override in framerates.csv
+    if not ncopiesMemory.get(targetKey) is None:
+        ncopies = ncopiesMemory[targetKey]
+        # print 'remembering sticky framerate',fileId, ncopies
+
+    # check for 'sticky' override from framerates.csv
+    framerateInfoRecord = framerateInfo.get(fileId + '+')
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframes'])
+        ncopiesMemory[targetKey] = ncopies # remember it
+        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+
+    # check for single image override from framerates.csv
+    framerateInfoRecord = framerateInfo.get(fileId)
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframes'])
+        # ncopiesMemory[targetKey] = None # reset the sticky setting
+        ncopiesMemory.pop(targetKey, None) # remove the sticky setting
+        # print 'got single framerate',fileId,ncopies,ncopiesMemory
+
+
+
 def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
@@ -122,6 +150,19 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
 
         volume = row[config.colCompositesVolume]
         compositeId = row[config.colCompositesCompositeId]
+
+        #. will need to get this from joined files.csv,
+        # so can turn compositing on/off with compositing.csv
+        # volume = row[config.colFilesVolume]
+        # fileId = row[config.colFilesFileId]
+        # filter = row[config.colFilesFilter]
+        # system = row[config.colFilesSystem]
+        # craft = row[config.colFilesCraft]
+        # target = row[config.colFilesTarget]
+        # camera = row[config.colFilesCamera]
+        # # relabel target field if necessary - see db/targets.csv for more info
+        # target = lib.retarget(retargetingInfo, fileId, target)
+
 
         # filter on volume or composite id
         if volume!=filterVolume and compositeId!=filterCompositeId: continue

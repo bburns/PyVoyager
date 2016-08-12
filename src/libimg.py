@@ -431,23 +431,19 @@ def img2png(srcdir, filespec, destdir):
 
 
 def adjustImageFile(infile, outfile):
-    "Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg."
+    """
+    Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
+    """
     #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
-    # im = mpim.imread(infile)
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
     # adjust image
     im = np.rot90(im, 2) # rotate by 180
 
-    # this actually saves bw images with a colormap
-    # mpim.imsave(outfile, im)
-    # this actually does min/max optimization - see http://stackoverflow.com/a/1713101/243392
-    # the CALIB images are really dark, and this result looks nice
-    # misc.imsave(outfile, im)
-
     # rather do it explicitly though...
-    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    im = cv2.equalizeHist(im)
 
     cv2.imwrite(outfile, im)
 
@@ -538,25 +534,6 @@ def combineChannels(channels):
     #     # if filter in ['Clear']:
     #         # rowClear = row
 
-    # # try using another channel to fill in...
-    # # if rowRed is None:
-    # #     if not rowClear is None: rowRed = rowClear
-    # #     elif not rowBlue is None: rowRed = rowBlue
-    # #     elif not rowGreen is None: rowRed = rowGreen
-    # # if rowGreen is None:
-    # #     if not rowClear is None: rowGreen = rowClear
-    # #     elif not rowBlue is None: rowGreen = rowBlue
-    # #     elif not rowGreen is None: rowRed = rowRed
-    # # if rowBlue is None:
-    # #     if not rowClear is None: rowBlue = rowClear
-    # #     elif not rowRed is None: rowBlue = rowRed
-    # #     elif not rowGreen is None: rowBlue = rowGreen
-    # blank = np.zeros((h,w), np.uint8)
-    # if rowGreen: blank = rowGreen[colIm]
-    # if rowRed: blank = rowRed[colIm]
-    # if rowBlue: blank = rowBlue[colIm]
-    # if rowClear: blank = rowClear[colIm]
-
     # # assign a blank image if missing a channel
     # blank = np.zeros((h,w), np.uint8)
     # imRed = rowRed[colIm] if rowRed else blank
@@ -573,14 +550,13 @@ def combineChannels(channels):
     # im = cv2.merge((imBlue, imGreen, imRed))
     # # show(im)
 
-
-
     # get dictionary of filters
     d = {}
     for row in channels:
         filter = row[colFilter]
         d[filter] = row
 
+    # a little dictionary fn
     def dget(d, skeys):
         "pop a value from dictionary d, trying keys in skeys"
         if len(d)>0:
@@ -601,8 +577,10 @@ def combineChannels(channels):
     if channelRed is None: channelRed = dget(d,'Clear,Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
     if channelGreen is None: channelGreen = dget(d,'Clear,Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
 
+    # get images
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
+            # print row
             filename = row[colFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
             # apply weight if necessary
@@ -646,13 +624,12 @@ def combineChannels(channels):
     # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
 
-
     # scale image to 800x800
     if enlarged:
         im = resizeImage(im, 800, 800)
         # im.thumbnail((800,800), Image.BICUBIC) # PIL
 
-    # later - maybe crop canvas
+    # later - maybe crop canvas, zoom for nice views
     # eg im = im[400:1200, 400:1200]
 
     return im

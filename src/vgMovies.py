@@ -16,32 +16,12 @@ import lib
 import libimg
 
 
-def concatenateClips(movieId, clipIds):
-    "Concatenate the given mp4 clips into an mp4 movie"
-
-    print 'Generating movie', movieId
-    print movieId, clipIds
-    # movieFilepath = config.moviesFolder + movieId + '.mp4'
-    # movieContentsFilepath = config.moviesFolder + movieId + '.txt'
-    movieFilepath = config.folders['movies'] + movieId + '.mp4'
-    movieContentsFilepath = config.folders['movies'] + movieId + '.txt'
-    if clipIds != []:
-        makeContentsFile(movieContentsFilepath, clipIds)
-        # now make the movie
-        # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
-        cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, movieFilepath)
-        print cmd
-        os.system(cmd)
-
-
 def makeContentsFile(movieContentsFilepath, clipIds):
     "Make a text file containing a list of mp4 clips that will be merged by ffmpeg"
 
     f = open(movieContentsFilepath, 'w')
     for clipId in clipIds:
         print clipId
-        # clipFilepath = config.clipsFolder + clipId + '.mp4'
-        # movieFilepath = config.moviesFolder + clipId + '.mp4'
         clipFilepath = config.folders['clips'] + clipId + '.mp4'
         movieFilepath = config.folders['movies'] + clipId + '.mp4'
         # if file avail, add it
@@ -55,15 +35,34 @@ def makeContentsFile(movieContentsFilepath, clipIds):
     f.close()
 
 
-def vgMovies():
-    "Combine individual clips into movies based on db/movies.csv"
+def concatenateClips(movieId, clipIds):
+    "Concatenate the given mp4 clips into an mp4 movie"
 
-    # walk over db/movies.csv file, eg
-    # movieId,clipId
-    # Jupiter-Voyager1,Jupiter-Voyager1-Title
-    # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
-    # Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
-    # Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow-Color
+    print 'Generating movie', movieId
+    print movieId, clipIds
+    movieFilepath = config.folders['movies'] + movieId + '.mp4'
+    movieContentsFilepath = config.folders['movies'] + movieId + '.txt'
+    if clipIds != []:
+        makeContentsFile(movieContentsFilepath, clipIds)
+        # now make the movie
+        # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
+        cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, movieFilepath)
+        print cmd
+        os.system(cmd)
+
+
+def vgMovies():
+    """
+    Combine individual clips into movies based on db/movies.csv
+
+    walk over db/movies.csv file, eg
+    movieId,clipId
+    Jupiter-Voyager1,Jupiter-Voyager1-Title
+    Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
+    Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
+    Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow-Color
+
+    """
 
     # get new movieId,
     # get clipId if available
@@ -74,10 +73,10 @@ def vgMovies():
     # repeat until eof
     # should end up with movies for each planet flyby, and one with all of them, all.mp4
 
-    reader, f = lib.openCsvReader(config.dbMovies)
+    csvMovies, fMovies = lib.openCsvReader(config.dbMovies)
     lastMovieId = ''
     clipIds = []
-    for row in reader:
+    for row in csvMovies:
         movieId = row[0] # eg Neptune-Voyager2
         clipId = row[1] # eg Neptune-Voyager2-Triton-Narrow
         if movieId != lastMovieId and lastMovieId != '':
@@ -87,6 +86,7 @@ def vgMovies():
         lastMovieId = movieId
 
     concatenateClips(lastMovieId, clipIds)
+    fMovies.close()
 
     #. then would want to add music, either to each clip, or to all.mp4
     # specify in music.csv

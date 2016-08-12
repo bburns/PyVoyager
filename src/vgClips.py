@@ -51,14 +51,14 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
     # check for 'sticky' override from framerates.csv
     framerateInfoRecord = framerateInfo.get(fileId + '+')
     if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframesPerImage'])
+        ncopies = int(framerateInfoRecord['nframes'])
         ncopiesMemory[targetKey] = ncopies # remember it
         # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
 
     # check for single image override from framerates.csv
     framerateInfoRecord = framerateInfo.get(fileId)
     if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframesPerImage'])
+        ncopies = int(framerateInfoRecord['nframes'])
         # ncopiesMemory[targetKey] = None # reset the sticky setting
         ncopiesMemory.pop(targetKey, None) # remove the sticky setting
         # print 'got single framerate',fileId,ncopies,ncopiesMemory
@@ -66,11 +66,6 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
     return ncopies
 
 
-# def stageFiles(bwOrColor, targetPathParts):
-# def stageFiles(targetPathParts):
-# def stageFiles(volnums, targetPathParts):
-# def stageFiles(volnum, targetPathParts):
-# def stageFiles(filterVolume, targetPathParts):
 def stageFiles(filterVolumes, targetPathParts):
     """
     Make links from source files (centers or composites) to clip stage folders.
@@ -137,8 +132,7 @@ def stageFiles(filterVolumes, targetPathParts):
 
         # does this image match the target path the user specified on the cmdline?
         addImage = False
-        # if volume in filterVolumes: addImage = True
-        # if lib.targetMatches(targetPathParts, system, craft, target, camera): addImage = True
+        # note AND
         if (volume in filterVolumes) and \
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
@@ -260,11 +254,6 @@ def stageFiles(filterVolumes, targetPathParts):
     print
 
 
-# def vgClips(targetPath=None, keepLinks=False):
-# def vgClips(filterVolumes=[], imageIds=[], targetPath=None, keepLinks=False):
-# def vgClips(filterVolumes=None, imageIds=None, targetPath=None, keepLinks=False):
-# def vgClips(filterVolume=None, imageId=None, targetPath=None, keepLinks=False):
-# def vgClips(filterVolume='', filterTargetPath='', keepLinks=False):
 def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     """
     Build clips associated with the given volumes AND target path (eg '//Io').
@@ -288,12 +277,8 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
         vgTitles.vgTitles(filterTargetPath)
 
         # stage images for ffmpeg
-        # os.rmdir(config.clipsStageFolder)
         lib.rmdir(config.clipsStageFolder)
-        # stageFiles(bwOrColor, targetPathParts)
-        # stageFiles(targetPathParts)
         stageFiles(filterVolumes, targetPathParts)
-        # stageFiles(filterVolume, targetPathParts)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',

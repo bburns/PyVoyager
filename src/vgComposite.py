@@ -109,7 +109,8 @@ def processChannels(channelRows, volume, nfile, startId):
     Can have single channel groups.
     Other parameters are just for status update.
     """
-    # print channelRows
+    # for row in channelRows:
+        # print row
     nchannels = len(channelRows)
     print 'Volume %s compositing %d: %s (%d channels)    \r' % \
           (volume,nfile,startId,nchannels),

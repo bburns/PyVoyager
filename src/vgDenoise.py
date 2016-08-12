@@ -24,10 +24,12 @@ def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
     "remove noise from images in given volume"
 
     volnum = str(volnum) # eg '5101'
-    inputSubfolder = lib.getSubfolder('adjust', volnum)
-    outputSubfolder = lib.getSubfolder('denoise', volnum)
 
     if volnum!='':
+        
+        inputSubfolder = lib.getSubfolder('adjust', volnum)
+        outputSubfolder = lib.getSubfolder('denoise', volnum)
+        
         # quit if volume folder exists
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall: print "Folder exists: " + outputSubfolder
@@ -36,14 +38,17 @@ def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
         # build the adjusted images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
         # vgCenter.vgCenter(volnum, False, False)
-        vgAdjust.vgAdjust(volnum, optionOverwrite=False, directCall=False)
+        # vgAdjust.vgAdjust(volnum, optionOverwrite=False, directCall=False)
+        vgAdjust.vgAdjust(volnum, '', optionOverwrite=False, directCall=False)
         
         # make folder
         lib.mkdir(outputSubfolder)
 
 
-    # get number of files to process
-    nfiles = len(os.listdir(inputSubfolder))
+        # get number of files to process
+        nfiles = len(os.listdir(inputSubfolder))
+    else:
+        nfiles = 1
 
     # read small dbs into memory
     denoisingInfo = lib.readCsv(config.dbDenoising) # when to turn denoising on/off

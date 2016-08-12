@@ -18,8 +18,8 @@ logfile = 'log.txt'
 
 
 # include titles in clips?
-includeTitles = True
-# includeTitles = False
+# includeTitles = True
+includeTitles = False
 
 
 # Voyager

@@ -18,7 +18,7 @@ import libimg
 import log
 
 import vgDenoise
-# import vgAdjust
+import vgAdjust
 
 
 # config.drawCrosshairs = True
@@ -45,12 +45,13 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         print 'Centers.csv already contains volume ' + filterVolume + ' - run with -y to optionOverwrite'
     #         return
 
-    inputSubfolder = lib.getSubfolder('denoise', filterVolume)
-    # inputSubfolder = lib.getSubfolder('adjust', filterVolume)
-    outputSubfolder = lib.getSubfolder('center', filterVolume)
-
     if filterVolume!='':
-        
+
+        #. just do adjust for now
+        # inputSubfolder = lib.getSubfolder('denoise', filterVolume)
+        inputSubfolder = lib.getSubfolder('adjust', filterVolume)
+        outputSubfolder = lib.getSubfolder('center', filterVolume)
+
         # quit if volume folder exists
         if os.path.isdir(outputSubfolder) and optionOverwrite==False:
             if directCall: print "Folder exists: " + outputSubfolder
@@ -58,15 +59,16 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # build the previous images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        # vgAdjust.vgAdjust(filterVolume, optionOverwrite=False, directCall=False)
-        vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
+        vgAdjust.vgAdjust(filterVolume, '', optionOverwrite=False, directCall=False)
+        # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
         lib.mkdir(outputSubfolder)
 
-    # get number of files to process
-    # nfiles = len(os.listdir(denoisedSubfolder))
-    nfiles = len(os.listdir(inputSubfolder))
+        # get number of files to process
+        nfiles = len(os.listdir(inputSubfolder))
+    else:
+        nfiles = 1
 
     # read small dbs into memory
     centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off

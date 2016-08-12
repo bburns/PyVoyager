@@ -14,30 +14,27 @@ import libimg
 import vgUnzip
 
 
-def vgConvert(volnum, overwrite=False, directCall=True):
+def vgConvert(volnum, optionOverwrite=False, directCall=True):
 
     "Convert IMG files to PNG files for the given volume, if png folder doesn't exist yet."
 
     volnum = str(volnum)
-    inputSubfolder = lib.getSubfolder('unzip', filterVolume)
-    outputSubfolder = lib.getSubfolder('convert', filterVolume)
+    inputSubfolder = lib.getSubfolder('unzip', volnum)
+    outputSubfolder = lib.getSubfolder('convert', volnum)
 
     # quit if volume folder exists
-    if os.path.isdir(outputSubfolder) and overwrite==False:
+    if os.path.isdir(outputSubfolder) and optionOverwrite==False:
         if directCall: print "Folder exists: " + outputSubfolder
         return
 
     # unzip the download, if not already there
-    vgUnzip.vgUnzip(volnum, False, False) # not a direct call by the user
+    vgUnzip.vgUnzip(volnum, optionOverwrite=False, directCall=False)
+
+    # create dest folder
+    lib.mkdir(outputSubfolder)
 
     # now convert the images
 
-    # create dest folder
-    # lib.rmdir(imagesSubfolder)
-    # lib.mkdir(imagesSubfolder)
-    lib.mkdir(outputSubfolder)
-
-    # datadir = unzippedSubfolder + 'DATA/'
     datadir = inputSubfolder + 'DATA/'
     print "Converting imgs to pngs for " + datadir
 

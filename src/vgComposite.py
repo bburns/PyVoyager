@@ -105,8 +105,12 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
         # make folder
         lib.mkdir(outputSubfolder)
 
-    # get centering info - will use to get files from either adjusted or centered folders
-    # centeringInfo = lib.readCsv(config.dbCentering)
+    # read small db into memory
+    compositingInfo = lib.readCsv(config.dbCompositing) # when to turn centering on/off
+
+    # should we composite the image?
+    compositing = True # default
+    compositingMemory = {} # keyed on planet-spacecraft-target-camera
 
     # iterate over composites.csv records
     csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
@@ -120,7 +124,6 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
         compositeId = row[config.colCompositesCompositeId]
 
         # filter on volume or composite id
-        # if volume==filterVolume or compositeId==filterCompositeId:
         if volume!=filterVolume and compositeId!=filterCompositeId: continue
 
         # gather image filenames into channelRows so can merge them

@@ -442,8 +442,49 @@ def adjustImageFile(infile, outfile):
     im = np.rot90(im, 2) # rotate by 180
 
     # rather do it explicitly though...
-    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
     # im = cv2.equalizeHist(im) # not what we want...
+
+    # get histogram
+    # see http://docs.opencv.org/3.1.0/d1/db7/tutorial_py_histogram_begins.html
+    # eg hist = cv2.calcHist([im],[0],mask,[256],[0,256])
+    images = [im]
+    channels = [0]
+    mask = None # lets you filter to part of an image
+    histSize = [256] # number of bins
+    ranges = [0, 256] # range of intensity values
+    hist = cv2.calcHist(images, channels, mask, histSize, ranges)
+    # print hist
+
+    # ignore top n%, or top n pixels
+    # start at top, get cumulative sum downwards until reach certain amount of pixels
+    npixels = im.shape[0] * im.shape[1]
+    # pct = 0.001
+    # npixelsTop = int(npixels * pct) + 1
+    npixelsTop = 100
+    # print npixels, npixelsTop
+    sum = 0
+    maxvalue = 255
+    for i in xrange(255,0,-1):
+        sum += hist[i]
+        if sum>npixelsTop:
+            maxvalue = i
+            break
+    # print maxvalue
+
+    # set values > maxvalue to maxvalue
+    # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
+    # ret, mask = cv2.threshold(im, maxvalue, 255, cv2.THRESH_BINARY_INV)
+    # newvalues = (255-mask)
+    # show(mask)
+    # im = (im & mask) + (newvalues)
+    np.clip(im, 0, maxvalue, im)
+    # show(im)
+
+    # stretch image values
+    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # show(im)
+
 
     cv2.imwrite(outfile, im)
 

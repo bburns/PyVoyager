@@ -365,13 +365,16 @@ grabbedFolder = onlineFolder  + "grabbed/"
 
 # test images go here
 testFolder = 'test/'
-testCenterdb = testFolder + 'testCenters.csv'
+testCenterdb = testFolder + 'testCenterImages.csv'
 testCenterImagesFolder = testFolder + 'center/'
 testDenoiseImagesFolder = testFolder + 'denoise/'
+
+musicFolder = 'music/'
 
 
 # parts of filenames
 suffixes = {
+    'convert':   '',
     'adjust':    '_adjusted',
     'denoise':   '_denoised',
     'center':    '_centered',

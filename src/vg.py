@@ -127,8 +127,14 @@ elif cmd=="convert":
     lib.beep()
 
 elif cmd=="adjust":
-    for filterVolume in filterVolumes:
-        vgAdjust.vgAdjust(filterVolume, optionOverwrite)
+    # for filterVolume in filterVolumes:
+        # vgAdjust.vgAdjust(filterVolume, optionOverwrite)
+    if filterImageIds:
+        for imageId in filterImageIds:
+            vgAdjust.vgAdjust('', imageId, optionOverwrite=True)
+    else:
+        for filterVolume in filterVolumes:
+            vgAdjust.vgAdjust(filterVolume, '', optionOverwrite)
     lib.beep()
 
 elif cmd=="denoise":
@@ -149,7 +155,7 @@ elif cmd=="center":
 
 elif cmd=="composite":
     if filterImageIds:
-        for compositeId in compositeIds:
+        for compositeId in filterImageIds:
             vgComposite.vgComposite('', compositeId, optionOverwrite=True)
     else:
         for filterVolume in filterVolumes:

@@ -82,7 +82,7 @@ def vgTarget(filterVolume='', targetPath=''):
             if os.path.isfile(src):
                 lib.cp(src, targetFolder)
 
-        nfiles += 1
+            nfile += 1
 
     fFiles.close()
     print

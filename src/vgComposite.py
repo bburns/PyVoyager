@@ -29,10 +29,10 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
     Walks over records in composites.csv, merges channel images, writes to composites folder
     eg
         composites.csv:
-        volume,compositeId,centerId,filter,weight,x,y
-        VGISS_5103,C1537728,C1537728,Blue
-        VGISS_5103,C1537728,C1537730,Orange,0.8
-        VGISS_5103,C1537728,C1537732,Green,1,10,3
+        compositeId,centerId,volume,filter,weight,x,y
+        C1537728,C1537728,5103,Blue
+        C1537728,C1537730,5103,Orange,0.8
+        C1537728,C1537732,5103,Green,1,10,3
         =>
         step05_composites/VGISS_5103/C1537728_composite.jpg
         Note: weight and x,y are optional - default to 1,0,0
@@ -127,15 +127,13 @@ def processChannels(channelRows, volume, nfile, startId):
             x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
             #. may use imageSource to know adjusted vs centered?
-            # get centered filepath
-            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             # if don't have a centered file, use the adjusted file
+            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
             channel = [filter,channelfilepath,weight,x,y]
             channels.append(channel)
 
-        # outfilepath = lib.getCompositeFilepath(volume, compositeId)
         outfilepath = lib.getFilepath('composite', volume, compositeId)
         im = libimg.combineChannels(channels)
         cv2.imwrite(outfilepath, im)

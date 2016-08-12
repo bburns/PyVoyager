@@ -21,7 +21,8 @@ import vgConvert
 #. handle indiv images also
 # def vgAdjust(volnum, imageId=None, targetPath=None, overwrite=False, directCall=True):
 # def vgAdjust(volnum, overwrite=False, directCall=True):
-def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
+# def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
+def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True):
 
     "Build adjusted images for given volume, if they don't exist yet"
 
@@ -30,10 +31,11 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
     # adjustmentsSubfolder = config.adjustmentsFolder + 'VGISS_' + filterVolume + '/'
     # imagesSubfolder = lib.getSubfolder('convert', filterVolume)
     # adjustmentsSubfolder = lib.getSubfolder('adjust', filterVolume)
-    inputSubfolder = lib.getSubfolder('convert', filterVolume)
-    outputSubfolder = lib.getSubfolder('adjust', filterVolume)
 
     if filterVolume!='':
+
+        inputSubfolder = lib.getSubfolder('convert', filterVolume)
+        outputSubfolder = lib.getSubfolder('adjust', filterVolume)
 
         # quit if volume folder exists
         # if os.path.isdir(adjustmentsSubfolder) and optionOverwrite==False:
@@ -47,17 +49,21 @@ def vgAdjust(filterVolume, optionOverwrite=False, directCall=True):
         # make new folder
         lib.mkdir(outputSubfolder)
 
-    # get number of files to process
-    nfiles = len(os.listdir(inputSubfolder))
+        # get number of files to process
+        nfiles = len(os.listdir(inputSubfolder))
+    else:
+        nfiles = 1
 
     # iterate through all available images
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
     for row in csvFiles:
         volume = row[config.colFilesVolume]
-        if volume!=filterVolume: continue # filter on desired volume
-
         fileId = row[config.colFilesFileId]
+
+        # if volume!=filterVolume: continue # filter on desired volume
+        if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
+
         filter = row[config.colFilesFilter]
         system = row[config.colFilesSystem]
         craft = row[config.colFilesCraft]

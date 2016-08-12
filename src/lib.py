@@ -269,62 +269,22 @@ def getSubfolder(step, volume):
     return subfolder
 
 
-#. merge all these to one fn
-
 def getFilepath(step, volume, fileId, filter=None):
     "Get the filepath for the image specified, relative to the main PyVoyager folder."
     folder = config.folders[step] # eg 'adjust' -> 'data/step04_adjusted/'
     suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
     subfolder = folder + 'VGISS_' + volume + '/'
-    if filter:
+    if step=='convert':
+        # eg C1641820_CALIB_GREEN.png
+        filetitle = fileId + '_' + config.imageType + '_' + filter.upper() + '.png'
+    elif filter:
+        # eg C1641820_adjusted_Green.jpg
         filetitle = fileId + suffix + '_' + filter + config.extension
     else:
+        # eg C1641820_composite.jpg
         filetitle = fileId + suffix + config.extension
     filepath = subfolder + filetitle
     return filepath
-
-
-# def getAdjustedFilepath(volume, fileId, filter):
-#     "get the filepath for the adjusted image specified"
-#     folder = config.adjustmentsFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
-#     filepath = folder + filetitle
-#     return filepath
-
-# def getDenoisedFilepath(volume, fileId, filter):
-#     "get the filepath for the denoised image specified"
-#     folder = config.denoisedFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.denoisedSuffix + '_' + filter + config.extension
-#     filepath = folder + filetitle
-#     return filepath
-
-# def getCenteredFilepath(volume, fileId, filter):
-#     "get the filepath for the centered image specified"
-#     folder = config.centersFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.centersSuffix + '_' + filter + config.extension
-#     filepath = folder + filetitle
-#     return filepath
-
-# def getCompositeFilepath(volume, fileId):
-#     "get the filepath for the composite image specified"
-#     folder = config.compositesFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.compositesSuffix + config.extension
-#     filepath = folder + filetitle
-#     return filepath
-
-# def getMosaicFilepath(volume, fileId):
-#     "get the filepath for the mosaic image specified"
-#     folder = config.mosaicsFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.mosaicsSuffix + config.extension
-#     filepath = folder + filetitle
-#     return filepath
-
-# def getAnnotatedFilepath(volume, fileId):
-#     "get the filepath for the annotated image specified"
-#     folder = config.annotationsFolder + 'VGISS_' + volume + '/'
-#     filetitle = fileId + config.annotationsSuffix + config.extension
-#     filepath = folder + filetitle
-#     return filepath
 
 
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
@@ -435,22 +395,29 @@ def getVolumeNumbers(s):
 def rm(filepath):
     "remove a file, ignore error (eg if doesn't exist)"
     #. add specific error handlers
-    os.remove(filepath)
-    # try:
-        # os.remove(filepath)
-    # except:
-        # pass
+    # os.remove(filepath)
+    try:
+        os.remove(filepath)
+    except Exception, e:
+        print e
+        print e.errno
+        # if e.errno==2: # [Error 3] The system cannot find the path specified:
+            # pass
+        # else:
+            # raise
 
 
 def rmdir(folder):
     "remove a folder and its contents, ignoring errors (eg if it doesn't exist)"
-    #. add specific error handlers
-    # shutil.rmtree(folder)
     try:
         shutil.rmtree(folder)
     except Exception, e:
-        print e
-        print e.errno
+        if e.errno==2: # [Error 3] The system cannot find the path specified
+            pass
+        else:
+            print e
+            print e.errno
+            raise
         # print e.message
         # print exc
         # print exc.errno

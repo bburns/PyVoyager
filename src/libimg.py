@@ -479,8 +479,6 @@ def combineChannels(channels):
     colFilter = 0
     colFilename = 1
     colWeight = 2
-    # colX = 4 # note: x and y are reversed, due to numpy's matrices being like matlab
-    # colY = 3
     colX = 3
     colY = 4
     colIm = -1
@@ -503,44 +501,141 @@ def combineChannels(channels):
     w = xmax-xmin+1; h = ymax-ymin+1
     enlarged = w!=800 or h!=800
 
-    # get images for each channel
-    rowRed = None
-    rowGreen = None
-    rowBlue = None
+    # # get images for each channel
+    # rowRed = None
+    # rowGreen = None
+    # rowBlue = None
+    # # rowClear = None
+    # for row in channels:
+    #     filename = row[colFilename]
+    #     # note: this returns None if filename is invalid - doesn't throw an error
+    #     #. this is wasteful - might not even use this file
+    #     im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+    #     # apply weight if necessary
+    #     weight = row[colWeight] if len(row)>colWeight else 1.0
+    #     if weight!=1.0: im = cv2.multiply(im,weight)
+    #     # if canvas needs to be enlarged, do so
+    #     if enlarged:
+    #         canvas = np.zeros((h,w), np.uint8) # 0-255
+    #         x = row[colX] if len(row)>colX else 0
+    #         y = row[colY] if len(row)>colY else 0
+    #         # print xmin,x,ymin,y
+    #         # copy image into canvas at right point
+    #         canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+    #         im = canvas
+    #         # show(im)
+    #     row.append(im)
+    #     # now assign the row to one of the available channels
+    #     # eventually would like something more accurate than just rgb.
+    #     # and note: the last one in the set of channels wins.
+    #     filter = row[colFilter]
+    #     if filter in ['Orange']:
+    #         rowRed = row
+    #     if filter in ['Green']:
+    #         rowGreen = row
+    #     if filter in ['Blue','Violet','Uv','Ch4_Js','Ch4_U']:
+    #         rowBlue = row
+    #     # if filter in ['Clear']:
+    #         # rowClear = row
+
+    # # try using another channel to fill in...
+    # # if rowRed is None:
+    # #     if not rowClear is None: rowRed = rowClear
+    # #     elif not rowBlue is None: rowRed = rowBlue
+    # #     elif not rowGreen is None: rowRed = rowGreen
+    # # if rowGreen is None:
+    # #     if not rowClear is None: rowGreen = rowClear
+    # #     elif not rowBlue is None: rowGreen = rowBlue
+    # #     elif not rowGreen is None: rowRed = rowRed
+    # # if rowBlue is None:
+    # #     if not rowClear is None: rowBlue = rowClear
+    # #     elif not rowRed is None: rowBlue = rowRed
+    # #     elif not rowGreen is None: rowBlue = rowGreen
+    # blank = np.zeros((h,w), np.uint8)
+    # if rowGreen: blank = rowGreen[colIm]
+    # if rowRed: blank = rowRed[colIm]
+    # if rowBlue: blank = rowBlue[colIm]
+    # if rowClear: blank = rowClear[colIm]
+
+    # # assign a blank image if missing a channel
+    # blank = np.zeros((h,w), np.uint8)
+    # imRed = rowRed[colIm] if rowRed else blank
+    # imGreen = rowGreen[colIm] if rowGreen else blank
+    # imBlue = rowBlue[colIm] if rowBlue else blank
+
+    # # merge channels - BGR for cv2
+    # print imBlue.shape
+    # print imGreen.shape
+    # print imRed.shape
+    # # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
+    # # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
+    # # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
+    # im = cv2.merge((imBlue, imGreen, imRed))
+    # # show(im)
+
+
+
+    # get dictionary of filters
+    d = {}
     for row in channels:
-        filename = row[colFilename]
-        # note: this returns None if filename is invalid - doesn't throw an error
-        im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        # apply weight if necessary
-        weight = row[colWeight] if len(row)>colWeight else 1.0
-        if weight!=1.0: im = cv2.multiply(im,weight)
-        # if canvas needs to be enlarged, do so
-        if enlarged:
-            canvas = np.zeros((h,w), np.uint8) # 0-255
-            x = row[colX] if len(row)>colX else 0
-            y = row[colY] if len(row)>colY else 0
-            # print xmin,x,ymin,y
-            # copy image into canvas at right point
-            # canvas[x-xmin:x-xmin+800, y-ymin:y-ymin+800] = np.array(im)
-            canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
-            im = canvas
-            # show(im)
-        row.append(im)
-        # now assign the row to one of the available channels
-        # eventually would like something more accurate than just rgb
         filter = row[colFilter]
-        if filter in ['Orange','Clear']:
-            rowRed = row
-        if filter in ['Green','Clear']:
-            rowGreen = row
-        if filter in ['Blue','Violet','Uv','Ch4_Js','Ch4_U','Clear']:
-            rowBlue = row
+        d[filter] = row
+
+    def dget(d, skeys):
+        "pop a value from dictionary d, trying keys in skeys"
+        if len(d)>0:
+            keys = skeys.split(',')
+            for key in keys:
+                value = d.pop(key, None)
+                if value:
+                    return value
+        return None
+
+    # first pass
+    channelBlue = dget(d,'Blue')
+    channelRed = dget(d,'Orange')
+    channelGreen = dget(d,'Green')
+
+    # second pass
+    if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Clear,Ch4_Js,Ch4_U,Green,Orange')
+    if channelRed is None: channelRed = dget(d,'Clear,Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
+    if channelGreen is None: channelGreen = dget(d,'Clear,Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
+
+    for row in [channelBlue, channelRed, channelGreen]:
+        if row:
+            filename = row[colFilename]
+            im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+            # apply weight if necessary
+            weight = row[colWeight] if len(row)>colWeight else 1.0
+            if weight!=1.0: im = cv2.multiply(im,weight)
+            # if canvas needs to be enlarged, do so
+            if enlarged:
+                canvas = np.zeros((h,w), np.uint8) # 0-255
+                x = row[colX] if len(row)>colX else 0
+                y = row[colY] if len(row)>colY else 0
+                # print xmin,x,ymin,y
+                # copy image into canvas at right point
+                canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+                im = canvas
+                # show(im)
+            # stick the image on the end of the row (colIm)
+            row.append(im)
 
     # assign a blank image if missing a channel
     blank = np.zeros((h,w), np.uint8)
-    imRed = rowRed[colIm] if rowRed else blank
-    imGreen = rowGreen[colIm] if rowGreen else blank
-    imBlue = rowBlue[colIm] if rowBlue else blank
+    imRed = channelRed[colIm] if channelRed else blank
+    imGreen = channelGreen[colIm] if channelGreen else blank
+    imBlue = channelBlue[colIm] if channelBlue else blank
+
+    # # third pass - assume we have at least 2 channels at this point,
+    # # so try synthesizing a third.
+    #. this works, but like the psychedelic jupiter clouds at the moment
+    # imRed = channelRed[colIm] if channelRed else None
+    # imGreen = channelGreen[colIm] if channelGreen else None
+    # imBlue = channelBlue[colIm] if channelBlue else None
+    # if imBlue is None: imBlue = (imRed + imGreen) / 2
+    # if imRed is None: imRed = (imBlue + imGreen) / 2
+    # if imGreen is None: imGreen = (imRed + imBlue) / 2
 
     # merge channels - BGR for cv2
     # print imBlue.shape
@@ -550,7 +645,7 @@ def combineChannels(channels):
     # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
     # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
-    # show(im)
+
 
     # scale image to 800x800
     if enlarged:

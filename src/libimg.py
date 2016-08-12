@@ -442,8 +442,8 @@ def adjustImageFile(infile, outfile):
     im = np.rot90(im, 2) # rotate by 180
 
     # rather do it explicitly though...
-    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-    im = cv2.equalizeHist(im)
+    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # im = cv2.equalizeHist(im) # not what we want...
 
     cv2.imwrite(outfile, im)
 

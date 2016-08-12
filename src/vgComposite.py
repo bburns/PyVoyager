@@ -22,6 +22,54 @@ import libimg
 import vgCenter
 
 
+# def processChannels(channelRows):
+def processChannels(channelRows, volume, nfile, startId):
+    #. could also have zoom factor, warp info, rotate
+    """
+    Combine channel images into new file.
+
+    channelRows is an array of rows corresponding to rows in the composites.csv file.
+    should have [compositeId,centerId,volnum,filter,weight,x,y]
+    eg [
+      ['C434823','C434823','5101','Orange']
+      ['C434823','C434825','5101','Blue','0.8','42','18']
+      ['C434823','C434827','5101','Green','1','-50','83']
+      ]
+    they are combined and written to a file in the composites folder, step05_composites.
+    Can have single channel groups.
+    Other parameters are just for status update.
+    """
+    # for row in channelRows:
+        # print row
+    nchannels = len(channelRows)
+    print 'Volume %s compositing %d: %s (%d channels)    \r' % \
+          (volume,nfile,startId,nchannels),
+    if nchannels > 0:
+        volume = ''
+        compositeId = ''
+        channels = []
+        for row in channelRows:
+            compositeId = row[config.colCompositesCompositeId]
+            fileId = row[config.colCompositesFileId]
+            volume = row[config.colCompositesVolume]
+            filter = row[config.colCompositesFilter]
+            weight = float(row[config.colCompositesWeight]) \
+                     if len(row)>config.colCompositesWeight else 1.0
+            x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
+            y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
+            #. may use imageSource to know adjusted vs centered?
+            # if don't have a centered file, use the adjusted file
+            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
+            if not os.path.isfile(channelfilepath):
+                channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
+            channel = [filter,channelfilepath,weight,x,y]
+            channels.append(channel)
+
+        outfilepath = lib.getFilepath('composite', volume, compositeId)
+        im = libimg.combineChannels(channels)
+        cv2.imwrite(outfilepath, im)
+
+
 def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
@@ -90,54 +138,6 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
     processChannels(channelRows,startVol,nfile,startId)
     print
     fComposites.close()
-
-
-# def processChannels(channelRows):
-def processChannels(channelRows, volume, nfile, startId):
-    #. could also have zoom factor, warp info, rotate
-    """
-    Combine channel images into new file.
-
-    channelRows is an array of rows corresponding to rows in the composites.csv file.
-    should have [compositeId,centerId,volnum,filter,weight,x,y]
-    eg [
-      ['C434823','C434823','5101','Orange']
-      ['C434823','C434825','5101','Blue','0.8','42','18']
-      ['C434823','C434827','5101','Green','1','-50','83']
-      ]
-    they are combined and written to a file in the composites folder, step05_composites.
-    Can have single channel groups.
-    Other parameters are just for status update.
-    """
-    # for row in channelRows:
-        # print row
-    nchannels = len(channelRows)
-    print 'Volume %s compositing %d: %s (%d channels)    \r' % \
-          (volume,nfile,startId,nchannels),
-    if nchannels > 0:
-        volume = ''
-        compositeId = ''
-        channels = []
-        for row in channelRows:
-            compositeId = row[config.colCompositesCompositeId]
-            fileId = row[config.colCompositesFileId]
-            volume = row[config.colCompositesVolume]
-            filter = row[config.colCompositesFilter]
-            weight = float(row[config.colCompositesWeight]) \
-                     if len(row)>config.colCompositesWeight else 1.0
-            x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
-            y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
-            #. may use imageSource to know adjusted vs centered?
-            # if don't have a centered file, use the adjusted file
-            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
-            if not os.path.isfile(channelfilepath):
-                channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
-            channel = [filter,channelfilepath,weight,x,y]
-            channels.append(channel)
-
-        outfilepath = lib.getFilepath('composite', volume, compositeId)
-        im = libimg.combineChannels(channels)
-        cv2.imwrite(outfilepath, im)
 
 
 if __name__ == '__main__':

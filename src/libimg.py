@@ -6,6 +6,7 @@ Not reusable - most/many are specific to PyVoyager
 """
 
 import os
+import os.path
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 import numpy as np
 import cv2
@@ -22,6 +23,7 @@ from PIL import ImageDraw
 
 
 import config
+import lib
 import log
 
 
@@ -460,7 +462,7 @@ def stretchHistogram(im):
         if sum>npixelsTop:
             maxvalue = i
             break
-    print maxvalue
+    # print maxvalue
 
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
@@ -480,7 +482,7 @@ def stretchHistogram(im):
     return im
 
 
-def adjustImageFile(infile, outfile):
+def adjustImageFile(infile, outfile, doStretchHistogram=True):
     """
     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
     """
@@ -497,14 +499,21 @@ def adjustImageFile(infile, outfile):
         im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
         im = np.array(im, np.uint8)
 
-    # im2 = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # stretch the histogram to bring up the brightness levels
+    # (the CALIB images are dark)
+    if doStretchHistogram:
+        # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX) # hotspots throw it off
+        im = stretchHistogram(im) # can blow out small targets
 
-    # rather do it explicitly though...
-    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX) # hotspots throw it off
-    # im = cv2.equalizeHist(im) # not what we want...
-    im = stretchHistogram(im)
+    retval = cv2.imwrite(outfile, im)
 
-    cv2.imwrite(outfile, im)
+    # if write failed, try creating the folder first
+    if not retval:
+        folder = os.path.dirname(outfile)
+        lib.mkdir_p(folder)
+        retval = cv2.imwrite(outfile, im)
+
+    return retval
 
 
 def show(im, title='cv2 image - press esc to continue'):

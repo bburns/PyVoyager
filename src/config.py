@@ -75,6 +75,10 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # Adjust
 # ----------------------------------------
 
+# targets over this size (fraction of the image frame)
+# won't get histogram stretched (can blow out small targets)
+adjustHistogramImageFractionMinimum = 0.25
+
 
 # Denoise
 # ----------------------------------------

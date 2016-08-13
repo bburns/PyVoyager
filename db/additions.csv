@@ -1,15 +1,16 @@
 
 # additions.csv
-# list images to include after the given imageId
+# Specify images to include after the given imageId.
 # --------------------------------------------------------------------------------
 
-# Note: this file needs to be sorted so can be joined with files.csv
+# Note: this file DOES need to be sorted so can be joined with files.csv.
 
 
 fileId,additionId,nframes
 
 
 # Jupiter Voyager 1
+# ----------------------------------------
 
 # Jupiter
 # C1620647,images/jupiter-voyager1-jupiter-mosaic-bjorn-jonsson-800x800.jpg,60
@@ -29,6 +30,7 @@ fileId,additionId,nframes
 
 
 # Uranus
+# ----------------------------------------
 
 # Ariel
 # C2684342,C2684338_composite,40

@@ -155,7 +155,7 @@ C1534819,2
 # then starts rotation sequence
 #. trim down a bit for now - too long and not stable yet
 C1537728+,0
-C1538528+,3
+C1538528+,2
 C1542032+,0
 # last rotation frame
 # C1550852
@@ -168,11 +168,13 @@ C1607929+,0
 # last frame
 # C1607953
 
-#. slow down on the two color psychedelic clouds
-#. maybe cut this segment short also, for now
+# slow down on the two color psychedelic clouds
+#. could cut this segment short also, for now
 # first two color frame
 C1608711,10
-C1609105+,2
+#. maybe hide all the 'non-interesting' ones for now, though they're all interesting
+# C1609105+,2
+C1609105+,0
 C1615453,30
 C1617549,30
 C1617553,30

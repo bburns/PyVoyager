@@ -1,27 +1,40 @@
 
 # framerateConstants.csv
-# this file controls the frame rate for different targets
+# This file controls the frame rate for different targets.
 # --------------------------------------------------------------------------------
 
-# the default frameRateConstant is set in config.frameRateConstant, e.g. 60
-# frame rate is calculated as nframes = frameRateConstant * imageFraction
-# so movie gets slower as get closer to target
+# See also framerates.csv, which controls the frame rate for each image. 
 
-#. separate out for wide/narrow. eh, for targetKey
+# The default frameRateConstant is set in config.frameRateConstant, e.g. 60.
+# The values in this file override the default.
+# The frame rate is calculated as nframes = frameRateConstant * imageFraction,
+# so movie gets slower as get closer to the target - typically need to slow things 
+# down for moons. 
+# The frame rate is kind of arbitrary - it depends on how rapidly pictures were taken.
 
-target,frameRateConstant
+# Also see config.frameRateNCopiesMax, which sets the slowest speed.
 
-Jupiter,0.5
-Callisto,30
-# Jupiter-Voyager1-Callisto-Narrow,30
-# Jupiter-Voyager1-Callisto-Wide,15
-Europa,25
-Ganymede,15
-Io,15
 
-Saturn,1
+targetKey,frameRateConstant
+# ----------------------------------------
 
-Uranus,1
+Jupiter-Voyager1-Jupiter-Narrow,0.5
+Jupiter-Voyager1-Jupiter-Wide,0.5
+Jupiter-Voyager1-Callisto-Narrow,30
+Jupiter-Voyager1-Callisto-Wide,15
+Jupiter-Voyager1-Europa,25
+Jupiter-Voyager1-Ganymede-Narrow,15
+Jupiter-Voyager1-Ganymede-Wide,7
+Jupiter-Voyager1-Io-Narrow,15
+Jupiter-Voyager1-Io-Wide,15
 
-Neptune,1
-Triton,30
+Saturn-Voyager1-Saturn-Narrow,1
+
+Uranus-Voyager2-Uranus-Narrow,1
+Uranus-Voyager2-Uranus-Wide,1
+
+Neptune-Voyager2-Neptune-Narrow,1
+Neptune-Voyager2-Neptune-Wide,1
+Neptune-Voyager2-Triton-Narrow,30
+Neptune-Voyager2-Triton-Wide,30
+

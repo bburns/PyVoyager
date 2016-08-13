@@ -133,8 +133,12 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
         # make folder
         lib.mkdir(outputSubfolder)
 
-    # read small db into memory
+    # open files.csv so can join to it
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
+
+    # read small dbs into memory
     compositingInfo = lib.readCsv(config.dbCompositing) # when to turn centering on/off
+    retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
     # should we composite the image?
     compositing = True # default
@@ -151,17 +155,22 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
         volume = row[config.colCompositesVolume]
         compositeId = row[config.colCompositesCompositeId]
 
-        #. will need to get this from joined files.csv,
-        # so can turn compositing on/off with compositing.csv
-        # volume = row[config.colFilesVolume]
-        # fileId = row[config.colFilesFileId]
-        # filter = row[config.colFilesFilter]
-        # system = row[config.colFilesSystem]
-        # craft = row[config.colFilesCraft]
-        # target = row[config.colFilesTarget]
-        # camera = row[config.colFilesCamera]
+        # # get more image properties from files.csv,
+        # # so can turn compositing on/off with compositing.csv.
+        # # (need to keep track of which target we're looking at)
+        # rowFiles = lib.getJoinRow(csvFiles, config.colFilesFileId, compositeId)
+        # # imageFraction = float(rowFiles[config.colFilesImageFraction])
+        # # volume = row[config.colFilesVolume]
+        # # fileId = row[config.colFilesFileId]
+        # filter = rowFiles[config.colFilesFilter]
+        # system = rowFiles[config.colFilesSystem]
+        # craft = rowFiles[config.colFilesCraft]
+        # target = rowFiles[config.colFilesTarget]
+        # camera = rowFiles[config.colFilesCamera]
+
         # # relabel target field if necessary - see db/targets.csv for more info
         # target = lib.retarget(retargetingInfo, fileId, target)
+
 
 
         # filter on volume or composite id
@@ -181,6 +190,7 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
     # process the last leftover group
     processChannels(channelRows,startVol,nfile,startId)
     print
+    fFiles.close()
     fComposites.close()
 
 

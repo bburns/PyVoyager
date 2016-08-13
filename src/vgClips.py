@@ -68,7 +68,9 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
 
 def stageFiles(filterVolumes, targetPathParts):
     """
-    Make links from source files (centers or composites) to clip stage folders.
+    Make links from source files to clip stage folders.
+    filterVolumes is a list of volumes as strings
+    targetPathParts is [system, craft, target, camera]
     """
 
     print 'Making links from source files'
@@ -175,7 +177,10 @@ def stageFiles(filterVolumes, targetPathParts):
                 # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
-            if os.path.isfile(imageFilepath):
+            # if os.path.isfile(imageFilepath):
+            if not os.path.isfile(imageFilepath):
+                print 'file not found', imageFilepath
+            else:
 
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
@@ -231,14 +236,16 @@ def stageFiles(filterVolumes, targetPathParts):
             # or else include volume, filter, fileId, but then it's not as general purpose,
             # eg for including extraneous images
 
-            # one possibility would be to lookup the volume based on the imageId boundaries (fast),
-            # and then grab whatever image started with the given additionId so don't need filter.
-            # other extraneous images would have a special prefix, eg 'file:'.
+            # one possibility would be to lookup the volume based on the imageId
+            # boundaries (fast), and then grab whatever image started with the
+            # given additionId so don't need filter. other extraneous images
+            # would have a special prefix, eg 'file:'.
 
-            # presumably there wouldn't be a whole lot of these so speed is not too much a factor.
+            # presumably there wouldn't be a whole lot of these so speed is not
+            # too much a factor.
 
             if additionId.startswith('images/'):
-                print 'adding',additionId
+                print 'adding',additionId,targetKey
                 filetitle = additionId[7:] # trim off images/
                 folder = config.folders['additions']
                 imageFilepath = folder + filetitle

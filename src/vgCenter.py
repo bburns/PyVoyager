@@ -72,7 +72,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
     # read small dbs into memory
     centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
-    targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
+    retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
     # open positions.csv file for target angular size info
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
@@ -102,7 +102,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         note = rowFiles[config.colFilesNote]
 
         # relabel target field if necessary
-        target = lib.retarget(targetInfo, fileId, target)
+        target = lib.retarget(retargetingInfo, fileId, target)
 
         # get filenames
         infile = lib.getFilepath('denoise', volume, fileId, filter)

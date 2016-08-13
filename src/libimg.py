@@ -432,7 +432,9 @@ def img2png(srcdir, filespec, destdir):
 
 def stretchHistogram(im):
     "stretch the histogram of the given image, ignoring the n hottest pixels"
+
     #. watch out for small moons - maybe pass targetsize in?
+
     # get histogram
     # see http://docs.opencv.org/3.1.0/d1/db7/tutorial_py_histogram_begins.html
     # eg hist = cv2.calcHist([im],[0],mask,[256],[0,256])
@@ -442,7 +444,7 @@ def stretchHistogram(im):
     histSize = [256] # number of bins
     ranges = [0, 256] # range of intensity values
     hist = cv2.calcHist(images, channels, mask, histSize, ranges)
-    # print hist
+    # print [int(x) for x in hist]
 
     # ignore top n%, or top n pixels
     # start at top, get cumulative sum downwards until reach certain amount of pixels
@@ -458,16 +460,22 @@ def stretchHistogram(im):
         if sum>npixelsTop:
             maxvalue = i
             break
-    # print maxvalue
+    print maxvalue
 
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
     np.clip(im, 0, maxvalue, im)
-    # show(im)
 
     # stretch image values
     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-    # show(im)
+
+    # images = [im]
+    # channels = [0]
+    # mask = None # lets you filter to part of an image
+    # histSize = [256] # number of bins
+    # ranges = [0, 256] # range of intensity values
+    # hist = cv2.calcHist(images, channels, mask, histSize, ranges)
+    # print [int(x) for x in hist]
 
     return im
 
@@ -478,20 +486,23 @@ def adjustImageFile(infile, outfile):
     """
     #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
-    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
+    # im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
 
     # adjust image
     im = np.rot90(im, 2) # rotate by 180
 
-    # show(im)
+    # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
+    if type(im[0][0])==np.uint16:
+        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+        im = np.array(im, np.uint8)
+
     # im2 = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-    # show(im2)
 
     # rather do it explicitly though...
     # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX) # hotspots throw it off
     # im = cv2.equalizeHist(im) # not what we want...
     im = stretchHistogram(im)
-    # show(im)
 
     cv2.imwrite(outfile, im)
 

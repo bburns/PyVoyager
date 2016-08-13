@@ -1,0 +1,149 @@
+
+"""
+vg title command
+
+Build title pages for different targets.
+Called by the vg clips command.
+"""
+
+#. need to build titles for planets/systems and all.mp4 also
+
+
+import os
+import csv
+
+import config
+import lib
+import libimg
+
+
+
+def vgTitle(targetPath=None):
+
+    "Make titles for specified targetpaths"
+
+    # what does the user want to focus on?
+    targetPathParts = lib.parseTargetPath(targetPath)
+    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
+
+    print 'Making titles for', targetPathParts
+
+    targetPathSeen = {}
+    systemPathSeen = {}
+
+    # iterate through all available images
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
+    for row in csvFiles:
+
+        volume = row[config.colFilesVolume]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
+
+        # is this an image the user wants to see?
+        doTarget = lib.targetMatches(targetPathParts, system, craft, target, camera)
+        if target in config.targetsIgnore: doTarget = False
+
+        if doTarget:
+
+            # make sure we haven't seen this target before
+            targetKey = system + craft + target + camera # eg JupiterVoyager1IoNarrow
+            targetSeen = targetPathSeen.get(targetKey)
+            if not targetSeen:
+
+                # get subfolder and make sure it exists
+                # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
+                subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
+                targetfolder = config.folders['titles'] + subfolder
+                lib.mkdir_p(targetfolder)
+
+                print subfolder + '                                         \r',
+
+                # make title image
+                title = target # eg Triton
+                subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
+                subtitle2 = system + " System" # eg Neptune System
+                subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
+                img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
+
+                # save it
+                # note: ffmpeg requires file type to match that of other frames in movie,
+                # so use config.extension here
+                titlefilepath = targetfolder + 'title' + config.extension
+                img.save(titlefilepath)
+
+                # remember this targetpath
+                targetPathSeen[targetKey] = True
+
+
+            # make sure we haven't seen this system before
+            systemKey = system + craft # eg JupiterVoyager1
+            systemSeen = systemPathSeen.get(systemKey)
+            if not systemSeen:
+
+                # get subfolder and make sure it exists
+                # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
+                subfolder = system + '/' + craft + '/'
+                systemfolder = config.folders['titles'] + subfolder
+                lib.mkdir_p(systemfolder)
+
+                print subfolder + '                                         \r',
+
+                # make title image
+                title = system
+                subtitle1 = "Voyager " + craft[-1:] # eg Voyager 2
+                subtitle2 = ''
+                subtitle3 = ''
+                img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+
+                # save it
+                # note: ffmpeg requires file type to match that of other frames in movie,
+                # so use config.extension here
+                titlefilepath = systemfolder + 'title' + config.extension
+                img.save(titlefilepath)
+
+                # remember this systempath
+                systemPathSeen[systemKey] = True
+
+
+    fFiles.close()
+    print
+
+
+    # make main title pages
+    title = "Voyager: The Grand Tour"
+    subtitle1 = "An open-source movie"
+    subtitle2 = ''
+    subtitle3 = ''
+    img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+
+    # save it
+    # note: ffmpeg requires file type to match that of other frames in movie,
+    # so use config.extension here
+    folder = config.folders['titles']
+    titlefilepath = folder + 'title' + config.extension
+    img.save(titlefilepath)
+
+    # make epilogue
+    title = "Voyager"
+    subtitle1 = "Dedicated to those who made it possible"
+    subtitle2 = 'This is an open source movie - you can help!'
+    subtitle3 = 'See grandtourmovie.org'
+    img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+
+    # save it
+    # note: ffmpeg requires file type to match that of other frames in movie,
+    # so use config.extension here
+    folder = config.folders['titles']
+    titlefilepath = folder + 'epilogue' + config.extension
+    img.save(titlefilepath)
+    
+
+
+if __name__ == '__main__':
+    os.chdir('..')
+    vgTitle('//Triton')
+    print 'done'

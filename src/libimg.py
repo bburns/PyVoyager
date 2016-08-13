@@ -91,40 +91,45 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     img.save(outfile)
 
 
-def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3=''):
+def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False):
 
     "draw a title page, return a PIL image"
 
     font = ImageFont.truetype(config.titleFont, config.titleFontsize)
 
-    imgsize = (800,800)
+    imgsize = [800,800]
     bgcolor = (0,0,0)
     fgcolor = (200,200,200)
-    pos = (200,300)
 
     img = Image.new("RGBA", imgsize, bgcolor)
     draw = ImageDraw.Draw(img)
 
+    pos = [200,300]
     s = title
-    draw.text(pos, s, fgcolor, font=font)
     w,h = font.getsize(s)
-    # print w,h # 207,53
+    if center: pos[0] = 400 - w/2
+    draw.text(pos, s, fgcolor, font=font)
 
-    pos = (pos[0],pos[1]+h*1.5)
-    s = subtitle1
     fgcolor = (120,120,120)
+
+    pos = [pos[0],pos[1]+h*1.6]
+    s = subtitle1
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
-    pos = (pos[0],pos[1]+h)
+    pos = [pos[0],pos[1]+h*1.1]
     s = subtitle2
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
-    pos = (pos[0],pos[1]+h)
+    pos = [pos[0],pos[1]+h*1.1]
     s = subtitle3
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
-    draw = ImageDraw.Draw(img)
-    # img.save("a_test.png")
     return img
 
 
@@ -796,7 +801,7 @@ def findCircle(im, radius=None):
         if circles is None:
             canny_threshold = int(canny_threshold / 2)
             # print 'reducing canny threshold to',canny_threshold
-            log.log('reducing canny threshold to',canny_threshold)
+            # log.log('reducing canny threshold to',canny_threshold)
             if canny_threshold < 20: #. param
                 break
 
@@ -855,8 +860,7 @@ def findCircle(im, radius=None):
         cv2.imwrite(config.debugImageTitle + '_cannyedges.jpg', imedges)
 
     if circles is None:
-        # print 'no circles found'
-        log.log('no circles found')
+        # log.log('no circles found')
         circle = None
     else:
         circles = circles[0,:] # extract array

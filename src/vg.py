@@ -63,6 +63,7 @@ import vgComposite
 import vgMosaic
 import vgAnnotate
 import vgTarget
+import vgTitle
 import vgClips
 import vgMovies
 
@@ -156,10 +157,12 @@ elif cmd=="center":
 elif cmd=="composite":
     if filterImageIds:
         for compositeId in filterImageIds:
-            vgComposite.vgComposite('', compositeId, optionOverwrite=True)
-    else:
+            vgComposite.vgComposite('', compositeId, '', optionOverwrite=True)
+    elif filterVolumes:
         for filterVolume in filterVolumes:
-            vgComposite.vgComposite(filterVolume, '', optionOverwrite)
+            vgComposite.vgComposite(filterVolume, '', '', optionOverwrite)
+    else:
+        vgComposite.vgComposite('', '', filterTargetPath)
     lib.beep()
 
 elif cmd=="mosaic":
@@ -178,6 +181,10 @@ elif cmd=="target":
             vgTarget.vgTarget(filterVolume, '')
     else:
         vgTarget.vgTarget('', filterTargetPath)
+    lib.beep()
+
+elif cmd=="title":
+    vgTitle.vgTitle(filterTargetPath)
     lib.beep()
 
 elif cmd=="clips":

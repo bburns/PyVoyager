@@ -98,7 +98,9 @@ def foo():
 
 
 
-def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
+#. handle targetpath
+# def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
+def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwrite=False, directCall=True):
     """
     Build composite images by combining channel images.
 
@@ -116,6 +118,8 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
 
     filterVolume = str(filterVolume)
     filterCompositeId = filterCompositeId.upper() # always capital C
+    # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    targetPathParts = lib.parseTargetPath(filterTargetPath)
 
     if filterVolume!='':
 
@@ -173,8 +177,9 @@ def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCa
 
 
 
-        # filter on volume or composite id
+        # filter on volume or composite id or targetpath
         if volume!=filterVolume and compositeId!=filterCompositeId: continue
+        # if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera)==False: doComposite = False
 
         # gather image filenames into channelRows so can merge them
         if compositeId == startId:
@@ -201,7 +206,7 @@ if __name__ == '__main__':
     # vgComposite('','c1617245')
 
     # ariel - works
-    vgComposite('','c2684338',True)
+    vgComposite('','c2684338','',True)
     filename = lib.getCompositeFilepath('7206','c2684338')
     im = cv2.imread(filename)
     libimg.show(im)

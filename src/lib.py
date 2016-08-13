@@ -35,12 +35,13 @@ def loadPreviousStep(targetPathParts, fn):
     load previous build step by determining volumes needed for the given target path.
     calls fn with fn(volume, '', False, False)
     """
+    #. this is called by ?
 
     # what does the user want to focus on?
     pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
 
     # load small db into memory
-    targetInfo = readCsv(config.dbRetargeting) # remapping listed targets
+    retargetingInfo = readCsv(config.dbRetargeting) # remapping listed targets
 
     # collect volumes needed, call the given fn with those volumes
     volumes = {}
@@ -55,7 +56,7 @@ def loadPreviousStep(targetPathParts, fn):
         camera = rowFiles[config.colFilesCamera]
 
         # relabel target field if necessary
-        target = retarget(targetInfo, fileId, target)
+        target = retarget(retargetingInfo, fileId, target)
 
         addImage = True
         if (pathSystem and pathSystem!=system): addImage = False
@@ -198,17 +199,17 @@ def concatFiles(filename1, filename2):
     f1.close()
 
 
-def retarget(targetInfo, fileId, target):
+def retarget(retargetingInfo, fileId, target):
     "get translated target for the given image file and target"
-    # targetInfo is a db read from retargeting.csv using the readCsv fn
+    # retargetingInfo is a db read from retargeting.csv using the readCsv fn
     # see db/retargeting.csv for more info
-    targetInfoRecord = targetInfo.get(fileId)
-    if targetInfoRecord:
+    retargetingInfoRecord = retargetingInfo.get(fileId)
+    if retargetingInfoRecord:
         # make sure old target matches what we have
-        if targetInfoRecord['oldTarget']==target:
-            target = targetInfoRecord['newTarget']
+        if retargetingInfoRecord['oldTarget']==target:
+            target = retargetingInfoRecord['newTarget']
         else:
-            print 'Warning: retargeting.csv record discrepancy for ' + fileId
+            print 'Warning: retargeting.csv record discrepancy for ' + fileId,retargetingInfoRecord['oldTarget'],'vs',target
     return target
 
 

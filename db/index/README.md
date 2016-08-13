@@ -12,9 +12,9 @@ They were copied here, with a suffix indicating the planet:
 7 Uranus  
 8 Neptune  
 
-indexFileColTarget = 6 # eg IO
-indexFileColTime = 10 # eg 1979-03-05T15:32:56
-indexFileColInstrument = 11 # eg WIDE ANGLE CAMERA
+colIndexTarget = 6 # eg IO
+colIndexTime = 10 # eg 1979-03-05T15:32:56
+colIndexInstrument = 11 # eg WIDE ANGLE CAMERA
 
 Columns (extracted from rawimages.lbl):
 

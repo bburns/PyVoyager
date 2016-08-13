@@ -9,33 +9,34 @@ movieId,clipId
 # Voyager 1
 # --------------------------------------------------------------------------------
 Jupiter-Voyager1,Jupiter-Voyager1-Title
-Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
-Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
-Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow-Color
-Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow-Color
-Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow-Color
-Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide-Color
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Wide
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide
+Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
 
 
 # Voyager 2
 # --------------------------------------------------------------------------------
 
-# switch to color when looks better
 # Uranus-Voyager2,Uranus-Voyager2-Title
-# Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow-Color
-# Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Color
-Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow-Bw
-Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide-Color
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
+Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
+Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
 
 Neptune-Voyager2,Neptune-Voyager2-Title
-Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow-Color
-Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow-Color
-Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide-Color
+Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow
+Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow
+Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide
 
 
 # All together

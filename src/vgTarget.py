@@ -19,7 +19,6 @@ import vgCenter
 
 
 
-#. handle targetPath
 def vgTarget(filterVolume='', targetPath=''):
     "Copy images in given volume to target subfolders"
 
@@ -50,6 +49,7 @@ def vgTarget(filterVolume='', targetPath=''):
 
         # should we add this image?
         addImage = False
+        #. note: volume OR targetpath - change to AND?
         if filterVolume!='' and volume==filterVolume: addImage = True
         if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
@@ -72,12 +72,14 @@ def vgTarget(filterVolume='', targetPath=''):
                 src = lib.getFilepath('mosaic', volume, fileId)
             if not os.path.isfile(src):
                 src = lib.getFilepath('composite', volume, fileId)
-            if not os.path.isfile(src):
-                src = lib.getFilepath('center', volume, fileId, filter)
-            if not os.path.isfile(src):
-                src = lib.getFilepath('denoise', volume, fileId, filter)
-            if not os.path.isfile(src):
-                src = lib.getFilepath('adjust', volume, fileId, filter)
+            # if not os.path.isfile(src):
+                # src = lib.getFilepath('center', volume, fileId, filter)
+            # if not os.path.isfile(src):
+                # src = lib.getFilepath('denoise', volume, fileId, filter)
+            # if not os.path.isfile(src):
+                # src = lib.getFilepath('adjust', volume, fileId, filter)
+            # if not os.path.isfile(src):
+                # src = lib.getFilepath('convert', volume, fileId, filter)
 
             if os.path.isfile(src):
                 lib.cp(src, targetFolder)

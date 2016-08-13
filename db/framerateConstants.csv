@@ -1,16 +1,21 @@
 
+# framerateConstants.csv
 # this file controls the frame rate for different targets
+# --------------------------------------------------------------------------------
+
 # the default frameRateConstant is set in config.frameRateConstant, e.g. 60
 # frame rate is calculated as nframes = frameRateConstant * imageFraction
-# so gets slower as get closer to target
+# so movie gets slower as get closer to target
 
-#. might need separate ones for wide/narrow
+#. separate out for wide/narrow. eh, for targetKey
 
 target,frameRateConstant
 
 Jupiter,0.5
-Callisto,15
-Europa,15
+Callisto,30
+# Jupiter-Voyager1-Callisto-Narrow,30
+# Jupiter-Voyager1-Callisto-Wide,15
+Europa,25
 Ganymede,15
 Io,15
 

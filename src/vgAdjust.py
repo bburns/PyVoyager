@@ -67,6 +67,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # only stretch the histogram if target is large enough (small moons get blown out)
         doStretchHistogram = (imageFraction > config.adjustHistogramImageFractionMinimum)
+        # print doStretchHistogram
 
         # adjust the file
         infile = lib.getFilepath('convert', volume, fileId, filter)

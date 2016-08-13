@@ -1,6 +1,7 @@
 
 # retargeting.csv
 # handle multitarget images here
+# --------------------------------------------------------------------------------
 
 # can remap old target to new target, eg
 # if the TARGET field says Io but Jupiter is what the frame gets centered on, can say
@@ -15,7 +16,7 @@
 
 #. at the moment this is all read into memory for simplicity
 # hopefully won't get too big
-# if it does, might want to read it in, sort it, keep it as a list to walk down simultaneous to files.csv
+# if it does, might need to join on it
 
 # x,y are not used yet
 
@@ -41,12 +42,130 @@ C1630316,Amalthea,Jupiter
 
 # callisto
 # narrow
-# has lots of black frames at the end - may want to retarget those also
+C1461430,Callisto,Europa
 C1615559,Callisto,Jupiter
 C1615601,Callisto,Jupiter
+C1642116,Callisto,Sky
+C1642414,Callisto,Sky
+C1642530,Callisto,Sky
+C1642538,Callisto,Sky
+C1642540,Callisto,Sky
+C1642542,Callisto,Sky
+C1642544,Callisto,Sky
+C1642554,Callisto,Sky
+C1642556,Callisto,Sky
+C1642558,Callisto,Sky
+C1642600,Callisto,Sky
+C1642602,Callisto,Sky
+C1642604,Callisto,Sky
+C1642606,Callisto,Sky
+C1642614,Callisto,Sky
+C1642616,Callisto,Sky
+C1642618,Callisto,Sky
+C1642620,Callisto,Sky
+C1642622,Callisto,Sky
+C1642624,Callisto,Sky
+C1642626,Callisto,Sky
+C1642628,Callisto,Sky
+C1642658,Callisto,Sky
+C1642702,Callisto,Sky
+C1642706,Callisto,Sky
+C1642708,Callisto,Sky
+C1642717,Callisto,Sky
+C1642719,Callisto,Sky
+C1642721,Callisto,Sky
+C1642729,Callisto,Sky
+C1642731,Callisto,Sky
+C1642733,Callisto,Sky
+C1642735,Callisto,Sky
+C1642737,Callisto,Sky
+C1642739,Callisto,Sky
+C1642827,Callisto,Sky
+C1642829,Callisto,Sky
+C1642831,Callisto,Sky
+C1642833,Callisto,Sky
+C1642835,Callisto,Sky
+C1642837,Callisto,Sky
+C1643445,Callisto,Sky
+C1643451,Callisto,Sky
+C1643455,Callisto,Sky
+C1643457,Callisto,Sky
+
 # wide
 
+
 # io
+# narrow
+
+
+# original unknown
+C1534314,,Callisto
+C1568642,,Io
+C1574643,,Io
+C1575317,,Io
+C1583818,,Sky
+C1587932,,Io
+C1589253,,Sky
+C1591023,,Sky
+C1592203,,Sky
+C1593743,,Sky
+C1596128,,Sky
+C1596702,,Io
+C1597957,,Sky
+C1600407,,Io
+C1605746,,Sky
+C1605752,,Sky
+C1606902,,Sky
+C1606908,,Sky
+C1610349,,Sky
+C1610355,,Sky
+C1614541,,Sky
+C1618648,,Sky
+C1618653,,Sky
+C1626425,,Sky
+C1626431,,Sky
+C1637757,,Sky
+C1638245,,Sky
+C1638251,,Sky
+C1638257,,Sky
+C1638305,,Sky
+C1639253,,Sky
+C1639305,,Sky
+C1639307,,Sky
+C1639318,,Sky
+C1639324,,Sky
+C1639539,,Sky
+C1640430,,Sky
+C1640432,,Sky
+C1640452,,Sky
+C1640559,,Sky
+C1640600,,Sky
+C1640602,,Sky
+C1640604,,Sky
+C1640610,,Sky
+C1640612,,Sky
+C1640613,,Sky
+C1640614,,Sky
+C1640616,,Sky
+C1640618,,Sky
+C1640707,,Sky
+C1640709,,Sky
+C1640713,,Sky
+C1640715,,Sky
+C1640717,,Sky
+C1640721,,Sky
+C1640731,,Sky
+C1640733,,Sky
+C1640735,,Sky
+C1640737,,Sky
+C1640739,,Sky
+C1640741,,Sky
+C1640743,,Sky
+C1640745,,Sky
+C1640747,,Sky
+C1640749,,Sky
+C1640751,,Sky
+C1646751,,Sky
 
 
 # Uranus

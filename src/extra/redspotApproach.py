@@ -1,7 +1,9 @@
 
-"""
-Generate framerates.csv records for voyager 1 red spot approach movie
-"""
+# Generate framerates.csv records for voyager 1 red spot approach movie
+
+# this still doesn't get it all right - had to go in and fix 10 or so
+# parts manually where the red spot was out of sync
+
 
 import os
 

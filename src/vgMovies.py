@@ -58,9 +58,9 @@ def vgMovies():
     walk over db/movies.csv file, eg
     movieId,clipId
     Jupiter-Voyager1,Jupiter-Voyager1-Title
-    Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow-Color
-    Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow-Color
-    Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow-Color
+    Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow
+    Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
+    Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow
 
     """
 
@@ -88,8 +88,16 @@ def vgMovies():
     concatenateClips(lastMovieId, clipIds)
     fMovies.close()
 
-    #. then would want to add music, either to each clip, or to all.mp4
-    # specify in music.csv
+    # then would want to add music to all.mp4, or per system clip
+    # specify in music.csv?
+    # make vg music step?
+    # eg
+    # Jupiter-Voyager1,music/foo.mp3
+    # Saturn-Voyager1,music/bar.mp3
+    # or
+    # All,music/baz.mp3
+
+
 
 
 if __name__ == '__main__':

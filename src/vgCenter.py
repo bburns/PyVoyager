@@ -111,7 +111,6 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # infile = lib.getFilepath('adjust', volume, fileId, filter)
         outfile = lib.getFilepath('center', volume, fileId, filter)
 
-        # print 'Volume %s centering %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
         log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 

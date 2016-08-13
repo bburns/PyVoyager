@@ -24,7 +24,7 @@ import vgTitles
 
 
 
-def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
+def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
                framerateInfo, fileId):
     """
     how many copies of the given target do we need?
@@ -32,9 +32,9 @@ def getNCopies(targetInfo, target, imageFraction, ncopiesMemory, targetKey,
     """
 
     # ncopies is proportional to imageFraction
-    targetInfoRecord = targetInfo.get(target)
-    if targetInfoRecord:
-        frameRateConstant = int(float(targetInfoRecord['frameRateConstant']))
+    framerateConstantInfoRecord = framerateConstantInfo.get(target)
+    if framerateConstantInfoRecord:
+        frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
     else:
         frameRateConstant = config.clipsDefaultFrameRateConstant
     ncopies = int(frameRateConstant * imageFraction) + 1
@@ -82,7 +82,7 @@ def stageFiles(filterVolumes, targetPathParts):
 
     # read some small dbs into memory
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
-    targetInfo = lib.readCsv(config.dbTarget) # change framerates per target
+    framerateConstantInfo = lib.readCsv(config.dbFramerateConstants) # change framerates per target
     framerateInfo = lib.readCsv(config.dbFramerates) # change framerates per image
     centeringInfo = lib.readCsv(config.dbCentering) # turn centering on/off
 
@@ -129,12 +129,12 @@ def stageFiles(filterVolumes, targetPathParts):
         # how many copies of this image do we want?
         # note: we need to do this even if we don't add this image,
         # because need to keep track of sticky overrides from framerates.csv.
-        ncopies = getNCopies(targetInfo, target, imageFraction, ncopiesMemory,
+        ncopies = getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory,
                              targetKey, framerateInfo, fileId)
 
         # does this image match the target path the user specified on the cmdline?
         addImage = False
-        # note AND
+        # note AND -
         if (volume in filterVolumes) and \
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
@@ -177,10 +177,11 @@ def stageFiles(filterVolumes, targetPathParts):
                 # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
-            # if os.path.isfile(imageFilepath):
-            if not os.path.isfile(imageFilepath):
-                print 'file not found', imageFilepath
-            else:
+            if os.path.isfile(imageFilepath):
+            # if not os.path.isfile(imageFilepath):
+                # can't do this because we're iterating over files, not composites
+                # print 'file not found', imageFilepath
+            # else:
 
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/

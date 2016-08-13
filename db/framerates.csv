@@ -1,83 +1,512 @@
 
-# slowdown/speed up movies
+# framerates.csv
+# Slowdown/speed up movies for specific image ranges
+# --------------------------------------------------------------------------------
 
-# nframesPerImage is the number of frames to repeat each image -
-# the default is 1, anything higher slows the movie down that amount.
+# nframes is the number of frames to show each image -
+# the default is 1, anything higher slows the movie down that amount -
 # must be an integer.
 
-# main frame rate is set in config.py - movieFrameRate
-# these values are all based on a frame rate of 20fps
+# The main frame rate is set in config.py - movieFrameRate.
+# These values are all based on a frame rate of 25fps.
 
-# this file does NOT need to be sorted, since it's all read into a dictionary at the moment
+# This file does NOT need to be sorted, since it's all read into a dictionary at the moment.
 
-# can set 'sticky' overrides by appending a '+' to the imageId -
+# Can set 'sticky' overrides by appending a '+' to the imageId -
 # the frame rate will stick for that target until set explicitly otherwise.
 # eg
 # c1238432+,4
 # c1239382,1
 
+#. maybe have temporary override by appending '-' -
+# frame rate would resume after that
 
-fileId,nframesPerImage
+
+
+fileId,nframes,notes
+
+
+# Voyager 1 Jupiter
+# ----------------------------------------
 
 # Jupiter
-# ----------------------------------------
+# red-spot approach movie - generated with extras/redspotApproach.py
+C1464337+,0
+C1465333,2
+# C1465602+,0
+C1466558,2
+# C1466827+,0
+C1467821,2
+# C1468050+,0
+C1469046,2
+# C1469315+,0
+C1470311,2
+# C1470540+,0
+C1471534,2
+# C1471803+,0
+C1472759,2
+# C1473028+,0
+C1474024,2
+# C1474253+,0
+C1475249,2
+# C1475516+,0
+C1476512,2
+# C1476741+,0
+C1477737,2
+# C1478006+,0
+C1479002,2
+# C1479231+,0
+C1480225,2
+# C1480454+,0
+C1481450,2
+# C1481719+,0
+C1482715,2
+# C1482944+,0
+C1483938,2
+# C1484207+,0
+C1485203,2
+# C1485432+,0
+C1486428,2
+# C1486657+,0
+C1487651,2
+# C1487920+,0
+C1488916,2
+# C1489145+,0
+C1490141,2
+# C1490410+,0
+C1491404,2
+# C1491633+,0
+C1492629,2
+# C1492858+,0
+C1493854,2
+# C1494123+,0
+
+# corrections to redspotApproach.py output
+C1495119,2
+# C1495346+,0
+C1496342,2
+# C1496611+,0
+C1497607,2
+# C1497836+,0
+C1498832,2
+# C1499101+,0
+C1500055,2
+# C1500324+,0
+C1501320,2
+# C1501549+,0
+# C1503043+,0
+C1502545,2
+# C1502814+,0
+C1503808,2
+# C1504037+,0
+C1505033,2
+# C1505302+,0
+C1506258,2
+# C1506527+,0
+
+# back to working
+C1507521,2
+# C1507750+,0
+C1508746,2
+# C1509015+,0
+C1510011,2
+# C1510240+,0
+C1511234,2
+# C1511503+,0
+C1512459,2
+# C1512728+,0
+C1513724,2
+# C1513953+,0
+C1514949,2
+# C1515216+,0
+C1516212,2
+# C1516441+,0
+C1517437,2
+# C1517706+,0
+C1518702,2
+# C1518931+,0
+C1519925,2
+# C1520154+,0
+C1521150,2
+# C1521419+,0
+C1522415,2
+# C1522644+,0
+C1523638,2
+# C1523907+,0
+C1524903,2
+# C1525132+,0
+C1526128,2
+# C1526357+,0
+C1527353,2
+# C1527620+,0
+C1528616,2
+# C1528845+,0
+C1529841,2
+# C1530110+,0
+C1531104,2
+# C1531333+,0
+C1532333,2
+# C1532558+,0
+C1533554,2
+# C1533823+,0
+# last red spot approach frame
+C1534819,2
+
+# then starts rotation sequence
+#. trim down a bit for now - too long and not stable yet
+C1537728+,0
+C1538528+,3
+C1542032+,0
+# last rotation frame
+# C1550852
+
+#. edit out the very chaotic quadrant mosaic frames
+C1550858+,0
+# nearly good red spot image
+C1607923,10
+C1607929+,0
+# last frame
+# C1607953
+
+#. slow down on the two color psychedelic clouds
+#. maybe cut this segment short also, for now
+# first two color frame
+C1608711,10
+C1609105+,2
+C1615453,30
+C1617549,30
+C1617553,30
+C1618217,20
+C1618825,30
+C1618837,30
+C1619052,30
+C1619117,30
+C1620316,30
+C1620430,30
+C1620612,30
+C1620632,30
+C1620701,30
+C1620815,30
+C1620852,30
+C1620929,30
+C1620954,30
+C1620958,30
+C1621014,30
+C1621324,30
+C1621445,30
+C1621449,30
+C1621457,30
+C1621645,30
+C1621649,30
+C1621726,30
+C1621742,30
+C1621751,30
+C1621755,30
+C1621759,30
+C1622015,30
+C1622019,30
+C1622106,30
+C1622216,30
+C1622313,30
+C1622321,30
+C1622338,30
+C1622529,30
+C1622533,30
+C1622541,30
+C1622545,30
+C1622610,30
+C1622647,30
+C1622655,30
+C1622659,30
+C1622707,30
+C1622909,30
+C1622929,30
+C1622937,30
+C1622945,30
+C1623013,30
+C1623101,30
+C1623105,30
+C1623109,30
+C1623113,30
+C1623117,30
+C1623121,30
+C1623141,30
+C1623145,30
+C1623149,30
+C1623153,30
+C1623157,30
+C1623657,30
+C1623705,30
+C1623842,30
+C1623846,30
+C1623943,30
+C1623947,30
+C1624253,30
+C1624300,30
+C1624307,30
+C1624314,30
+C1624701,30
+C1624705,30
+C1624806,30
+C1624915,30
+C1625115,30
+C1625416,30
+C1625517,30
+C1625606,30
+C1625610,30
+C1625614,30
+C1625719,30
+C1626031,30
+C1626206,30
+C1626210,30
+C1626214,30
+C1626246,30
+C1626449,30
+C1626534,30
+C1626538,30
+C1626550,30
+C1626722,30
+C1627153,30
+C1627456,30
+C1627500,30
+C1627542,30
+C1628115,30
+C1628841,30
+C1628845,30
+C1628849,30
+C1628853,30
+C1628857,30
+C1628901,30
+C1628909,30
+C1629105,30
+C1629121,30
+C1629301,30
+C1629305,30
+C1629309,30
+C1629357,30
+C1629401,30
+C1629804,30
+C1630028,30
+C1630643,30
+C1630647,30
+C1631003,30
+C1631011,30
+C1631044,30
+C1631046,30
+C1631332,30
+C1631414,30
+C1631428,30
+C1631445,30
+C1631449,30
+C1631512,30
+C1631530,30
+C1631534,30
+C1631536,30
+C1631549,30
+C1631601,30
+C1631605,30
+C1631607,30
+C1631707,30
+C1631722,30
+C1631724,30
+C1631738,30
+C1631836,30
+C1631905,30
+C1631924,30
+C1631936,30
+C1631942,30
+C1631951,30
+C1631953,30
+C1631955,30
+C1631957,30
+C1632111,30
+C1632117,30
+C1632347,30
+C1632404,30
+C1632418,30
+C1632420,30
+C1632435,30
+C1632512,30
+C1632528,30
+C1632559,30
+C1633246,30
+C1633350,30
+C1633357,30
+C1633404,30
+C1633605,30
+C1633627,30
+C1633631,30
+C1633639,30
+C1634023,30
+C1634031,30
+C1634819,30
+C1634841,30
+C1634845,30
+C1635021,30
+C1635025,30
+C1635029,30
+C1635734,30
+C1636113,30
+C1636203,30
+C1636458,30
+C1636736,30
+C1636944,30
+C1637312,30
+C1637324,30
+C1637704,30
+C1637819,30
+C1638511,30
+C1638513,30
+C1640946,30
+C1641253,30
+C1642002,30
+
+
+# cut out wobbly crescent segment
+# first uncentered crescent frame
+C1643012+,0
+# first well-centered crescent frame
+C1690946+,2
+
+
+
+
+
+
 
 # C1637732,coolmoonlet,20
 # C1638131,diffmoonlet?,20
 
-# amalthea
+
+# Amalthea
 # C1637732,8
 # C1638149,20
 
-# callisto
-# C1639944,20
-# C1642626,1
-# C1642141,20
 
-# europa
-# C1635212,8
+# Callisto
+# starts at C1474515
+C1632300,30,last small shot
+C1641752,0,corner
+C1642124,0,corner
+C1642141,30
+C1642546,0,corner
+C1642638,0,corner
+C1642648,0,noise
+C1642723,0,blur
+C1642725,0,blur
+C1642727,0,blur
+C1642813,0,corner
+C1642821,0,noise
+C1642823,0,corner
+C1648814,20,crescent
+C1677918,20,last shot
 
-# ganymede
-# C1460413,6
-# C1624522,8
-# C1633443,10
-# pause longer on nice images
-C1640202,40
-C1640322,40
+
+
+# Europa
+# narrow
+# C1464330_composite start
+C1636904,60,closest composite shot
+C1649524,30,last frame - crescent
+
+# Ganymede
+# narrow
+# C1460413 start
+# C1640202,40
+# C1640322,40
+C1640342,40
 C1640352,40
+C1640422,60
+C1640424,0,blur
+C1640426,0,blur
+C1640428,0,blur
+C1640438,0,blur
+C1640440,0,blur
+C1640444,60
+C1640446,60
+C1640454,30
+C1640456,40
+C1640458,0,blur
 C1640502,40
-C1640528,40
+C1640506,0,blur
+C1640508,0,blur
+C1640510,30
+C1640518,30
+C1640524,0,blur
+C1640528,60
+C1640540,0,blur
 C1640542,40
+C1640548,30
+C1640550,20
+C1640552,0,corner
+C1640723,20
+C1669918,40,last shot crescent
 
-# ganymede wide
-# C1627348,4
-# C1640315,8
+# wide
+# C1627348 start
+C1640746,40,last good crescent shot
 
-# io
-# C1636826,10
+
+# Io
+# narrow
+# incl volcanoes
+C1637536,30
+C1637544,30
+C1637748,30
+C1637750,30
+C1637752,30
+# interesting shots
+C1638235,30
+C1638900,30
+C1638906,30
+C1638942,30
+C1638954,30
+C1638956,30
+C1639002,30
+C1639034,30
+C1639038,30
+C1639040,30
+C1639104,30
+C1639116,30
+C1639118,30
+C1639122,30
+C1639130,30
+C1639132,30
+C1639134,30
+C1639138,30
+C1639142,30
+C1639150,30
+C1639200,30
+C1639219,30
+C1639221,30
+C1639242,30
+#. bright volcano at end - would like to zoom in on this
+C1648109,60
+
+# wide
+C1639228,40
+C1639301,40
+C1639309,40,volcano
+
 
 
 
 # Uranus
 # ----------------------------------------
 
-# uranus
+# Uranus
 
 # first frame - hide the start sequence - too long
 C2447705+,0
-
 # C2672949+,10
 # C2673007, 1
-
 # cool moon sequences
 C2577621+,3
 C2600321,1
 C2604520+,2
 C2604942,1
-
 # uhoh, it says search in it...
 # C2679143,7205,Uranus,Voyager2,Uranus,1986-01-22T21:04:46,Wide,Clear,ONE OF 16 SAT SEARCH FRAMES IMAGING ARIEL'S ORBIT AND REGION INTERIOR
-
 # rings - some need to be shifted
 C2672831+,8
 C2672901,1
@@ -106,6 +535,7 @@ C2684533,40
 C2684535,40
 C2684539,40
 
+
 # miranda
 C2681643,20
 C2684409,40
@@ -117,11 +547,11 @@ C2684617,40
 C2684620,40
 C2684626,40
 C2684629,40
-
 # C2564729,4
 # C2681429,12
 # C2684409,25
 # C2690737,4
+
 
 # oberon
 # C2465854,4
@@ -130,8 +560,10 @@ C2684629,40
 # nicest image
 C2683625,40
 
+
 # puck is only one frame - show for a while
 C2683716,50
+
 
 # titania
 # C2465905,Uranus-Voyager2-Titania-Narrow,6

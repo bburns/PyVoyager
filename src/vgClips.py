@@ -27,41 +27,40 @@ import vgTitles
 def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
                framerateInfo, fileId):
     """
-    how many copies of the given target do we need?
-    uses imageFraction, information in targets.csv, framerates.csv, etc.
+    How many copies of the given target do we need?
+    Bases it on imageFraction, information in targets.csv, framerates.csv, etc.
     """
 
-    # ncopies is proportional to imageFraction
+    # ncopies is basically proportional to imageFraction
     framerateConstantInfoRecord = framerateConstantInfo.get(target)
     if framerateConstantInfoRecord:
         frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
     else:
-        frameRateConstant = config.clipsDefaultFrameRateConstant
+        frameRateConstant = config.frameRateConstantDefault
     ncopies = int(frameRateConstant * imageFraction) + 1
 
-    # don't let it go too slowly
-    if ncopies > config.clipsMaxFrameRateConstant:
-        ncopies = config.clipsMaxFrameRateConstant
+    # but don't let it go too slowly
+    if ncopies > config.frameRateNCopiesMax:
+        ncopies = config.frameRateNCopiesMax
 
     # check for previous sticky setting override in framerates.csv
     if not ncopiesMemory.get(targetKey) is None:
         ncopies = ncopiesMemory[targetKey]
-        # print 'remembering sticky framerate',fileId, ncopies
+        print 'remembering sticky framerate',fileId, ncopies
 
     # check for 'sticky' override from framerates.csv
     framerateInfoRecord = framerateInfo.get(fileId + '+')
     if not framerateInfoRecord is None:
         ncopies = int(framerateInfoRecord['nframes'])
         ncopiesMemory[targetKey] = ncopies # remember it
-        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+        print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
 
     # check for single image override from framerates.csv
     framerateInfoRecord = framerateInfo.get(fileId)
     if not framerateInfoRecord is None:
         ncopies = int(framerateInfoRecord['nframes'])
-        # ncopiesMemory[targetKey] = None # reset the sticky setting
         ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-        # print 'got single framerate',fileId,ncopies,ncopiesMemory
+        print 'got single framerate',fileId,ncopies,ncopiesMemory
 
     return ncopies
 
@@ -69,7 +68,7 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
 def stageFiles(filterVolumes, targetPathParts):
     """
     Make links from source files to clip stage folders.
-    filterVolumes is a list of volumes as strings
+    filterVolumes is a list of volumes as strings, e.g. ['5101','5102']
     targetPathParts is [system, craft, target, camera]
     """
 
@@ -77,13 +76,10 @@ def stageFiles(filterVolumes, targetPathParts):
 
     # print filterVolumes, targetPathParts
 
-    # what does the user want to focus on?
-    # pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
-
     # read some small dbs into memory
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
-    framerateConstantInfo = lib.readCsv(config.dbFramerateConstants) # change framerates per target
-    framerateInfo = lib.readCsv(config.dbFramerates) # change framerates per image
+    framerateConstantInfo = lib.readCsv(config.dbFramerateConstants) # change framerate per target
+    framerateInfo = lib.readCsv(config.dbFramerates) # change framerate per image
     centeringInfo = lib.readCsv(config.dbCentering) # turn centering on/off
 
     # keep track of number of files in each target subfolder,
@@ -141,47 +137,16 @@ def stageFiles(filterVolumes, targetPathParts):
         if target in config.clipsIgnoreTargets: addImage = False
         if addImage and ncopies > 0:
 
-            # do we need to center this image?
-            # this is out of date - just base it on whether centered file exists
-            # doCenter = lib.centerThisImageQ(centeringInfo, targetKey, fileId, target)
-
-            # get image source path
-            # eg data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-            # if centering for this image is turned off, let's assume for now that
-            # that means we don't want the color image, since it'd be misaligned anyway.
-            #. this is true for moons like miranda, e.g.,
-            # but for jupiter i like the psychedelic colors
-            # if doCenter==False:
-            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            # elif bwOrColor=='bw':
-            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            # else:
-            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-
-            # use composite image if available, otherwise the centered or adjusted image
-            # if bwOrColor=='color':
-                # imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            # elif bwOrColor=='bw':
-                # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-                # if not os.path.isfile(imageFilepath):
-                    # imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            # imageFilepath = lib.getCompositeFilepath(volume, fileId)
-
+            # use annotated image if available, else mosaic or composite.
+            # but don't use centered files or will get bw images mixed in with color.
             imageFilepath = lib.getFilepath('annotate', volume, fileId)
             if not os.path.isfile(imageFilepath):
                 imageFilepath = lib.getFilepath('mosaic', volume, fileId)
             if not os.path.isfile(imageFilepath):
                 imageFilepath = lib.getFilepath('composite', volume, fileId)
-            # don't do this or you'll get bw images mixed with the color images
-            # if not os.path.isfile(imageFilepath):
-                # imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
 
             # if image file exists, create subfolder and link image
             if os.path.isfile(imageFilepath):
-            # if not os.path.isfile(imageFilepath):
-                # can't do this because we're iterating over files, not composites
-                # print 'file not found', imageFilepath
-            # else:
 
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
@@ -196,7 +161,6 @@ def stageFiles(filterVolumes, targetPathParts):
                 # if we haven't seen this subfolder before add titlepage a few times.
                 # titlepages are created in the previous step, vgBuildTitles.
                 if config.includeTitles and nfile==0:
-                    # titleImageFilepath = config.titlesFolder + subfolder + 'title' + \
                     titleImageFilepath = config.folders['titles'] + subfolder + 'title' + \
                                          config.extension
                     # need to get out of the target dir - we're always this deep
@@ -207,7 +171,6 @@ def stageFiles(filterVolumes, targetPathParts):
                     nfile += ntitleCopies
 
                 print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
-                # print "Volume %s frame: %s x %d           " % (volume, fileId, ncopies)
 
                 # link to file
                 # note: mklink requires admin privileges,
@@ -221,7 +184,7 @@ def stageFiles(filterVolumes, targetPathParts):
                 nfile += ncopies
                 nfilesInTargetDir[targetKey] = nfile
 
-        # check for additional images
+        # check for additional images in additions.csv
         rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
         if rowAdditions:
             print fileId, rowAdditions
@@ -258,14 +221,14 @@ def stageFiles(filterVolumes, targetPathParts):
                 nfilesInTargetDir[targetKey] = nfile
             else:
                 print 'unhandled addition', additionId
-            # if '_composite':
-            #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-            # elif '_centered':
-            #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-            # elif '_adjusted':
-            #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-            # need to insert the additional image here
-            # add nframes into stage
+                # if '_composite':
+                #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+                # elif '_centered':
+                #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+                # elif '_adjusted':
+                #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+                # need to insert the additional image here
+                # add nframes into stage
 
     fAdditions.close()
     fPositions.close()

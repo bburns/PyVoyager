@@ -58,10 +58,10 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
 
         fileId = row[config.colFilesFileId]
         # filter = row[config.colFilesFilter]
-        # system = row[config.colFilesSystem]
-        # craft = row[config.colFilesCraft]
-        # target = row[config.colFilesTarget]
-        # camera = row[config.colFilesCamera]
+        system = row[config.colFilesSystem]
+        craft = row[config.colFilesCraft]
+        target = row[config.colFilesTarget]
+        camera = row[config.colFilesCamera]
         
         time = row[config.colFilesTime].replace('T', ' ')
         note = row[config.colFilesNote].title()
@@ -84,9 +84,8 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
             else:
                 distance = ''
             
-            print 'Volume %s annotating %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-            # print 'Volume %s annotating %d/%d: %s     ' % (volume,nfile,nfiles,infile)
-            # print fileId, time, distance
+            # print 'Volume %s annotating %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+            print 'Volume %s annotating %d/%d: %s %s %s         \r' % (volume,nfile,nfiles,fileId,time,target),
             libimg.annotateImageFile(infile, outfile, fileId, time, distance, note)
             nfile += 1
 

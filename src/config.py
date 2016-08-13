@@ -316,11 +316,14 @@ clipsIgnoreTargets = dontCenterTargets
 # used to determine nframes per image - this multiplied by imageFraction,
 # so slows down when closer to target
 # this can be overridden in targets.csv
-clipsDefaultFrameRateConstant = 60
+# clipsDefaultFrameRateConstant = 60
+frameRateConstantDefault = 60
 
 # the max number of copies for each frame (higher=slower movie)
 # clipsMaxFrameRateConstant = 30 # v0.43 uranus
-clipsMaxFrameRateConstant = 20 # v0.43 jupiter
+# clipsMaxFrameRateConstant = 20 # v0.43 jupiter
+# frameRateConstantMax = 20 # v0.43 jupiter
+frameRateNCopiesMax = 20 # v0.43 jupiter
 
 # minimum number of frames for a clip to be generated
 # (otherwise get lots of 0:00 movies)

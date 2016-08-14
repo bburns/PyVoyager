@@ -20,6 +20,17 @@ from dateutil import parser as dtparser
 import config
 
 
+
+def getImageFraction(csvPositions, fileId):
+    "look up the imageFraction for the given image in the positions.csv file"
+    rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
+    if rowPositions:
+        imageFraction = float(rowPositions[config.colPositionsImageFraction])
+    else: # just for rhea and sky
+        imageFraction = 0
+    return imageFraction
+
+
 def secondsSince1970(sDatetime, epoch=datetime(1970,1,1)):
     "convert a datetime string to seconds since 1970-01-01"
     # eg "1986-01-18T15:35:10" -> 506446510.0

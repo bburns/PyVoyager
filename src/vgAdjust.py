@@ -57,13 +57,8 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # if volume!=filterVolume: continue # filter on desired volume
         if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
 
-        # join on positions.csv to get expected target size and radius
-        # imageFraction is fraction of image frame taken up by target
-        rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
-        if rowPositions:
-            imageFraction = float(rowPositions[config.colPositionsImageFraction])
-        else:
-            imageFraction = 0 # just rhea and some sky
+        # get expected angular size (as fraction of frame)
+        imageFraction = lib.getImageFraction(csvPositions, fileId)
 
         # only stretch the histogram if target is large enough (small moons get blown out)
         doStretchHistogram = (imageFraction > config.adjustHistogramImageFractionMinimum)

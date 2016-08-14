@@ -62,40 +62,14 @@ def processChannels(channelRows, volume, nfile, startId):
             channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
-            channel = [filter,channelfilepath,weight,x,y]
-            channels.append(channel)
+            if os.path.isfile(channelfilepath):
+                channel = [filter,channelfilepath,weight,x,y]
+                channels.append(channel)
 
-        outfilepath = lib.getFilepath('composite', volume, compositeId)
-        im = libimg.combineChannels(channels)
-        cv2.imwrite(outfilepath, im)
-
-
-
-def foo():
-    # don't let it go too slowly
-    if ncopies > config.clipsMaxFrameRateConstant:
-        ncopies = config.clipsMaxFrameRateConstant
-
-    # check for previous sticky setting override in framerates.csv
-    if not ncopiesMemory.get(targetKey) is None:
-        ncopies = ncopiesMemory[targetKey]
-        # print 'remembering sticky framerate',fileId, ncopies
-
-    # check for 'sticky' override from framerates.csv
-    framerateInfoRecord = framerateInfo.get(fileId + '+')
-    if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframes'])
-        ncopiesMemory[targetKey] = ncopies # remember it
-        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
-
-    # check for single image override from framerates.csv
-    framerateInfoRecord = framerateInfo.get(fileId)
-    if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframes'])
-        # ncopiesMemory[targetKey] = None # reset the sticky setting
-        ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-        # print 'got single framerate',fileId,ncopies,ncopiesMemory
-
+        if len(channels)>0:
+            outfilepath = lib.getFilepath('composite', volume, compositeId)
+            im = libimg.combineChannels(channels)
+            cv2.imwrite(outfilepath, im)
 
 
 #. handle targetpath

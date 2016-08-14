@@ -119,11 +119,7 @@ def stageFiles(filterVolumes, targetPathParts):
         target = lib.retarget(retargetingInfo, fileId, target)
 
         # get expected angular size (as fraction of frame)
-        rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
-        if rowPositions:
-            imageFraction = float(rowPositions[config.colPositionsImageFraction])
-        else:
-            imageFraction = 0
+        imageFraction = lib.getImageFraction(csvPositions, fileId)
 
         # build a key
         targetKey = system + '-' + craft + '-' + target + '-' + camera
@@ -141,6 +137,7 @@ def stageFiles(filterVolumes, targetPathParts):
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
+        # print targetKey, ncopies, addImage
         if addImage and ncopies > 0:
 
             # use annotated image if available, else mosaic or composite.

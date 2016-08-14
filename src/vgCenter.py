@@ -114,13 +114,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
         nfile += 1
 
-        # join on positions.csv to get expected target size and radius
-        # imageFraction is fraction of image frame taken up by target
-        rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
-        if rowPositions:
-            imageFraction = float(rowPositions[config.colPositionsImageFraction])
-        else:
-            imageFraction = 0 # just rhea and some sky
+        # get expected angular size (as fraction of frame) and radius
+        imageFraction = lib.getImageFraction(csvPositions, fileId)
         targetRadius = int(400*imageFraction) #.param
 
         # do we actually need to center this image?

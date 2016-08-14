@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.45 inprogress
+Version 0.45
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -310,11 +310,17 @@ History
 <!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 
-Version 0.45 (2016-08)
+<!-- Version 0.46 (2016-08) -->
+<!-- ---------------------------------------- -->
+
+
+Version 0.45 (2016-08-14)
 ----------------------------------------
 - Frame rate constants can be set by System-Craft-Target-Camera
 
-Make Voyager 1 Jupiter system movie
+Made Voyager 1 Jupiter system movie - lots of edits to composites.csv and framerates.csv
+
+Jupiter rotation segment still a bit unstable.
 
 Version 0.44 (2016-08-12)
 ----------------------------------------

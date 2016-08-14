@@ -196,26 +196,17 @@ def stageFiles(filterVolumes, targetPathParts):
             ncopies = int(rowAdditions[config.colAdditionsNFrames])
 
             # get imagePath
-
-            #. how get volume? should the addition col have the whole filepath?
-            #. and filter?
+            #. how get volume from fileId like C2684338?
             # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
-            # but that ties the data structure down too much
-            # or else include volume, filter, fileId, but then it's not as general purpose,
-            # eg for including extraneous images
-
-            # one possibility would be to lookup the volume based on the imageId
-            # boundaries (fast), and then grab whatever image started with the
-            # given additionId so don't need filter. other extraneous images
-            # would have a special prefix, eg 'file:'.
-
-            # presumably there wouldn't be a whole lot of these so speed is not
-            # too much a factor.
+            # get folder step06 from suffix, _composite.
+            # could lookup the volume based on the imageId boundaries, and then grab
+            # whatever image started with the given additionId so don't need filter.
+            # other extraneous images would have a special prefix, eg 'images/'.
 
             if additionId.startswith('images/'):
                 print 'adding',additionId,targetKey
                 filetitle = additionId[7:] # trim off images/
-                folder = config.folders['additions']
+                folder = config.folders['additions'] # data/images/
                 imageFilepath = folder + filetitle
                 print imageFilepath
                 addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)

@@ -464,7 +464,8 @@ def parseTargetPath(targetPath):
     Then can take apart result with something like -
         pathparts = parseTargetPath(targetPath)
         pathSystem, pathCraft, pathTarget, pathCamera = pathparts
-    Returns None if targetPath is empty or None
+    # Returns None if targetPath is empty or None
+    Returns [None,None,None,None] if targetPath is empty or None
     """
     if targetPath:
         pathparts = targetPath.split('/')
@@ -475,7 +476,8 @@ def parseTargetPath(targetPath):
         pathparts = [pathpart.strip() for pathpart in pathparts]
         pathparts = [pathpart if len(pathpart)>0 else None for pathpart in pathparts]
         return pathparts
-    return None
+    # return None
+    return [None,None,None,None]
 
 
 

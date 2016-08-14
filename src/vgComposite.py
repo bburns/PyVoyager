@@ -19,7 +19,7 @@ import lib
 import libimg
 
 
-# import vgCenter
+import vgCenter
 import vgInpaint
 
 
@@ -99,8 +99,8 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
 
     if filterVolume!='':
 
-        # inputSubfolder = lib.getSubfolder('center', filterVolume)
-        inputSubfolder = lib.getSubfolder('inpaint', filterVolume)
+        inputSubfolder = lib.getSubfolder('center', filterVolume)
+        # inputSubfolder = lib.getSubfolder('inpaint', filterVolume)
         outputSubfolder = lib.getSubfolder('composite', filterVolume)
 
         # quit if volume folder exists
@@ -109,8 +109,8 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
             return
 
         # build the centered images for the volume, if not already there
-        # vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
-        vgInpaint.vgInpaint(filterVolume, '', optionOverwrite=False, directCall=False)
+        vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
+        # vgInpaint.vgInpaint(filterVolume, '', optionOverwrite=False, directCall=False)
 
         # make folder
         lib.mkdir(outputSubfolder)

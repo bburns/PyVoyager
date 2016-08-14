@@ -143,25 +143,67 @@ def stageFiles(filterVolumes, targetPathParts):
         ncopies = getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory,
                              targetKey, framerateInfo, fileId)
 
-        # does this image match the target path the user specified on the cmdline?
+        # does this image match the volume and target path the user specified on the cmdline?
         addImage = False
         # note AND -
         if (volume in filterVolumes) and \
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
-        if addImage and ncopies > 0:
+        # if addImage and ncopies > 0:
+        if addImage:
 
-            # use annotated image if available, else mosaic or composite.
-            # but don't use centered files or will get bw images mixed in with color.
-            imageFilepath = lib.getFilepath('annotate', volume, fileId)
-            if not os.path.isfile(imageFilepath):
-                imageFilepath = lib.getFilepath('mosaic', volume, fileId)
-            if not os.path.isfile(imageFilepath):
-                imageFilepath = lib.getFilepath('composite', volume, fileId)
+            if ncopies > 0:
+                # use annotated image if available, else mosaic or composite.
+                # but don't use centered files or will get bw images mixed in with color.
+                imageFilepath = lib.getFilepath('annotate', volume, fileId)
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getFilepath('mosaic', volume, fileId)
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getFilepath('composite', volume, fileId)
 
-            # if image file exists, create subfolder and link image
-            if os.path.isfile(imageFilepath):
+                # if image file exists, create subfolder and link image
+                if os.path.isfile(imageFilepath):
+
+                    # get staging subfolder and make sure it exists
+                    # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
+                    subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
+                    targetFolder = config.clipsStageFolder + subfolder
+                    lib.mkdir_p(targetFolder)
+
+                    # get current file number in that folder, or start at 0
+                    nfile = ntargetDirFiles.get(targetKey) or 0
+
+                    # if we haven't seen this subfolder before add titlepage a few times.
+                    # titlepages are created in the previous step, vgTitle.
+                    if config.includeTitles and nfile==0:
+                        titleFilepath = config.folders['titles'] + subfolder + 'title' + \
+                                             config.extension
+                        ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
+                        addImages(titleFilepath, targetFolder, ntitleCopies,
+                                  ntargetDirFiles, targetKey)
+
+                    print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
+
+                    # add links to file
+                    # note: mklink requires admin privileges, so must run in an admin console
+                    # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
+                    addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+
+            # check for additional images in additions.csv
+            rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
+            if rowAdditions:
+                print fileId, rowAdditions
+                additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
+                ncopies = int(rowAdditions[config.colAdditionsNFrames])
+
+                # get imagePath
+                #. how get volume from fileId like C2684338?
+                # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
+                # get folder step06 from suffix, _composite.
+                # could lookup the volume based on the imageId boundaries, and then grab
+                # whatever image started with the given additionId so don't need filter.
+                # other extraneous images would have a special prefix, eg 'images/'.
 
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
@@ -169,57 +211,23 @@ def stageFiles(filterVolumes, targetPathParts):
                 targetFolder = config.clipsStageFolder + subfolder
                 lib.mkdir_p(targetFolder)
 
-                # get current file number in that folder, or start at 0
-                nfile = ntargetDirFiles.get(targetKey) or 0
-
-                # if we haven't seen this subfolder before add titlepage a few times.
-                # titlepages are created in the previous step, vgTitle.
-                if config.includeTitles and nfile==0:
-                    titleFilepath = config.folders['titles'] + subfolder + 'title' + \
-                                         config.extension
-                    ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
-                    addImages(titleFilepath, targetFolder, ntitleCopies,
-                              ntargetDirFiles, targetKey)
-
-                print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
-
-                # add links to file
-                # note: mklink requires admin privileges, so must run in an admin console
-                # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
-                addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-
-        # check for additional images in additions.csv
-        rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
-        if rowAdditions:
-            print fileId, rowAdditions
-            additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
-            ncopies = int(rowAdditions[config.colAdditionsNFrames])
-
-            # get imagePath
-            #. how get volume from fileId like C2684338?
-            # eg data/step06_composites/VGISS_7206/C2684338_composite.jpg
-            # get folder step06 from suffix, _composite.
-            # could lookup the volume based on the imageId boundaries, and then grab
-            # whatever image started with the given additionId so don't need filter.
-            # other extraneous images would have a special prefix, eg 'images/'.
-
-            if additionId.startswith('images/'):
-                print 'adding',additionId,targetKey
-                filetitle = additionId[7:] # trim off images/
-                folder = config.folders['additions'] # data/images/
-                imageFilepath = folder + filetitle
-                print imageFilepath
-                addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-            else:
-                print 'unhandled addition', additionId
-                # if '_composite':
-                #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
-                # elif '_centered':
-                #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-                # elif '_adjusted':
-                #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-                # need to insert the additional image here
-                # add nframes into stage
+                if additionId.startswith('images/'):
+                    print 'adding',additionId,targetKey
+                    filetitle = additionId[7:] # trim off images/
+                    folder = config.folders['additions'] # data/images/
+                    imageFilepath = folder + filetitle
+                    print imageFilepath
+                    addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                else:
+                    print 'unhandled addition', additionId
+                    # if '_composite':
+                    #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+                    # elif '_centered':
+                    #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
+                    # elif '_adjusted':
+                    #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
+                    # need to insert the additional image here
+                    # add nframes into stage
 
     fAdditions.close()
     fPositions.close()

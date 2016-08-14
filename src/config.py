@@ -9,10 +9,10 @@
 # ----------------------------------------
 
 # include titles in clips?
-includeTitles = True
-# includeTitles = False
+# includeTitles = True
+includeTitles = False
 
-# use jpegs for faster development time
+# use jpegs for faster development time, less space
 useJpegs = True
 # useJpegs = False
 extension = '.jpg' if useJpegs else '.png'

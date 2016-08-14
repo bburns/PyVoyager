@@ -312,8 +312,9 @@ History
 
 Version 0.45 (2016-08)
 ----------------------------------------
+- Frame rate constants can be set by System-Craft-Target-Camera
 
-Make Jupiter system movie with annotated images
+Make Voyager 1 Jupiter system movie
 
 Version 0.44 (2016-08-12)
 ----------------------------------------

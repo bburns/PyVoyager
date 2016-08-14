@@ -48,25 +48,25 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
     framerateInfoRecord = framerateInfo.get(fileId + '-') # eg C1234567-
     if not framerateInfoRecord is None:
         ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-        print 'turned off sticky framerate',fileId
+        # print 'turned off sticky framerate',fileId
 
     # check for previous sticky setting override in framerates.csv
     if not ncopiesMemory.get(targetKey) is None:
         ncopies = ncopiesMemory[targetKey]
-        print 'remembering sticky framerate',fileId, ncopies
+        # print 'remembering sticky framerate',fileId, ncopies
 
     # check for 'sticky' override from framerates.csv
     framerateInfoRecord = framerateInfo.get(fileId + '+') # eg C1234567+
     if not framerateInfoRecord is None:
         ncopies = int(framerateInfoRecord['nframes'])
         ncopiesMemory[targetKey] = ncopies # remember it
-        print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
 
     # check for single image override from framerates.csv - temporary setting
     framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
     if not framerateInfoRecord is None:
         ncopies = int(framerateInfoRecord['nframes'])
-        print 'got single framerate',fileId,ncopies,ncopiesMemory
+        # print 'got single framerate',fileId,ncopies,ncopiesMemory
 
     return ncopies
 

@@ -8,18 +8,17 @@
 # Global settings
 # ----------------------------------------
 
+# include titles in clips?
+includeTitles = True
+# includeTitles = False
+
 # use jpegs for faster development time
 useJpegs = True
 # useJpegs = False
 extension = '.jpg' if useJpegs else '.png'
 
-
 logfile = 'log.txt'
 
-
-# include titles in clips?
-# includeTitles = True
-includeTitles = False
 
 
 # Voyager

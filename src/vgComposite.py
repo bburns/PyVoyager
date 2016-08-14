@@ -137,9 +137,6 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
         # make folder
         lib.mkdir(outputSubfolder)
 
-    # open files.csv so can join to it
-    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
-
     # read small dbs into memory
     compositingInfo = lib.readCsv(config.dbCompositing) # when to turn centering on/off
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
@@ -147,6 +144,9 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
     # should we composite the image?
     compositing = True # default
     compositingMemory = {} # keyed on planet-spacecraft-target-camera
+
+    # open files.csv so can join to it
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # iterate over composites.csv records
     csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
@@ -158,39 +158,46 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
 
         volume = row[config.colCompositesVolume]
         compositeId = row[config.colCompositesCompositeId]
+        fileId = row[config.colCompositesFileId]
 
-        # # get more image properties from files.csv,
-        # # so can turn compositing on/off with compositing.csv.
-        # # (need to keep track of which target we're looking at)
-        # rowFiles = lib.getJoinRow(csvFiles, config.colFilesFileId, compositeId)
-        # # imageFraction = float(rowFiles[config.colFilesImageFraction])
-        # # volume = row[config.colFilesVolume]
-        # # fileId = row[config.colFilesFileId]
-        # filter = rowFiles[config.colFilesFilter]
-        # system = rowFiles[config.colFilesSystem]
-        # craft = rowFiles[config.colFilesCraft]
-        # target = rowFiles[config.colFilesTarget]
-        # camera = rowFiles[config.colFilesCamera]
+        # get more image properties from files.csv,
+        # so can turn compositing on/off with compositing.csv.
+        # (need to keep track of which target we're looking at)
+        # print compositeId
+        rowFiles = lib.getJoinRow(csvFiles, config.colFilesFileId, compositeId)
+        # note: since compositeId repeats, we might have already advanced to the next record,
+        # in which case rowFiles will be None. But the target properties will remain the same.
+        if rowFiles:
+            filter = rowFiles[config.colFilesFilter]
+            system = rowFiles[config.colFilesSystem]
+            craft = rowFiles[config.colFilesCraft]
+            target = rowFiles[config.colFilesTarget]
+            camera = rowFiles[config.colFilesCamera]
 
-        # # relabel target field if necessary - see db/targets.csv for more info
-        # target = lib.retarget(retargetingInfo, fileId, target)
-
-
+            # relabel target field if necessary - see db/targets.csv for more info
+            target = lib.retarget(retargetingInfo, compositeId, target)
 
         # filter on volume or composite id or targetpath
-        if volume!=filterVolume and compositeId!=filterCompositeId: continue
-        # if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera)==False: doComposite = False
+        # if volume!=filterVolume and compositeId!=filterCompositeId: continue
+        doComposite = False
+        if volume==filterVolume: doComposite = True
+        if compositeId==filterCompositeId: doComposite = True
+        if targetPathParts and \
+           lib.targetMatches(targetPathParts, system, craft, target, camera):
+            doComposite = True
 
-        # gather image filenames into channelRows so can merge them
-        if compositeId == startId:
-            channelRows.append(row)
-        else:
-            # we're seeing a new compositeId, so process all the gathered channels
-            processChannels(channelRows,startVol,nfile,startId)
-            startId = compositeId
-            startVol = volume
-            channelRows = [row]
-            nfile += 1
+        if doComposite:
+
+            # gather image filenames into channelRows so can merge them
+            if compositeId == startId:
+                channelRows.append(row)
+            else:
+                # we're seeing a new compositeId, so process all the gathered channels
+                processChannels(channelRows,startVol,nfile,startId)
+                startId = compositeId
+                startVol = volume
+                channelRows = [row]
+                nfile += 1
 
     # process the last leftover group
     processChannels(channelRows,startVol,nfile,startId)

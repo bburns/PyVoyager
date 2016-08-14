@@ -89,7 +89,6 @@ C1532333,2
 C1533554,2
 # last red spot approach frame
 C1534819,2
-
 # then starts rotation sequence
 # trim down a bit for now - too long and not stable yet
 C1537728+,0
@@ -97,7 +96,6 @@ C1538528+,1
 C1542032+,0
 # last rotation frame
 # C1550852
-
 #. edit out the very chaotic quadrant mosaic frames
 C1550858+,0
 # nearly good red spot image
@@ -105,7 +103,6 @@ C1607923,10
 C1607929+,0
 # last frame
 # C1607953
-
 # slow down on the two color psychedelic clouds
 #. could cut this segment short also, for now
 # first two color frame
@@ -301,7 +298,6 @@ C1638513,25
 C1640946,25
 C1641253,25
 C1642002,25
-
 # cut out wobbly crescent segment
 # first uncentered crescent frame
 C1643012+,0
@@ -315,20 +311,36 @@ C1690946+,2
 
 
 # Callisto
+# narrow
 # starts at C1474515
 C1632156+,4
 C1632300,30,last small shot
+
+C1639944+,2
+C1640010-
 C1641752,0,corner
 C1641753,8
+C1641806,30
+C1641814,30
+C1641822,30
 C1641827,8
+C1641832,30
 C1641837,8
 C1642124,0,corner
 C1642141,30
-C1642141,8
-C1642205,8
+C1642151,30,bigcrater
+C1642207,30
+C1642211,30,bigcrater
+C1642222,30
+C1642225,30
+C1642434,30
+C1642446,30
+C1642506,30,string of craters
+C1642518,30
 C1642546,0,corner
 C1642638,0,corner
 C1642648,0,noise
+
 C1642723,0,blur
 C1642725,0,blur
 C1642727,0,blur
@@ -337,7 +349,8 @@ C1642821,0,noise
 C1642823,0,corner
 C1648814,20,crescent
 C1677918,20,last shot
-
+# wide
+C1642205,8
 
 
 # Europa

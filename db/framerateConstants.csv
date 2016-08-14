@@ -12,7 +12,8 @@
 # down for moons. 
 # The frame rate is kind of arbitrary - it depends on how rapidly pictures were taken.
 
-# Also see config.frameRateNCopiesMax, which sets the slowest speed.
+# Also see config.frameRateNCopiesMax, which sets the slowest speed, AFTER using
+# these values.
 
 
 targetKey,frameRateConstant
@@ -22,7 +23,8 @@ Jupiter-Voyager1-Jupiter-Narrow,0.5
 Jupiter-Voyager1-Jupiter-Wide,0.5
 Jupiter-Voyager1-Callisto-Narrow,30
 Jupiter-Voyager1-Callisto-Wide,10
-Jupiter-Voyager1-Europa,25
+Jupiter-Voyager1-Europa-Narrow,20
+Jupiter-Voyager1-Europa-Wide,25
 Jupiter-Voyager1-Ganymede-Narrow,15
 Jupiter-Voyager1-Ganymede-Wide,7
 Jupiter-Voyager1-Io-Narrow,15

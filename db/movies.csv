@@ -10,11 +10,12 @@ movieId,clipId
 # --------------------------------------------------------------------------------
 Jupiter-Voyager1,Jupiter-Voyager1-Title
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Wide
 Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow
 Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow
 Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Wide
-Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow
+Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide
 Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
 

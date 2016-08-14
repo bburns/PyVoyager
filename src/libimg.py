@@ -31,25 +31,38 @@ def inpaintImage(infile, priorfile, outfile, targetRadius):
     assumes both files are centered on the target.
     targetRadius is the expected size of the target.
     """
+    debug = False
+
+    # read image and prior image
     im = cv2.imread(infile, 0) #.param
     imPrior = cv2.imread(priorfile, 0) #.param
+    if debug: show(im)
+    if debug: show(imPrior)
 
-    # get mask for target radius and where im is 0 or 255
-    mask = np.zeros(im.shape[:2], np.uint8)
-    mask = cv2.circle(mask, (399,399), targetRadius, 255, -1) # -1=filled #.params
-    # show(mask)
+    # get mask for target radius
+    maskTarget = np.zeros(im.shape[:2], np.uint8)
+    maskTarget = cv2.circle(maskTarget, (399,399), targetRadius, 255, -1) # -1=filled #.params
+    if debug: show(maskTarget)
 
-    # get mask where image is black (or very dark)
-    mask2 = np.array(255 * (im<5), np.uint8)
-    # show(mask2)
+    # get mask where image is black
+    maskBlack = np.array(255 * (im<=4), np.uint8) #.param
+    if debug: show(maskBlack)
 
-    # merge the masks
-    mask3 = mask & mask2
-    # show(mask3)
+    # get mask where image is white
+    maskWhite = np.array(255 * (im>=255), np.uint8) #.param
+    if debug: show(maskWhite)
+
+    # combine the masks
+    maskEmpty = maskBlack | maskWhite
+    if debug: show(maskEmpty)
+
+    # merge with target mask
+    maskPaint = maskTarget & maskEmpty
+    if debug: show(maskPaint)
 
     # pull pixels from imPrior where mask is
-    imOut = (im & (255-mask3)) + (imPrior & mask3)
-    # show(imOut)
+    imOut = (im & (255-maskPaint)) + (imPrior & maskPaint)
+    if debug: show(imOut)
 
     cv2.imwrite(outfile, imOut)
 

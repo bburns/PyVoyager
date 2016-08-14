@@ -102,9 +102,9 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
         if priorfile and imageFraction < 1: #. ?
             if volume==filterVolume or fileId==filterImageId:
                 if os.path.isfile(infile):
-                    print infile
-                    print priorfile
-                    print outfile
+                    # print infile
+                    # print priorfile
+                    # print outfile
 
                     print 'Volume %s inpainting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
                     nfile += 1
@@ -125,6 +125,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
 if __name__ == '__main__':
     os.chdir('..')
     # vgInpaint(5101)
-    vgInpaint('','C1464114') # first image with gap, in 5101
+    # vgInpaint('','C1464114') # first image with gap, in 5101
+    vgInpaint('','C1494354')
     print 'done'
 

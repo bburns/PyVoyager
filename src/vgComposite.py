@@ -59,7 +59,7 @@ def processChannels(channelRows, volume, nfile, startId):
             x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
             # if don't have an inpaint or centered file, use the adjusted file
-            channelfilepath = lib.getFilepath('inpaint', volume, fileId, filter)
+            channelfilepath = lib.getFilepath('inpaint', volume, fileId)
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             if not os.path.isfile(channelfilepath):

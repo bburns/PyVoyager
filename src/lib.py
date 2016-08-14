@@ -171,7 +171,7 @@ def getJoinRow(csvReader, joinColumn, joinValue):
     comments, and the first data line (the header).
     """
     try:
-        row = csvReader.peek()
+        row = csvReader.peek() # will throw error if eof
         currentValue = row[joinColumn] # if blank row this will throw error also
     except:
         return None
@@ -219,7 +219,8 @@ def openCsvWriter(filename):
     Use like 'writer.writerow(row)'
     """
     f = open(filename, 'wb')
-    writer = csv.writer(f)
+    # writer = csv.writer(f)
+    writer = csv.writer(f, lineterminator='\n')
     return writer, f
 
 
@@ -231,7 +232,7 @@ def openCsvReader(filename):
     Then can say reader.peek() to just look at the current record.
     """
     f = open(filename, 'rt')
-    f = dataLines(f)
+    f = dataLines(f) # ignore comments, blank lines and header row
     reader = more_itertools.peekable(csv.reader(f))
     return reader, f
 

@@ -19,7 +19,8 @@ import lib
 import libimg
 
 
-import vgCenter
+# import vgCenter
+import vgInpaint
 
 
 # def processChannels(channelRows):
@@ -57,9 +58,10 @@ def processChannels(channelRows, volume, nfile, startId):
                      if len(row)>config.colCompositesWeight else 1.0
             x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
-            #. may use imageSource to know adjusted vs centered?
-            # if don't have a centered file, use the adjusted file
-            channelfilepath = lib.getFilepath('center', volume, fileId, filter)
+            # if don't have an inpaint or centered file, use the adjusted file
+            channelfilepath = lib.getFilepath('inpaint', volume, fileId, filter)
+            if not os.path.isfile(channelfilepath):
+                channelfilepath = lib.getFilepath('center', volume, fileId, filter)
             if not os.path.isfile(channelfilepath):
                 channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
             if os.path.isfile(channelfilepath):
@@ -97,7 +99,8 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
 
     if filterVolume!='':
 
-        inputSubfolder = lib.getSubfolder('center', filterVolume)
+        # inputSubfolder = lib.getSubfolder('center', filterVolume)
+        inputSubfolder = lib.getSubfolder('inpaint', filterVolume)
         outputSubfolder = lib.getSubfolder('composite', filterVolume)
 
         # quit if volume folder exists
@@ -106,7 +109,8 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
             return
 
         # build the centered images for the volume, if not already there
-        vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
+        # vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
+        vgInpaint.vgInpaint(filterVolume, '', optionOverwrite=False, directCall=False)
 
         # make folder
         lib.mkdir(outputSubfolder)

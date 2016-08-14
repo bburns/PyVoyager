@@ -12,20 +12,12 @@ fileId,additionId,nframes
 # Jupiter Voyager 1
 # ----------------------------------------
 
-# Jupiter
-# C1620647,images/jupiter-voyager1-jupiter-mosaic-bjorn-jonsson-800x800.jpg,60
-# C1635358,images/jupiter-voyager1-jupiter-red-spot-mosaic-bjorn-jonsson-800x800.jpg,60
 
-# Callisto
-# C1642825,images/jupiter-voyager1-callisto-mosaic-mmokkp-800x800.jpg,60
-
-# Ganymede
-# C1640725,images/jupiter-voyager1-ganymede-mosaic-bjorn-jonsson-800x800.jpg,60
 
 # Io
-# C1648109,images/jupiter-voyager1-io-mosaic-ted-stryk-800x800.jpg,60
-# C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
-# C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
+C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
+#. source?
+C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
 
 
 
@@ -40,7 +32,7 @@ fileId,additionId,nframes
 
 # an ariel mosaic
 #. source? wikipedia, but... annotate the image
-# C2684539,images/uranus-voyager2-ariel-mosaic-sourceQ-800x800.jpg,60
+C2684539,images/uranus-voyager2-ariel-mosaic-sourceQ-800x800.jpg,60
 
 
 

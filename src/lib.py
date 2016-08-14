@@ -23,7 +23,7 @@ import config
 
 def getImageFraction(csvPositions, fileId):
     "look up the imageFraction for the given image in the positions.csv file"
-    rowPositions = lib.getJoinRow(csvPositions, config.colPositionsFileId, fileId)
+    rowPositions = getJoinRow(csvPositions, config.colPositionsFileId, fileId)
     if rowPositions:
         imageFraction = float(rowPositions[config.colPositionsImageFraction])
     else: # just for rhea and sky

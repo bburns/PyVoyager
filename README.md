@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.45
+Version 0.46 inprogress
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
 
@@ -310,8 +310,9 @@ History
 <!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 
-<!-- Version 0.46 (2016-08) -->
-<!-- ---------------------------------------- -->
+Version 0.46 (2016-08)
+----------------------------------------
+- Add `vg inpaint` step to fill in missing parts of target, where possible
 
 
 Version 0.45 (2016-08-14)

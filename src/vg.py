@@ -11,6 +11,7 @@ PyVoyager commands
   vg adjust         - adjust images (rotate and enhance)
   vg denoise        - remove noise from images
   vg center         - center images
+  vg inpaint        - fill in missing pixels where possible
   vg composite      - create color images
   vg target         - copy images into target subfolders
   vg clips          - create bw or color clips
@@ -59,6 +60,7 @@ import vgConvert
 import vgAdjust
 import vgDenoise
 import vgCenter
+import vgInpaint
 import vgComposite
 import vgMosaic
 import vgAnnotate
@@ -151,6 +153,17 @@ elif cmd=="center":
     else:
         for filterVolume in filterVolumes:
             vgCenter.vgCenter(filterVolume, '', optionOverwrite)
+    log.stop()
+    lib.beep()
+
+elif cmd=="inpaint":
+    log.start()
+    if filterImageIds:
+        for imageId in filterImageIds:
+            vgInpaint.vgInpaint('', imageId, optionOverwrite)
+    else:
+        for filterVolume in filterVolumes:
+            vgInpaint.vgInpaint(filterVolume, '', optionOverwrite)
     log.stop()
     lib.beep()
 

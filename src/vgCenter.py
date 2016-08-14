@@ -33,8 +33,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     filterVolume = str(filterVolume) # eg '5101'
     filterImageId = filterImageId.upper() # always capital C
 
-    #. need to handle indiv imageids - stabilize to the target disc.
-    #. will eventually also want to fine tune in relation to previous image.
+    #. will eventually also want to fine tune stability in relation to previous and next image.
 
     # #. if file contains the given volume, either stop or remove those lines
     # s = ',' + filterVolume + ','

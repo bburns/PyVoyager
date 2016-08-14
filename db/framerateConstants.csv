@@ -3,17 +3,20 @@
 # This file controls the frame rate for different targets.
 # --------------------------------------------------------------------------------
 
-# See also framerates.csv, which controls the frame rate for each image. 
-
-# The default frameRateConstant is set in config.frameRateConstant, e.g. 60.
-# The values in this file override the default.
 # The frame rate is calculated as nframes = frameRateConstant * imageFraction,
 # so movie gets slower as get closer to the target - typically need to slow things 
 # down for moons. 
+
+# The default frameRateConstant is set in config.frameRateConstant, e.g. 60.
+# The values in this file override the default.
+
 # The frame rate is kind of arbitrary - it depends on how rapidly pictures were taken.
 
 # Also see config.frameRateNCopiesMax, which sets the slowest speed, AFTER using
 # these values.
+
+# See also framerates.csv, which controls the frame rate for each image, overriding 
+# all other settings. 
 
 
 targetKey,frameRateConstant

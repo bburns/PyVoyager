@@ -12,20 +12,46 @@ import numpy as np
 import cv2
 import math
 import random
-# import matplotlib.image as mpim # for imread, imsave
-# import scipy.misc as misc # for imsave - uses PIL - see http://stackoverflow.com/a/1713101/243392
 
-# for makeTitlePage, annotateImageFile
 import PIL
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
-
 import config
 import lib
 import log
 
+
+
+
+def inpaintImage(infile, priorfile, outfile, targetRadius):
+    """
+    fill in regions of black or white in infile using pixels from priorfile.
+    assumes both files are centered on the target.
+    targetRadius is the expected size of the target.
+    """
+    im = cv2.imread(infile, 0) #.param
+    imPrior = cv2.imread(priorfile, 0) #.param
+
+    # get mask for target radius and where im is 0 or 255
+    mask = np.zeros(im.shape[:2], np.uint8)
+    mask = cv2.circle(mask, (399,399), targetRadius, 255, -1) # -1=filled #.params
+    # show(mask)
+
+    # get mask where image is black (or very dark)
+    mask2 = np.array(255 * (im<5), np.uint8)
+    # show(mask2)
+
+    # merge the masks
+    mask3 = mask & mask2
+    # show(mask3)
+
+    # pull pixels from imPrior where mask is
+    imOut = (im & (255-mask3)) + (imPrior & mask3)
+    # show(imOut)
+
+    cv2.imwrite(outfile, imOut)
 
 
 
@@ -330,7 +356,8 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     """
 
     # get fixed image of filled target disc
-    imFixed = np.zeros((800,800), np.uint8) #.params
+    # imFixed = np.zeros((800,800), np.uint8) #.params
+    imFixed = np.zeros(infile.shape[:2], np.uint8)
     cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
 
     # get input file

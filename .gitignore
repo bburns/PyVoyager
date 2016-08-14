@@ -25,3 +25,5 @@ src/experiments/noise/
 test/denoise/hide/*denoised*
 annex/
 music/
+db/centersNew.csv
+db/compositesOld.csv

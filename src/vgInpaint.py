@@ -2,7 +2,7 @@
 """
 vg inpaint command
 
-Fill in gaps in targets, where possible, using pixels from prior frame. 
+Fill in gaps in targets, where possible, using pixels from prior frame.
 """
 
 import os
@@ -23,7 +23,7 @@ import vgCenter
 
 
 def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True):
-    
+
     "Build centered and stabilized images for given volume and write x,y,radius to centers.csv"
 
     filterVolume = str(filterVolume) # eg '5101'
@@ -41,7 +41,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
 
         # build the previous images for the volume, if not already there
         vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
-        
+
         # create folder
         lib.mkdir(outputSubfolder)
 
@@ -65,9 +65,9 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
     for rowFiles in csvFiles:
         volume = rowFiles[config.colFilesVolume]
         fileId = rowFiles[config.colFilesFileId]
-        
+
         # filter to given volume/image
-        # if volume!=filterVolume and fileId!=filterImageId: continue 
+        # if volume!=filterVolume and fileId!=filterImageId: continue
 
         # get image properties
         filter = rowFiles[config.colFilesFilter]
@@ -83,7 +83,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
         # build key
         targetKey = system + '-' + craft + '-' + target + '-' + camera
         # print targetKey
-        
+
         # get expected angular size (as fraction of frame) and radius
         imageFraction = lib.getImageFraction(csvPositions, fileId)
         targetRadius = int(400*imageFraction) #.param
@@ -95,7 +95,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
 
         # print infile
         # print outfile
-        
+
         # get previous image, if any
         priorfile = lastImageInTargetSequence.get(targetKey)
         # print priorfile
@@ -117,9 +117,10 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
         # remember this image
         lastImageInTargetSequence[targetKey] = infile
 
-
     fPositions.close()
     fFiles.close()
+    print
+
 
 
 if __name__ == '__main__':

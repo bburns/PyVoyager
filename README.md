@@ -312,7 +312,7 @@ History
 
 Version 0.46 (2016-08)
 ----------------------------------------
-- Add `vg inpaint` step to fill in missing parts of target, where possible
+- Add `vg inpaint` step to fill in missing or whited out parts of target, where possible
 
 
 Version 0.45 (2016-08-14)

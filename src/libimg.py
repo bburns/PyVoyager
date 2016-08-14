@@ -369,8 +369,7 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     """
 
     # get fixed image of filled target disc
-    # imFixed = np.zeros((800,800), np.uint8) #.params
-    imFixed = np.zeros(infile.shape[:2], np.uint8)
+    imFixed = np.zeros((800,800), np.uint8) #.params
     cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
 
     # get input file

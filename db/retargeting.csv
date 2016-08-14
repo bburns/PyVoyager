@@ -31,6 +31,17 @@ C1607925,Amalthea,Jupiter
 C1607927,Amalthea,Jupiter
 C1615351,Amalthea,Jupiter
 C1615355,Amalthea,Jupiter
+C1550828,Amalthea,Sky
+C1610402,Amalthea,Sky
+C1613716,Amalthea,Sky
+C1638137,Amalthea,Sky
+C1638539,Amalthea,Sky
+C1638541,Amalthea,Sky
+C1638543,Amalthea,Sky
+C1638545,Amalthea,Sky
+C1638547,Amalthea,Sky
+C1638643,Amalthea,Sky
+C1593337,Amalthea,Io
 # wide
 C1550829,Amalthea,Jupiter
 C1610357,Amalthea,Jupiter
@@ -39,7 +50,9 @@ C1613711,Amalthea,Jupiter
 C1613717,Amalthea,Jupiter
 C1630316,Amalthea,Jupiter
 
+
 # Callisto
+# narrow
 C1461430,Callisto,Europa
 C1615559,Callisto,Jupiter
 C1615601,Callisto,Jupiter
@@ -88,6 +101,9 @@ C1643445,Callisto,Sky
 C1643451,Callisto,Sky
 C1643455,Callisto,Sky
 C1643457,Callisto,Sky
+# wide
+C1642559,Callisto,Sky
+C1642601,Callisto,Sky
 
 # Europa
 C1534314,Europa,Callisto

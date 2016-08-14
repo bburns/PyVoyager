@@ -349,15 +349,19 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, mi
 
 
 
-def makeSymbolicLinks(targetFolder, sourcePath, nfile, ncopies):
-    "Make ncopies of symbolic link from the source to the target file, starting with number nfile"
+def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
+    """
+    Make ncopies of symbolic links from the source file to the target folder.
+    Numbers files sequentially using config.videoFilespec, starting with number nfile.
+    config.videoFilespec is something like "img%05d.jpg".
+    """
     # this requires running from an admin console
     for i in range(ncopies):
         n = nfile + i
-        targetPath2 = targetFolder + config.videoFilespec % n # eg 'img00001.png'
+        targetPath = targetFolder + config.videoFilespec % n # eg 'img00001.png'
         # eg mklink data\step09_clips\Neptune\Voyager2\Neptune\Narrow\Bw\img00001.png
-        #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png > nul
-        cmd = 'mklink ' + targetPath2 + ' ' + sourcePath + ' > nul'
+        #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png
+        cmd = 'mklink ' + targetPath + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
         os.system(cmd)
 

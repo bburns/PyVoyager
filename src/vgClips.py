@@ -71,6 +71,19 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
     return ncopies
 
 
+def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
+    """
+    add symbolic links from imageFilepath to target folder and update nfile count for target.
+    """
+    nfile = ntargetDirFiles.get(targetKey) or 0
+    # need to get out of the target dir - we're always this deep - could parameterize if needed
+    imagePathRelative = '../../../../../../../' + imageFilepath
+    lib.makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
+    # increment the file number for the target folder
+    nfile += ncopies
+    ntargetDirFiles[targetKey] = nfile
+
+
 def stageFiles(filterVolumes, targetPathParts):
     """
     Make links from source files to clip stage folders.
@@ -90,7 +103,7 @@ def stageFiles(filterVolumes, targetPathParts):
 
     # keep track of number of files in each target subfolder,
     # so we can number files appropriately and know when to add titles
-    nfilesInTargetDir = {}
+    ntargetDirFiles = {}
 
     # how many times should we duplicate the images?
     ncopies = 1 # default
@@ -137,7 +150,6 @@ def stageFiles(filterVolumes, targetPathParts):
            lib.targetMatches(targetPathParts, system, craft, target, camera):
             addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
-        # print targetKey, ncopies, addImage
         if addImage and ncopies > 0:
 
             # use annotated image if available, else mosaic or composite.
@@ -158,34 +170,23 @@ def stageFiles(filterVolumes, targetPathParts):
                 lib.mkdir_p(targetFolder)
 
                 # get current file number in that folder, or start at 0
-                nfile = nfilesInTargetDir.get(targetKey)
-                if not nfile: nfile = 0
+                nfile = ntargetDirFiles.get(targetKey) or 0
 
                 # if we haven't seen this subfolder before add titlepage a few times.
-                # titlepages are created in the previous step, vgBuildTitles.
+                # titlepages are created in the previous step, vgTitle.
                 if config.includeTitles and nfile==0:
-                    titleImageFilepath = config.folders['titles'] + subfolder + 'title' + \
+                    titleFilepath = config.folders['titles'] + subfolder + 'title' + \
                                          config.extension
-                    # need to get out of the target dir - we're always this deep
-                    titleImagePathRelative = '../../../../../../../' + titleImageFilepath
                     ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
-                    lib.makeSymbolicLinks(targetFolder, titleImagePathRelative,
-                                          nfile, ntitleCopies)
-                    nfile += ntitleCopies
+                    addImages(titleFilepath, targetFolder, ntitleCopies,
+                              ntargetDirFiles, targetKey)
 
                 print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 
-                # link to file
-                # note: mklink requires admin privileges,
-                # so must run this script in an admin console
-                # eg imageFilepath=data/step3_centers/VGISS_5101/centered_C1327321_RAW_Orange.png
-                # need to get out of the target dir
-                imagePathRelative = '../../../../../../../' + imageFilepath
-                lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
-
-                # increment the file number for the target folder
-                nfile += ncopies
-                nfilesInTargetDir[targetKey] = nfile
+                # add links to file
+                # note: mklink requires admin privileges, so must run in an admin console
+                # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
+                addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
 
         # check for additional images in additions.csv
         rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -217,11 +218,7 @@ def stageFiles(filterVolumes, targetPathParts):
                 folder = config.folders['additions']
                 imageFilepath = folder + filetitle
                 print imageFilepath
-                imagePathRelative = '../../../../../../../' + imageFilepath
-                lib.makeSymbolicLinks(targetFolder, imagePathRelative, nfile, ncopies)
-                # increment the file number for the target folder
-                nfile += ncopies
-                nfilesInTargetDir[targetKey] = nfile
+                addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
             else:
                 print 'unhandled addition', additionId
                 # if '_composite':

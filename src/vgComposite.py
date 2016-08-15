@@ -159,10 +159,14 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
         # if volume!=filterVolume and compositeId!=filterCompositeId: continue
         doComposite = False
         if volume==filterVolume: doComposite = True
-        if compositeId==filterCompositeId: doComposite = True
-        if targetPathParts and \
-           lib.targetMatches(targetPathParts, system, craft, target, camera):
-            doComposite = True
+        # if compositeId==filterCompositeId: doComposite = True
+        # if targetPathParts and \
+           # lib.targetMatches(targetPathParts, system, craft, target, camera):
+            # doComposite = True
+        compositeOk = (compositeId==filterCompositeId)
+        targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
+        # note AND -
+        if compositeOk and targetPathOk: doComposite = True
 
         if doComposite:
 

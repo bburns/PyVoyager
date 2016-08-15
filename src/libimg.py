@@ -67,8 +67,6 @@ def inpaintImage(infile, priorfile, outfile, targetRadius):
     cv2.imwrite(outfile, imOut)
 
 
-
-
 def getGradientMagnitude(im):
     "Get magnitude of gradient for given image"
     ddepth = cv2.CV_32F
@@ -93,7 +91,6 @@ def getGradientMagnitude(im):
 
     mag = cv2.addWeighted(dxabs, 0.5, dyabs, 0.5, 0)
     return mag
-
 
 
 def annotateImageFile(infile, outfile, imageId, time, distance, note):
@@ -170,7 +167,6 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     draw.text(pos, s, fgcolor, font=font)
 
     return img
-
 
 
 def denoiseImageFile(infile, outfile):
@@ -613,7 +609,6 @@ def combineChannels(channels):
     # rowRed = None
     # rowGreen = None
     # rowBlue = None
-    # # rowClear = None
     # for row in channels:
     #     filename = row[colFilename]
     #     # note: this returns None if filename is invalid - doesn't throw an error
@@ -643,8 +638,6 @@ def combineChannels(channels):
     #         rowGreen = row
     #     if filter in ['Blue','Violet','Uv','Ch4_Js','Ch4_U']:
     #         rowBlue = row
-    #     # if filter in ['Clear']:
-    #         # rowClear = row
 
     # # assign a blank image if missing a channel
     # blank = np.zeros((h,w), np.uint8)

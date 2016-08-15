@@ -50,6 +50,7 @@ def processChannels(channelRows, optionAlign):
     #. could also have zoom factor, warp info, rotate
     # for row in channelRows: print row
     centered = False
+    weightXYFilledOut = False
     if len(channelRows) > 0:
         volume = ''
         compositeId = ''
@@ -63,6 +64,8 @@ def processChannels(channelRows, optionAlign):
                      if len(row)>config.colCompositesWeight else 1.0
             x = int(row[config.colCompositesX]) if len(row)>config.colCompositesX else 0
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
+
+            if len(row)>config.colCompositesWeight: weightXYFilledOut = True
 
             # if don't have an inpaint or centered file, use the adjusted file
             channelfilepath = lib.getFilepath('inpaint', volume, fileId)
@@ -81,6 +84,7 @@ def processChannels(channelRows, optionAlign):
         if len(channels)>0:
             outfilepath = lib.getFilepath('composite', volume, compositeId)
             if centered: optionAlign = False # don't try to align images if already centered
+            if weightXYFilledOut: optionAlign = False # don't align if already have values
             im, channels = libimg.combineChannels(channels, optionAlign)
             libimg.imwrite(outfilepath, im)
             # if -align: update channels x,y etc
@@ -155,27 +159,18 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # open compositesNew.csv for writing
-    if optionAlign: csvNew, fNew = lib.openCsvWriter(config.dbCompositesNew)
+    if optionAlign:
+        lib.rm(config.dbCompositesNew)
+        csvNew, fNew = lib.openCsvWriter(config.dbCompositesNew)
 
     # iterate over composites.csv records
     csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
-    # need access to comments and blank lines so don't use openCsvReader
-    # fComposites = open(config.dbComposites,'rt')
-    # csvComposites = csv.reader(fComposites)
-    # csvComposites.next() # skip header row! #. brittle
 
     startId = ''
     startVol = ''
     channelRows = []
     nfile = 0
     for row in csvComposites:
-
-        # if row==[]: # blank line
-        #     if optionAlign: csvNew.writerow(row)
-        #     continue
-        # elif row[0][0]=='#': # comment
-        #     if optionAlign: csvNew.writerow(row)
-        #     continue
 
         # get composite info
         compositeId = row[config.colCompositesCompositeId]
@@ -226,6 +221,8 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
     # if optionAlign: fNew.close()
     fFiles.close()
     fComposites.close()
+
+
 
 
 if __name__ == '__main__':

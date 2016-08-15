@@ -312,21 +312,22 @@ History
 
 Version 0.46 (2016-08)
 ----------------------------------------
-- Add `vg inpaint` step to fill in missing or whited out parts of target, where possible
-- Add `-align` option to `vg composite` to attempt to align channels and update `composites.csv`
+- Add `-align` option to `vg composite` - will attempt to align channels and update `composites.csv` records where not already set
+
 
 
 Version 0.45 (2016-08-14)
 ----------------------------------------
+- Add `vg inpaint` step to fill in missing or whited out parts of target, where possible
 - Frame rate constants can be set by System-Craft-Target-Camera
 
 Made Voyager 1 Jupiter system movie - lots of edits to composites.csv and framerates.csv
 
-Jupiter rotation segment still a bit unstable.
+Jupiter rotation segment still a bit unstable - cloud and moon composites not aligned, except where centered.
 
 Version 0.44 (2016-08-12)
 ----------------------------------------
-- Add `vg annotate` step - annotate images with imageId, date/time, distance (km), NOTE field text
+- Add optional `vg annotate` step - annotate images with imageId, date/time, distance (km), NOTE field text
 - `vg clips` can include additional images after frames, as specified in `additions.csv` - use to add hand-tuned mosaics, etc
 - `vg adjust` ignores brightest n pixels before doing histogram stretch, to avoid hotspots keeping image dim
 - Remove `vg clip` bw/color options - all clips will draw from composite step, which will include single channel 'composites' - keeps pipeline simple

@@ -4,11 +4,13 @@ PyVoyager
 
 Version 0.46 inprogress
 
-PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. Ideally the movie would also include some mosaics generated with hand-annotated data, and/or separately hand-assembled mosaics of better quality.
+PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
+
+The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate. 
 
 This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files. 
 
-It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. I'm working on improving the centering/stabilization and coloring routines.
+It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. 
 
 There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore!
 
@@ -42,34 +44,41 @@ https://www.youtube.com/watch?v=o4zh8C-ma_A
 Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks)
 
 
-What you can do
-----------------------------------------
+<!-- What you can do -->
+<!-- ---------------------------------------- -->
 
-Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required - 
+<!-- Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required -  -->
 
 <!-- - Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command. -->
 <!-- - Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`.  -->
-- Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file.
-- Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
-- Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
-- And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file. 
+<!-- - Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file. -->
+<!-- - Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there.  -->
+<!-- - Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file.  -->
+<!-- - And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file.  -->
 
 
 Pipeline
 ----------------------------------------
 
-Voyager consists of a command line interface to a pipeline of Python programs with the following steps:
+Voyager consists of a command line interface to a pipeline of Python programs with the following steps (many not completed yet):
 
-* Download Voyager datasets from **PDS archives** [1]
-* Extract the contents of the tar.gz archives
-* Convert Voyager IMG images to PNGs using **img2png** [2]
-* Adjust the contrast of the images and rotate them
-* Center images on the target using blob detection using **SciPy** [3] and Hough circle detection using **OpenCV** [4]. Other libraries used include **NumPy** [5] and **Matplotlib** [6]
-* Stabilize the images with ECC Maximization [13] in **OpenCV**
-* Colorize frames by combining images, where possible, using **OpenCV**
-* [Build mosaics from images with hand-annotated information]
-* Arrange images into folders corresponding to different planets/spacecrafts/targets/cameras
-* Make movies for each target flyby and add titles [and music] using **ffmpeg** [7] and **Pillow** [8]
+* Download - download archives from **PDS archives** [1]
+* Unzip - decompress archive volumes
+* Convert - convert RAW images to pngs using **img2png** [2]
+* Flatfield - subtract good flatfields
+* Adjust - rotate180, histogram stretch
+* Denoise - identify/eliminate noise where possible
+* Center - center and stabilize images
+* Dereseau - remove reseau marks cleanly
+* Inpaint - fill in black/white areas with pixels from prior frame
+* Undistort - geometric correction 800x800->1000x1000
+* Composite - combine channels using auto+manual info
+* Mosaic - combine images using auto+manual info
+* Colorize - colorize bw images with lores color info - need to know viewing geometry, so after mosaic step
+* Crop - crop and zoom frames, eg io volcano
+* Annotate - add caption information, point out features, etc
+* Clips - combine images into short movies, one per target
+* Movies - combine clips into movies, add music
 
 
 Installation
@@ -77,17 +86,11 @@ Installation
 
 You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** version 3 [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], **more-itertools** [14], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12]. 
 
-I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**. 
+I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**, and added the rest with `pip`. 
 
-At this point I'm not sure how rough the installation process might be - eventually I'll make some step-by-step instructions. 
+At this point I'm not sure how rough the installation process might be. 
 
-
-Compatibility
-----------------------------------------
-
-The main limitation is **img2png**, which is only available on Windows - this is what converts the PDS IMG files to PNGs, so it's an important step.
-
-In the future, the PNG images (or JPGs) could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use.
+Note that **img2png** is only available on Windows - in the future, the PNG images (or JPGs) could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use, if the editing needs to be distributed.
 
 
 Usage
@@ -103,6 +106,7 @@ Entering `vg` will show the available commands:
       vg adjust         - adjust images (rotate and enhance)
       vg denoise        - remove noise from images
       vg center         - center images
+      vg inpaint        - fill in missing pixels where possible
       vg composite      - create color images
       vg target         - copy images into target subfolders
       vg clips          - create bw or color clips
@@ -133,11 +137,11 @@ Entering `vg` will show the available commands:
 
     e.g. vg clips 8205 //triton
 
-Most commands will fill in any missing intermediate steps, so for example, to download, denoise, center, composite, mosaic, and annotate all the Uranus images (which might take a while - there are 7 volumes of 1-3GB each), enter
+Most commands will fill in any missing intermediate steps, so for example, to download, denoise, center, infill, composite, mosaic, and annotate all the Uranus images (which might take a while - there are 7 volumes of 1-3GB each), enter
 
     > vg annotate 7*
 
-Or you can be more explicit and run them individually, as folllows -
+Or you can be more explicit and run them individually, as follows (and note, many steps are optional, like denoise, infill, mosaic, annotate - though might need to tweak the code to turn off the automatic running of previous step) -
 
 Download a tarfile volume, e.g. volume 5101 - the first dataset, Jupiter approach
 
@@ -183,7 +187,7 @@ to generate the narrow angle Triton flyby movies, or
 
     > vg clips
 
-to generate all available color movies.
+to generate all available movies.
 
 Then these clips can be assembled into movies (one per system and then one overall movie, as specified in db/movies.csv) with
 
@@ -238,7 +242,7 @@ Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
 
-After downloading the tar files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
+After downloading the tar.gz files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
 
 The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv` (included in the distribution). This helps with the Hough circle detection, and also to stabilize the image. 
 
@@ -252,10 +256,10 @@ Centering is turned off at closest approach by determining when the target size 
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`, included with the distribution) looks like this:
 
-    volume,fileid,phase,craft,target,time,instrument,filter,note
-    5104,C1541422,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
-    5104,C1541424,Jupiter,Voyager1,Jupiter,1979-02-01T00:38:40,Narrow,Orange,3 COLOR ROTATION MOVIE
-    5104,C1541426,Jupiter,Voyager1,Jupiter,1979-02-01T00:40:16,Narrow,Green,3 COLOR ROTATION MOVIE
+    fileid,volume,phase,craft,target,time,instrument,filter,note
+    C1541422,5104,Jupiter,Voyager1,Jupiter,1979-02-01T00:37:04,Narrow,Blue,3 COLOR ROTATION MOVIE
+    C1541424,5104,Jupiter,Voyager1,Jupiter,1979-02-01T00:38:40,Narrow,Orange,3 COLOR ROTATION MOVIE
+    C1541426,5104,Jupiter,Voyager1,Jupiter,1979-02-01T00:40:16,Narrow,Green,3 COLOR ROTATION MOVIE
     ...
 
 though different targets and camera records can be also interleaved with others.
@@ -264,10 +268,10 @@ One issue is that some images have more than one target in them (e.g. Jupiter wi
 
 The master list of files (`db/files.csv`) has been compiled into a list of composite frames to build using the `vg init composites` command, based on repeating groups of filters for the different targets and cameras. The resulting file (`db/composites.csv`) looks like this:
 
-    volume,compositeId,centerId,filter
-    5104,C1541422,C1541422,Blue
-    5104,C1541422,C1541424,Orange
-    5104,C1541422,C1541426,Green
+    compositeId,centerId,volume,filter
+    C1541422,C1541422,5104,Blue
+    C1541422,C1541424,5104,Orange
+    C1541422,C1541426,5104,Green
 
 This file is used by the `vg composite <volume>` command to generate the color frames.
 
@@ -290,20 +294,6 @@ Issues
 There's a Trello board to track issues and progress here - https://trello.com/b/kEkGDMYR/voyager
 
 
-Next steps
-----------------------------------------
-
-* Improve stabilization/centering routines - handle off-screen centers and crescents
-* Remove noise
-* Improve color frame detection and rendering routines - borrow missing channels from previous frames, use all available channels, use more precise colors than rgb, increase color saturation, colorize target consistently, eg with a large reference view (eg nice blue neptune globe), add hand-annotation for alignment where necessary
-* Add audio
-* Host jpg/png images somewhere for download to make cross-platform - put on an Amazon s3 server
-* Build mosaics with hand-annotated information, include in movies
-* Host mp4s on a server for better quality (YouTube downgrades some to 360p). Or Vimeo?
-* Option to make b&w movies using one filter, to reduce flickering
-* Add adjustment step to correct images - remove reseau marks, subtract dark current images, stretch histogram (?)
-
-
 History
 ----------------------------------------
 
@@ -313,7 +303,6 @@ History
 Version 0.46 (2016-08)
 ----------------------------------------
 - Add `-align` option to `vg composite` - will attempt to align channels and update `composites.csv` records where not already set
-
 
 
 Version 0.45 (2016-08-14)
@@ -459,7 +448,6 @@ License
 ----------------------------------------
 
 This software is released under the MIT license - see LICENSE.md.
-
 
 
 [1]: http://pds-rings.seti.org/voyager/

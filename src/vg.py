@@ -171,16 +171,23 @@ elif cmd=="inpaint":
     lib.beep()
 
 elif cmd=="composite":
+    # can filter on volumes and targetpath OR ids and targetpath, but not vols and ids
     if filterImageIds:
         for compositeId in filterImageIds:
-            vgComposite.vgComposite('', compositeId, '',
+            vgComposite.vgComposite(None, compositeId, filterTargetPath,
                                     optionOverwrite=True, optionAlign=optionAlign)
+            # vgComposite.vgComposite(None, compositeId, None,
+            # vgComposite.vgComposite(filterCompositeId=compositeId,
+                                    # optionOverwrite=True, optionAlign=optionAlign)
     elif filterVolumes:
         for filterVolume in filterVolumes:
-            vgComposite.vgComposite(filterVolume, '', '',
+            vgComposite.vgComposite(filterVolume, None, filterTargetPath,
                                     optionOverwrite, optionAlign=optionAlign)
-    elif filterTargetPath:
-        vgComposite.vgComposite('', '', filterTargetPath, optionAlign=optionAlign)
+            # vgComposite.vgComposite(filterVolume, None, None,
+            # vgComposite.vgComposite(filterVolume=filterVolume, None, None,
+    # elif filterTargetPath:
+    #     # vgComposite.vgComposite(None, None, filterTargetPath, optionAlign=optionAlign)
+    #     vgComposite.vgComposite(filterTargetPath=filterTargetPath, optionAlign=optionAlign)
     lib.beep()
 
 elif cmd=="mosaic":

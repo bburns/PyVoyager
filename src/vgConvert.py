@@ -28,7 +28,8 @@ def vgConvert(volnum, optionOverwrite=False, directCall=True):
         return
 
     # unzip the download, if not already there
-    vgUnzip.vgUnzip(volnum, optionOverwrite=False, directCall=False)
+    # vgUnzip.vgUnzip(volnum, optionOverwrite=False, directCall=False)
+    vgUnzip.vgUnzip(volnum, directCall=False)
 
     # create dest folder
     lib.mkdir(outputSubfolder)

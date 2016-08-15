@@ -373,16 +373,18 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
 
     # get input file
-    im = cv2.imread(infile,0) #.param
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
+    # align the image to the target disc
     dx, dy, alignmentOk = getImageAlignment(imFixed, im)
     if alignmentOk:
-        szFixed = imFixed.shape
-        # this is just a translation
-        warp_matrix = np.array([[1,0,dy],[0,1,dx]])
-        # print warp_matrix
-        im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
-                            flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        # szFixed = imFixed.shape
+        # # this is just a translation
+        # warp_matrix = np.array([[1,0,dy],[0,1,dx]])
+        # # print warp_matrix
+        # im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
+        #                     flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        im = shiftImage(im, dx, dy)
         # this doesn't work as precisely, and it's about same speed, so just use warp
         # im = translateImage(im, dx, dy)
     #. weird bug - these flags kept getting set to True, but where?
@@ -567,20 +569,29 @@ def show(im, title='cv2 image - press esc to continue'):
     cv2.destroyAllWindows()
 
 
+def shiftImage(im, dx, dy):
+    """
+    shift the image by dx, dy using an affine matrix.
+    dimensions are kept the same - the image is just shifted out of frame.
+    """
+    warp_matrix = np.array([[1,0,dy],[0,1,dx]], np.float)
+    im = cv2.warpAffine(im, warp_matrix, im.shape[:2],
+                        flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+    return im
+
+
 def alignChannels(channels):
-    "attempt to align the images in the given channels"
+    "attempt to align the images in the given channel arrays"
     # print channels
-    imFixed = channels[0][config.colChannelIm]
-    im = channels[1][config.colChannelIm]
-    dx,dy,alignmentOk = getImageAlignment(imFixed, im)
+    im0 = channels[0][config.colChannelIm]
+    im1 = channels[1][config.colChannelIm]
+    dx,dy,alignmentOk = getImageAlignment(im0, im1)
     if alignmentOk:
         channels[1][config.colChannelX] = dx
         channels[1][config.colChannelY] = dy
-    else:
-        imFixed = channels[1][config.colChannelIm]
     if channels[2]:
-        im = channels[2][config.colChannelIm]
-        dx,dy,alignmentOk = getImageAlignment(imFixed, im)
+        im2 = channels[2][config.colChannelIm]
+        dx,dy,alignmentOk = getImageAlignment(im0, im2)
         if alignmentOk:
             channels[2][config.colChannelX] = dx
             channels[2][config.colChannelY] = dy
@@ -600,23 +611,20 @@ def getCanvasSizeForChannels(channels):
             if y+799 > ymax: ymax = y+799 #.param
     w = xmax-xmin+1; h = ymax-ymin+1
     enlarged = (w!=800) or (h!=800) #.param
-    # return w,h,enlarged
     return w,h,xmin,ymin,enlarged
 
 
 def combineChannels(channels, optionAlign=False):
     """
     Combine the given channels and return a single cv2 image.
-
-    If only one channel included will return a b/w image.
-    If missing a channel will use a blank/black image for that channel.
-    channels is an array of [filter, filename, <weight, x, y>]
-    (the last 3 are optional)
+    channels is an array of [filter, filename, weight, x, y]
     eg channels = [
-      ['Orange','composites/orange.png'],
+      ['Orange','composites/orange.png',1,0,0],
       ['Green','composites/green.png',0.8,30,40],
       ['Blue','composites/blue.png',0.9,50,66],
     ]
+    If only one channel included will return a b/w image.
+    If missing a channel will use a blank/black image for that channel.
     If optionAlign is True will attempt to align channels - x,y values
     are included in return channels array.
     Returns im, channels.
@@ -627,8 +635,9 @@ def combineChannels(channels, optionAlign=False):
     if len(channels)==1:
         filename = channels[0][config.colChannelFilename]
         gray = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        channels[0][config.colChannelX] = 0
-        channels[0][config.colChannelY] = 0
+        if optionAlign:
+            channels[0][config.colChannelX] = 0
+            channels[0][config.colChannelY] = 0
         return gray, channels
 
     # # find size of canvas that will contain all images
@@ -689,6 +698,7 @@ def combineChannels(channels, optionAlign=False):
     for row in channels:
         filter = row[config.colChannelFilter]
         d[filter] = row
+    # print d
 
     # a little dictionary fn
     def dget(d, skeys):
@@ -728,7 +738,8 @@ def combineChannels(channels, optionAlign=False):
             filename = row[config.colChannelFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
             # apply weight if necessary
-            weight = row[config.colChannelWeight] if len(row)>config.colChannelWeight else 1.0
+            # weight = row[config.colChannelWeight] if len(row)>config.colChannelWeight else 1.0
+            weight = row[config.colChannelWeight]
             if weight!=1.0: im = cv2.multiply(im,weight)
             # # if canvas needs to be enlarged, do so
             # if enlarged:
@@ -745,7 +756,7 @@ def combineChannels(channels, optionAlign=False):
 
     # # fourth pass - assume we have at least 2 channels at this point,
     # # so try synthesizing a third.
-    # # . this works, but like the psychedelic jupiter clouds at the moment
+    # # . this kind of works, but like the psychedelic jupiter clouds at the moment
     # imRed = channelRed[config.colChannelIm] if channelRed else None
     # imGreen = channelGreen[config.colChannelIm] if channelGreen else None
     # imBlue = channelBlue[config.colChannelIm] if channelBlue else None
@@ -754,29 +765,34 @@ def combineChannels(channels, optionAlign=False):
     # if imGreen is None: imGreen = (imRed + imBlue) / 2
 
     # attempt to align channels
-    # at this point we know we have 2 or 3 channels
     if optionAlign:
         channels = alignChannels([channelBlue, channelRed, channelGreen])
 
     # find size of canvas that will contain all images
     # w,h,enlarged = getCanvasSizeForChannels(channels)
     w,h,xmin,ymin,enlarged = getCanvasSizeForChannels(channels)
-    print w,h,xmin,ymin
+    print w,h,xmin,ymin,enlarged
 
-    # if canvas needs to be enlarged, do so
+    # if canvas needs to be enlarged, do so, and position each channel correctly
     if enlarged:
         for row in channels:
+            # if row:
+            #     im = row[config.colChannelIm]
+            #     canvas = np.zeros((h,w), np.uint8) # 0-255
+            #     x = row[config.colChannelX]
+            #     y = row[config.colChannelY]
+            #     # print xmin,x,ymin,y
+            #     # copy image into canvas at right point
+            #     canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+            #     im = canvas
+            #     row[config.colChannelIm] = im
+            #     # show(im)
             if row:
                 im = row[config.colChannelIm]
-                canvas = np.zeros((h,w), np.uint8) # 0-255
-                x = row[config.colChannelX] if len(row)>config.colChannelX else 0
-                y = row[config.colChannelY] if len(row)>config.colChannelY else 0
-                # print xmin,x,ymin,y
-                # copy image into canvas at right point
-                canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
-                im = canvas
+                x = row[config.colChannelX]
+                y = row[config.colChannelY]
+                im = shiftImage(im, x, y)
                 row[config.colChannelIm] = im
-                show(im)
 
     # assign a blank image if missing a channel
     blank = np.zeros((h,w), np.uint8)
@@ -788,21 +804,17 @@ def combineChannels(channels, optionAlign=False):
     # print imBlue.shape
     # print imGreen.shape
     # print imRed.shape
-    # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
-    # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
-    # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
     im = cv2.merge((imBlue, imGreen, imRed))
 
     # scale image to 800x800
     if enlarged:
         im = resizeImage(im, 800, 800)
         # im.thumbnail((800,800), Image.BICUBIC) # PIL
-        show(im)
+        # show(im)
 
     # later - maybe crop canvas, zoom for nice views
     # eg im = im[400:1200, 400:1200]
 
-    # return im
     return im, channels
 
 

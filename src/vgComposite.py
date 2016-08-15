@@ -74,9 +74,9 @@ def processChannels(channelRows, volume, nfile, startId):
             cv2.imwrite(outfilepath, im)
 
 
-#. handle targetpath
-# def vgComposite(filterVolume, filterCompositeId, optionOverwrite=False, directCall=True):
-def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwrite=False, directCall=True):
+def vgComposite(filterVolume, filterCompositeId, filterTargetPath,
+                # optionOverwrite=False, directCall=True):
+                optionOverwrite=False, optionAlign=False, directCall=True):
     """
     Build composite images by combining channel images.
 
@@ -126,8 +126,16 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
     # open files.csv so can join to it
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
+    # open compositesNew.csv for writing
+    # if optionAlign:
+        # csvNew, fNew = lib.openCsvWriter(config.dbCompositesNew)
+
     # iterate over composites.csv records
+    # csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
     csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
+    # fComposites = open(config.dbComposites,'rt')
+    # csvComposites = csv.reader(fComposites)
+    # csvComposites.next() # skip header row! #. brittle
     startId = ''
     startVol = ''
     channelRows = []
@@ -157,14 +165,12 @@ def vgComposite(filterVolume, filterCompositeId, filterTargetPath, optionOverwri
 
         # filter on volume or composite id or targetpath
         # if volume!=filterVolume and compositeId!=filterCompositeId: continue
+        #. this logic might need some work
         doComposite = False
-        if volume==filterVolume: doComposite = True
-        # if compositeId==filterCompositeId: doComposite = True
-        # if targetPathParts and \
-           # lib.targetMatches(targetPathParts, system, craft, target, camera):
-            # doComposite = True
-        compositeOk = (compositeId==filterCompositeId)
-        targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
+        volumeOk = (volume==filterVolume)
+        if volumeOk: doComposite = True
+        compositeOk = (compositeId==filterCompositeId) #. if compid is none, ok=true
+        targetPathOk = (lib.targetMatches(targetPathParts, system, craft, target, camera))
         # note AND -
         if compositeOk and targetPathOk: doComposite = True
 

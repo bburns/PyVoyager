@@ -1,9 +1,9 @@
 
 """
-convert voyager 1 jupiter wide angle approach movie
-from color (two channel, purplish) to bw.
-will colorize later.
-creates an alternate composites.csv file, keeping whitespace and comments intact.
+vg align composites command
+
+Align channels in a composite image and update records in composites.csv,
+keeping whitespace and comments intact.
 """
 
 import os
@@ -15,14 +15,14 @@ import lib
 import libimg
 
 
-csvNew,fNew = lib.openCsvWriter('newcomp.csv')
-
 os.chdir('../..')
 csvFiles,fFiles = lib.openCsvReader(config.dbFiles)
 
+csvNew,fNew = lib.openCsvWriter(config.dbCompositesNew)
+
 fComposites = open(config.dbComposites,'rt')
 csvComposites = csv.reader(fComposites)
-csvComposites.next() # skip header row
+csvComposites.next() # skip header row! #. brittle
 targetKey = ''
 for row in csvComposites:
     if row==[]:

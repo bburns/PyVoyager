@@ -22,7 +22,7 @@ volume,fileid,phase,craft,target,time,instrument,filter,note
 5101,C1471307,Jupiter,Voyager1,Jupiter,1979-01-09T00:59:55,Narrow,Uv
 5101,C1471309,Jupiter,Voyager1,Jupiter,1979-01-09T01:03:04,Narrow,Blue
 5101,C1471311,Jupiter,Voyager1,Jupiter,1979-01-09T01:06:16,Narrow,Green
-5101,C1471313,Jupiter,Voyager1,Jupiter,1979-01-09T01:45:54,Narrow,Orange << note time delta ~40mins
+5101,C1471313,Jupiter,Voyager1,Jupiter,1979-01-09T01:45:54,Narrow,Orange < note time delta ~40mins
 
 you want to make some records like this -
 composites.csv
@@ -36,24 +36,12 @@ volume,compositeId,centerId,filter
 5101,C1471307,C1471311,Green
 5101,C1471313,C1471313,Orange
 
-
-if tdelta>th dump the current buffer as a group record, clear it
-
-
-
-
-
 ie when it catches the repeated Uv filter, it writes out the intervening records as a group -
 a composite record.
 Different targets and cameras are sometimes interleaved in files.csv,
 but it can disentangle them because it keeps different circular buffers
 for each target/camera combination.
 """
-
-#. also need to look at the time to make sure they're all within a certain range -
-# eg the last orange filter is 40 mins after the last green one,
-# so belongs in a different group
-
 
 import os
 import csv
@@ -77,7 +65,7 @@ debug = False
 
 
 def newBuffer():
-    ""
+    "return a new circular buffer, eg [[],[],[],[],[],[],[]]"
     buffer = []
     for i in range(maxRecordsInGroup):
         buffer.append([])
@@ -85,7 +73,7 @@ def newBuffer():
 
 
 def dumpBufferAsGroup(csvComposites, buffer):
-    "dump buffer records as a group"
+    "dump buffer records as a group to csvComposites file"
     # get nonempty rows
     rows = [row for row in buffer if row != []]
     outCompositeId = None

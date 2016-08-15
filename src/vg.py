@@ -93,11 +93,14 @@ else:
 # pick out and remove options from argument list
 optionOverwrite = False
 optionKeepLinks = False
+optionAlign = False
 optionList = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
 for option in optionList:
     if option=='-y':
         optionOverwrite = True
+    elif option=='-align':
+        optionAlign = True
     elif option=='-keeplinks':
         optionKeepLinks = True
 
@@ -170,12 +173,14 @@ elif cmd=="inpaint":
 elif cmd=="composite":
     if filterImageIds:
         for compositeId in filterImageIds:
-            vgComposite.vgComposite('', compositeId, '', optionOverwrite=True)
+            vgComposite.vgComposite('', compositeId, '',
+                                    optionOverwrite=True, optionAlign=optionAlign)
     elif filterVolumes:
         for filterVolume in filterVolumes:
-            vgComposite.vgComposite(filterVolume, '', '', optionOverwrite)
-    else:
-        vgComposite.vgComposite('', '', filterTargetPath)
+            vgComposite.vgComposite(filterVolume, '', '',
+                                    optionOverwrite, optionAlign=optionAlign)
+    elif filterTargetPath:
+        vgComposite.vgComposite('', '', filterTargetPath, optionAlign=optionAlign)
     lib.beep()
 
 elif cmd=="mosaic":

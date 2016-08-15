@@ -8,6 +8,8 @@ movieId,clipId
 
 # Voyager 1
 # --------------------------------------------------------------------------------
+
+# Jupiter
 Jupiter-Voyager1,Jupiter-Voyager1-Title
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow
@@ -19,13 +21,19 @@ Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Wide
 Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
 Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
 
+# Saturn
+
 
 # Voyager 2
 # --------------------------------------------------------------------------------
 
+# Jupiter
+
+# Saturn
+
+# Uranus
 # Uranus-Voyager2,Uranus-Voyager2-Title
-# Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
-# Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
+Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
 Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow
 Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow
 Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow
@@ -34,6 +42,7 @@ Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow
 Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
 Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
 
+# Neptune
 Neptune-Voyager2,Neptune-Voyager2-Title
 Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow
 Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow

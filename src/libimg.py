@@ -672,15 +672,25 @@ def combineChannels(channels):
                     return value
         return None
 
-    # first pass
+    # first pass - assign primary colors, if available
     channelBlue = dget(d,'Blue')
     channelRed = dget(d,'Orange')
     channelGreen = dget(d,'Green')
 
-    # second pass
-    if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Clear,Ch4_Js,Ch4_U,Green,Orange')
-    if channelRed is None: channelRed = dget(d,'Clear,Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
-    if channelGreen is None: channelGreen = dget(d,'Clear,Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
+    #. not sure about this order - maybe assign clear 2nd?
+
+    # second pass - choose from some secondary options
+    # if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Clear,Ch4_Js,Ch4_U,Green,Orange')
+    # if channelRed is None: channelRed = dget(d,'Clear,Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
+    # if channelGreen is None: channelGreen = dget(d,'Clear,Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
+    if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Ch4_Js,Ch4_U,Green,Orange')
+    if channelRed is None: channelRed = dget(d,'Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
+    if channelGreen is None: channelGreen = dget(d,'Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
+
+    # third pass - anything can use the clear channel
+    if channelBlue is None: channelBlue = d.get('Clear')
+    if channelRed is None: channelRed = d.get('Clear')
+    if channelGreen is None: channelGreen = d.get('Clear')
 
     # get images
     for row in [channelBlue, channelRed, channelGreen]:
@@ -710,9 +720,9 @@ def combineChannels(channels):
     imGreen = channelGreen[colIm] if channelGreen else blank
     imBlue = channelBlue[colIm] if channelBlue else blank
 
-    # # third pass - assume we have at least 2 channels at this point,
+    # # fourth pass - assume we have at least 2 channels at this point,
     # # so try synthesizing a third.
-    #. this works, but like the psychedelic jupiter clouds at the moment
+    # # . this works, but like the psychedelic jupiter clouds at the moment
     # imRed = channelRed[colIm] if channelRed else None
     # imGreen = channelGreen[colIm] if channelGreen else None
     # imBlue = channelBlue[colIm] if channelBlue else None

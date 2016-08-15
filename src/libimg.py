@@ -341,7 +341,9 @@ def getImageAlignment(imFixed, im):
     try:
         cc, warp_matrix = cv2.findTransformECC(imFixed, im, warp_matrix,
                                                warp_mode, criteria)
-    except:
+    # except:
+    except Exception, e:
+        print e
         # if can't find solution, images aren't close enough in similarity
         dx = 0
         dy = 0

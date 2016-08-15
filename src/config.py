@@ -190,6 +190,7 @@ houghRadiusSearchPercent = 10
 # stabilizeECCIterations = 2000
 # stabilizeECCIterations = 1000 # v0.41 jupiter
 stabilizeECCIterations = 500 # v0.43 uranus
+# stabilizeECCIterations = 10000 # v0.43 uranus
 
 # stabilizeECCTerminationEpsilon = 1e-12
 # stabilizeECCTerminationEpsilon = 1e-11
@@ -198,6 +199,7 @@ stabilizeECCIterations = 500 # v0.43 uranus
 # stabilizeECCTerminationEpsilon = 1e-8
 # stabilizeECCTerminationEpsilon = 1e-6 # v0.41 jupiter
 stabilizeECCTerminationEpsilon = 1e-5 # v0.43 uranus
+# stabilizeECCTerminationEpsilon = 1e-7 # v0.41 jupiter
 
 # if image needs to shift too much, assume something is wrong - don't shift it
 # stabilizeMaxDeltaPosition = 18 # v0.40 uranus

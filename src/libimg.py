@@ -599,7 +599,7 @@ def shiftImage(im, dx, dy):
 
 def alignChannels(channels):
     "attempt to align the images in the given channel arrays"
-    # print channels
+    print channels
     im0 = channels[0][config.colChannelIm]
     im1 = channels[1][config.colChannelIm]
     assert not im0 is None
@@ -637,11 +637,11 @@ def getCanvasSizeForChannels(channels):
 def combineChannels(channels, optionAlign=False):
     """
     Combine the given channels and return a single cv2 image.
-    channels is an array of [filter, filename, weight, x, y]
+    channels is an array of [fileId, filter, filename, weight, x, y]
     eg channels = [
-      ['Orange','composites/orange.png',1,0,0],
-      ['Green','composites/green.png',0.8,30,40],
-      ['Blue','composites/blue.png',0.9,50,66],
+      ['c1234','Orange','composites/orange.png',1,0,0],
+      ['c1235','Green','composites/green.png',0.8,30,40],
+      ['c1236','Blue','composites/blue.png',0.9,50,66],
     ]
     If only one channel included will return a b/w image.
     If missing a channel will use a blank/black image for that channel.
@@ -649,7 +649,7 @@ def combineChannels(channels, optionAlign=False):
     are included in return channels array.
     Returns im, channels.
     """
-    # print channels
+    print channels
 
     # if just one channel then return a bw image
     if len(channels)==1:
@@ -747,15 +747,16 @@ def combineChannels(channels, optionAlign=False):
     if channelGreen is None: channelGreen = dget(d,'Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
 
     # third pass - anything can use the clear channel
-    if channelBlue is None: channelBlue = d.get('Clear')
-    if channelRed is None: channelRed = d.get('Clear')
-    if channelGreen is None: channelGreen = d.get('Clear')
+    blankrow = ['blank','Blank','blank.jpg',1,0,0]
+    if channelBlue is None: channelBlue = d.get('Clear') or blankrow
+    if channelRed is None: channelRed = d.get('Clear') or blankrow
+    if channelGreen is None: channelGreen = d.get('Clear') or blankrow
 
     # get images
     blank = np.zeros((800,800), np.uint8)
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
-            # print row
+            print row
             filename = row[config.colChannelFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
             if im is None:
@@ -824,10 +825,11 @@ def combineChannels(channels, optionAlign=False):
     imBlue = channelBlue[config.colChannelIm] if channelBlue else blank
 
     # merge channels - BGR for cv2
-    # print imBlue.shape
-    # print imGreen.shape
-    # print imRed.shape
+    print imBlue.shape
+    print imGreen.shape
+    print imRed.shape
     im = cv2.merge((imBlue, imGreen, imRed))
+    show(im)
 
     # scale image to 800x800
     if enlarged:

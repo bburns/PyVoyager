@@ -491,11 +491,12 @@ colAdditionsAdditionId = 1
 colAdditionsNFrames    = 2
 
 # composite channels array
-colChannelFilter = 0
-colChannelFilename = 1
-colChannelWeight = 2
-colChannelX = 3
-colChannelY = 4
+colChannelFileId = 0
+colChannelFilter = 1
+colChannelFilename = 2
+colChannelWeight = 3
+colChannelX = 4
+colChannelY = 5
 colChannelIm = -1
 
 

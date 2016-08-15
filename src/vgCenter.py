@@ -132,10 +132,10 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
             rowNew = [fileId, volume, x, y, foundRadius]
             csvNewCenters.writerow(rowNew)
             
-        else: # don't need to center image, so just copy as is
-            
+        # don't really need to do this as further stages could just fall back on adjusted images
+        # else: # don't need to center image, so just copy as is
             #. should outfile keep the _denoised or _adjusted tag?
-            lib.cp(infile, outfile)
+            # lib.cp(infile, outfile)
             
 
     fPositions.close()

@@ -25,6 +25,19 @@ import log
 
 
 
+def imwrite(outfile, im):
+    """
+    like cv2.imwrite but on error will try to create the outfile's folder also
+    useful in some cases where not known if folder exists or not.
+    """
+    ok = cv2.imwrite(outfile, im)
+    if not ok:
+        folder = os.path.dirname(outfile)
+        lib.mkdir(folder)
+        ok = cv2.imwrite(outfile, im)
+    return ok
+
+
 def inpaintImage(infile, priorfile, outfile, targetRadius):
     """
     fill in regions of black or white in infile using pixels from priorfile.
@@ -64,7 +77,8 @@ def inpaintImage(infile, priorfile, outfile, targetRadius):
     imOut = (im & (255-maskPaint)) + (imPrior & maskPaint)
     if debug: show(imOut)
 
-    cv2.imwrite(outfile, imOut)
+    # cv2.imwrite(outfile, imOut)
+    imwrite(outfile, imOut)
 
 
 def getGradientMagnitude(im):
@@ -291,7 +305,8 @@ def denoiseImageFile(infile, outfile):
     #     # im[line,:] = 0
     #     im[line,:] = (rowAbove+rowBelow)/2
 
-    cv2.imwrite(outfile, im)
+    # cv2.imwrite(outfile, im)
+    imwrite(outfile, im)
 
 
 def resizeImage(im, w, h):
@@ -395,7 +410,8 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     #     im = gray2rgb(im)
     #     circle = (399,399,targetRadius) #.params
     #     drawCircle(im, circle, color = (0,255,255)) # yellow circle
-    cv2.imwrite(outfile, im)
+    # cv2.imwrite(outfile, im)
+    imwrite(outfile, im)
     return dx,dy,alignmentOk
 
 
@@ -420,7 +436,8 @@ def centerImageFileAt(infile, outfile, x, y):
     im = centerImage(im, boundingBox)
     if config.drawCrosshairs:
         drawCrosshairs(im)
-    cv2.imwrite(outfile, im)
+    # cv2.imwrite(outfile, im)
+    imwrite(outfile, im)
 
 
 def centerImageFile(infile, outfile, targetRadius=None):
@@ -437,7 +454,8 @@ def centerImageFile(infile, outfile, targetRadius=None):
     # center the image on the target
     im = centerImage(im, boundingBox)
 
-    cv2.imwrite(outfile, im)
+    # cv2.imwrite(outfile, im)
+    imwrite(outfile, im)
 
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
@@ -551,14 +569,13 @@ def adjustImageFile(infile, outfile, doStretchHistogram=True):
         # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX) # hotspots throw it off
         im = stretchHistogram(im) # can blow out small targets
 
-    retval = cv2.imwrite(outfile, im)
-
+    # retval = cv2.imwrite(outfile, im)
     # if write failed, try creating the folder first
-    if not retval:
-        folder = os.path.dirname(outfile)
-        lib.mkdir_p(folder)
-        retval = cv2.imwrite(outfile, im)
-
+    # if not retval:
+        # folder = os.path.dirname(outfile)
+        # lib.mkdir_p(folder)
+        # retval = cv2.imwrite(outfile, im)
+    retval = imwrite(outfile, im)
     return retval
 
 
@@ -585,12 +602,15 @@ def alignChannels(channels):
     # print channels
     im0 = channels[0][config.colChannelIm]
     im1 = channels[1][config.colChannelIm]
+    assert not im0 is None
+    assert not im1 is None
     dx,dy,alignmentOk = getImageAlignment(im0, im1)
     if alignmentOk:
         channels[1][config.colChannelX] = dx
         channels[1][config.colChannelY] = dy
     if channels[2]:
         im2 = channels[2][config.colChannelIm]
+        assert not im2 is None
         dx,dy,alignmentOk = getImageAlignment(im0, im2)
         if alignmentOk:
             channels[2][config.colChannelX] = dx
@@ -732,11 +752,14 @@ def combineChannels(channels, optionAlign=False):
     if channelGreen is None: channelGreen = d.get('Clear')
 
     # get images
+    blank = np.zeros((800,800), np.uint8)
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
             # print row
             filename = row[config.colChannelFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+            if im is None:
+                im = blank
             # apply weight if necessary
             # weight = row[config.colChannelWeight] if len(row)>config.colChannelWeight else 1.0
             weight = row[config.colChannelWeight]

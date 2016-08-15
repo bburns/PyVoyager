@@ -24,16 +24,13 @@ import vgInpaint
 
 
 def printStatus(channelRows,volume,nfile,startId):
-    ""
+    "print status message"
     nchannels = len(channelRows)
     print 'Volume %s compositing %d: %s (%d channels)    \r' % \
           (volume,nfile,startId,nchannels),
 
 
-# def processChannels(channelRows):
-# def processChannels(channelRows, optionAlign, volume, nfile, startId):
 def processChannels(channelRows, optionAlign):
-    #. could also have zoom factor, warp info, rotate
     """
     Combine channel images into new file.
 
@@ -49,8 +46,8 @@ def processChannels(channelRows, optionAlign):
     If optionAlign is True, will attempt to align the channels,
     and will return updated x,y values.
     """
-    # for row in channelRows:
-        # print row
+    #. could also have zoom factor, warp info, rotate
+    # for row in channelRows: print row
     if len(channelRows) > 0:
         volume = ''
         compositeId = ''
@@ -66,9 +63,13 @@ def processChannels(channelRows, optionAlign):
             y = int(row[config.colCompositesY]) if len(row)>config.colCompositesY else 0
             # if don't have an inpaint or centered file, use the adjusted file
             channelfilepath = lib.getFilepath('inpaint', volume, fileId)
-            if not os.path.isfile(channelfilepath):
+            if os.path.isfile(channelfilepath):
+                optionAlign = False # don't try to align already centered images
+            else:
                 channelfilepath = lib.getFilepath('center', volume, fileId, filter)
-            if not os.path.isfile(channelfilepath):
+            if os.path.isfile(channelfilepath):
+                optionAlign = False # don't try to align already centered images
+            else:
                 channelfilepath = lib.getFilepath('adjust', volume, fileId, filter)
             if os.path.isfile(channelfilepath):
                 channel = [filter,channelfilepath,weight,x,y]
@@ -77,10 +78,12 @@ def processChannels(channelRows, optionAlign):
         if len(channels)>0:
             outfilepath = lib.getFilepath('composite', volume, compositeId)
             im, channels = libimg.combineChannels(channels, optionAlign)
-            if not cv2.imwrite(outfilepath, im):
-                outputSubfolder = lib.getSubfolder('composite', volume)
-                lib.mkdir(outputSubfolder)
-                cv2.imwrite(outfilepath, im)
+            # cv2.imwrite(outfilepath, im)
+            # if not cv2.imwrite(outfilepath, im):
+            #     outputSubfolder = lib.getSubfolder('composite', volume)
+            #     lib.mkdir(outputSubfolder)
+            #     cv2.imwrite(outfilepath, im)
+            libimg.imwrite(outfilepath, im)
             # print channels
             print [ch[:-1] for ch in channels if ch]
 
@@ -102,11 +105,11 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
         Note: weight and x,y are optional - default to 1,0,0
     """
 
-    filterCompositeId = filterCompositeId.upper() # always capital C
+    # filterCompositeId = filterCompositeId.upper() # always capital C
+    if filterCompositeId: filterCompositeId = filterCompositeId.upper() # always capital C
     # note: targetPathParts = [system, craft, target, camera]
     targetPathParts = lib.parseTargetPath(filterTargetPath)
 
-    # if filterVolume!='':
     if filterVolume:
 
         filterVolume = str(filterVolume)
@@ -134,8 +137,7 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # open compositesNew.csv for writing
-    if optionAlign:
-        csvNew, fNew = lib.openCsvWriter(config.dbCompositesNew)
+    if optionAlign: csvNew, fNew = lib.openCsvWriter(config.dbCompositesNew)
 
     # iterate over composites.csv records
     # csvComposites, fComposites = lib.openCsvReader(config.dbComposites)
@@ -177,18 +179,7 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
             # relabel target field if necessary - see db/targets.csv for more info
             target = lib.retarget(retargetingInfo, compositeId, target)
 
-        # filter on volume or composite id or targetpath
-        # if volume!=filterVolume and compositeId!=filterCompositeId: continue
-        #. this logic might need some work
-        # doComposite = False
-        # # volumeOk = (volume==filterVolume)
-        # volumeOk = (filterVolume!='' and volume==filterVolume)
-        # if volumeOk: doComposite = True
-        # compositeOk = (compositeId==filterCompositeId) #. if compid is none, ok=true
-        # targetPathOk = (lib.targetMatches(targetPathParts, system, craft, target, camera))
-        # # note AND -
-        # if compositeOk and targetPathOk: doComposite = True
-
+        # filter on volume and composite id and targetpath
         #. test this logic
         volumeOk = (volume==filterVolume if filterVolume else True)
         compositeOk = (compositeId==filterCompositeId if filterCompositeId else True)
@@ -196,15 +187,12 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
                         if filterTargetPath else True)
         doComposite = volumeOk and compositeOk and targetPathOk
 
-
         if doComposite:
-
             # gather image filenames into channelRows so can merge them
             if compositeId == startId:
                 channelRows.append(row)
             else:
                 # we're seeing a new compositeId, so process all the gathered channels
-                # processChannels(channelRows,optionAlign,startVol,nfile,startId)
                 printStatus(channelRows,startVol,nfile,startId)
                 processChannels(channelRows,optionAlign)
                 startId = compositeId
@@ -239,8 +227,10 @@ if __name__ == '__main__':
     # file1 = folder + 'C1640236_adjusted_Blue.jpg'
     # file2 = folder + 'C1640234_adjusted_Violet.jpg'
     # file3 = folder + 'C1640238_adjusted_Orange.jpg'
-    vgComposite(None,'C1640232',None,optionOverwrite=True, optionAlign=True)
-    filename = lib.getFilepath('composite','5117','C1640232')
+    # vgComposite(None,'C1640232',None,optionOverwrite=True, optionAlign=True)
+    # filename = lib.getFilepath('composite','5117','C1640232')
+    vgComposite(None,'C1640222',None,optionOverwrite=True, optionAlign=True)
+    filename = lib.getFilepath('composite','5117','C1640222')
 
     im = cv2.imread(filename)
     libimg.show(im)

@@ -51,7 +51,7 @@ if 1:
     # file2 = ''
     # file3 = folder + 'C1635021_adjusted_Orange.jpg'
 
-    # jupiter and moons - works
+    # jupiter and moons - works pretty well considering moons are moving
     # folder = '../../data/step04_adjust/VGISS_5112/'
     # file1 = folder + 'C1610017_adjusted_Violet.jpg'
     # file2 = ''
@@ -59,8 +59,8 @@ if 1:
 
 if 1:
     channels = [['Blue',file1,1,0,0], ['Green',file2,1,0,0], ['Orange',file3,1,0,0]]
-    # im,channels = libimg.combineChannels(channels, optionAlign=False)
-    im,channels = libimg.combineChannels(channels, optionAlign=True)
+    im,channels = libimg.combineChannels(channels, optionAlign=False)
+    # im,channels = libimg.combineChannels(channels, optionAlign=True)
     # print
     # print [ch[:-1] for ch in channels if ch]
     libimg.show(im)

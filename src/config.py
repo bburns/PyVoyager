@@ -488,6 +488,16 @@ colAdditionsFileId     = 0
 colAdditionsAdditionId = 1
 colAdditionsNFrames    = 2
 
+# composite channels array
+colChannelFilter = 0
+colChannelFilename = 1
+colChannelWeight = 2
+colChannelX = 3
+colChannelY = 4
+colChannelIm = -1
+
+
+
 
 
 # Voyager PDS volumes - 87 total

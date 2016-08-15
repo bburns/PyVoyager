@@ -353,6 +353,8 @@ def getImageAlignment(imFixed, im):
         # note: x and y are reversed
         dy = warp_matrix[0][2]
         dx = warp_matrix[1][2]
+        dx = int(round(dx))
+        dy = int(round(dy))
         alignmentOk = True
     return dx,dy,alignmentOk
 
@@ -563,7 +565,44 @@ def show(im, title='cv2 image - press esc to continue'):
     cv2.destroyAllWindows()
 
 
-def combineChannels(channels):
+def alignChannels(channels):
+    "attempt to align the images in the given channels"
+    # print channels
+    imFixed = channels[0][config.colChannelIm]
+    im = channels[1][config.colChannelIm]
+    dx,dy,alignmentOk = getImageAlignment(imFixed, im)
+    if alignmentOk:
+        channels[1][config.colChannelX] = dx
+        channels[1][config.colChannelY] = dy
+    else:
+        imFixed = channels[1][config.colChannelIm]
+    if channels[2]:
+        im = channels[2][config.colChannelIm]
+        dx,dy,alignmentOk = getImageAlignment(imFixed, im)
+        if alignmentOk:
+            channels[2][config.colChannelX] = dx
+            channels[2][config.colChannelY] = dy
+    return channels
+
+
+def getCanvasSizeForChannels(channels):
+    "given an array of channels, return size of canvas that would contain them all"
+    xmin = 0; xmax = 799; ymin = 0; ymax = 799 #.params
+    for row in channels:
+        if row:
+            x = row[config.colChannelX] if len(row)>config.colChannelX else 0
+            y = row[config.colChannelY] if len(row)>config.colChannelY else 0
+            if x < xmin: xmin = x
+            if x+799 > xmax: xmax = x+799 #.param
+            if y < ymin: ymin = y
+            if y+799 > ymax: ymax = y+799 #.param
+    w = xmax-xmin+1; h = ymax-ymin+1
+    enlarged = (w!=800) or (h!=800) #.param
+    # return w,h,enlarged
+    return w,h,xmin,ymin,enlarged
+
+
+def combineChannels(channels, optionAlign=False):
     """
     Combine the given channels and return a single cv2 image.
 
@@ -576,34 +615,22 @@ def combineChannels(channels):
       ['Green','composites/green.png',0.8,30,40],
       ['Blue','composites/blue.png',0.9,50,66],
     ]
+    If optionAlign is True will attempt to align channels - x,y values
+    are included in return channels array.
+    Returns im, channels.
     """
     # print channels
 
-    # define input columns
-    colFilter = 0
-    colFilename = 1
-    colWeight = 2
-    colX = 3
-    colY = 4
-    colIm = -1
-
     # if just one channel then return a bw image
     if len(channels)==1:
-        filename = channels[0][colFilename]
+        filename = channels[0][config.colChannelFilename]
         gray = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-        return gray
+        channels[0][config.colChannelX] = 0
+        channels[0][config.colChannelY] = 0
+        return gray, channels
 
-    # find size of canvas that will contain all images
-    xmin = 0; xmax = 799; ymin = 0; ymax = 799 #.params
-    for row in channels:
-        x = row[colX] if len(row)>colX else 0
-        y = row[colY] if len(row)>colY else 0
-        if x < xmin: xmin = x
-        if x+799 > xmax: xmax = x+799
-        if y < ymin: ymin = y
-        if y+799 > ymax: ymax = y+799
-    w = xmax-xmin+1; h = ymax-ymin+1
-    enlarged = w!=800 or h!=800
+    # # find size of canvas that will contain all images
+    # w,h,enlarged = getCanvasSizeForChannels(channels)
 
     # # get images for each channel
     # rowRed = None
@@ -620,8 +647,8 @@ def combineChannels(channels):
     #     # if canvas needs to be enlarged, do so
     #     if enlarged:
     #         canvas = np.zeros((h,w), np.uint8) # 0-255
-    #         x = row[colX] if len(row)>colX else 0
-    #         y = row[colY] if len(row)>colY else 0
+    #         x = row[config.colChannelX] if len(row)>config.colChannelX else 0
+    #         y = row[config.colChannelY] if len(row)>config.colChannelY else 0
     #         # print xmin,x,ymin,y
     #         # copy image into canvas at right point
     #         canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
@@ -631,7 +658,7 @@ def combineChannels(channels):
     #     # now assign the row to one of the available channels
     #     # eventually would like something more accurate than just rgb.
     #     # and note: the last one in the set of channels wins.
-    #     filter = row[colFilter]
+    #     filter = row[config.colChannelFilter]
     #     if filter in ['Orange']:
     #         rowRed = row
     #     if filter in ['Green']:
@@ -658,12 +685,12 @@ def combineChannels(channels):
     # get dictionary of filters
     d = {}
     for row in channels:
-        filter = row[colFilter]
+        filter = row[config.colChannelFilter]
         d[filter] = row
 
     # a little dictionary fn
     def dget(d, skeys):
-        "pop a value from dictionary d, trying keys in skeys"
+        "pop a value from dictionary d, trying all keys in skeys"
         if len(d)>0:
             keys = skeys.split(',')
             for key in keys:
@@ -677,7 +704,7 @@ def combineChannels(channels):
     channelRed = dget(d,'Orange')
     channelGreen = dget(d,'Green')
 
-    #. not sure about this order - maybe assign clear 2nd?
+    #. not positive about this order - maybe assign clear 2nd?
 
     # second pass - choose from some secondary options
     # if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Clear,Ch4_Js,Ch4_U,Green,Orange')
@@ -696,39 +723,64 @@ def combineChannels(channels):
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
             # print row
-            filename = row[colFilename]
+            filename = row[config.colChannelFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
             # apply weight if necessary
-            weight = row[colWeight] if len(row)>colWeight else 1.0
+            weight = row[config.colChannelWeight] if len(row)>config.colChannelWeight else 1.0
             if weight!=1.0: im = cv2.multiply(im,weight)
-            # if canvas needs to be enlarged, do so
-            if enlarged:
-                canvas = np.zeros((h,w), np.uint8) # 0-255
-                x = row[colX] if len(row)>colX else 0
-                y = row[colY] if len(row)>colY else 0
-                # print xmin,x,ymin,y
-                # copy image into canvas at right point
-                canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
-                im = canvas
-                # show(im)
+            # # if canvas needs to be enlarged, do so
+            # if enlarged:
+            #     canvas = np.zeros((h,w), np.uint8) # 0-255
+            #     x = row[config.colChannelX] if len(row)>config.colChannelX else 0
+            #     y = row[config.colChannelY] if len(row)>config.colChannelY else 0
+            #     # print xmin,x,ymin,y
+            #     # copy image into canvas at right point
+            #     canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+            #     im = canvas
+            #     # show(im)
             # stick the image on the end of the row (colIm)
             row.append(im)
-
-    # assign a blank image if missing a channel
-    blank = np.zeros((h,w), np.uint8)
-    imRed = channelRed[colIm] if channelRed else blank
-    imGreen = channelGreen[colIm] if channelGreen else blank
-    imBlue = channelBlue[colIm] if channelBlue else blank
 
     # # fourth pass - assume we have at least 2 channels at this point,
     # # so try synthesizing a third.
     # # . this works, but like the psychedelic jupiter clouds at the moment
-    # imRed = channelRed[colIm] if channelRed else None
-    # imGreen = channelGreen[colIm] if channelGreen else None
-    # imBlue = channelBlue[colIm] if channelBlue else None
+    # imRed = channelRed[config.colChannelIm] if channelRed else None
+    # imGreen = channelGreen[config.colChannelIm] if channelGreen else None
+    # imBlue = channelBlue[config.colChannelIm] if channelBlue else None
     # if imBlue is None: imBlue = (imRed + imGreen) / 2
     # if imRed is None: imRed = (imBlue + imGreen) / 2
     # if imGreen is None: imGreen = (imRed + imBlue) / 2
+
+    # attempt to align channels
+    # at this point we know we have 2 or 3 channels
+    if optionAlign:
+        channels = alignChannels([channelBlue, channelRed, channelGreen])
+
+    # find size of canvas that will contain all images
+    # w,h,enlarged = getCanvasSizeForChannels(channels)
+    w,h,xmin,ymin,enlarged = getCanvasSizeForChannels(channels)
+    print w,h,xmin,ymin
+
+    # if canvas needs to be enlarged, do so
+    if enlarged:
+        for row in channels:
+            if row:
+                im = row[config.colChannelIm]
+                canvas = np.zeros((h,w), np.uint8) # 0-255
+                x = row[config.colChannelX] if len(row)>config.colChannelX else 0
+                y = row[config.colChannelY] if len(row)>config.colChannelY else 0
+                # print xmin,x,ymin,y
+                # copy image into canvas at right point
+                canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+                im = canvas
+                row[config.colChannelIm] = im
+                show(im)
+
+    # assign a blank image if missing a channel
+    blank = np.zeros((h,w), np.uint8)
+    imRed = channelRed[config.colChannelIm] if channelRed else blank
+    imGreen = channelGreen[config.colChannelIm] if channelGreen else blank
+    imBlue = channelBlue[config.colChannelIm] if channelBlue else blank
 
     # merge channels - BGR for cv2
     # print imBlue.shape
@@ -743,11 +795,13 @@ def combineChannels(channels):
     if enlarged:
         im = resizeImage(im, 800, 800)
         # im.thumbnail((800,800), Image.BICUBIC) # PIL
+        show(im)
 
     # later - maybe crop canvas, zoom for nice views
     # eg im = im[400:1200, 400:1200]
 
-    return im
+    # return im
+    return im, channels
 
 
 def drawCircle(im, circle, color = (0,255,0)):

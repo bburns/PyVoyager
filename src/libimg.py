@@ -25,6 +25,213 @@ import log
 
 
 
+def getImageAlignmentORB(im0, im1):
+    """
+    Get alignment between images using ORB feature alignment.
+    Returns dx,dy,alignmentOk
+    If unable to align images returns 0,0,False
+    """
+
+    npoints = 100
+    # sharpen = False
+    sharpen = True
+    sz = 800
+    # sz = 100
+    # neighborhood = 31 # default
+    # neighborhood = 7
+    neighborhood = 11 # kind of works on clouds!
+    # neighborhood = 13
+    # fastThreshold = 20 # default
+    fastThreshold = 5
+    knnMatching = True
+    # knnMatching = False
+    # crossCheck = True
+    crossCheck = False
+    # homography = True
+    homography = False
+    # ransac=True
+    # ransac=False
+
+    # no help - get nearly randomly scattered features in clouds
+    if sharpen:
+        im0 = sharpenImage(im0)
+        im1 = sharpenImage(im1)
+
+    # no help - still no features found in clouds
+    if sz!=800:
+        im0 = resizeImage(im0,sz,sz)
+        im1 = resizeImage(im1,sz,sz)
+    blank = np.zeros((sz,sz),np.uint8)
+
+    # bug patch - see https://github.com/opencv/opencv/issues/6081
+    cv2.ocl.setUseOpenCL(False)
+
+    # Initiate ORB detector
+    # ORB (oriented BRIEF) keypoint detector and descriptor extractor.
+    # described in [125] . The algorithm uses FAST in pyramids to detect stable
+    # keypoints, selects the strongest features using FAST or Harris response,
+    # finds their orientation using first-order moments and computes the
+    # descriptors using BRIEF (where the coordinates of random point pairs (or
+    # k-tuples) are rotated according to the measured orientation).
+    # create (int nfeatures=500, float scaleFactor=1.2f, int nlevels=8,
+    #   int edgeThreshold=31, int firstLevel=0, int WTA_K=2,
+    #   int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20)
+    # orb = cv2.ORB_create()
+    # The second parameter is for scaling the images down (or the detector patch up) between octaves (or levels). using the number 1.0f means you don't change the scale between octaves, this makes no sense, especially since your third parameter is the number of levels which is 2 and not 1. The default is 1.2f for scale and 8 levels, for less calculations, use a scaling of 1.5f and 4 levels (again, just a suggestion, other parameters will work too).
+    # orb = cv2.ORB_create(npoints)
+    # orb = cv2.ORB_create(npoints,edgeThreshold=15,patchSize=15) # no help with clouds - not enough features found
+    # orb = cv2.ORB_create(npoints,edgeThreshold=7,patchSize=7) # no help with clouds - not enough features found
+    # orb = cv2.ORB_create(npoints,edgeThreshold=7,patchSize=7,fastThreshold=5) # works with sharpen and resize on clouds
+    # orb = cv2.ORB_create(npoints,edgeThreshold=51,patchSize=51) # no help with clouds - not enough features found
+    orb = cv2.ORB_create(npoints,edgeThreshold=neighborhood,patchSize=neighborhood,fastThreshold=fastThreshold)
+    # orb = cv2.ORB_create(npoints, fastThreshold=3)
+
+    # find the keypoints and their descriptors
+    kp0, des0 = orb.detectAndCompute(im0,None)
+    kp1, des1 = orb.detectAndCompute(im1,None)
+
+    if des0 is None or des1 is None:
+        print 'des0 or des1 is none - ie no keypoints found'
+        return 0,0,False
+
+    out = cv2.drawKeypoints(im0,kp0,None)
+    show(out)
+
+    # brute force matcher
+    # see http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html
+    # create BFMatcher object
+    # need to use NORM_HAMMING as ORB is a binary feature
+    # matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    # matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False) # need False to allow knnMatch to work - why?
+    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=crossCheck) # need False to allow knnMatch to work - why?
+
+    if knnMatching:
+        # use K nearest neighbor matching
+        # and get all the good matches as per Lowe's ratio test
+        matches = matcher.knnMatch(des0,des1,k=2)
+        good = [m[0] for m in matches if len(m) == 2 and m[0].distance < m[1].distance * 0.75]
+    else:
+        # Match descriptors and sort them in the order of their distance
+        matches = matcher.match(des0,des1)
+        matches = sorted(matches, key = lambda x:x.distance)
+        good = matches[:30]
+        # good = matches
+
+    # Draw good matches
+    print 'good matches',len(good)
+    # out = cv2.drawMatches(im0,kp0,im1,kp1,good,None)
+    out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    show(out)
+
+
+    if homography:
+        # Initialize lists
+        kp0list = []
+        kp1list = []
+        # For each match...
+        for m in good:
+            # Get the matching keypoints for each of the images
+            im0idx = m.queryIdx
+            im1idx = m.trainIdx
+            # Get the coordinates
+            (x0,y0) = kp0[im0idx].pt
+            (x1,y1) = kp1[im1idx].pt
+            # Append to each list
+            kp0list.append((x0, y0))
+            kp1list.append((x1, y1))
+        kp0a = np.array(kp0list)
+        kp1a = np.array(kp1list)
+
+        # http://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography
+        # H, status = cv2.findHomography(p1, p2, cv2.RANSAC, 5.0)
+        # H, status = cv2.findHomography(kp0, kp1)
+        # H, status = cv2.findHomography(kp0a, kp1a)
+        # H, status = cv2.findHomography(kp0a, kp1a, cv2.RANSAC)
+        H, status = cv2.findHomography(kp0a, kp1a, cv2.RANSAC, 5.0)
+        if H is None:
+            print 'H is none - no good solution found'
+            return 0,0,False
+        print H
+        w,h=800,800
+        # imx = cv2.warpPerspective(im1, H, (w,h))
+        # show(imx)
+        # imy = cv2.merge((blank, im0, imx))
+        # show(imy)
+        # dx = H[1][2]
+        # dy = H[0][2]
+        dx = H[0][2]
+        dy = H[1][2]
+        imx = shiftImage(im1, dx, dy)
+        show(imx)
+        imy = cv2.merge((blank, im0, imx))
+        show(imy)
+
+
+    else:
+        # find transformation
+        src_pts = np.float32([ kp0[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+        dst_pts = np.float32([ kp1[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+        # note: M might include a bit of rotation, but we'll just ignore that
+        # this does include RANSAC to eliminate outliers - see
+        # https://github.com/opencv/opencv/blob/master/modules/video/src/lkpyramid.cpp
+        M = cv2.estimateRigidTransform(src_pts,dst_pts,False)
+        if M is None:
+            print 'M is none - no good solution found'
+            return 0,0,False
+        print M
+        # eg
+        # [[  1.00273314e+00   2.62991563e-03  -1.53541381e+02]
+        # [ -2.62991563e-03   1.00273314e+00  -1.77198771e+01]]
+        # show images
+        # just want pure translation
+        M[0][0]=1
+        M[0][1]=0
+        M[1][0]=0
+        M[1][1]=1
+        # note order of cols, rows -
+        rows, cols = im1.shape[:2]
+        imx = cv2.warpAffine(im1, M, (cols,rows), flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        show(imx)
+        print blank.shape
+        print im0.shape
+        print imx.shape
+        imy = cv2.merge((blank, im0, imx))
+        show(imy)
+        # dx = M[1][2]
+        # dy = M[0][2]
+        dx = M[0][2]
+        dy = M[1][2]
+
+    # return results
+    if sz!=800: #.
+        dx*=800/sz;dy*=800/sz
+    alignmentOk = True
+    return dx,dy,alignmentOk
+
+
+def getImageAlignmentCombined(im0, im1, dx=0, dy=0):
+    ""
+    # dx,dy,ok = getImageAlignmentDiff(im0, im1)
+    dx,dy,ok = getImageAlignmentORB(im0, im1)
+    # if ok:
+        # dx,dy,ok = getImageAlignment(im0, im1, dx=dx, dy=dy)
+    return dx,dy,ok
+
+
+def sharpenImage(im):
+    "sharpen image with a simple 2d kernel"
+    kernel = np.array([[0,-1,0], [-1,5,-1], [0,-1,0]])
+    # kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]]) # a bit too sharp, even for clouds
+    # kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
+    # kernel = np.array([[-1,-1,-1,-1,-1],
+                       # [-1,2,2,2,-1],
+                       # [-1,2,8,2,-1],
+                       # [-1,2,2,2,-1],
+                       # [-1,-1,-1,-1,-1]]) / 8.0
+    im = cv2.filter2D(im, -1, kernel)
+    return im
+
+
 def imwrite(outfile, im):
     """
     like cv2.imwrite but on error will try to create the outfile's folder also
@@ -105,6 +312,15 @@ def getGradientMagnitude(im):
 
     mag = cv2.addWeighted(dxabs, 0.5, dyabs, 0.5, 0)
     return mag
+
+
+def getGradientMagnitudeSobel(im):
+    # Calculate the x and y gradients using Sobel operator
+    grad_x = cv2.Sobel(im,cv2.CV_32F,1,0,ksize=3)
+    grad_y = cv2.Sobel(im,cv2.CV_32F,0,1,ksize=3)
+    # Combine the two gradients
+    grad = cv2.addWeighted(np.absolute(grad_x), 0.5, np.absolute(grad_y), 0.5, 0)
+    return grad
 
 
 def annotateImageFile(infile, outfile, imageId, time, distance, note):
@@ -313,52 +529,86 @@ def resizeImage(im, w, h):
     "Resize image, keeping aspect ratio, filling in gaps with black, return new image."
 
     oldH, oldW = im.shape[:2]
-    print oldH, oldW #950,885
     aspectRatio = float(oldW) / float(oldH)
-    print aspectRatio #0.93
     if aspectRatio > 1: # width>height
         newW = w
         newH = int(newW / aspectRatio)
     else:
         newH = h
         newW = int(newH * aspectRatio)
-    print newH, newW #800,745
     # confusing - this takes w,h not h,w?
     # im = cv2.resize(im, (newH,newW), interpolation=cv2.INTER_AREA)
     im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
-    canvas = np.zeros((h,w,3), np.uint8)
+    # canvas = np.zeros((h,w,3), np.uint8)
+    canvas = np.zeros(im.shape, np.uint8)
     x = int((w-newW)/2)
     y = int((h-newH)/2)
-    print x,y #27,0
-    # ValueError: could not broadcast input array from shape (745,800,3) into shape (800,745,3)
     canvas[y:y+newH, x:x+newW] = im
-    # canvas[x:x+newW, y:y+newH] = im
     return canvas
 
 
-def getImageAlignment(imFixed, im):
+# def getImageAlignment(imFixed, im):
+# def getImageAlignment(imFixed, im, useGradients=False):
+def getImageAlignment(imFixed, im, useGradients=False, dx=0, dy=0):
     """
     Get alignment between images using ECC maximization algorithm.
     Returns dx,dy,alignmentOk
     If unable to align images returns 0,0,False
     """
+    # if useGradients:
+    #     # imFixed = getGradientMagnitudeSobel(im)
+    #     # im = getGradientMagnitudeSobel(im)
+    #     imFixed = getGradientMagnitude(im)
+    #     im = getGradientMagnitude(im)
+    #     # imFixed = cv2.adaptiveThreshold(imFixed, maxValue=255,
+    #     #                            adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    #     #                            thresholdType=cv2.THRESH_BINARY_INV,
+    #     #                            blockSize=3,
+    #     #                            C=2)
+    #     # im = cv2.adaptiveThreshold(im, maxValue=255,
+    #     #                            adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    #     #                            thresholdType=cv2.THRESH_BINARY_INV,
+    #     #                            blockSize=3,
+    #     #                            C=2)
+
+    #     # remove any long horizontal segments
+    #     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (50,1));
+    #     mask = 255 - cv2.erode(imFixed, kernel)
+    #     imFixed = imFixed & mask
+    #     mask = 255 - cv2.erode(im, kernel)
+    #     im = im & mask
+
+    #     # remove any long vertical segments
+    #     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,25));
+    #     mask = 255 - cv2.erode(imFixed, kernel)
+    #     imFixed = imFixed & mask
+    #     mask = 255 - cv2.erode(im, kernel)
+    #     im = im & mask
+
+    #     # imFixed = cv2.
+    #     imFixed = cv2.normalize(imFixed, None, 0, 255, cv2.NORM_MINMAX)
+    #     im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    #     show(imFixed)
+    #     show(im)
     warp_mode = cv2.MOTION_TRANSLATION
     warp_matrix = np.eye(2, 3, dtype=np.float32) #. paramnames?
-    number_of_iterations = config.stabilizeECCIterations
-    termination_eps = config.stabilizeECCTerminationEpsilon
+    # initial guess
+    # warp_matrix[1][2] = dx
+    # warp_matrix[0][2] = dy
+    warp_matrix[0][2] = dx
+    warp_matrix[1][2] = dy
     criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT,
-                number_of_iterations,  termination_eps)
+                config.stabilizeECCIterations, config.stabilizeECCTerminationEpsilon)
 
     # run the ECC algorithm - the results are stored in warp_matrix
     # throws an error if doesn't converge, so catch it
     try:
-        cc, warp_matrix = cv2.findTransformECC(imFixed, im, warp_matrix,
-                                               warp_mode, criteria)
-    # except:
+        warp_matrix = np.eye(2, 3, dtype=np.float32)
+        cc, warp_matrix = cv2.findTransformECC(imFixed, im, warp_matrix, warp_mode, criteria)
     except Exception, e:
-        print e
+        print 'exception', e
         # if can't find solution, images aren't close enough in similarity
         dx = 0
         dy = 0
@@ -368,8 +618,10 @@ def getImageAlignment(imFixed, im):
         # [[ 1.          0.          1.37005 ]
         #  [ 0.          1.          0.485788]]
         # note: x and y are reversed
-        dy = warp_matrix[0][2]
-        dx = warp_matrix[1][2]
+        # dy = warp_matrix[0][2]
+        # dx = warp_matrix[1][2]
+        dx = warp_matrix[0][2]
+        dy = warp_matrix[1][2]
         dx = int(round(dx))
         dy = int(round(dy))
         alignmentOk = True
@@ -394,11 +646,6 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     dx, dy, alignmentOk = getImageAlignment(imFixed, im)
     if alignmentOk:
         # szFixed = imFixed.shape
-        # # this is just a translation
-        # warp_matrix = np.array([[1,0,dy],[0,1,dx]])
-        # # print warp_matrix
-        # im = cv2.warpAffine(im, warp_matrix, (szFixed[1],szFixed[0]),
-        #                     flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
         im = shiftImage(im, dx, dy)
         # this doesn't work as precisely, and it's about same speed, so just use warp
         # im = translateImage(im, dx, dy)
@@ -581,6 +828,9 @@ def adjustImageFile(infile, outfile, doStretchHistogram=True):
 
 def show(im, title='cv2 image - press esc to continue'):
     "Show a cv2 image and wait for a keypress"
+    # im = resizeImage(im,680,680)
+    if im.shape[1]>680:
+        im = resizeImage(im,int(im.shape[1]*0.75),int(im.shape[0]*0.75))
     cv2.imshow(title, im)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -591,30 +841,38 @@ def shiftImage(im, dx, dy):
     shift the image by dx, dy using an affine matrix.
     dimensions are kept the same - the image is just shifted out of frame.
     """
-    warp_matrix = np.array([[1,0,dy],[0,1,dx]], np.float)
-    im = cv2.warpAffine(im, warp_matrix, im.shape[:2],
+    # warp_matrix = np.array([[1,0,dy],[0,1,dx]], np.float)
+    warp_matrix = np.array([[1,0,dx],[0,1,dy]], np.float)
+    # note order of cols, rows -
+    rows, cols = im.shape[:2]
+    im = cv2.warpAffine(im, warp_matrix, (cols,rows),
                         flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
     return im
 
 
-def alignChannels(channels):
+#. make this more generic - eg pass in set of images to align, return set of displacements
+# could call it getChannelAlignments
+def alignChannels(channels, useGradients=False):
     "attempt to align the images in the given channel arrays"
-    print channels
+    # print channels
+    # print [ch[2:-1] for ch in channels if ch]
     im0 = channels[0][config.colChannelIm]
     im1 = channels[1][config.colChannelIm]
     assert not im0 is None
     assert not im1 is None
-    dx,dy,alignmentOk = getImageAlignment(im0, im1)
+    dx,dy,alignmentOk = getImageAlignment(im0, im1, useGradients)
     if alignmentOk:
         channels[1][config.colChannelX] = dx
         channels[1][config.colChannelY] = dy
     if channels[2]:
         im2 = channels[2][config.colChannelIm]
         assert not im2 is None
-        dx,dy,alignmentOk = getImageAlignment(im0, im2)
+        dx,dy,alignmentOk = getImageAlignment(im0, im2, useGradients)
         if alignmentOk:
             channels[2][config.colChannelX] = dx
             channels[2][config.colChannelY] = dy
+    for channel in channels:
+        if channel: print channel[2:-1]
     return channels
 
 
@@ -634,7 +892,8 @@ def getCanvasSizeForChannels(channels):
     return w,h,xmin,ymin,enlarged
 
 
-def combineChannels(channels, optionAlign=False):
+# def combineChannels(channels, optionAlign=False):
+def combineChannels(channels, optionAlign=False, useGradients=False):
     """
     Combine the given channels and return a single cv2 image.
     channels is an array of [fileId, filter, filename, weight, x, y]
@@ -790,7 +1049,7 @@ def combineChannels(channels, optionAlign=False):
 
     # attempt to align channels
     if optionAlign:
-        channels = alignChannels([channelBlue, channelRed, channelGreen])
+        channels = alignChannels([channelBlue, channelRed, channelGreen], useGradients)
 
     # find size of canvas that will contain all images
     # w,h,enlarged = getCanvasSizeForChannels(channels)
@@ -1138,7 +1397,7 @@ def findBoundingBox(im, radius):
     return boundingBox
 
 
-#. do i need this anymore? was this before upgrading to v3?
+#. do i need this anymore? was this before upgrading to v3? yes
 # def drawMatches(img1, kp1, img2, kp2, matches):
 #     # source: http://stackoverflow.com/questions/11114349/how-to-visualize-descriptor-matching-using-opencv-module-in-python
 #     """
@@ -1213,10 +1472,12 @@ def findBoundingBox(im, radius):
 #         cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), color, 1)
 
 
-#     # Show the image
-#     cv2.imshow('Matched Features', out)
-#     cv2.waitKey(0)
-#     cv2.destroyAllWindows()
+#     return out
+
+#     # # Show the image
+#     # cv2.imshow('Matched Features', out)
+#     # cv2.waitKey(0)
+#     # cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

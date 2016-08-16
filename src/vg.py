@@ -18,8 +18,9 @@ PyVoyager commands
   vg movies         - create movies from clips
   vg list           - show status of local datasets
 
-  vg test center    - run centering tests
   vg test denoise   - run denoising tests
+  vg test center    - run centering tests
+  vg test composite - run compositing tests
 
 where most commands can be followed by <filter> and <options>, where
 
@@ -70,8 +71,9 @@ import vgClips
 import vgMovies
 
 import vgList
-import vgTestCenter
 import vgTestDenoise
+import vgTestCenter
+import vgTestComposite
 import vgGrab
 import vgInitFiles
 import vgInitCenters
@@ -227,10 +229,12 @@ elif cmd=="list":
 
 elif cmd=="test":
     subject = args[0]
-    if subject=='center':
-        vgTestCenter.vgTestCenter()
-    elif subject=='denoise':
+    if subject=='denoise':
         vgTestDenoise.vgTestDenoise()
+    elif subject=='center':
+        vgTestCenter.vgTestCenter()
+    elif subject=='composite':
+        vgTestComposite.vgTestComposite()
 
 elif cmd=="grab":
     vgGrab.vgGrab()

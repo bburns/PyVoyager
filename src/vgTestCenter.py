@@ -27,8 +27,10 @@ def vgTestCenter():
     # config.drawCircle = True
     config.drawCrosshairs = True
 
-    centeredFolder = config.testCenterImagesFolder + 'centered/'
-    debugFolder = config.testCenterImagesFolder + 'debug/'
+    testCenterdb = config.testFolder + 'testCenterImages.csv'
+    testCenterImagesFolder = config.testFolder + 'center/'
+    centeredFolder = testCenterImagesFolder + 'centered/'
+    debugFolder = testCenterImagesFolder + 'debug/'
 
     #. fix this weird issue with access denied
     lib.rmdir(centeredFolder)
@@ -43,11 +45,11 @@ def vgTestCenter():
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
     
     # read in small csv file
-    results = lib.readCsv(config.testCenterdb) # test/testCenters.csv
+    results = lib.readCsv(testCenterdb) # test/testCenters.csv
     ntests = len(results)
     ntestsok = 0
 
-    for root, dirs, files in os.walk(config.testCenterImagesFolder): # test/center
+    for root, dirs, files in os.walk(testCenterImagesFolder): # test/center
         for filename in files:
 
             ext = filename[-4:].lower()

@@ -150,7 +150,7 @@ blobRadiusMax = 10 # v0.42
 # but just made tests worse
 #. try again, reduce accthresh also
 houghAccumulatorSize = 1 # always
-# houghAccumulatorSize = 2 # always
+# houghAccumulatorSize = 2 # no help
 
 houghMinDistanceBetweenCircles = 400
 
@@ -219,20 +219,16 @@ stabilizeECCTerminationEpsilon = 1e-5 # v0.43 uranus
 # stabilizeNTimesToUseFixedFrame = 1 # v0.42 try jupiter - align to previous frame, using round instead of int, try to fix leftward drift
 
 
-# suffix for centered filenames
-# centersSuffix = '_centered'
-
 # rotate image 180 degrees during centering step
-rotateImage = True
+# rotateImage = True
 
 # debugging image options during centering step
 # used by test/testCentering.py - don't use for normal processing!
-#. just make one flag
-drawBinaryImage = False # save thresholded image
-drawBoundingBox = False # save image with bounding box around biggest blob
-drawEdges = False # save canny edges image ~ used by hough circle detector
-drawCircle = False # save image with best detected hough circle
-drawCircles = False # save image with all detected hough circles
+# drawBinaryImage = False # save thresholded image
+# drawBoundingBox = False # save image with bounding box around biggest blob
+# drawEdges = False # save canny edges image ~ used by hough circle detector
+# drawCircle = False # save image with best detected hough circle
+# drawCircles = False # save image with all detected hough circles
 drawCrosshairs = False # draw crosshairs on image
 drawTarget = False # draw expected target size/location with yellow circle
 
@@ -375,9 +371,6 @@ grabbedFolder = onlineFolder  + "grabbed/"
 
 # test images go here
 testFolder = 'test/'
-testCenterdb = testFolder + 'testCenterImages.csv'
-testCenterImagesFolder = testFolder + 'center/'
-testDenoiseImagesFolder = testFolder + 'denoise/'
 
 musicFolder = 'music/'
 

@@ -136,14 +136,12 @@ def getImageAlignmentORB(im0, im1):
     # fastThreshold = 20 # default
     fastThreshold = 10
     # fastThreshold = 5
-    # fastThreshold = 3
-    # fastThreshold = 2
     # fastThreshold = 1
     # fastThreshold = 0
-    knnMatching = True
-    # knnMatching = False
-    # crossCheck = True
-    crossCheck = False # need False so knnMatch works - why?
+    # knnMatching = True
+    knnMatching = False
+    crossCheck = True
+    # crossCheck = False # need False so knnMatch works - why?
     # homography = True
     homography = False
     contrast = True # looks better but doesn't help ORB
@@ -231,8 +229,8 @@ def getImageAlignmentORB(im0, im1):
         # match descriptors and sort them in the order of their distance
         matches = matcher.match(des0,des1)
         matches = sorted(matches, key = lambda x:x.distance)
-        # good = matches[:30]
-        good = good
+        good = matches[:30]
+        # good = matches
 
     # draw good matches
     # print 'good matches',len(good)

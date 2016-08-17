@@ -119,8 +119,12 @@ def getImageAlignmentORB(im0, im1):
 
     npoints = 500 # default
     # npoints = 100
+    # magnitude = True
+    magnitude = False
     sharpen = False
     # sharpen = True
+    contrast = True
+    # contrast = False
     sz = 800
     # sz = 400
     # sz = 200
@@ -144,21 +148,25 @@ def getImageAlignmentORB(im0, im1):
     # crossCheck = False # need False so knnMatch works - why?
     # keepMatches = 50
     # keepMatches = 30
-    keepMatches = 40
+    # keepMatches = 40
+    keepMatches = 10
     # homography = True
     homography = False
-    contrast = True # looks better but doesn't help ORB
-    # contrast = False
 
+    if magnitude:
+        im0 = getGradientMagnitude(im0)
+        im1 = getGradientMagnitude(im1)
     if sharpen:
         im0 = sharpenImage(im0)
         im1 = sharpenImage(im1)
     if contrast:
         im0 = cv2.equalizeHist(im0)
         im1 = cv2.equalizeHist(im1)
+        # ---
         # clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8,8))
         # im0 = clahe.apply(im0)
         # im1 = clahe.apply(im1)
+        # ---
         # maxIntensity = 255.0
         # phi = 1
         # theta = 1

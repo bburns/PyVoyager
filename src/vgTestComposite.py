@@ -67,8 +67,9 @@ def vgTestComposite():
 
         # align im1 to im0
         dx,dy,ok = libimg.getImageAlignmentORB(im0, im1)
-        # if not ok:
-            # dx,dy,ok = libimg.getImageAlignmentDiff(im0, im1)
+        if not ok:
+            print 'trying alternate alignment'
+            dx,dy,ok = libimg.getImageAlignmentDiff(im0, im1)
             # dx,dy,ok = libimg.getImageAlignment(im0, im1) # try ecc - bad
 
         # show composite
@@ -77,6 +78,8 @@ def vgTestComposite():
             blank = np.zeros((800,800),np.uint8)
             im = cv2.merge((im0,blank,im1))
             libimg.show(im,fileId)
+        else:
+            dx=dy=400 # just so avg px error isn't artificially low
 
         dx=-dx;dy=-dy
 

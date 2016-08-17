@@ -43,6 +43,73 @@ def getImageAlignmentCombined(im0, im1, dx=0, dy=0):
     return dx,dy,ok
 
 
+def getImageAlignmentDiff(im0, im1):
+    """
+    get image alignment by minimizing the sum of differences between images
+    """
+
+    # lores image size
+    # sz = 100
+    sz = 200
+    # sz = 40
+
+    # tilesize = 40
+    tilesize = 25
+    # tilesize = 20
+    # tilesize = 10
+
+    # get lores versions
+    im0sm = resizeImage(im0,sz,sz)
+    im1sm = resizeImage(im1,sz,sz)
+    show(im0sm)
+    show(im1sm)
+
+    dx=dy=0
+    imax=jmax=sz-tilesize
+    istep=1
+
+    # get tile from im1
+    nsteps = sz/tilesize
+    dxsum=dysum=0
+    for tilex in range(0,sz-tilesize,tilesize):
+        for tiley in range(0,sz-tilesize,tilesize):
+            tile = im1sm[tiley:tiley+tilesize, tilex:tilex+tilesize]
+            # libimg.show(tile)
+
+            # method = cv2.TM_SQDIFF
+            # method = cv2.TM_SQDIFF_NORMED
+            # method = cv2.TM_CCOEFF
+            # method = cv2.TM_CCOEFF_NORMED
+            # method = cv2.TM_CCORR
+            method = cv2.TM_CCORR_NORMED
+            res = cv2.matchTemplate(im0sm,tile,method)
+            # res = cv2.matchTemplate(im1sm,tile,method) # sanity check
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+            # top_left = min_loc
+            if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+                top_left = min_loc
+            else:
+                top_left = max_loc
+            # w=h=tilesize
+            # bottom_right = (top_left[0] + w, top_left[1] + h)
+            # cv2.rectangle(res,top_left, bottom_right, 255, 1)
+            # show(res)
+
+            dx = top_left[0]-tilex
+            dy = top_left[1]-tiley
+            dxsum+=dx
+            dysum+=dy
+
+    dx = dxsum/nsteps/nsteps; dy = dysum/nsteps/nsteps
+    dx *= 800/sz; dy *= 800/sz
+    # dx,dy=dy,dx
+    dx=-dx;dy=-dy
+    # print dx,dy
+    im1shifted = shiftImage(im1, dx,dy)
+    show(im1shifted)
+    return dx,dy,True
+
+
 def getImageAlignmentORB(im0, im1):
     """
     Get alignment between images using ORB feature alignment.
@@ -50,37 +117,55 @@ def getImageAlignmentORB(im0, im1):
     If unable to align images returns 0,0,False
     """
 
-    npoints = 100
-    # sharpen = False
-    sharpen = True
+    npoints = 500 # default
+    # npoints = 100
+    sharpen = False
+    # sharpen = True
     sz = 800
     # sz = 400
     # sz = 200
     # sz = 100
-    # neighborhood = 31 # default
-    # neighborhood = 21
-    neighborhood = 9
-    # neighborhood = 7
-    # neighborhood = 11 # kind of works on clouds!
-    # neighborhood = 15
     # neighborhood = 51
+    # neighborhood = 31 # default
+    neighborhood = 21
+    # neighborhood = 15
+    # neighborhood = 13
+    # neighborhood = 11 # kind of works on clouds
+    # neighborhood = 9
+    # neighborhood = 7
     # fastThreshold = 20 # default
-    # fastThreshold = 5
+    fastThreshold = 5
     # fastThreshold = 3
     # fastThreshold = 2
-    fastThreshold = 1
+    # fastThreshold = 1
+    # fastThreshold = 0
     knnMatching = True
     # knnMatching = False
     # crossCheck = True
     crossCheck = False # need False so knnMatch works - why?
     # homography = True
     homography = False
-    # ransac=True
-    # ransac=False
+    contrast = True # looks better but doesn't help ORB
+    # contrast = False
 
     if sharpen:
         im0 = sharpenImage(im0)
         im1 = sharpenImage(im1)
+    if contrast:
+        im0 = cv2.equalizeHist(im0)
+        im1 = cv2.equalizeHist(im1)
+        # clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8,8))
+        # im0 = clahe.apply(im0)
+        # im1 = clahe.apply(im1)
+        # maxIntensity = 255.0
+        # phi = 1
+        # theta = 1
+        # expt = 2
+        # x = np.arange(maxIntensity)
+        # im0 = (maxIntensity/phi)*(im0/(maxIntensity/theta))**expt
+        # im1 = (maxIntensity/phi)*(im1/(maxIntensity/theta))**expt
+        # im0 = np.array(im0,dtype=np.uint8)
+        # im1 = np.array(im1,dtype=np.uint8)
 
     if sz!=800:
         im0 = resizeImage(im0,sz,sz)
@@ -113,8 +198,16 @@ def getImageAlignmentORB(im0, im1):
                          patchSize=neighborhood,fastThreshold=fastThreshold)
 
     # find the keypoints and their descriptors
-    kp0, des0 = orb.detectAndCompute(im0,None)
-    kp1, des1 = orb.detectAndCompute(im1,None)
+    # kp0, des0 = orb.detectAndCompute(im0,None)
+    # kp1, des1 = orb.detectAndCompute(im1,None)
+
+    # detect keypoints
+    kp0 = orb.detect(im0,None)
+    kp1 = orb.detect(im1,None)
+
+    # compute descriptors for keypoints
+    kp0, des0 = orb.compute(im0,kp0)
+    kp1, des1 = orb.compute(im1,kp1)
 
     if des0 is None or des1 is None:
         print 'des0 or des1 is none - ie no keypoints found'
@@ -137,7 +230,8 @@ def getImageAlignmentORB(im0, im1):
         # match descriptors and sort them in the order of their distance
         matches = matcher.match(des0,des1)
         matches = sorted(matches, key = lambda x:x.distance)
-        good = matches[:30]
+        # good = matches[:30]
+        good = good
 
     # draw good matches
     # print 'good matches',len(good)
@@ -227,12 +321,12 @@ def sharpenImage(im):
     "sharpen image with a simple 2d kernel"
     kernel = np.array([[0,-1,0], [-1,5,-1], [0,-1,0]])
     # kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]]) # a bit too sharp, even for clouds
-    # kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]])
     # kernel = np.array([[-1,-1,-1,-1,-1],
                        # [-1,2,2,2,-1],
                        # [-1,2,8,2,-1],
                        # [-1,2,2,2,-1],
                        # [-1,-1,-1,-1,-1]]) / 8.0
+    # kernel = np.array([[1,1,1], [1,-7,1], [1,1,1]]) # blur
     im = cv2.filter2D(im, -1, kernel)
     return im
 

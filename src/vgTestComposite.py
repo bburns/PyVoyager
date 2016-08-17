@@ -67,14 +67,16 @@ def vgTestComposite():
 
         # align im1 to im0
         dx,dy,ok = libimg.getImageAlignmentORB(im0, im1)
-        if not ok:
-            dx,dy,ok = libimg.getImageAlignment(im0, im1) # try ecc
+        # if not ok:
+            # dx,dy,ok = libimg.getImageAlignmentDiff(im0, im1)
+            # dx,dy,ok = libimg.getImageAlignment(im0, im1) # try ecc - bad
 
         # show composite
-        im1 = libimg.shiftImage(im1, dx, dy)
-        blank = np.zeros((800,800),np.uint8)
-        im = cv2.merge((blank,im0,im1))
-        libimg.show(im)
+        if ok:
+            im1 = libimg.shiftImage(im1, dx, dy)
+            blank = np.zeros((800,800),np.uint8)
+            im = cv2.merge((im0,blank,im1))
+            libimg.show(im,fileId)
 
         dx=-dx;dy=-dy
 
@@ -83,7 +85,7 @@ def vgTestComposite():
         deltay = abs(dy-bestdy)
         err = math.sqrt(deltax**2 + deltay**2)
         errsum += err
-        if err<maxerr:
+        if ok and err<maxerr:
             print "[OK]     %s: error %dpx" % (fileId,err)
             ntestsok += 1
         else:

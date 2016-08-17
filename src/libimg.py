@@ -59,8 +59,10 @@ def getImageAlignmentORB(im0, im1):
     # sz = 100
     # neighborhood = 31 # default
     # neighborhood = 21
+    neighborhood = 9
     # neighborhood = 7
-    neighborhood = 11 # kind of works on clouds!
+    # neighborhood = 11 # kind of works on clouds!
+    # neighborhood = 15
     # neighborhood = 51
     # fastThreshold = 20 # default
     # fastThreshold = 5

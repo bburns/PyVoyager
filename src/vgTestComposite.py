@@ -8,6 +8,7 @@ Test of compositing routines.
 import cv2
 import os
 import math
+import numpy as np
 
 import config
 import lib
@@ -38,7 +39,7 @@ def vgTestComposite():
     # csvTests = lib.readCsv(testCompositeDb) # test/testCenters.csv
     # ntests = len(csvTests)
     # ntestsok = 0
-    maxerr=8
+    maxerr = 8
     errsum = 0
     ntests = 0
     ntestsok = 0
@@ -47,6 +48,7 @@ def vgTestComposite():
     for row in csvTests:
         # print row
         ntests += 1
+        
         volume = row[0] # not used but helpful for csv file
         f0 = row[1]
         f1 = row[2]
@@ -54,7 +56,7 @@ def vgTestComposite():
         bestdy = int(row[4])
         
         fileId = f0[:8]
-        print 'Testing',fileId
+        # print 'Testing',fileId
         
         f0 = folder + f0 + '.jpg'
         f1 = folder + f1 + '.jpg'
@@ -64,33 +66,37 @@ def vgTestComposite():
         assert not im1 is None
 
         # align im1 to im0
-        dx,dy,ok = libimg.getImageAlignmentCombined(im0, im1)
-        if ok:
-            im1 = libimg.shiftImage(im1, dx, dy)
-            libimg.show(im1)
-            
-            dx=-dx;dy=-dy
-            
-            # calculate error
-            deltax = abs(dx-bestdx)
-            deltay = abs(dy-bestdy)
-            err = math.sqrt(deltax**2 + deltay**2)
-            errsum += err
-            if err<maxerr:
-                print "[OK]     %s: error %dpx" % (fileId,err)
-                ntestsok += 1
-            else:
-                print "[FAILED] %s: error %dpx - dx,dy (%d, %d) expected (%d, %d)" % \
-                      (fileId, err, dx, dy, bestdx, bestdy)
-            print
+        dx,dy,ok = libimg.getImageAlignmentORB(im0, im1)
+        if not ok:
+            dx,dy,ok = libimg.getImageAlignment(im0, im1) # try ecc
+
+        # show composite
+        im1 = libimg.shiftImage(im1, dx, dy)
+        blank = np.zeros((800,800),np.uint8)
+        im = cv2.merge((blank,im0,im1))
+        libimg.show(im)
+
+        dx=-dx;dy=-dy
+
+        # calculate error
+        deltax = abs(dx-bestdx)
+        deltay = abs(dy-bestdy)
+        err = math.sqrt(deltax**2 + deltay**2)
+        errsum += err
+        if err<maxerr:
+            print "[OK]     %s: error %dpx" % (fileId,err)
+            ntestsok += 1
+        else:
+            print "[FAILED] %s: error %dpx - dx,dy (%d, %d) expected (%d, %d)" % \
+                  (fileId, err, dx, dy, bestdx, bestdy)
                 
     fTests.close()
     
     accuracy = ntestsok/float(ntests)*100
     avgerror = errsum/float(ntests)
     print
-    print "Accuracy %0.1f%% (%d/%d tests passed)." % (accuracy, ntestsok, ntests)
-    print "Average error %dpx." % (avgerror)
+    print "Accuracy %0.1f%% (%d/%d tests passed) - average error %dpx." % \
+          (accuracy, ntestsok, ntests, avgerror)
     print
 
 

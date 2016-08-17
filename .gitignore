@@ -30,3 +30,4 @@ db/compositesOld.csv
 src/experiments/*.jpg
 experiments/
 db/compositesNew.csv
+test/composite/other/

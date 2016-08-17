@@ -23,6 +23,24 @@ import lib
 import log
 
 
+def thresholdImage(im):
+    "get adaptive threshold of image"
+    im = cv2.adaptiveThreshold(im, maxValue=255,
+                               adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                               thresholdType=cv2.THRESH_BINARY_INV,
+                               blockSize=3,
+                               # C=30)
+                               C=10)
+    return im
+
+
+def getImageAlignmentCombined(im0, im1, dx=0, dy=0):
+    ""
+    # dx,dy,ok = getImageAlignmentDiff(im0, im1)
+    dx,dy,ok = getImageAlignmentORB(im0, im1)
+    if ok:
+        dx,dy,ok = getImageAlignment(im0, im1, dx=dx, dy=dy)
+    return dx,dy,ok
 
 
 def getImageAlignmentORB(im0, im1):
@@ -36,28 +54,32 @@ def getImageAlignmentORB(im0, im1):
     # sharpen = False
     sharpen = True
     sz = 800
+    # sz = 400
+    # sz = 200
     # sz = 100
     # neighborhood = 31 # default
+    # neighborhood = 21
     # neighborhood = 7
     neighborhood = 11 # kind of works on clouds!
-    # neighborhood = 13
+    # neighborhood = 51
     # fastThreshold = 20 # default
-    fastThreshold = 5
+    # fastThreshold = 5
+    # fastThreshold = 3
+    # fastThreshold = 2
+    fastThreshold = 1
     knnMatching = True
     # knnMatching = False
     # crossCheck = True
-    crossCheck = False
+    crossCheck = False # need False so knnMatch works - why?
     # homography = True
     homography = False
     # ransac=True
     # ransac=False
 
-    # no help - get nearly randomly scattered features in clouds
     if sharpen:
         im0 = sharpenImage(im0)
         im1 = sharpenImage(im1)
 
-    # no help - still no features found in clouds
     if sz!=800:
         im0 = resizeImage(im0,sz,sz)
         im1 = resizeImage(im1,sz,sz)
@@ -73,18 +95,20 @@ def getImageAlignmentORB(im0, im1):
     # finds their orientation using first-order moments and computes the
     # descriptors using BRIEF (where the coordinates of random point pairs (or
     # k-tuples) are rotated according to the measured orientation).
+    # The second parameter is for scaling the images down (or the detector patch
+    # up) between octaves (or levels). using the number 1.0f means you don't
+    # change the scale between octaves, this makes no sense, especially since
+    # your third parameter is the number of levels which is 2 and not 1. The
+    # default is 1.2f for scale and 8 levels, for less calculations, use a
+    # scaling of 1.5f and 4 levels (again, just a suggestion, other parameters
+    # will work too).
     # create (int nfeatures=500, float scaleFactor=1.2f, int nlevels=8,
     #   int edgeThreshold=31, int firstLevel=0, int WTA_K=2,
     #   int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20)
     # orb = cv2.ORB_create()
-    # The second parameter is for scaling the images down (or the detector patch up) between octaves (or levels). using the number 1.0f means you don't change the scale between octaves, this makes no sense, especially since your third parameter is the number of levels which is 2 and not 1. The default is 1.2f for scale and 8 levels, for less calculations, use a scaling of 1.5f and 4 levels (again, just a suggestion, other parameters will work too).
     # orb = cv2.ORB_create(npoints)
-    # orb = cv2.ORB_create(npoints,edgeThreshold=15,patchSize=15) # no help with clouds - not enough features found
-    # orb = cv2.ORB_create(npoints,edgeThreshold=7,patchSize=7) # no help with clouds - not enough features found
-    # orb = cv2.ORB_create(npoints,edgeThreshold=7,patchSize=7,fastThreshold=5) # works with sharpen and resize on clouds
-    # orb = cv2.ORB_create(npoints,edgeThreshold=51,patchSize=51) # no help with clouds - not enough features found
-    orb = cv2.ORB_create(npoints,edgeThreshold=neighborhood,patchSize=neighborhood,fastThreshold=fastThreshold)
-    # orb = cv2.ORB_create(npoints, fastThreshold=3)
+    orb = cv2.ORB_create(npoints,edgeThreshold=neighborhood,
+                         patchSize=neighborhood,fastThreshold=fastThreshold)
 
     # find the keypoints and their descriptors
     kp0, des0 = orb.detectAndCompute(im0,None)
@@ -94,77 +118,67 @@ def getImageAlignmentORB(im0, im1):
         print 'des0 or des1 is none - ie no keypoints found'
         return 0,0,False
 
-    out = cv2.drawKeypoints(im0,kp0,None)
-    show(out)
+    # out = cv2.drawKeypoints(im0,kp0,None)
+    # show(out)
 
-    # brute force matcher
+    # create brute force matcher
     # see http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html
-    # create BFMatcher object
-    # need to use NORM_HAMMING as ORB is a binary feature
-    # matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
-    # matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False) # need False to allow knnMatch to work - why?
-    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=crossCheck) # need False to allow knnMatch to work - why?
+    # need to use NORM_HAMMING since ORB is a binary feature
+    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=crossCheck)
 
     if knnMatching:
         # use K nearest neighbor matching
-        # and get all the good matches as per Lowe's ratio test
         matches = matcher.knnMatch(des0,des1,k=2)
+        # get all the good matches as per Lowe's ratio test
         good = [m[0] for m in matches if len(m) == 2 and m[0].distance < m[1].distance * 0.75]
     else:
-        # Match descriptors and sort them in the order of their distance
+        # match descriptors and sort them in the order of their distance
         matches = matcher.match(des0,des1)
         matches = sorted(matches, key = lambda x:x.distance)
         good = matches[:30]
-        # good = matches
 
-    # Draw good matches
-    print 'good matches',len(good)
-    # out = cv2.drawMatches(im0,kp0,im1,kp1,good,None)
-    out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # draw good matches
+    # print 'good matches',len(good)
+    out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,
+                          flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
     show(out)
 
 
     if homography:
-        # Initialize lists
+        # initialize lists
         kp0list = []
         kp1list = []
-        # For each match...
+        # for each match...
         for m in good:
-            # Get the matching keypoints for each of the images
+            # get the matching keypoints for each of the images
             im0idx = m.queryIdx
             im1idx = m.trainIdx
-            # Get the coordinates
+            # get the coordinates
             (x0,y0) = kp0[im0idx].pt
             (x1,y1) = kp1[im1idx].pt
-            # Append to each list
+            # append to each list
             kp0list.append((x0, y0))
             kp1list.append((x1, y1))
         kp0a = np.array(kp0list)
         kp1a = np.array(kp1list)
 
-        # http://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#findhomography
-        # H, status = cv2.findHomography(p1, p2, cv2.RANSAC, 5.0)
-        # H, status = cv2.findHomography(kp0, kp1)
+        # see http://docs.opencv.org/2.4/modules/calib3d/doc/
+        #   camera_calibration_and_3d_reconstruction.html#findhomography
         # H, status = cv2.findHomography(kp0a, kp1a)
         # H, status = cv2.findHomography(kp0a, kp1a, cv2.RANSAC)
         H, status = cv2.findHomography(kp0a, kp1a, cv2.RANSAC, 5.0)
         if H is None:
-            print 'H is none - no good solution found'
+            print 'H is none - no good solution found - %d good matches' % len(good)
             return 0,0,False
         print H
-        w,h=800,800
-        # imx = cv2.warpPerspective(im1, H, (w,h))
-        # show(imx)
-        # imy = cv2.merge((blank, im0, imx))
-        # show(imy)
-        # dx = H[1][2]
-        # dy = H[0][2]
+        # w,h=800,800
         dx = H[0][2]
         dy = H[1][2]
-        imx = shiftImage(im1, dx, dy)
-        show(imx)
-        imy = cv2.merge((blank, im0, imx))
-        show(imy)
+
+        # imx = shiftImage(im1, dx, dy)
+        # # show(imx)
+        # imy = cv2.merge((blank, im0, imx))
+        # # show(imy)
 
 
     else:
@@ -178,27 +192,25 @@ def getImageAlignmentORB(im0, im1):
         if M is None:
             print 'M is none - no good solution found'
             return 0,0,False
-        print M
+        # print M
         # eg
         # [[  1.00273314e+00   2.62991563e-03  -1.53541381e+02]
         # [ -2.62991563e-03   1.00273314e+00  -1.77198771e+01]]
-        # show images
-        # just want pure translation
-        M[0][0]=1
-        M[0][1]=0
-        M[1][0]=0
-        M[1][1]=1
-        # note order of cols, rows -
-        rows, cols = im1.shape[:2]
-        imx = cv2.warpAffine(im1, M, (cols,rows), flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
-        show(imx)
-        print blank.shape
-        print im0.shape
-        print imx.shape
-        imy = cv2.merge((blank, im0, imx))
-        show(imy)
-        # dx = M[1][2]
-        # dy = M[0][2]
+
+        # # show images
+        # # just want pure translation
+        # M[0][0]=1
+        # M[0][1]=0
+        # M[1][0]=0
+        # M[1][1]=1
+        # # note order of cols, rows -
+        # rows, cols = im1.shape[:2]
+        # imx = cv2.warpAffine(im1, M, (cols,rows),
+        #                      flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        # # show(imx)
+        # imy = cv2.merge((blank, im0, imx))
+        # # show(imy)
+
         dx = M[0][2]
         dy = M[1][2]
 
@@ -207,15 +219,6 @@ def getImageAlignmentORB(im0, im1):
         dx*=800/sz;dy*=800/sz
     alignmentOk = True
     return dx,dy,alignmentOk
-
-
-def getImageAlignmentCombined(im0, im1, dx=0, dy=0):
-    ""
-    # dx,dy,ok = getImageAlignmentDiff(im0, im1)
-    dx,dy,ok = getImageAlignmentORB(im0, im1)
-    # if ok:
-        # dx,dy,ok = getImageAlignment(im0, im1, dx=dx, dy=dy)
-    return dx,dy,ok
 
 
 def sharpenImage(im):

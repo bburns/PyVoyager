@@ -142,6 +142,9 @@ def getImageAlignmentORB(im0, im1):
     knnMatching = False
     crossCheck = True
     # crossCheck = False # need False so knnMatch works - why?
+    # keepMatches = 50
+    # keepMatches = 30
+    keepMatches = 40
     # homography = True
     homography = False
     contrast = True # looks better but doesn't help ORB
@@ -229,7 +232,7 @@ def getImageAlignmentORB(im0, im1):
         # match descriptors and sort them in the order of their distance
         matches = matcher.match(des0,des1)
         matches = sorted(matches, key = lambda x:x.distance)
-        good = matches[:30]
+        good = matches[:keepMatches]
         # good = matches
 
     # draw good matches

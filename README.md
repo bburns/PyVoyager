@@ -82,9 +82,15 @@ In more detail, 'interesting' features are detected using ORB [20] in one image,
 
 If this approach fails to find a good translation (due to lack of enough corresponding points, for instance), it will fall back on ECC Maximization [15] to try to align the images. 
 
-Here is an image showing what the feature-matching process looks like, and the resulting composite. 
+Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
+
+![Feature matching](https://github.com/bburns.km/PyVoyager/raw/master/images/C1637948_matching.jpg)
+![Combined image](https://github.com/bburns.km/PyVoyager/raw/master/images/C1637948_aligned.jpg)
 
 
+
+<!-- http://imgur.com/tOyS31F -->
+<!-- http://imgur.com/9k5Brn4 -->
 
 
 

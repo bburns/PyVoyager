@@ -288,7 +288,8 @@ def getImageAlignmentORB(im0, im1):
         imx = shiftImage(im1, dx, dy)
         # show(imx)
         blank = np.zeros((sz,sz),np.uint8)
-        imy = cv2.merge((blank, im0, imx))
+        # imy = cv2.merge((blank, im0, imx))
+        imy = cv2.merge((im0, blank, imx)) # base image is blue, moved is red
         show(imy)
 
     elif transform=='affine':
@@ -940,7 +941,6 @@ def shiftImage(im, dx, dy):
 
 #. make this more generic - eg pass in set of images to align, return set of displacements
 # could call it getChannelAlignments
-# def alignChannels(channels, useGradients=False):
 def alignChannels(channels):
     "attempt to align the images in the given channel arrays"
     # print channels

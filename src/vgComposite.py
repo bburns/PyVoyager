@@ -86,14 +86,17 @@ def processChannels(channelRows, optionAlign):
             if centered: optionAlign = False # don't try to align images if already centered
             if weightXYFilledOut: optionAlign = False # don't align if already have values
 
+            # combine the channel images
             im, channels = libimg.combineChannels(channels, optionAlign)
 
             libimg.imwrite(outfilepath, im)
             # if -align: update channels x,y etc
             if optionAlign:
+                # make sure all the rows have all their columns
                 for row in channelRows:
                     while len(row)<=config.colCompositesY:
                         row.append('')
+                # find each row in channelRows and update weights and x,y translation
                 for row in channels:
                     for row2 in channelRows:
                         if row2[config.colCompositesFileId]==row[config.colChannelFileId]:

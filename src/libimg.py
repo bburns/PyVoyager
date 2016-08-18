@@ -283,6 +283,13 @@ def getImageAlignmentORB(im0, im1):
         if not modelOk:
             print 'no ransac model found'
             return 0,0,False
+        # imx = cv2.warpAffine(im1, M, (cols,rows),
+        #                      flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        imx = shiftImage(im1, dx, dy)
+        # show(imx)
+        blank = np.zeros((sz,sz),np.uint8)
+        imy = cv2.merge((blank, im0, imx))
+        show(imy)
 
     elif transform=='affine':
 

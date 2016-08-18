@@ -5,6 +5,8 @@
 
 # Note: this file DOES need to be sorted so can be joined with files.csv.
 
+#. maybe specify insert before/after as flag?
+
 
 fileId,additionId,nframes
 

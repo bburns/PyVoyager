@@ -21,6 +21,7 @@ from PIL import ImageDraw
 import config
 import lib
 import log
+import ransac
 
 
 def thresholdImage(im):
@@ -76,6 +77,9 @@ def getImageAlignmentDiff(im0, im1):
             tile = im1sm[tiley:tiley+tilesize, tilex:tilex+tilesize]
             # libimg.show(tile)
 
+            # use opencv template matching routine
+            # for examples of methods see
+            # http://docs.opencv.org/3.1.0/d4/dc6/tutorial_py_template_matching.html
             # method = cv2.TM_SQDIFF
             # method = cv2.TM_SQDIFF_NORMED
             # method = cv2.TM_CCOEFF
@@ -120,38 +124,41 @@ def getImageAlignmentORB(im0, im1):
     npoints = 500 # default
     # npoints = 100
     # magnitude = True
-    magnitude = False
-    sharpen = False
+    magnitude = False # best
+    sharpen = False # best
     # sharpen = True
-    contrast = True
+    contrast = True # best (using equalize hist)
     # contrast = False
     sz = 800
     # sz = 400
     # sz = 200
     # sz = 100
+    # neighborhood = 121
     # neighborhood = 51
-    neighborhood = 31 # default
+    neighborhood = 31 # default and best
     # neighborhood = 21
     # neighborhood = 15
     # neighborhood = 13
-    # neighborhood = 11 # kind of works on clouds
+    # neighborhood = 11
     # neighborhood = 9
     # neighborhood = 7
     # fastThreshold = 20 # default
-    fastThreshold = 10
+    fastThreshold = 10 # best
     # fastThreshold = 5
     # fastThreshold = 1
     # fastThreshold = 0
     # knnMatching = True
-    knnMatching = False
-    crossCheck = True
+    knnMatching = False # best
+    crossCheck = True # best
     # crossCheck = False # need False so knnMatch works - why?
     # keepMatches = 50
-    # keepMatches = 30
     # keepMatches = 40
-    keepMatches = 10
+    # keepMatches = 30
+    # keepMatches = 20
+    keepMatches = 10 # best
+    # keepMatches = 5
     # homography = True
-    homography = False
+    homography = False # best
 
     if magnitude:
         im0 = getGradientMagnitude(im0)
@@ -186,6 +193,12 @@ def getImageAlignmentORB(im0, im1):
     cv2.ocl.setUseOpenCL(False)
 
     # Initiate ORB detector
+
+    # ORB is basically a fusion of FAST keypoint detector and BRIEF descriptor
+    # with many modifications to enhance the performance. First it use FAST to
+    # find keypoints, then apply Harris corner measure to find top N points
+    # among them. It also use pyramid to produce multiscale-features.
+
     # ORB (oriented BRIEF) keypoint detector and descriptor extractor.
     # described in [125] . The algorithm uses FAST in pyramids to detect stable
     # keypoints, selects the strongest features using FAST or Harris response,
@@ -203,7 +216,6 @@ def getImageAlignmentORB(im0, im1):
     #   int edgeThreshold=31, int firstLevel=0, int WTA_K=2,
     #   int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20)
     # orb = cv2.ORB_create()
-    # orb = cv2.ORB_create(npoints)
     orb = cv2.ORB_create(npoints,edgeThreshold=neighborhood,
                          patchSize=neighborhood,fastThreshold=fastThreshold)
 
@@ -250,7 +262,47 @@ def getImageAlignmentORB(im0, im1):
     show(out)
 
 
-    if homography:
+    if not homography:
+        # find transformation
+
+        # # note: M might include a bit of rotation, but we'll just ignore that
+        # # this includes RANSAC to eliminate outliers - see
+        # # https://github.com/opencv/opencv/blob/master/modules/video/src/lkpyramid.cpp
+        # src_pts = np.float32([ kp0[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+        # dst_pts = np.float32([ kp1[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+        # M = cv2.estimateRigidTransform(src_pts,dst_pts,False)
+        # if M is None:
+        #     print 'M is none - no good solution found'
+        #     return 0,0,False
+        # # print M
+        # # eg
+        # # [[  1.00273314e+00   2.62991563e-03  -1.53541381e+02]
+        # # [ -2.62991563e-03   1.00273314e+00  -1.77198771e+01]]
+        # # show images
+        # # just want pure translation
+        # M[0][0]=1
+        # M[0][1]=0
+        # M[1][0]=0
+        # M[1][1]=1
+        # # note order of cols, rows -
+        # rows, cols = im1.shape[:2]
+        # imx = cv2.warpAffine(im1, M, (cols,rows),
+        #                      flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
+        # # show(imx)
+        # imy = cv2.merge((blank, im0, imx))
+        # # show(imy)
+        # dx = M[0][2]
+        # dy = M[1][2]
+
+        # get simple translation model, including ransac
+        src_pts = [ kp0[m.queryIdx].pt for m in good ]
+        dst_pts = [ kp1[m.trainIdx].pt for m in good ]
+        data = zip(src_pts,dst_pts)
+        # print data
+        dx, dy = ransac.getRansacModel(data)
+
+    else:
+
         # initialize lists
         kp0list = []
         kp1list = []
@@ -286,39 +338,6 @@ def getImageAlignmentORB(im0, im1):
         # imy = cv2.merge((blank, im0, imx))
         # # show(imy)
 
-
-    else:
-        # find transformation
-        src_pts = np.float32([ kp0[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
-        dst_pts = np.float32([ kp1[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
-        # note: M might include a bit of rotation, but we'll just ignore that
-        # this does include RANSAC to eliminate outliers - see
-        # https://github.com/opencv/opencv/blob/master/modules/video/src/lkpyramid.cpp
-        M = cv2.estimateRigidTransform(src_pts,dst_pts,False)
-        if M is None:
-            print 'M is none - no good solution found'
-            return 0,0,False
-        # print M
-        # eg
-        # [[  1.00273314e+00   2.62991563e-03  -1.53541381e+02]
-        # [ -2.62991563e-03   1.00273314e+00  -1.77198771e+01]]
-
-        # # show images
-        # # just want pure translation
-        # M[0][0]=1
-        # M[0][1]=0
-        # M[1][0]=0
-        # M[1][1]=1
-        # # note order of cols, rows -
-        # rows, cols = im1.shape[:2]
-        # imx = cv2.warpAffine(im1, M, (cols,rows),
-        #                      flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
-        # # show(imx)
-        # imy = cv2.merge((blank, im0, imx))
-        # # show(imy)
-
-        dx = M[0][2]
-        dy = M[1][2]
 
     # return results
     if sz!=800: #.

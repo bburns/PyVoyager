@@ -102,8 +102,8 @@ def processChannels(channelRows, optionAlign):
             # print [ch[:-1] for ch in channels if ch]
         # return channels
     # caller needs to know if x,y values were changed
-    changed = not centered
-    return changed
+    xyChanged = not centered
+    return xyChanged
 
 
 def writeUpdates(csvNew, channelRows):
@@ -134,6 +134,7 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
     """
 
     if filterCompositeId: filterCompositeId = filterCompositeId.upper() # always capital C
+
     # note: targetPathParts = [system, craft, target, camera]
     targetPathParts = lib.parseTargetPath(filterTargetPath)
 
@@ -204,8 +205,11 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
             else:
                 # we're seeing a new compositeId, so process all the gathered channels
                 printStatus(channelRows,startVol,nfile,startId)
-                changed = processChannels(channelRows,optionAlign)
-                if optionAlign and changed: writeUpdates(csvNew, channelRows)
+                processChannels(channelRows, optionAlign)
+                # processChannels(channelRows, optionAlign, csvNew)
+                # xyChanged = processChannels(channelRows, optionAlign)
+                # if optionAlign and xyChanged:
+                    # writeUpdates(csvNew, channelRows)
                 startId = compositeId
                 startVol = volume
                 channelRows = [row]
@@ -214,11 +218,14 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
     # process the last leftover group
     print channelRows
     printStatus(channelRows,startVol,nfile,startId)
-    changed = processChannels(channelRows,optionAlign)
-    if optionAlign and changed: writeUpdates(csvNew, channelRows)
+    processChannels(channelRows, optionAlign)
+    # processChannels(channelRows, optionAlign, csvNew)
+    # xyChanged = processChannels(channelRows,optionAlign)
+    # if optionAlign and xyChanged:
+        # writeUpdates(csvNew, channelRows)
 
     print
-    # if optionAlign: fNew.close()
+    if optionAlign: fNew.close()
     fFiles.close()
     fComposites.close()
 

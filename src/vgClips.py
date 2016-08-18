@@ -20,7 +20,7 @@ import lib
 
 # import vgComposite
 import vgAnnotate
-import vgTitles
+import vgTitle
 
 
 
@@ -255,7 +255,7 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
         # lib.loadPreviousStep(targetPathParts, vgAnnotate.vgAnnotate)
 
         # make sure we have some titles
-        vgTitles.vgTitles(filterTargetPath)
+        vgTitle.vgTitle(filterTargetPath)
 
         # stage images for ffmpeg
         lib.rmdir(config.clipsStageFolder)

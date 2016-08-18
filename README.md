@@ -84,8 +84,8 @@ If this approach fails to find a good translation (due to lack of enough corresp
 
 Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
 
-![Feature matching](https://github.com/bburns.km/PyVoyager/raw/master/images/C1637948_matching.jpg)
-![Combined image](https://github.com/bburns.km/PyVoyager/raw/master/images/C1637948_aligned.jpg)
+![Feature matching](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg)
+![Combined image](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg)
 
 
 

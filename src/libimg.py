@@ -872,7 +872,7 @@ def stretchHistogram(im, nHotPixels=100):
     maxvalue = 255
     for i in xrange(255,0,-1):
         sum += hist[i]
-        if sum>nHotPixels:
+        if sum > nHotPixels:
             maxvalue = i
             break
 
@@ -890,7 +890,6 @@ def adjustImageFile(infile, outfile, doStretchHistogram=True):
     """
     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
     """
-    #. could subtract dark current image, remove reseau marks if starting from RAW images, etc
 
     # need ANYDEPTH flag as the pngs are 16-bit
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
@@ -926,8 +925,8 @@ def shiftImage(im, dx, dy):
     Note: image dimensions are kept the same - the image is just shifted out of frame.
     """
     M = np.array([[1,0,dx],[0,1,dy]], np.float)
-    # note order of cols, rows -
     rows, cols = im.shape[:2]
+    # note order of cols, rows -
     im = cv2.warpAffine(im, M, (cols, rows), flags = cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP)
     return im
 
@@ -960,6 +959,7 @@ def alignChannels(channels, useGradients=False):
     return channels
 
 
+#. refactor
 def getCanvasSizeForChannels(channels):
     "given an array of channels, return size of canvas that would contain them all"
     xmin = 0; xmax = 799; ymin = 0; ymax = 799 #.params
@@ -976,8 +976,8 @@ def getCanvasSizeForChannels(channels):
     return w,h,xmin,ymin,enlarged
 
 
-# def combineChannels(channels, optionAlign=False):
-def combineChannels(channels, optionAlign=False, useGradients=False):
+#. refactor
+def combineChannels(channels, optionAlign=False):
     """
     Combine the given channels and return a single cv2 image.
     channels is an array of [fileId, filter, filename, weight, x, y]
@@ -989,10 +989,10 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
     If only one channel included will return a b/w image.
     If missing a channel will use a blank/black image for that channel.
     If optionAlign is True will attempt to align channels - x,y values
-    are included in return channels array.
+    are included in the return channels array.
     Returns im, channels.
     """
-    print channels
+    # print channels
 
     # if just one channel then return a bw image
     if len(channels)==1:
@@ -1061,7 +1061,6 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
     for row in channels:
         filter = row[config.colChannelFilter]
         d[filter] = row
-    # print d
 
     # a little dictionary fn
     def dget(d, skeys):
@@ -1079,12 +1078,7 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
     channelRed = dget(d,'Orange')
     channelGreen = dget(d,'Green')
 
-    #. not positive about this order - maybe assign clear 2nd?
-
     # second pass - choose from some secondary options
-    # if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Clear,Ch4_Js,Ch4_U,Green,Orange')
-    # if channelRed is None: channelRed = dget(d,'Clear,Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
-    # if channelGreen is None: channelGreen = dget(d,'Clear,Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
     if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Ch4_Js,Ch4_U,Green,Orange')
     if channelRed is None: channelRed = dget(d,'Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
     if channelGreen is None: channelGreen = dget(d,'Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')
@@ -1096,18 +1090,17 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
     if channelGreen is None: channelGreen = d.get('Clear') or blankrow
 
     # get images
-    blank = np.zeros((800,800), np.uint8)
+    blank = np.zeros((800,800), np.uint8) #.params
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
-            print row
+            # print row
             filename = row[config.colChannelFilename]
             im = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-            if im is None:
-                im = blank
+            if im is None: im = blank
             # apply weight if necessary
-            # weight = row[config.colChannelWeight] if len(row)>config.colChannelWeight else 1.0
             weight = row[config.colChannelWeight]
             if weight!=1.0: im = cv2.multiply(im,weight)
+            #. handle this
             # # if canvas needs to be enlarged, do so
             # if enlarged:
             #     canvas = np.zeros((h,w), np.uint8) # 0-255
@@ -1123,7 +1116,7 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
 
     # # fourth pass - assume we have at least 2 channels at this point,
     # # so try synthesizing a third.
-    # # . this kind of works, but like the psychedelic jupiter clouds at the moment
+    # # . this doesn't work very well - better to have a dedicated colorize step
     # imRed = channelRed[config.colChannelIm] if channelRed else None
     # imGreen = channelGreen[config.colChannelIm] if channelGreen else None
     # imBlue = channelBlue[config.colChannelIm] if channelBlue else None
@@ -1133,28 +1126,16 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
 
     # attempt to align channels
     if optionAlign:
-        channels = alignChannels([channelBlue, channelRed, channelGreen], useGradients)
+        channels = alignChannels([channelBlue, channelRed, channelGreen])
 
     # find size of canvas that will contain all images
-    # w,h,enlarged = getCanvasSizeForChannels(channels)
     w,h,xmin,ymin,enlarged = getCanvasSizeForChannels(channels)
-    print w,h,xmin,ymin,enlarged
+    # print w,h,xmin,ymin,enlarged
 
     # if canvas needs to be enlarged, do so, and position each channel correctly
     if enlarged:
         for row in channels:
-            # if row:
-            #     im = row[config.colChannelIm]
-            #     canvas = np.zeros((h,w), np.uint8) # 0-255
-            #     x = row[config.colChannelX]
-            #     y = row[config.colChannelY]
-            #     # print xmin,x,ymin,y
-            #     # copy image into canvas at right point
-            #     canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
-            #     im = canvas
-            #     row[config.colChannelIm] = im
-            #     # show(im)
-            if row:
+            if row: #.remove
                 im = row[config.colChannelIm]
                 x = row[config.colChannelX]
                 y = row[config.colChannelY]
@@ -1167,21 +1148,17 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
     imGreen = channelGreen[config.colChannelIm] if channelGreen else blank
     imBlue = channelBlue[config.colChannelIm] if channelBlue else blank
 
-    # merge channels - BGR for cv2
-    print imBlue.shape
-    print imGreen.shape
-    print imRed.shape
-    im = cv2.merge((imBlue, imGreen, imRed))
+    # merge channels
+    # print imBlue.shape
+    # print imGreen.shape
+    # print imRed.shape
+    im = cv2.merge((imBlue, imGreen, imRed)) # BGR for cv2
     # show(im)
 
     # scale image to 800x800
     if enlarged:
-        im = resizeImage(im, 800, 800)
-        # im.thumbnail((800,800), Image.BICUBIC) # PIL
+        im = resizeImage(im, 800, 800) #.params
         # show(im)
-
-    # later - maybe crop canvas, zoom for nice views
-    # eg im = im[400:1200, 400:1200]
 
     return im, channels
 
@@ -1189,11 +1166,11 @@ def combineChannels(channels, optionAlign=False, useGradients=False):
 def drawCircle(im, circle, color = (0,255,0)):
     """
     Draw a circle on the given cv2 image.
-    Note: circle is (y,x,radius), color is (b,g,r).
+    Note: circle is (x,y,radius), color is (b,g,r).
     """
-    (y,x,r) = circle
+    (x,y,r) = circle
     lineWidth = 1
-    cv2.circle(im, (y,x), r, color, lineWidth)
+    cv2.circle(im, (x,y), r, color, lineWidth)
 
 
 def gray2rgb(im):
@@ -1213,18 +1190,19 @@ def drawBoundingBox(im, boundingBox):
     [x1,y1,x2,y2] = boundingBox
     imbox = np.copy(im)
     imbox = cv2.cvtColor(imbox, cv2.COLOR_GRAY2RGB)
-    # note y,x
-    # cv2.rectangle(imbox, (y1,x1), (y2,x2), (255,0,0), 2)
     cv2.rectangle(imbox, (x1,y1),(x2,y2), (255,0,0), 2)
     return imbox
 
 
-def findCircle(im, radius=None):
-    "Find best circle in given image, with optional expected radius. Return as (y,x,r)"
+def findCircle(im, expectedRadius=None):
+    """
+    Find best circle in given image, with optional expectedRadius of target.
+    Returns circle as (x,y,r)
+    """
 
-    # note: internally the HoughCircles function calls the Canny edge detector
+    # set Hough circle detection parameters
 
-    # set Hough detection parameters
+    # Note: internally the HoughCircles function calls the Canny edge detector
 
     # only available method now
     method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
@@ -1233,42 +1211,35 @@ def findCircle(im, radius=None):
     dp = config.houghAccumulatorSize # eg 1.0
 
     # distance between circles
-    minDist = config.houghMinDistanceBetweenCircles # eg 200
+    minDist = config.houghMinDistanceBetweenCircles # eg 200px
 
     # First method-specific parameter. In case of CV_HOUGH_GRADIENT,
     # it is the higher threshold of the two passed to the Canny() edge
     # detector (the lower one is twice smaller).
-    # Param 1 will set the sensitivity; how strong the edges of the circles need
-    # to be. Too high and it won't detect anything, too low and it will find too
-    # much clutter.
+    # higher value means edges need to be sharper
+    # this value will be lowered if no circles found
     canny_threshold = config.houghCannyUpperThreshold # eg 200
 
-    # Second method-specific parameter. In case of CV_HOUGH_GRADIENT,
-    # it is the accumulator threshold for the circle centers at the detection
-    # stage. The smaller it is, the more false circles may be detected. Circles,
+    # the accumulator threshold for the circle centers at the detection
+    # stage. The smaller it is, the more false circles may be detected. Circles
     # corresponding to the larger accumulator values, will be returned first.
-    # Param 2 will set how many edge points it needs to find to
+    # This will set how many edge points it needs to find to
     # declare that it's found a circle. Again, too high will detect nothing, too
     # low will declare anything to be a circle. The ideal value of param 2 will
     # be related to the circumference of the circles.
-    # (so should be proportional to the radius)
+    #. so should be proportional to the expectedRadius?
     acc_threshold = config.houghAccumulatorThreshold # eg 10
 
-    if radius:
+    # get search radii
+    if expectedRadius:
         pct = config.houghRadiusSearchPercent # eg 10
-        minRadius = int((1-float(pct)/100) * radius)
-        maxRadius = int((1+float(pct)/100) * radius)
+        minRadius = int((1-float(pct)/100) * expectedRadius)
+        maxRadius = int((1+float(pct)/100) * expectedRadius)
     else:
         minRadius = 0
         maxRadius = 0
 
-    # circles = cv2.HoughCircles(im, method, dp, minDist,
-    #                            param1 = canny_threshold,
-    #                            param2 = acc_threshold,
-    #                            minRadius = minRadius,
-    #                            maxRadius = maxRadius)
-
-    # look for circles, lowering canny threshold if can't find any (assume target is dim)
+    # look for circles, lowering canny threshold if can't find any (ie assume target is dim)
     circles = None
     while circles is None:
         circles = cv2.HoughCircles(im, method, dp, minDist,
@@ -1278,57 +1249,9 @@ def findCircle(im, radius=None):
                                    maxRadius = maxRadius)
         if circles is None:
             canny_threshold = int(canny_threshold / 2)
-            # print 'reducing canny threshold to',canny_threshold
             # log.log('reducing canny threshold to',canny_threshold)
             if canny_threshold < 20: #. param
                 break
-
-    # need largish acc threshold for this to get triggered
-    # #. if still can't find circles, try expanding image size
-    # # (to find targets with centers outside of image, like limbs)
-    # # for 800x800 would be 2400x2400
-    # if circles is None:
-    #     print 'try enlarging image size'
-    #     w,h = im.shape[1],im.shape[0]
-    #     # imLarger = blank image 3x3 of imsize
-    #     # newsize = (imwidth * 2, imheight * 2)
-    #     canvas = np.zeros((h*3,w*3), np.uint8)
-    #     # copy im into canvas in middle
-    #     canvas[h:h+h, w:w+w] = im
-    #     c2 = resizeImage(canvas,600,600)
-    #     show(c2)
-    #     # upper = 200
-    #     # lower = upper/2
-    #     # c2 = cv2.Canny(c2, lower, upper)
-    #     # show(c2)
-    #     print canvas.shape
-    #     print type(canvas[0][0])
-    #     canny_threshold = config.houghCannyUpperThreshold
-    #     acc_threshold = 5
-    #     circles = cv2.HoughCircles(canvas, method, dp, minDist,
-    #                                param1 = canny_threshold,
-    #                                param2 = acc_threshold,
-    #                                minRadius = minRadius,
-    #                                maxRadius = maxRadius)
-    #     # if found circle, crop im out of canvas, centered on target
-    #     #. what if imageFraction>1?
-    #     # crop canvas to original image size
-    #     # eg imcrop = canvas[400:1200, 400:1200]
-    #     # x1 = int(imwidth/2)
-    #     # y1 = int(imheight/2)
-    #     if not circles is None:
-    #         print 'circle found! crop to it'
-    #         # circles = circles[0,:] # extract array
-    #         circle = circles[0,:][0]
-    #         circle = np.round(circle).astype('int') # round all values to ints
-    #         im2 = gray2rgb(canvas)
-    #         drawCircle(im2, circle) # green
-    #         im2 = resizeImage(im2,600,600)
-    #         show(im2)
-    #         y,x,r = circle
-    #         x1 = x - int(w/2)
-    #         y1 = y - int(h/2)
-    #         im = canvas[y1:y1+h,x1:x1+w]
 
     # draw canny edges
     if config.debugImageTitle:
@@ -1352,7 +1275,7 @@ def findCircle(im, radius=None):
                 drawCircle(im, circ, (0,0,255)) # red
             drawCircle(im, circle) # green
             cv2.imwrite(config.debugImageTitle + '_circles.jpg', im)
-    return circle # (y,x,r)
+    return circle # (x,y,r)
 
 
 def centerImage(im, boundingBox):
@@ -1388,8 +1311,6 @@ def findBoundingBoxByCircle(im, radius):
     "Find the bounding box enclosing the best circle in image and return it, or None."
     circle = findCircle(im, radius)
     if not circle is None:
-        #. this is supposed to be y,x,r - not sure what's going on
-        # (y,x,r) = circle
         (x,y,r) = circle
         x1 = x-r
         x2 = x+r
@@ -1425,7 +1346,8 @@ def findBoundingBoxByBlob(im):
         cv2.imwrite(config.debugImageTitle + '_binaryimage.jpg', b)
 
     # find position of objects
-    # http://docs.scipy.org/doc/scipy-0.16.1/reference/generated/scipy.ndimage.measurements.find_objects.html
+    # http://docs.scipy.org/doc/scipy-0.16.1/reference/generated/
+    #   scipy.ndimage.measurements.find_objects.html
     # http://stackoverflow.com/questions/22103572/how-to-find-the-rectangles-in-an-image
     blobs = ndimage.find_objects(labels)
 
@@ -1479,89 +1401,6 @@ def findBoundingBox(im, radius):
         if boundingBox is None:
             boundingBox = findBoundingBoxByBlob(im)
     return boundingBox
-
-
-#. do i need this anymore? was this before upgrading to v3? yes
-# def drawMatches(img1, kp1, img2, kp2, matches):
-#     # source: http://stackoverflow.com/questions/11114349/how-to-visualize-descriptor-matching-using-opencv-module-in-python
-#     """
-#     My own implementation of cv2.drawMatches as OpenCV 2.4.9
-#     does not have this function available but it's supported in
-#     OpenCV 3.0.0
-
-#     This function takes in two images with their associated
-#     keypoints, as well as a list of DMatch data structure (matches)
-#     that contains which keypoints matched in which images.
-
-#     An image will be produced where a montage is shown with
-#     the first image followed by the second image beside it.
-
-#     Keypoints are delineated with circles, while lines are connected
-#     between matching keypoints.
-
-#     img1,img2 - Grayscale images
-#     kp1,kp2 - Detected list of keypoints through any of the OpenCV keypoint
-#               detection algorithms
-#     matches - A list of matches of corresponding keypoints through any
-#               OpenCV keypoint matching algorithm
-#     """
-
-#     # Create a new output image that concatenates the two images together
-#     # (a.k.a) a montage
-#     rows1 = img1.shape[0]
-#     cols1 = img1.shape[1]
-#     rows2 = img2.shape[0]
-#     cols2 = img2.shape[1]
-
-#     # out = np.zeros((max([rows1,rows2]),cols1+cols2,3), dtype='uint8')
-#     out = np.zeros((max([rows1,rows2]),cols1+cols2,3), np.uint8)
-
-#     # Place the first image to the left
-#     out[:rows1,:cols1,:] = np.dstack([img1, img1, img1])
-
-#     # Place the next image to the right of it
-#     out[:rows2,cols1:cols1+cols2,:] = np.dstack([img2, img2, img2])
-
-#     # For each pair of points we have between both images
-#     # draw circles, then connect a line between them
-#     for mat in matches:
-
-#         # Get the matching keypoints for each of the images
-#         img1_idx = mat.queryIdx
-#         img2_idx = mat.trainIdx
-
-#         # x - columns
-#         # y - rows
-#         (x1,y1) = kp1[img1_idx].pt
-#         (x2,y2) = kp2[img2_idx].pt
-
-#         r = random.randint(100,255)
-#         g = random.randint(100,255)
-#         b = random.randint(100,255)
-#         color = (b,g,r)
-
-#         # Draw a small circle at both co-ordinates
-#         # radius 4
-#         # colour blue
-#         # thickness = 1
-#         # cv2.circle(out, (int(x1),int(y1)), 4, (255, 0, 0), 1)
-#         # cv2.circle(out, (int(x2)+cols1,int(y2)), 4, (255, 0, 0), 1)
-#         cv2.circle(out, (int(x1),int(y1)), 4, color, 1)
-#         cv2.circle(out, (int(x2)+cols1,int(y2)), 4, color, 1)
-
-#         # Draw a line in between the two points
-#         # thickness = 1
-#         # colour blue
-#         # cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), (255, 0, 0), 1)
-#         cv2.line(out, (int(x1),int(y1)), (int(x2)+cols1,int(y2)), color, 1)
-
-
-#     return out
-
-#     # # Show the image
-#     # cv2.imshow('Matched Features', out)
-#     # cv2.waitKey(0)
-#     # cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

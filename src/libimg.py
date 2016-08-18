@@ -265,9 +265,10 @@ def getImageAlignmentORB(im0, im1):
     # draw good matches
     # shows images side by side with colored lines between matched points
     #........... make debug flag to save this image to a debug folder? useful to look through them
-    # out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,
-    #                       flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    # show(out)
+    out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,
+    # out = cv2.drawMatches(im0,kp0,im1,kp1,matches,None,
+                          flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    show(out)
 
     # find transformation matrix
     if transform=='translate':
@@ -1077,6 +1078,7 @@ def combineChannels(channels, optionAlign=False):
     channelGreen = dget(d,'Green')
 
     # second pass - choose from some secondary options
+    # Ch4 are in infrared
     if channelBlue is None: channelBlue = dget(d,'Violet,Uv,Ch4_Js,Ch4_U,Green,Orange')
     if channelRed is None: channelRed = dget(d,'Ch4_Js,Ch4_U,Blue,Violet,Uv,Green')
     if channelGreen is None: channelGreen = dget(d,'Ch4_Js,Ch4_U,Orange,Blue,Violet,Uv')

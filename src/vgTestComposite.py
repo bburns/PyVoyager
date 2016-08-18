@@ -54,6 +54,7 @@ def vgTestComposite():
         f1 = row[2]
         bestdx = int(row[3])
         bestdy = int(row[4])
+        notes = row[5] if len(row)>5 else ''
         
         fileId = f0[:8]
         # print 'Testing',fileId
@@ -85,11 +86,11 @@ def vgTestComposite():
         err = math.sqrt(deltax**2 + deltay**2)
         errsum += err
         if ok and err<maxerr:
-            print "[OK]     %s: error %dpx" % (fileId,err)
+            print "[OK]     %s: error %dpx [%s]" % (fileId,err,notes)
             ntestsok += 1
         else:
-            print "[FAILED] %s: error %dpx - dx,dy (%d, %d) expected (%d, %d)" % \
-                  (fileId, err, dx, dy, bestdx, bestdy)
+            print "[FAILED] %s: error %dpx - dx,dy (%d, %d) expected (%d, %d) [%s]" % \
+                  (fileId, err, dx, dy, bestdx, bestdy, notes)
                 
     fTests.close()
     

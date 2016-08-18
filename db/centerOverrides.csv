@@ -1,0 +1,20 @@
+
+# centerOverrides.csv
+# this file would be used to correct any mis-centered images
+# --------------------------------------------------------------------------------
+
+# program will check here first for a match, then centers.csv
+
+# this file DOES need to be sorted to join against files.csv
+
+# either that, or mark manually overridden values in centers.csv file so they don't get overwritten.
+# but would be hard to remember to do that
+
+#. a cmd could remove records from here when the autocentering algo improves enough to duplicate them
+
+#. don't really need radius - get that from positions.csv
+
+fileId,volume,x,y,radius
+C1540822,5104,320,356,215
+C1540858,5104,290,290,213
+

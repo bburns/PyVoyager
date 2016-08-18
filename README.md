@@ -22,6 +22,9 @@ Example Movies
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
 
+https://www.youtube.com/watch?v=i38gzr6j5q4  
+Rough draft of Voyager 1 flyby of Jupiter system (13mins)
+
 https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43
 
@@ -42,6 +45,47 @@ Voyager 2 Neptune flyby color v0.2 - automatically colorized version
 
 https://www.youtube.com/watch?v=o4zh8C-ma_A  
 Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks)
+
+
+Issues
+----------------------------------------
+
+There's a Trello board to track issues and progress here - https://trello.com/b/kEkGDMYR/voyager
+
+
+<!-- Denoising Images -->
+<!-- ---------------------------------------- -->
+
+<!-- The images are denoised using ___ -->
+
+
+Centering Images
+----------------------------------------
+
+Images where the target fits completely in the frame are centered using blob detection [17], Hough circle detection [16], and ECC Maximization [15]. The expected target radius is calculated through SPICE data [12], from which the spacecraft and target position can be determined - this is used to help limit the Hough circle search, and then to draw a disc with the expected target size to which the image is aligned using ECC Maximization. The Hough circle detection is only accurate to a few pixels, so the ECC Maximization is needed for the final stabilization. 
+
+Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
+
+http://imgur.com/ikp6W17
+
+http://imgur.com/VstnxI7
+
+Centering is turned off at closest approach by determining when the target size is over a threshold (e.g. when the diameter is over 80% of the image width). 
+
+
+Aligning Composites
+----------------------------------------
+
+Composite channels for closeup images are aligned using feature detection [18] and matching, with RANSAC [19] to eliminate outliers from a least-squares fit model for the translation (which amounts to the translation tx, ty being an average of the feature movements).
+
+In more detail, 'interesting' features are detected using ORB [20] in one image, and matched with their corresponding point in another image. This is done for dozens-hundreds of interest points - they are each described with a feature vector, also obtained by ORB, then matched up with their corresponding point by a brute-force search. The RANSAC algorithm is used to throw out outliers, which would otherwise throw off the determined average translation. 
+
+If this approach fails to find a good translation (due to lack of enough corresponding points, for instance), it will fall back on ECC Maximization [15] to try to align the images. 
+
+Here is an image showing what the feature-matching process looks like, and the resulting composite. 
+
+
+
 
 
 <!-- What you can do -->
@@ -212,7 +256,7 @@ Parameters
 All configuration settings are stored in `config.py` - the goal is for the same set of parameters to work across all datasets as much as possible.
 
 
-How it works
+More details
 ----------------------------------------
 
 The data for each step is put into the following folders in the `data` subfolder:
@@ -242,17 +286,9 @@ Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
 
-After downloading the tar.gz files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, and ECC maximization [3] for stabilization.
+After downloading the tar.gz files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, the expected target radius, and ECC maximization [3] for stabilization. See the section on centering below for more details. 
 
 The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv` (included in the distribution). This helps with the Hough circle detection, and also to stabilize the image. 
-
-Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
-
-http://imgur.com/ikp6W17
-
-http://imgur.com/VstnxI7
-
-Centering is turned off at closest approach by determining when the target size is over some threshold. The target size is also used to control the speed of the movie, slowing down when the target is closer. 
 
 The PDS volumes come with index files for all the images they contain, which have been compiled into one smaller file using `vg init files`. The resulting file (`db/files.csv`, included with the distribution) looks like this:
 
@@ -275,7 +311,7 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
 
 This file is used by the `vg composite <volume>` command to generate the color frames.
 
-The clips are generated with the `vg clips [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each.
+The clips are generated with the `vg clips [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each. The target size is also used to control the speed of the movie, slowing down when the target is closer, but the framerate can also be controlled via the `framerateConstants.csv` and `framerates.csv` files. 
 
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
@@ -286,12 +322,6 @@ Testing
 Some centering test images are included in the `test/center` folder, and their correct center values in `test/testCenterFiles.csv`. You can run the tests on them with `vg test center`. The goal is to include some easy targets and lots of edge cases to test the centering/stabilizing routines.
 
 Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
-
-
-Issues
-----------------------------------------
-
-There's a Trello board to track issues and progress here - https://trello.com/b/kEkGDMYR/voyager
 
 
 History
@@ -464,3 +494,9 @@ This software is released under the MIT license - see LICENSE.md.
 [12]: http://naif.jpl.nasa.gov/naif/
 [13]: https://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
 [14]: https://github.com/erikrose/more-itertools
+[15]: http://xanthippi.ceid.upatras.gr/people/evangelidis/ecc/
+[16]: https://en.wikipedia.org/wiki/Circle_Hough_Transform
+[17]: https://en.wikipedia.org/wiki/Blob_detection
+[18]: https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)
+[19]: https://en.wikipedia.org/wiki/RANSAC
+[20]: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_orb/py_orb.html

@@ -81,7 +81,10 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 if __name__ == '__main__':
     os.chdir('..')
     # vgAdjust(5101)
-    vgAdjust('c1640000')
+    # vgAdjust('','c1640000')
+    vgAdjust('','C1640344') # callisto small
+    # vgAdjust('','C1502309') # callisto small
+    # vgAdjust('','C1553140') # ganymede giant hotspot
     print 'done'
 
 

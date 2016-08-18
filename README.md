@@ -68,8 +68,10 @@ Here are a couple of images showing the result of the centering/stabilization - 
 
 <!-- http://imgur.com/ikp6W17 -->
 <!-- http://imgur.com/VstnxI7 -->
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg | width=200)
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg | width=200)
+<!-- ![](https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg) -->
+<!-- ![](https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg) -->
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg" width="400">
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg" width="400">
 
 Centering is turned off at closest approach by determining when the target size is over a threshold (e.g. when the diameter is over 80% of the image width). 
 
@@ -85,8 +87,8 @@ If this approach fails to find a good translation (due to lack of enough corresp
 
 Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
 
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg | width=400)
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg | width=200)
+![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg)
+![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg)
 
 
 

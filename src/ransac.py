@@ -110,7 +110,8 @@ def getRansacModel(data):
     """
     minDataValues = 1
     maxIterations = 10
-    maxDistanceSquared = 16
+    # maxDistanceSquared = 16
+    maxDistanceSquared = 25
     minExtraDataPairs = 0
 
     iteration = 1

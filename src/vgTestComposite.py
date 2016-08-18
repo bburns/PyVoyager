@@ -66,11 +66,7 @@ def vgTestComposite():
         assert not im1 is None
 
         # align im1 to im0
-        dx,dy,ok = libimg.getImageAlignmentORB(im0, im1)
-        if not ok:
-            print 'trying alternate alignment'
-            dx,dy,ok = libimg.getImageAlignmentDiff(im0, im1)
-            # dx,dy,ok = libimg.getImageAlignment(im0, im1) # try ecc - bad
+        dx,dy,ok = libimg.getImageAlignment(im0, im1)
 
         # show composite
         if ok:

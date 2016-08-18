@@ -85,7 +85,9 @@ def processChannels(channelRows, optionAlign):
             outfilepath = lib.getFilepath('composite', volume, compositeId)
             if centered: optionAlign = False # don't try to align images if already centered
             if weightXYFilledOut: optionAlign = False # don't align if already have values
+
             im, channels = libimg.combineChannels(channels, optionAlign)
+
             libimg.imwrite(outfilepath, im)
             # if -align: update channels x,y etc
             if optionAlign:

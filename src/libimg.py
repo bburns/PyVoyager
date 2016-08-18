@@ -30,7 +30,6 @@ def thresholdImage(im):
                                adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
                                thresholdType=cv2.THRESH_BINARY_INV,
                                blockSize=3,
-                               # C=30)
                                C=10)
     return im
 
@@ -41,10 +40,10 @@ def getImageAlignment(im0, im1, dx=0, dy=0):
     Returns dx,dy,ok
     Returns 0,0,False if no alignment found
     """
-    # dx,dy,ok = getImageAlignmentDiff(im0, im1)
     dx,dy,ok = getImageAlignmentORB(im0, im1)
-    if ok:
+    if not ok:
         dx,dy,ok = getImageAlignmentECC(im0, im1, dx=dx, dy=dy) # initialize with dx,dy
+        # dx,dy,ok = getImageAlignmentDiff(im0, im1)
     return dx,dy,ok
 
 
@@ -933,7 +932,8 @@ def shiftImage(im, dx, dy):
 
 #. make this more generic - eg pass in set of images to align, return set of displacements
 # could call it getChannelAlignments
-def alignChannels(channels, useGradients=False):
+# def alignChannels(channels, useGradients=False):
+def alignChannels(channels):
     "attempt to align the images in the given channel arrays"
     # print channels
     # print [ch[2:-1] for ch in channels if ch]
@@ -941,16 +941,14 @@ def alignChannels(channels, useGradients=False):
     im1 = channels[1][config.colChannelIm]
     assert not im0 is None
     assert not im1 is None
-    # dx,dy,alignmentOk = getImageAlignment(im0, im1, useGradients)
-    dx,dy,alignmentOk = getImageAlignmentORB(im0, im1)
+    dx,dy,alignmentOk = getImageAlignment(im0, im1)
     if alignmentOk:
         channels[1][config.colChannelX] = dx
         channels[1][config.colChannelY] = dy
     if channels[2]:
         im2 = channels[2][config.colChannelIm]
         assert not im2 is None
-        # dx,dy,alignmentOk = getImageAlignment(im0, im2, useGradients)
-        dx,dy,alignmentOk = getImageAlignmentORB(im0, im2)
+        dx,dy,alignmentOk = getImageAlignment(im0, im2)
         if alignmentOk:
             channels[2][config.colChannelX] = dx
             channels[2][config.colChannelY] = dy

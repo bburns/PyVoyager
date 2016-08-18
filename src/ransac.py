@@ -109,7 +109,8 @@ def getRansacModel(data):
                           if 0, can get a ransac model with just minDataValues datapairs
     """
     minDataValues = 1
-    maxIterations = 10
+    # maxIterations = 10 # was randomly failing - needed to increase
+    maxIterations = 20
     # maxDistanceSquared = 16
     maxDistanceSquared = 25
     # maxDistanceSquared = 36

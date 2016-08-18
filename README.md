@@ -66,10 +66,6 @@ Images where the target fits completely in the frame are centered using blob det
 
 Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
 
-<!-- http://imgur.com/ikp6W17 -->
-<!-- http://imgur.com/VstnxI7 -->
-<!-- ![](https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg) -->
-<!-- ![](https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg) -->
 <img src="https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg" width="400">
 <img src="https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg" width="400">
 
@@ -87,14 +83,8 @@ If this approach fails to find a good translation (due to lack of enough corresp
 
 Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
 
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg)
-![](https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg)
-
-
-
-<!-- http://imgur.com/tOyS31F -->
-<!-- http://imgur.com/9k5Brn4 -->
-
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg" width="800">
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg" width="400">
 
 
 <!-- What you can do -->

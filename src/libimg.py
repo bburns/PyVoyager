@@ -299,7 +299,10 @@ def getImageAlignmentORB(im0, im1):
         dst_pts = [ kp1[m.trainIdx].pt for m in good ]
         data = zip(src_pts,dst_pts)
         # print data
-        dx, dy = ransac.getRansacModel(data)
+        dx, dy, modelOk = ransac.getRansacModel(data)
+        if not modelOk:
+            print 'no ransac model found'
+            return 0,0,False
 
     else:
 

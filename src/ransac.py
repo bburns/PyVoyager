@@ -99,7 +99,7 @@ def getRansacModel(data):
     """
     Get a model that fits the data, eliminating outliers. 
     data is a set of observed data point pairs.
-    Returns model parameters that best fit the data (or None if no good model is found).
+    Returns tx,ty,modelOk
     
     Parameters
       minDataValues - the minimum number of data values required to fit the model
@@ -112,12 +112,15 @@ def getRansacModel(data):
     maxIterations = 10
     # maxDistanceSquared = 16
     maxDistanceSquared = 25
-    minExtraDataPairs = 0
+    # maxDistanceSquared = 36
+    # minExtraDataPairs = 0
+    minExtraDataPairs = 1
 
     iteration = 1
     bestfit = None
     besterr = 1e9
-
+    modelOk = True
+    
     while (iteration < maxIterations):
 
         if debug: print 'iteration',iterations,'of',k
@@ -163,7 +166,12 @@ def getRansacModel(data):
                 bestfit = bettermodel
                 besterr = thiserr
         iteration += 1
-    return bestfit
+
+    # return bestfit
+    if bestfit:
+        return bestfit[0],bestfit[1],True
+    else:
+        return 0,0,False
 
 
 if __name__=='__main__':

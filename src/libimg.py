@@ -861,6 +861,7 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     """
     stretch the histogram of the given 16bit image and return it as an 8bit image.
     hot pixels are set at 32767, but hot noise can exist in an image also.
+    can pass maxvalue
     """
 
     # get histogram
@@ -873,7 +874,7 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     # ranges = [0, 256] # range of intensity values
     ranges = [0, 32768] # range of intensity values
     hist = cv2.calcHist(images, channels, mask, histSize, ranges)
-    print [int(x) for x in hist]
+    # print [int(x) for x in hist]
 
     # # ignore top n pixels
     # # start at top, get cumulative sum downwards until reach certain amount of pixels
@@ -897,18 +898,16 @@ def stretchHistogram16to8bit(im, maxvalue=None):
                 maxvalue = i
                 break
 
-    print maxvalue
+    # print maxvalue
     maxvalue = maxvalue * 128
 
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
     np.clip(im, 0, maxvalue, im)
 
-    # stretch image values to brightest amount
-    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-
     # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
     if type(im[0][0])==np.uint16:
+        # stretch image values to brightest amount
         im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
         # max level in the 16-bit image is 32767, and (/ 32767 128) = 255
         # im = im / 128 # this can be dividing it by too much - using normalize is safer

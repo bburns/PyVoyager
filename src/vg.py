@@ -249,6 +249,15 @@ elif cmd=="retarget":
     newTarget = args[1]
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
+elif cmd=="clear":
+    log.start()
+    step = args[0] # eg 'adjust'
+    if filterVolumes is None:
+        print 'Specify volume(s) to clear'
+    else:
+        for filterVolume in filterVolumes:
+            vgClear.vgClear(step, filterVolume)
+
 elif cmd=="init":
     log.start()
     subject = args[0]

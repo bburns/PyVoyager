@@ -22,14 +22,14 @@ Example Movies
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
 
+http://imgur.com/LO7Dnww  
+Voyager 2 Io approach v0.43
+
 https://www.youtube.com/watch?v=i38gzr6j5q4  
-Rough draft of Voyager 1 flyby of Jupiter system (13mins)
+Rough draft of Voyager 1 flyby of Jupiter system (13mins) v0.45
 
 https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43
-
-http://imgur.com/LO7Dnww  
-Voyager 2 Io approach v0.43
 
 https://www.youtube.com/watch?v=rAGWBo3-J2E  
 Voyager 1 Jupiter rotation movie color v0.41
@@ -75,7 +75,7 @@ Centering is turned off at closest approach by determining when the target size 
 Aligning Composites
 ----------------------------------------
 
-Composite channels for closeup images are aligned using feature detection [18] and matching, with RANSAC [19] to eliminate outliers from a least-squares fit model for the translation (which amounts to the translation tx, ty being an average of the feature movements).
+Composite channels for closeup images are aligned using feature detection [18] and matching, with RANSAC [19] to eliminate outliers from a least-squares fit model for the translation (which amounts to the translation tx, ty between images being an average of the feature movements).
 
 In more detail, 'interesting' features are detected using ORB [20] in one image, and matched with their corresponding point in another image. This is done for dozens-hundreds of interest points - they are each described with a feature vector, also obtained by ORB, then matched up with their corresponding point by a brute-force search. The RANSAC algorithm is used to throw out outliers, which would otherwise throw off the determined average translation. 
 
@@ -109,8 +109,8 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Unzip - decompress archive volumes
 * Convert - convert RAW images to pngs using **img2png** [2]
 * Flatfield - subtract good flatfields
-* Adjust - rotate180, histogram stretch
 * Denoise - identify/eliminate noise where possible
+* Adjust - rotate180, histogram stretch
 * Center - center and stabilize images
 * Dereseau - remove reseau marks cleanly
 * Inpaint - fill in black/white areas with pixels from prior frame
@@ -328,11 +328,12 @@ History
 
 <!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
+<!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
 Version 0.46 (2016-08)
 ----------------------------------------
-- Add `-align` option to `vg composite` - will attempt to align channels and update `composites.csv` records where not already set
-
+- Add `-align` option to `vg composite` - attempts to align channels using feature detection and matching
+- Fix `vg adjust` brightness enhancement to ignore hot pixels unless small moon. Improved brightness of dark moon pics and eliminated posterized look from some images due to 16-bit to 8-bit conversion. 
 
 Version 0.45 (2016-08-14)
 ----------------------------------------

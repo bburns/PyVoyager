@@ -856,10 +856,11 @@ def img2png(srcdir, filespec, destdir):
     os.system(cmd)
 
 
-def stretchHistogram(im, nHotPixels=100):
+# def stretchHistogram(im, nHotPixels=100):
+def stretchHistogram16to8bit(im, maxvalue=None):
     """
-    stretch the histogram of the given image, ignoring the n hottest pixels.
-    will blow out small targets, so need to guard against that.
+    stretch the histogram of the given 16bit image and return it as an 8bit image.
+    hot pixels are set at 32767, but hot noise can exist in an image also.
     """
 
     # get histogram
@@ -869,32 +870,55 @@ def stretchHistogram(im, nHotPixels=100):
     channels = [0]
     mask = None # lets you filter to part of an image
     histSize = [256] # number of bins
-    ranges = [0, 256] # range of intensity values
+    # ranges = [0, 256] # range of intensity values
+    ranges = [0, 32768] # range of intensity values
     hist = cv2.calcHist(images, channels, mask, histSize, ranges)
-    # print [int(x) for x in hist]
+    print [int(x) for x in hist]
 
-    # ignore top n pixels
-    # start at top, get cumulative sum downwards until reach certain amount of pixels
-    npixels = im.shape[0] * im.shape[1]
-    sum = 0
-    maxvalue = 255
-    for i in xrange(255,0,-1):
-        sum += hist[i]
-        if sum > nHotPixels:
-            maxvalue = i
-            break
+    # # ignore top n pixels
+    # # start at top, get cumulative sum downwards until reach certain amount of pixels
+    # npixels = im.shape[0] * im.shape[1]
+    # sum = 0
+    # maxvalue = 255
+    # for i in xrange(255,0,-1):
+    #     sum += hist[i]
+    #     if sum > nHotPixels:
+    #         maxvalue = i
+    #         break
+
+    # if no override value given, scan down histogram from hot pixel value 255,
+    # set max level to be next lowest value
+    if maxvalue is None:
+        maxvalue = 254
+        for i in xrange(254,0,-1):
+            # if hist[i]>0:
+            #. this is a fudge factor based on observing some histograms with noise. will want to decrease it after add vg denoise step
+            if hist[i]>13: #.param
+                maxvalue = i
+                break
+
+    print maxvalue
+    maxvalue = maxvalue * 128
 
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
     np.clip(im, 0, maxvalue, im)
 
-    # stretch image values
-    im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+    # stretch image values to brightest amount
+    # im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+
+    # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
+    if type(im[0][0])==np.uint16:
+        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+        # max level in the 16-bit image is 32767, and (/ 32767 128) = 255
+        # im = im / 128 # this can be dividing it by too much - using normalize is safer
+        im = np.array(im, np.uint8)
 
     return im
 
 
-def adjustImageFile(infile, outfile, doStretchHistogram=True):
+# def adjustImageFile(infile, outfile, doStretchHistogram=True):
+def adjustImageFile(infile, outfile, maxvalue=None):
     """
     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
     """
@@ -902,17 +926,13 @@ def adjustImageFile(infile, outfile, doStretchHistogram=True):
     # need ANYDEPTH flag as the pngs are 16-bit
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
 
+    # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
+    # if doStretchHistogram:
+        # im = stretchHistogram(im)
+    im = stretchHistogram16to8bit(im, maxvalue)
+
     # rotate image by 180
     im = np.rot90(im, 2)
-
-    # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
-    if type(im[0][0])==np.uint16:
-        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-        im = np.array(im, np.uint8)
-
-    # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
-    if doStretchHistogram:
-        im = stretchHistogram(im) # can blow out small targets
 
     retval = imwrite(outfile, im)
     return retval

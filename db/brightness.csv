@@ -1,0 +1,25 @@
+
+# brightness
+# override brightness adjustments with this file
+# --------------------------------------------------------------------------------
+
+# some images come out too dim because of noise or hot pixels
+# throwing off the histogram stretching - so can use this file to
+# set the highest pixel value to stretch to.
+
+# this file does NOT need to be sorted, as it is read into a dictionary in memory,
+# since it's expected to be fairly small.
+
+# volume is just there for reference
+
+imageId,volume,maxvalue
+# C1638611,
+# C1640344,5117,22
+# C1640140,5117,28
+# C1640150,5117,32
+# C1640200,5117,32
+# C1640214,5117,64
+# C1640218,5117,64
+# C1640222,5117,40
+# C1640224,5117,40
+

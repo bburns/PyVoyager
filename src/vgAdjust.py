@@ -46,6 +46,9 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     # open positions.csv file for target angular size info
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
 
+    # read in brightness.csv file, which contains settings for problem images
+    brightnessInfo = lib.readCsv(config.dbBrightness)
+
     # iterate through all available images
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
@@ -57,19 +60,32 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # if volume!=filterVolume: continue # filter on desired volume
         if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
 
-        # get expected angular size (as fraction of frame)
+        # get expected angular size (as fraction of frame) - joins on positions.csv file
         imageFraction = lib.getImageFraction(csvPositions, fileId)
 
-        # only stretch the histogram if target is large enough (small moons get blown out)
-        doStretchHistogram = (imageFraction > config.adjustHistogramImageFractionMinimum)
-        # print doStretchHistogram
-
-        # adjust the file
+        # get filenames
         infile = lib.getFilepath('convert', volume, fileId, filter)
         outfile = lib.getFilepath('adjust', volume, fileId, filter)
         print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+
+        # get max brightness value to override noise/hot pixels in some images
+        # maxvalue = lib.getMaxValue(csvBrightness, fileId) # will be None if no record avail
+        brightnessInfoRecord = brightnessInfo.get(fileId)
+        if brightnessInfoRecord:
+            maxvalue = int(brightnessInfoRecord['maxvalue'])
+        else:
+            maxvalue = None
+
+        # only stretch the histogram if target is large enough (small moons get blown out)
+        # doStretchHistogram = (imageFraction > config.adjustHistogramImageFractionMinimum)
+        dontStretchHistogram = (imageFraction <= config.adjustHistogramImageFractionMinimum)
+        if dontStretchHistogram:
+            maxvalue = 255
+
+        # adjust the image
         if os.path.isfile(infile):
-            libimg.adjustImageFile(infile, outfile, doStretchHistogram)
+            # libimg.adjustImageFile(infile, outfile, doStretchHistogram)
+            libimg.adjustImageFile(infile, outfile, maxvalue)
         else:
             print 'Warning: missing image file', infile
         nfile += 1
@@ -81,10 +97,11 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 if __name__ == '__main__':
     os.chdir('..')
     # vgAdjust(5101)
-    # vgAdjust('','c1640000')
-    vgAdjust('','C1640344') # callisto small
-    # vgAdjust('','C1502309') # callisto small
-    # vgAdjust('','C1553140') # ganymede giant hotspot
+    # vgAdjust('','C1502309') # 5102 callisto small
+    # vgAdjust('','C1553140') # 5106 callisto small
+    # vgAdjust('','C1640140') # 5117 ganymede limb
+    # vgAdjust('','C1642203') # 5117 callisto with big white area and noise
+    # vgAdjust('','C1640344') # 5117 ganymede giant hotspot and noise - need brightness.csv
     print 'done'
 
 

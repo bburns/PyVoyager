@@ -1,0 +1,16 @@
+
+# music
+# store music info here
+# --------------------------------------------------------------------------------
+
+# might be able to store this in movies.csv instead
+
+movieId,targetKey,musicFile
+
+
+# Voyager 1
+# --------------------------------------------------------------------------------
+
+# Jupiter
+Jupiter-Voyager1,Jupiter-Voyager1,bach-foo-218secs.mp3
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto,glass-foo-949.secs.mp3

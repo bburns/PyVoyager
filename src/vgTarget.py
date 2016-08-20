@@ -19,11 +19,13 @@ import vgCenter
 
 
 
-def vgTarget(filterVolume='', filterTargetPath=''):
+# def vgTarget(filterVolume='', filterTargetPath=''):
+def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
 
     "Copy images in given volume to target subfolders"
 
-    filterVolume = str(filterVolume)
+    if filterVolume:
+        filterVolume = str(filterVolume)
 
     # note: targetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
     targetPathParts = lib.parseTargetPath(filterTargetPath)
@@ -52,10 +54,15 @@ def vgTarget(filterVolume='', filterTargetPath=''):
         addImage = False
         # if filterVolume!='' and volume==filterVolume: addImage = True
         # if targetPathParts and lib.targetMatches(targetPathParts, system, craft, target, camera):
-        volumeOk = (filterVolume!='' and volume==filterVolume)
+        # volumeOk = (filterVolume!='' and volume==filterVolume)
+        volumeOk = (volume==filterVolume if filterVolume else True)
+        imageOk = (fileId==filterImageId if filterImageId else True)
         targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
+        if imageOk:
+            print fileId, volumeOk, imageOk, targetPathOk, volume, filterVolume
         # note AND -
-        if volumeOk and targetPathOk:
+        # if volumeOk and targetPathOk:
+        if volumeOk and imageOk and targetPathOk:
             addImage = True
         if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
         if addImage:

@@ -145,10 +145,13 @@ def stageFiles(filterVolumes, targetPathParts):
 
         # does this image match the volume and target path the user specified on the cmdline?
         addImage = False
+        # if (volume in filterVolumes) and \
+           # lib.targetMatches(targetPathParts, system, craft, target, camera):
+            # addImage = True
+        volumeOk = (volume in filterVolumes)
+        targetOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
         # note AND -
-        if (volume in filterVolumes) and \
-           lib.targetMatches(targetPathParts, system, craft, target, camera):
-            addImage = True
+        if volumeOk and targetOk: addImage = True
         if target in config.clipsIgnoreTargets: addImage = False
         # if addImage and ncopies > 0:
         if addImage:

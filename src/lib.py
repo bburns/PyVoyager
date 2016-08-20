@@ -448,12 +448,13 @@ def targetMatches(targetPathParts, system, craft, target, camera):
     eg if targetPathParts=[None,None,None,None], will always return True.
     """
     # targetPathParts = [s.title() for s in targetPathParts if s]
-    pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
     matches = True
-    if (pathSystem and pathSystem.title()!=system): matches = False
-    if (pathCraft and pathCraft.title()!=craft): matches = False
-    if (pathTarget and pathTarget.title()!=target): matches = False
-    if (pathCamera and pathCamera.title()!=camera): matches = False
+    if targetPathParts:
+        pathSystem, pathCraft, pathTarget, pathCamera = targetPathParts
+        if (pathSystem and pathSystem.title()!=system): matches = False
+        if (pathCraft and pathCraft.title()!=craft): matches = False
+        if (pathTarget and pathTarget.title()!=target): matches = False
+        if (pathCamera and pathCamera.title()!=camera): matches = False
     return matches
 
 
@@ -604,9 +605,13 @@ def unzipFile(zipfile, destfolder, overwrite=False):
 if __name__ == '__main__':
     os.chdir('..')
 
+    print getFilepath('inpaint', '5102', 'C1234567')
+
+
+
     # print getDownloadUrl(5101)
     # print getVolumeNumbers('5104')
-    print getVolumeNumbers('5104-5108')
+    # print getVolumeNumbers('5104-5108')
     # print getVolumeNumbers('51*')
     # print getVolumeNumbers('5*')
     # print getVolumeNumbers('*')

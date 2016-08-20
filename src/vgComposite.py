@@ -221,7 +221,7 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
                 nfile += 1
 
     # process the last leftover group
-    print channelRows
+    # print channelRows
     printStatus(channelRows,startVol,nfile,startId)
     processChannels(channelRows, optionAlign)
     # processChannels(channelRows, optionAlign, csvNew)

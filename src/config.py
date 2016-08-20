@@ -76,6 +76,7 @@ img2pngOptions = "-fnamefilter -loglevel0"
 
 # targets over this size (fraction of the image frame)
 # won't get histogram stretched (can blow out small targets)
+# see vgAdjust
 adjustHistogramImageFractionMinimum = 0.25
 
 
@@ -108,7 +109,7 @@ centerTargets = 'Amalthea,Thebe,Adrastea,Metis,Larissa,System,Phoebe,Unk_Sat,Hel
 Prometheus,Pandora,Calypso,Proteus,Janus,Telesto,Puck,Epimetheus'.split(',')
 
 
-# blob detection
+# center/blob detection
 # --------------------
 
 # level at which to take binary threshold for blob detection
@@ -140,7 +141,7 @@ blobAdaptiveThresholdConstant = 6 # v0.42
 
 blobRadiusMax = 10 # v0.42
 
-# circle detection
+# center/circle detection
 # --------------------
 
 # hough circle detector parameters
@@ -169,7 +170,7 @@ houghAccumulatorThreshold = 20 # v0.42 increased to this and did better because 
 houghRadiusSearchPercent = 10
 
 
-# stabilization
+# center/stabilization
 # --------------------
 
 # if radius of target in image is too different from previous frame,
@@ -257,7 +258,8 @@ targetsIgnore = dontCenterTargets
 # Titles
 # ----------------------------------------
 
-titleSecondsToShow = 4
+# titleSecondsToShow = 4
+titleSecondsToShow = 3.5
 
 titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
@@ -312,15 +314,13 @@ clipsIgnoreTargets = dontCenterTargets
 
 # used to determine nframes per image - this multiplied by imageFraction,
 # so slows down when closer to target
-# this can be overridden in targets.csv
-# clipsDefaultFrameRateConstant = 60
+# this can be overridden in framerateConstants.csv
 frameRateConstantDefault = 60
 
 # the max number of copies for each frame (higher=slower movie)
-# clipsMaxFrameRateConstant = 30 # v0.43 uranus
-# clipsMaxFrameRateConstant = 20 # v0.43 jupiter
-# frameRateConstantMax = 20 # v0.43 jupiter
-frameRateNCopiesMax = 20 # v0.43 jupiter
+# frameRateNCopiesMax = 30 # v0.43 uranus
+# frameRateNCopiesMax = 20 # v0.43 jupiter
+frameRateNCopiesMax = 25 # v0.46 jupiter
 
 # minimum number of frames for a clip to be generated
 # (otherwise get lots of 0:00 movies)

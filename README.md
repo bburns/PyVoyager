@@ -330,7 +330,7 @@ History
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
-Version 0.46 (2016-08-19)
+Version 0.46 (2016-08-)
 ----------------------------------------
 - Add `-align` option to `vg composite` - attempts to align channels using feature detection and matching
 - Fix `vg adjust` brightness enhancement to ignore hot pixels unless small moon. Improved brightness of dark moon pics and eliminated posterized look from some images due to 16-bit to 8-bit conversion. 
@@ -340,6 +340,7 @@ Version 0.45 (2016-08-14)
 ----------------------------------------
 - Add `vg inpaint` step to fill in missing or whited out parts of target, where possible
 - Frame rate constants can be set by System-Craft-Target-Camera
+- Add `vg test composite` to test compositing routines, with several examples for validation
 
 Made Voyager 1 Jupiter system movie - lots of edits to composites.csv and framerates.csv
 

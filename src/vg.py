@@ -209,11 +209,18 @@ elif cmd=="annotate":
     lib.beep()
 
 elif cmd=="target":
-    if filterVolumes:
+    # can filter on volumes and targetpath OR ids and targetpath, but not vols and ids
+    #. check this logic - make like vg composite?
+    if filterImageIds:
+        for imageId in filterImageIds:
+            vgTarget.vgTarget(None, imageId, filterTargetPath)
+    elif filterVolumes:
         for filterVolume in filterVolumes:
-            vgTarget.vgTarget(filterVolume, '')
+            # vgTarget.vgTarget(filterVolume, '')
+            vgTarget.vgTarget(filterVolume, '', filterTargetPath)
     else:
-        vgTarget.vgTarget('', filterTargetPath)
+        # vgTarget.vgTarget('', filterTargetPath)
+        vgTarget.vgTarget('', '', filterTargetPath)
     lib.beep()
 
 elif cmd=="title":

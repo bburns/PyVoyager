@@ -41,7 +41,8 @@ C1638543,Amalthea,Sky
 C1638545,Amalthea,Sky
 C1638547,Amalthea,Sky
 C1638643,Amalthea,Sky
-C1593337,Amalthea,Io
+# C1593337,Amalthea,Io
+C1593337,Amalthea,Callisto
 # wide
 C1550829,Amalthea,Jupiter
 C1610357,Amalthea,Jupiter
@@ -108,8 +109,10 @@ C1642601,Callisto,Sky
 # Europa
 C1534314,Europa,Callisto
 C1568642,Europa,Io
-C1574643,Europa,Io
-C1575317,Europa,Io
+# C1574643,Europa,Io
+C1574643,Europa,Callisto
+# C1575317,Europa,Io
+C1575317,Europa,Callisto
 C1587932,Europa,Io
 C1627002,Europa,Sky
 C1627004,Europa,Sky

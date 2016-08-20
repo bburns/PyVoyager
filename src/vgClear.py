@@ -2,7 +2,10 @@
 """
 vg clear command
 
-Clear folders specified for a given step.
+Remove folders specified for a given step.
+This is needed because the -y option sometimes fails to delete a folder
+if Windows still has a lock on it, eg thumbs.db.
+Better to have it fail up front with this cmd if going to leave a long cmd running. 
 """
 
 import csv
@@ -17,13 +20,13 @@ import libimg
 
 def vgClear(step='', filterVolume=''):
 
-    "clear volume folder for given step"
+    "remove volume folder for given step"
 
     filterVolume = str(filterVolume) # eg '5101'
     subfolder = lib.getSubfolder(step, filterVolume)
     print 'Clearing',subfolder
     lib.rmdir(subfolder)
-    print
+    # print
 
 if __name__ == '__main__':
     os.chdir('..')

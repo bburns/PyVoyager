@@ -5,22 +5,23 @@
 """
 PyVoyager commands
 
-  vg download       - download volume(s)
-  vg unzip          - unzip volume(s)
-  vg convert        - convert IMGs to PNGs
-  vg adjust         - adjust images (rotate and enhance)
-  vg denoise        - remove noise from images
-  vg center         - center images
-  vg inpaint        - fill in missing pixels where possible
-  vg composite      - create color images
-  vg target         - copy images into target subfolders
-  vg clips          - create bw or color clips
-  vg movies         - create movies from clips
-  vg list           - show status of local datasets
+  vg download            - download volume(s)
+  vg unzip               - unzip volume(s)
+  vg convert             - convert IMGs to PNGs
+  vg adjust              - adjust images (rotate and enhance)
+  vg denoise             - remove noise from images
+  vg center              - center images
+  vg inpaint             - fill in missing pixels where possible
+  vg composite           - create color images
+  vg target              - copy images into target subfolders
+  vg clips               - create bw or color clips
+  vg movies              - create movies from clips
+  vg list                - show status of local datasets
+  vg clear <step> <vols> - remove volume folders
 
-  vg test denoise   - run denoising tests
-  vg test center    - run centering tests
-  vg test composite - run compositing tests
+  vg test denoise        - run denoising tests
+  vg test center         - run centering tests
+  vg test composite      - run compositing tests
 
 where most commands can be followed by <filter> and <options>, where
 
@@ -71,6 +72,7 @@ import vgClips
 import vgMovies
 
 import vgList
+import vgClear
 import vgTestDenoise
 import vgTestCenter
 import vgTestComposite
@@ -105,6 +107,10 @@ for option in optionList:
         optionAlign = True
     elif option=='-keeplinks':
         optionKeepLinks = True
+    else:
+        print 'Error: unknown option',option
+        print
+        stop
 
 # parse remaining <filter> arguments
 filterVolumes = None
@@ -250,7 +256,6 @@ elif cmd=="retarget":
     vgRetarget.vgRetarget(oldTarget, newTarget)
 
 elif cmd=="clear":
-    log.start()
     step = args[0] # eg 'adjust'
     if filterVolumes is None:
         print 'Specify volume(s) to clear'

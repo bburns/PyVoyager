@@ -265,10 +265,9 @@ def getImageAlignmentORB(im0, im1):
     # draw good matches
     # shows images side by side with colored lines between matched points
     #........... make debug flag to save this image to a debug folder? useful to look through them
-    out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,
-    # out = cv2.drawMatches(im0,kp0,im1,kp1,matches,None,
-                          flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    show(out)
+    # out = cv2.drawMatches(im0,kp0,im1,kp1,good,None,
+                          # flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    # show(out)
 
     # find transformation matrix
     if transform=='translate':
@@ -290,7 +289,7 @@ def getImageAlignmentORB(im0, im1):
         blank = np.zeros((sz,sz),np.uint8)
         # imy = cv2.merge((blank, im0, imx))
         imy = cv2.merge((im0, blank, imx)) # base image is blue, moved is red
-        show(imy)
+        # show(imy)
 
     elif transform=='affine':
 
@@ -759,7 +758,8 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
 
     # align the image to the target disc
-    dx, dy, alignmentOk = getImageAlignment(imFixed, im)
+    # dx, dy, alignmentOk = getImageAlignment(imFixed, im)
+    dx, dy, alignmentOk = getImageAlignmentECC(imFixed, im)
     if alignmentOk:
         im = shiftImage(im, dx, dy)
         # this doesn't work as precisely (why?), and it's about same speed, so just use warp
@@ -979,8 +979,8 @@ def alignChannels(channels):
         if alignmentOk:
             channels[2][config.colChannelX] = dx
             channels[2][config.colChannelY] = dy
-    for channel in channels:
-        if channel: print channel[2:-1]
+    # for channel in channels:
+    #     if channel: print channel[2:-1]
     return channels
 
 

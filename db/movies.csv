@@ -1,25 +1,83 @@
 
+# movies
 # store movie info here
-# movies are built by concatenating available clips
+# --------------------------------------------------------------------------------
+
+# movies are built by concatenating specified segments together
 # filenames are just the id's with .mp4 appended
 
-movieId,clipId
-
+# note: imageIds are optional, and are inclusive
+#. could be a filename also?
+# movieId,targetKey,imageIdsOrFilename
+# movieId,targetKey,imageIds
+# movieFilename,targetKey,imageIds
+# moviename,targetKey,imageIds
+# moviename,blockname,imageIds
+# moviename,blockname,contents
+# moviename,subMoviename,contents
+targetKey, subtargetKey, contents
 
 # Voyager 1
 # --------------------------------------------------------------------------------
 
 # Jupiter
-Jupiter-Voyager1,Jupiter-Voyager1-Title
-Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide
-Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Callisto-Wide
-Jupiter-Voyager1,Jupiter-Voyager1-Europa-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Ganymede-Wide
-Jupiter-Voyager1,Jupiter-Voyager1-Io-Narrow
-Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
+
+# jupiter approach, rotation, clouds
+# Jupiter-Voyager1-Jupiter-approach, Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+# Jupiter-Voyager1-Jupiter-approach, Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
+# Jupiter-Voyager1-Jupiter/approach, Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+
+# Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1580000
+
+
+# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+# Jupiter-Voyager1-Jupiter/approach, Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
+# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
+
+
+# callisto
+# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Narrow,C1474515-C1642825
+# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
+
+# europa
+Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
+
+# ganymede
+# Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
+# Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Wide, C1640141-C1640752
+
+# io
+# Jupiter-Voyager1-Io,Jupiter-Voyager1-Io-Narrow
+
+# departure
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1690946-C1757410
+Jupiter-Voyager1-Jupiter-(departure),Jupiter-Voyager1-Jupiter-Wide,C1644034-C1757412
+
+
+# split between approach and departure is a bit arbitrary,
+# but tried to end the approach when switched to limb views.
+# Jupiter-Voyager1,Jupiter-Voyager1-Title
+# Jupiter-Voyager1,Jupiter-Voyager1,title.jpg
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-approach
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter/approach
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(approach)
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-[approach]
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide,C1550829-C1618136
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1462321-C1641338
+# Jupiter-Voyager1,Jupiter-Voyager1-Callisto
+Jupiter-Voyager1,Jupiter-Voyager1-Europa
+# Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
+# Jupiter-Voyager1,Jupiter-Voyager1-Io
+# departure
+# narrow angle is kind of redundant, unless has better color
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter/departure
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(departure)
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1690946-C1757410
+# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide,C1644034-C1757412
+# Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
+
 
 # Saturn
 
@@ -33,29 +91,29 @@ Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
 
 # Uranus
 # Uranus-Voyager2,Uranus-Voyager2-Title
-Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
-Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Ariel-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Miranda-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Oberon-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Puck-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
+# Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
 
 # Neptune
-Neptune-Voyager2,Neptune-Voyager2-Title
-Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow
-Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow
-Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide
+# Neptune-Voyager2,Neptune-Voyager2-Title
+# Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow
+# Neptune-Voyager2,Neptune-Voyager2-Triton-Narrow
+# Neptune-Voyager2,Neptune-Voyager2-Neptune-Wide
 
 
 # All together
 # --------------------------------------------------------------------------------
-All,All-Title
-All,Jupiter-Voyager1
-All,Saturn-Voyager1
-All,Jupiter-Voyager2
-All,Saturn-Voyager2
-All,Uranus-Voyager2
-All,Neptune-Voyager2
-All,All-Epilogue
+# All,All-Title
+# All,Jupiter-Voyager1
+# All,Saturn-Voyager1
+# All,Jupiter-Voyager2
+# All,Saturn-Voyager2
+# All,Uranus-Voyager2
+# All,Neptune-Voyager2
+# All,All-Epilogue

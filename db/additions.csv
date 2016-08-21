@@ -17,10 +17,13 @@ fileId,additionId,nframes
 
 
 # Io
+# add a couple of wideangles into narrowangle clip
+C1639250,C1639259_composite,50
+C1639250,C1639301_composite,50
+# add some mosaics to test it out
 C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
 #. source?
 C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
-
 
 
 # Uranus

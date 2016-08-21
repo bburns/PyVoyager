@@ -21,6 +21,93 @@ import config
 
 
 
+
+def makeContentsFile(movieContentsFilepath, filepaths):
+    "Make a text file containing a list of mp4 files that will be merged by ffmpeg"
+    f = open(movieContentsFilepath, 'w')
+    for filepath in filepaths:
+        line = "file '../../" + filepath + "'"
+        print >> f, line
+    f.close()
+
+
+def concatenateMovies(outputFilepath, inputFilepaths):
+    "Concatenate the given mp4 clips into an mp4 movie using ffmpeg"
+    # print 'Generating movie', outputFilepath
+    movieContentsFilepath = outputFilepath[:-4] + '.txt'
+    if inputFilepaths:
+        makeContentsFile(movieContentsFilepath, inputFilepaths)
+        # now make the movie
+        # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
+        cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
+        # print cmd
+        os.system(cmd)
+
+
+def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
+    """
+    add symbolic links from imageFilepath to target folder and update nfile count for target.
+    used by vgClips and vgMovies.
+    """
+    nfile = ntargetDirFiles.get(targetKey) or 0
+    # need to get out of the target dir - we're always this deep - could parameterize if needed
+    imagePathRelative = '../../../../../../../' + imageFilepath
+    makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
+    # increment the file number for the target folder
+    nfile += ncopies
+    ntargetDirFiles[targetKey] = nfile
+
+
+def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
+               framerateInfo, fileId):
+    """
+    How many copies of the given target do we need for clips/movies?
+    Bases it on imageFraction, information in targets.csv, framerates.csv, etc.
+    Useg by vgClips and vgMovies.
+    """
+
+    # ncopies is basically proportional to imageFraction
+    # framerateConstantInfoRecord = framerateConstantInfo.get(target)
+    framerateConstantInfoRecord = framerateConstantInfo.get(targetKey)
+    if framerateConstantInfoRecord:
+        frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
+    else:
+        frameRateConstant = config.frameRateConstantDefault
+    ncopies = int(frameRateConstant * imageFraction) + 1
+
+    # but don't let it go too slowly
+    if ncopies > config.frameRateNCopiesMax:
+        ncopies = config.frameRateNCopiesMax
+
+    # check for sticky setting off switch
+    framerateInfoRecord = framerateInfo.get(fileId + '-') # eg C1234567-
+    if not framerateInfoRecord is None:
+        ncopiesMemory.pop(targetKey, None) # remove the sticky setting
+        # print 'turned off sticky framerate',fileId
+
+    # check for previous sticky setting override in framerates.csv
+    if not ncopiesMemory.get(targetKey) is None:
+        ncopies = ncopiesMemory[targetKey]
+        # print 'remembering sticky framerate',fileId, ncopies
+
+    # check for 'sticky' override from framerates.csv
+    framerateInfoRecord = framerateInfo.get(fileId + '+') # eg C1234567+
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframes'])
+        ncopiesMemory[targetKey] = ncopies # remember it
+        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+
+    # check for single image override from framerates.csv - temporary setting
+    framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
+    if not framerateInfoRecord is None:
+        ncopies = int(framerateInfoRecord['nframes'])
+        # print 'got single framerate',fileId,ncopies,ncopiesMemory
+
+    return ncopies
+
+
+
+
 def getImageFraction(csvPositions, fileId):
     "look up the imageFraction for the given image in the positions.csv file"
     rowPositions = getJoinRow(csvPositions, config.colPositionsFileId, fileId)
@@ -300,6 +387,18 @@ def getFilepath(step, volume, fileId, filter=None):
     return filepath
 
 
+# def getMoviepath(step, targetKey):
+#     "get name of movie file for given step and target key"
+#     folder = config.folders[step] # eg 'movies' -> 'data/step14_movies/'
+#     # suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
+#     # subfolder = folder + 'VGISS_' + volume + '/'
+#     subfolders = '/'.join(targetKey.split('-')) + '/'
+#     subfolder = folder + subfolders
+#     filetitle = 'movie.mp4'
+#     filepath = subfolder + filetitle
+#     return filepath
+
+
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
     """
     Build mp4 videos using ffmpeg on sequentially numbered image files.
@@ -322,11 +421,10 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, mi
                 # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
                 targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
                 targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-                # videoTitle eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-                videoTitle = '-'.join(targetPath) + '.mp4'
-                # videoPath = '../../../../../../' + videoTitle
-                videoPath = outputFolder + videoTitle
-                imagesToMp4(stageFolderPath, filespec, videoPath, frameRate)
+                # videoFiletitle eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
+                videoFiletitle = '-'.join(targetPath) + '.mp4'
+                # videoFilepath = '../../../../../../' + videoFiletitle
+                imagesToMp4(stageFolderPath, filespec, videoFilepath, frameRate)
 
 # def makeClipFiles():
 #     "Build mp4 clips using ffmpeg on sequentially numbered image files"
@@ -536,22 +634,31 @@ def mkdir_p(path):
     "Make a directory tree, ignoring any errors (eg if it already exists)"
     try:
         os.makedirs(path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
+    except OSError as e:
+        if e.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
+            print 'e',e
+            print 'errno',e.errno
             raise
 
 
-def imagesToMp4(stageFolder, filenamePattern, outputFilename, frameRate):
-    "Convert a sequentially numbered set of images to an mp4 movie"
-    # stageFolder is the folder containing the sequentially numbered files
+def imagesToMp4(stageFolder, filenamePattern, outputFilename, framerate):
+    """
+    Convert a sequentially numbered set of images to an mp4 movie.
+    stageFolder is the folder containing the sequentially numbered files.
+    filenamePattern specifies the filenames, e.g. img%05d.jpg
+    outputFilename is the mp4 filename, e.g. Neptune-Voyager1.mp4
+    framerate is fps
+    """
     savedir = os.getcwd()
     os.chdir(stageFolder)
+    print 'cwd',os.getcwd()
     # eg "ffmpeg -y -i img%05d.png -r 15 a.mp4"
     cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % \
-          (config.videoFfmpegOptions, frameRate, filenamePattern, config.videoFfmpegOutputOptions, outputFilename)
-    # print cmd
+          (config.videoFfmpegOptions, framerate, filenamePattern,
+           config.videoFfmpegOutputOptions, outputFilename)
+    print cmd
     os.system(cmd)
     os.chdir(savedir)
 

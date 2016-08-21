@@ -24,76 +24,92 @@ import vgTitle
 
 
 
-def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
-               framerateInfo, fileId):
-    """
-    How many copies of the given target do we need?
-    Bases it on imageFraction, information in targets.csv, framerates.csv, etc.
-    """
+# def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
+#                framerateInfo, fileId):
+#     """
+#     How many copies of the given target do we need?
+#     Bases it on imageFraction, information in targets.csv, framerates.csv, etc.
+#     """
 
-    # ncopies is basically proportional to imageFraction
-    # framerateConstantInfoRecord = framerateConstantInfo.get(target)
-    framerateConstantInfoRecord = framerateConstantInfo.get(targetKey)
-    if framerateConstantInfoRecord:
-        frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
-    else:
-        frameRateConstant = config.frameRateConstantDefault
-    ncopies = int(frameRateConstant * imageFraction) + 1
+#     # ncopies is basically proportional to imageFraction
+#     # framerateConstantInfoRecord = framerateConstantInfo.get(target)
+#     framerateConstantInfoRecord = framerateConstantInfo.get(targetKey)
+#     if framerateConstantInfoRecord:
+#         frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
+#     else:
+#         frameRateConstant = config.frameRateConstantDefault
+#     ncopies = int(frameRateConstant * imageFraction) + 1
 
-    # but don't let it go too slowly
-    if ncopies > config.frameRateNCopiesMax:
-        ncopies = config.frameRateNCopiesMax
+#     # but don't let it go too slowly
+#     if ncopies > config.frameRateNCopiesMax:
+#         ncopies = config.frameRateNCopiesMax
 
-    # check for sticky setting off switch
-    framerateInfoRecord = framerateInfo.get(fileId + '-') # eg C1234567-
-    if not framerateInfoRecord is None:
-        ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-        # print 'turned off sticky framerate',fileId
+#     # check for sticky setting off switch
+#     framerateInfoRecord = framerateInfo.get(fileId + '-') # eg C1234567-
+#     if not framerateInfoRecord is None:
+#         ncopiesMemory.pop(targetKey, None) # remove the sticky setting
+#         # print 'turned off sticky framerate',fileId
 
-    # check for previous sticky setting override in framerates.csv
-    if not ncopiesMemory.get(targetKey) is None:
-        ncopies = ncopiesMemory[targetKey]
-        # print 'remembering sticky framerate',fileId, ncopies
+#     # check for previous sticky setting override in framerates.csv
+#     if not ncopiesMemory.get(targetKey) is None:
+#         ncopies = ncopiesMemory[targetKey]
+#         # print 'remembering sticky framerate',fileId, ncopies
 
-    # check for 'sticky' override from framerates.csv
-    framerateInfoRecord = framerateInfo.get(fileId + '+') # eg C1234567+
-    if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframes'])
-        ncopiesMemory[targetKey] = ncopies # remember it
-        # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
+#     # check for 'sticky' override from framerates.csv
+#     framerateInfoRecord = framerateInfo.get(fileId + '+') # eg C1234567+
+#     if not framerateInfoRecord is None:
+#         ncopies = int(framerateInfoRecord['nframes'])
+#         ncopiesMemory[targetKey] = ncopies # remember it
+#         # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
 
-    # check for single image override from framerates.csv - temporary setting
-    framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
-    if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframes'])
-        # print 'got single framerate',fileId,ncopies,ncopiesMemory
+#     # check for single image override from framerates.csv - temporary setting
+#     framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
+#     if not framerateInfoRecord is None:
+#         ncopies = int(framerateInfoRecord['nframes'])
+#         # print 'got single framerate',fileId,ncopies,ncopiesMemory
 
-    return ncopies
-
-
-def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
-    """
-    add symbolic links from imageFilepath to target folder and update nfile count for target.
-    """
-    nfile = ntargetDirFiles.get(targetKey) or 0
-    # need to get out of the target dir - we're always this deep - could parameterize if needed
-    imagePathRelative = '../../../../../../../' + imageFilepath
-    lib.makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
-    # increment the file number for the target folder
-    nfile += ncopies
-    ntargetDirFiles[targetKey] = nfile
+#     return ncopies
 
 
-def stageFiles(filterVolumes, targetPathParts):
+# def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
+#     """
+#     add symbolic links from imageFilepath to target folder and update nfile count for target.
+#     """
+#     nfile = ntargetDirFiles.get(targetKey) or 0
+#     # need to get out of the target dir - we're always this deep - could parameterize if needed
+#     imagePathRelative = '../../../../../../../' + imageFilepath
+#     lib.makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
+#     # increment the file number for the target folder
+#     nfile += ncopies
+#     ntargetDirFiles[targetKey] = nfile
+
+
+# def stageFiles(filterVolumes, targetPathParts):
+# def stageFiles(filterVolumes, targetPathParts, imageIds=None):
+# def stageFiles(filterVolumes, filterTargetPath, filterImageIds=None):
+# def stageFiles(stageFolder, filterVolumes, filterTargetPath, filterImageIds, ntargetDirFiles):
+# def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, ntargetDirFiles):
+def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
     """
     Make links from source files to clip stage folders.
-    filterVolumes is a list of volumes as strings, e.g. ['5101','5102']
-    targetPathParts is [system, craft, target, camera]
+    filterVolumes is a list of volumes as strings, e.g. ['5101','5102'], or None for all.
+    filterTargetPath is system/craft/target/camera, e.g. 'Jupiter//Io', or None for all.
+    filterImageIds is a string with start and stop imageIds, e.g. 'C1436454-C1528477' or None=all.
+    stageFolder is config.clipsStageFolder or config.moviesStageFolder
     """
+    # targetPathParts is [system, craft, target, camera], or None.
+    # ntargetDirFiles is a dictionary that keeps track of how many files each folder contains.
 
     print 'Making links from source files'
 
     # print filterVolumes, targetPathParts
+    # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
+    targetPathParts = lib.parseTargetPath(filterTargetPath)
+
+    if filterImageIds:
+        imageIdStart, imageIdStop = filterImageIds.split('-')
+    else:
+        imageIdStart, imageIdStop = None, None
 
     # read some small dbs into memory
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
@@ -140,23 +156,27 @@ def stageFiles(filterVolumes, targetPathParts):
         # how many copies of this image do we want?
         # note: we need to do this even if we don't add this image,
         # because need to keep track of sticky overrides from framerates.csv.
-        ncopies = getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory,
-                             targetKey, framerateInfo, fileId)
+        # ncopies = getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory,
+        ncopies = lib.getNCopies(framerateConstantInfo, target, imageFraction,
+                                 ncopiesMemory, targetKey, framerateInfo, fileId)
 
-        # does this image match the volume and target path the user specified on the cmdline?
-        addImage = False
-        # if (volume in filterVolumes) and \
-           # lib.targetMatches(targetPathParts, system, craft, target, camera):
-            # addImage = True
-        volumeOk = (volume in filterVolumes)
+        # check if this image matches the volume and target path the user specified on the cmdline
+        # addImage = False
+        # volumeOk = (volume in filterVolumes)
+        volumeOk = (volume in filterVolumes if filterVolumes else True)
         targetOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
-        # note AND -
-        if volumeOk and targetOk: addImage = True
-        if target in config.clipsIgnoreTargets: addImage = False
-        # if addImage and ncopies > 0:
+        imageOk = (fileId >= imageIdStart and fileId <= imageIdStop) if filterImageIds else True
+        ignoreTarget = (target in config.clipsIgnoreTargets)
+        # if volumeOk and targetOk: addImage = True # <- note AND here
+        # if target in config.clipsIgnoreTargets: addImage = False
+        # addImage = volumeOk and targetOk and (not ignoreTarget) # <- note AND here
+        addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
+        # if targetOk:
+            # print addImage, volumeOk, targetOk, imageOk, ignoreTarget, ncopies
         if addImage:
 
             if ncopies > 0:
+
                 # use annotated image if available, else mosaic or composite.
                 # but don't use centered files or will get bw images mixed in with color.
                 imageFilepath = lib.getFilepath('annotate', volume, fileId)
@@ -171,7 +191,8 @@ def stageFiles(filterVolumes, targetPathParts):
                     # get staging subfolder and make sure it exists
                     # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
                     subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                    targetFolder = config.clipsStageFolder + subfolder
+                    # targetFolder = config.clipsStageFolder + subfolder
+                    targetFolder = stageFolder + subfolder
                     lib.mkdir_p(targetFolder)
 
                     # get current file number in that folder, or start at 0
@@ -183,19 +204,20 @@ def stageFiles(filterVolumes, targetPathParts):
                         titleFilepath = config.folders['titles'] + subfolder + 'title' + \
                                              config.extension
                         ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
-                        addImages(titleFilepath, targetFolder, ntitleCopies,
-                                  ntargetDirFiles, targetKey)
+                        # addImages(titleFilepath, targetFolder, ntitleCopies,
+                        lib.addImages(titleFilepath, targetFolder, ntitleCopies,
+                                      ntargetDirFiles, targetKey)
 
                     print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 
                     # add links to file
                     # note: mklink requires admin privileges, so must run in an admin console
                     # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
-                    addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                    lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
 
             # check for additional images in additions.csv
             rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
-            if rowAdditions:
+            while rowAdditions:
                 print fileId, rowAdditions
                 additionId = rowAdditions[config.colAdditionsAdditionId] # eg C2684338_composite
                 ncopies = int(rowAdditions[config.colAdditionsNFrames])
@@ -211,26 +233,40 @@ def stageFiles(filterVolumes, targetPathParts):
                 # get staging subfolder and make sure it exists
                 # eg data/step09_clips/stage/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                targetFolder = config.clipsStageFolder + subfolder
+                # targetFolder = config.clipsStageFolder + subfolder
+                targetFolder = stageFolder + subfolder
                 lib.mkdir_p(targetFolder)
 
+                # insert the additional image
                 if additionId.startswith('images/'):
                     print 'adding',additionId,targetKey
                     filetitle = additionId[7:] # trim off images/
                     folder = config.folders['additions'] # data/images/
                     imageFilepath = folder + filetitle
                     print imageFilepath
-                    addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                    # add nframes into stage
+                    lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
                 else:
-                    print 'unhandled addition', additionId
-                    # if '_composite':
-                    #     imageFilepath = lib.getCompositeFilepath(volume, fileId)
+                    #.. need to look up correct volume here - might be in different one
+                    if additionId.endswith('_composite'):
+                        additionId = additionId[:-10] # remove '_composite'
+                        # imageFilepath = lib.getFilepath('composite', volume, fileId)
+                        imageFilepath = lib.getFilepath('composite', volume, additionId)
+                    else:
+                        print 'unhandled addition', additionId
+                        imageFilepath = ''
                     # elif '_centered':
                     #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
                     # elif '_adjusted':
                     #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
-                    # need to insert the additional image here
-                    # add nframes into stage
+                    print imageFilepath
+                    if os.path.isfile(imageFilepath):
+                        # add nframes into stage
+                        lib.addImages(imageFilepath, targetFolder, ncopies,
+                                      ntargetDirFiles, targetKey)
+                    else:
+                        print "warning: can't find image file",imageFilepath
+                rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
 
     fAdditions.close()
     fPositions.close()
@@ -244,25 +280,22 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     """
 
     # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
-    targetPathParts = lib.parseTargetPath(filterTargetPath)
+    # targetPathParts = lib.parseTargetPath(filterTargetPath)
 
     if keepLinks==False:
-
-        # make sure we have the necessary images
-        # if bwOrColor=='bw':
-            # lib.loadPreviousStep(targetPathParts, vgCenter.vgCenter)
-        # else:
-            # lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
-        # lib.loadPreviousStep(targetPathParts, vgComposite.vgComposite)
-        #. fix
-        # lib.loadPreviousStep(targetPathParts, vgAnnotate.vgAnnotate)
 
         # make sure we have some titles
         vgTitle.vgTitle(filterTargetPath)
 
+        # keep track of number of files in each target subfolder,
+        # so we can number files appropriately and know when to add titles
+        # ntargetDirFiles = {}
+
         # stage images for ffmpeg
         lib.rmdir(config.clipsStageFolder)
-        stageFiles(filterVolumes, targetPathParts)
+        # stageFiles(filterVolumes, targetPathParts)
+        # stageFiles(config.clipsStageFolder, filterVolumes, targetPathParts, None, ntargetDirFiles)
+        stageFiles(filterVolumes, filterTargetPath, None, config.clipsStageFolder, ntargetDirFiles)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',

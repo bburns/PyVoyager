@@ -228,13 +228,14 @@ elif cmd=="title":
     lib.beep()
 
 elif cmd=="clips":
-    if filterVolumes is None:
-        filterVolumes = config.volumes
+    # if filterVolumes is None:
+        # filterVolumes = config.volumes
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
     lib.beep()
 
 elif cmd=="movies":
-    vgMovies.vgMovies()
+    # vgMovies.vgMovies()
+    vgMovies.vgMovies(filterVolumes, filterTargetPath, optionKeepLinks)
     lib.beep()
 
 elif cmd=="list":

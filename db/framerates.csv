@@ -32,6 +32,7 @@ fileId,nframes,notes
 # starts wobbling here - could fix someday
 C1618137+,0
 # receeding crescent - goes further than the NA view
+C1644034+,1
 # C1654639+,1
 # C1757412 last frame
 
@@ -405,7 +406,7 @@ C1669918,40,last shot crescent
 
 # wide
 # C1627348 start
-C1640746,40,last good crescent shot
+# C1640746,40,last good crescent shot
 
 
 # Io

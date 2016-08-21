@@ -1,18 +1,20 @@
 
+# titles
 # could store clip title info here
+# --------------------------------------------------------------------------------
 
 target,description
 
 
 Uranus,"Greek God of the sky (Ouranos), corresponding to Roman Caelus"
-Ariel,A sky spirit in Shakespeare's The Tempest
+Ariel,"A sky spirit in Shakespeare's The Tempest"
 Miranda,"A character from William Shakespeare's play The Tempest - 'O brave new world, That has such people in it'"
-Oberon,The king of the fairies who appears as a character in Shakespeare's A Midsummer Night's Dream
-Puck,A mischievous sprite from Shakespeare's A Midsummer Night's Dream
-Titania,The queen of the fairies in Shakespeare's A Midsummer Night's Dream.
+Oberon,"The king of the fairies who appears as a character in Shakespeare's A Midsummer Night's Dream"
+Puck,"A mischievous sprite from Shakespeare's A Midsummer Night's Dream"
+Titania,"The queen of the fairies in Shakespeare's A Midsummer Night's Dream"
 Umbriel,"The 'dusky melancholy sprite' in Alexander Pope's The Rape of the Lock - the name suggests the Latin umbra, meaning shadow."
 
-Neptune,God of the sea
-Triton,Son of Neptune
-Proteus,Shape-changing sea god
-Nereid,Sea-nymph attendant of Neptune
+Neptune,"God of the sea"
+Triton,"Son of Neptune"
+Proteus,"Shape-changing sea god"
+Nereid,"Sea-nymph attendants of Neptune"

@@ -265,7 +265,7 @@ titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 
 
-# Videos (clips, segments, movies)
+# Videos (clips, movies)
 # ----------------------------------------
 
 # filename used for frames
@@ -364,6 +364,7 @@ folders = {
     }
 
 clipsStageFolder    = folders['clips'] + 'stage/'
+moviesStageFolder    = folders['movies'] + 'stage/'
 
 # grab folders - see vg grab
 grabFolder = onlineFolder  + "grab/"

@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.46 inprogress
+Version 0.46
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
@@ -330,11 +330,13 @@ History
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
-Version 0.46 (2016-08-)
+Version 0.46 (2016-08-20)
 ----------------------------------------
 - Add `-align` option to `vg composite` - attempts to align channels using feature detection and matching
 - Fix `vg adjust` brightness enhancement to ignore hot pixels unless small moon. Improved brightness of dark moon pics and eliminated posterized look from some images due to 16-bit to 8-bit conversion. 
 - Add `vg clear <step> <vols>` command to remove folders, as -y option sometimes fails due to Windows having a lock on a file, e.g. thumbs.db. 
+
+Made Voyager 1 Io encounter movie - cleaned up from prior version
 
 Version 0.45 (2016-08-14)
 ----------------------------------------

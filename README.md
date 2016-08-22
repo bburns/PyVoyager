@@ -332,7 +332,7 @@ History
 
 Version 0.47 (2016-08-)
 ----------------------------------------
-- `vg movies` can assemble movies from arbitrary segments for more editorial control
+- `vg movies` can assemble movies from arbitrary segments for more editorial control, e.g. mix wide angle with narrow angle segments
 
 
 

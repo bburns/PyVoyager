@@ -309,8 +309,12 @@ videoFfmpegOptions = "-y -loglevel warning"
 #. get warning: deprecated pixel format used, make sure you did set range correctly
 # how get rid of it?
 # videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
-videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj420p -crf 23" #. try this? mjpeg? (note J)
-# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p color_range 3 -crf 23" # nowork
+videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj420p -crf 23" # v0.46 and prior. note j
+# videoFfmpegOutputOptions = "-codec copy" # v0.47 for mjpeg (just store sequence of jpegs)
+
+# tells libx264 to prioritise encoding speed over output file size
+#. turn this off later
+videoFfmpegOutputOptions += " -preset ultrafast"
 
 
 # Clips

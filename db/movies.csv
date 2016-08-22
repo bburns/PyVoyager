@@ -22,24 +22,18 @@ targetKey, subtargetKey, contents
 
 # Jupiter
 
-# jupiter approach, rotation, clouds
-# Jupiter-Voyager1-Jupiter-approach, Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
-# Jupiter-Voyager1-Jupiter-approach, Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
-# Jupiter-Voyager1-Jupiter/approach, Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
-
-# Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
-Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1580000
-
-
-# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
-# Jupiter-Voyager1-Jupiter/approach, Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
-# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
-# Jupiter-Voyager1-Jupiter-[approach], Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
+# approach
+# split between approach and departure is a bit arbitrary,
+# but tried to end the approach when switched to limb views.
+Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1618136
+# Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C1580000
+# Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1641338
+Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Narrow, C1462321-C1550852
 
 
 # callisto
-# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Narrow,C1474515-C1642825
-# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
+Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Narrow,C1474515-C1642825
+Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
 
 # europa
 Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
@@ -49,34 +43,28 @@ Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
 Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Wide, C1640141-C1640752
 
 # io
-# Jupiter-Voyager1-Io,Jupiter-Voyager1-Io-Narrow
+Jupiter-Voyager1-Io,Jupiter-Voyager1-Io-Narrow
+
+# clouds
+Jupiter-Voyager1-Jupiter-(clouds), Jupiter-Voyager1-Jupiter-Narrow, C1550853-C1642002
 
 # departure
+# narrow angle is kind of redundant, unless has better color
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1690946-C1757410
 Jupiter-Voyager1-Jupiter-(departure),Jupiter-Voyager1-Jupiter-Wide,C1644034-C1757412
 
 
-# split between approach and departure is a bit arbitrary,
-# but tried to end the approach when switched to limb views.
 # Jupiter-Voyager1,Jupiter-Voyager1-Title
 # Jupiter-Voyager1,Jupiter-Voyager1,title.jpg
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-approach
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter/approach
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(approach)
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-[approach]
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide,C1550829-C1618136
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1462321-C1641338
-# Jupiter-Voyager1,Jupiter-Voyager1-Callisto
+Jupiter-Voyager1,Jupiter-Voyager1-Callisto
 Jupiter-Voyager1,Jupiter-Voyager1-Europa
 Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
-# Jupiter-Voyager1,Jupiter-Voyager1-Io
-# departure
-# narrow angle is kind of redundant, unless has better color
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter/departure
+Jupiter-Voyager1,Jupiter-Voyager1-Io
+Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(clouds)
 Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(departure)
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1690946-C1757410
-# Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Wide,C1644034-C1757412
 # Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
+# Jupiter-Voyager1,Jupiter-Voyager1,credits.jpg
 
 
 # Saturn

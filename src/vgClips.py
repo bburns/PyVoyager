@@ -265,8 +265,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     print imageFilepath
                     if os.path.isfile(imageFilepath):
                         # add nframes into stage
-                        # lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-                        lib.addImages(imageFilepath, targetFolder, ncopies, targetKey)
+                        lib.addImages(imageFilepath, targetFolder, ncopies,
+                                      ntargetDirFiles, targetKey)
                     else:
                         print "warning: can't find image file",imageFilepath
                 rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)

@@ -45,8 +45,8 @@ Jupiter-Voyager1-Jupiter-(approach), Jupiter-Voyager1-Jupiter-Wide, C1550829-C15
 Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
 
 # ganymede
-# Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
-# Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Wide, C1640141-C1640752
+Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
+Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Wide, C1640141-C1640752
 
 # io
 # Jupiter-Voyager1-Io,Jupiter-Voyager1-Io-Narrow
@@ -68,7 +68,7 @@ Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-(approach)
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter-Narrow,C1462321-C1641338
 # Jupiter-Voyager1,Jupiter-Voyager1-Callisto
 Jupiter-Voyager1,Jupiter-Voyager1-Europa
-# Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
+Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
 # Jupiter-Voyager1,Jupiter-Voyager1-Io
 # departure
 # narrow angle is kind of redundant, unless has better color

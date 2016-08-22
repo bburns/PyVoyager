@@ -96,6 +96,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
     filterTargetPath is system/craft/target/camera, e.g. 'Jupiter//Io', or None for all.
     filterImageIds is a string with start and stop imageIds, e.g. 'C1436454-C1528477' or None=all.
     stageFolder is config.clipsStageFolder or config.moviesStageFolder
+    This fn is also used by vgMovies, so be careful editing it.
     """
     # targetPathParts is [system, craft, target, camera], or None.
     # ntargetDirFiles is a dictionary that keeps track of how many files each folder contains.
@@ -172,6 +173,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
         # addImage = volumeOk and targetOk and (not ignoreTarget) # <- note AND here
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
         # if targetOk:
+        # if fileId=='C1617515':
             # print addImage, volumeOk, targetOk, imageOk, ignoreTarget, ncopies
         if addImage:
 
@@ -213,7 +215,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     # add links to file
                     # note: mklink requires admin privileges, so must run in an admin console
                     # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
-                    lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                    lib.addImages(imageFilepath, targetFolder, ncopies,
+                                  ntargetDirFiles, targetKey)
 
             # check for additional images in additions.csv
             rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -262,8 +265,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     print imageFilepath
                     if os.path.isfile(imageFilepath):
                         # add nframes into stage
-                        lib.addImages(imageFilepath, targetFolder, ncopies,
-                                      ntargetDirFiles, targetKey)
+                        # lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                        lib.addImages(imageFilepath, targetFolder, ncopies, targetKey)
                     else:
                         print "warning: can't find image file",imageFilepath
                 rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -278,24 +281,14 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     """
     Build clips associated with the given volumes AND target path (eg '//Io').
     """
-
-    # note: filterTargetPathParts = [pathSystem, pathCraft, pathTarget, pathCamera]
-    # targetPathParts = lib.parseTargetPath(filterTargetPath)
-
     if keepLinks==False:
 
         # make sure we have some titles
         vgTitle.vgTitle(filterTargetPath)
 
-        # keep track of number of files in each target subfolder,
-        # so we can number files appropriately and know when to add titles
-        # ntargetDirFiles = {}
-
         # stage images for ffmpeg
         lib.rmdir(config.clipsStageFolder)
-        # stageFiles(filterVolumes, targetPathParts)
-        # stageFiles(config.clipsStageFolder, filterVolumes, targetPathParts, None, ntargetDirFiles)
-        stageFiles(filterVolumes, filterTargetPath, None, config.clipsStageFolder, ntargetDirFiles)
+        stageFiles(filterVolumes, filterTargetPath, None, config.clipsStageFolder)
 
     # build mp4 files from all staged images
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',

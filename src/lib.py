@@ -42,6 +42,7 @@ def concatenateMovies(outputFilepath, inputFilepaths):
         cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
         # print cmd
         os.system(cmd)
+    # os.remove(movieContentsFilepath)
 
 
 def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
@@ -220,7 +221,6 @@ def dataLines(lines):
             i += 1
 
 
-# def centerThisImageQ(centeringInfo, targetKey, fileId, target):
 def centerThisImageQ(imageFraction, centeringInfo, fileId, note, target):
     """
     Should this image be centered? Checks with centering.csv and config.dontCenterTargets.
@@ -307,7 +307,8 @@ def retarget(retargetingInfo, fileId, target):
         if retargetingInfoRecord['oldTarget']==target:
             target = retargetingInfoRecord['newTarget']
         else:
-            print 'Warning: retargeting.csv record discrepancy for ' + fileId,retargetingInfoRecord['oldTarget'],'vs',target
+            print 'Warning: retargeting.csv record discrepancy for ' + \
+                  fileId,retargetingInfoRecord['oldTarget'],'vs',target
     return target
 
 
@@ -344,24 +345,6 @@ def cp(src, dst):
         return False
 
 
-# #. might only need the Filepath variants
-# def getAdjustedFilename(fileId, filter):
-#     "get the filename for the adjusted image specified"
-#     filename = fileId + config.adjustmentsSuffix + '_' + filter + config.extension
-#     return filename
-
-# def getCenteredFilename(fileId, filter):
-#     "get the filename for the centered image specified"
-#     filename = fileId + config.centersSuffix + '_' + filter + config.extension
-#     return filename
-
-# def getCompositeFilename(fileId, filter):
-#     "get the filename for the composite image specified"
-#     filename = fileId + config.compositesSuffix + config.extension
-#     return filename
-
-
-
 def getSubfolder(step, volume):
     "get a volume subfolder, eg ('adjust','5101') -> 'data/step03_adjusted/VGISS_5101/'"
     folder = config.folders[step]
@@ -385,18 +368,6 @@ def getFilepath(step, volume, fileId, filter=None):
         filetitle = fileId + suffix + config.extension
     filepath = subfolder + filetitle
     return filepath
-
-
-# def getMoviepath(step, targetKey):
-#     "get name of movie file for given step and target key"
-#     folder = config.folders[step] # eg 'movies' -> 'data/step14_movies/'
-#     # suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
-#     # subfolder = folder + 'VGISS_' + volume + '/'
-#     subfolders = '/'.join(targetKey.split('-')) + '/'
-#     subfolder = folder + subfolders
-#     filetitle = 'movie.mp4'
-#     filepath = subfolder + filetitle
-#     return filepath
 
 
 def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
@@ -424,27 +395,9 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, mi
                 # videoFiletitle eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
                 videoFiletitle = '-'.join(targetPath) + '.mp4'
                 # videoFilepath = '../../../../../../' + videoFiletitle
+                # videoFilepath = videoFiletitle
+                videoFilepath = outputFolder + videoFiletitle
                 imagesToMp4(stageFolderPath, filespec, videoFilepath, frameRate)
-
-# def makeClipFiles():
-#     "Build mp4 clips using ffmpeg on sequentially numbered image files"
-
-#     print 'Making mp4 clips using ffmpeg'
-#     stageFolder = config.clipsStageFolder # eg data/step09_clips/stage/
-#     # print folder
-#     for root, dirs, files in os.walk(stageFolder):
-#         # print root, dirs
-#         if dirs==[]: # reached the leaf level
-#             print 'Directory', root # eg data/step09_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
-#             stageFolderPath = os.path.abspath(root)
-#             # get target file path relative to staging folder,
-#             # eg ../../Neptune-Voyager-Triton-Narrow-Bw.mp4
-#             targetFolder = root[len(stageFolder):] # eg Neptune\Voyager2\Triton\Narrow\Bw
-#             targetPath = targetFolder.split('\\') # eg ['Neptune','Voyager2',...]
-#             clipTitle = '-'.join(targetPath) + '.mp4' # eg 'Neptune-Voyager2-Triton-Narrow-Bw.mp4'
-#             clipPath = '../../../../../../' + clipTitle
-#             lib.imagesToMp4(stageFolderPath, config.clipFilespec, clipPath, config.clipFrameRate)
-
 
 
 def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
@@ -462,7 +415,6 @@ def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
         cmd = 'mklink ' + targetPath + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
         os.system(cmd)
-
 
 
 def getImageIds(s):
@@ -526,9 +478,12 @@ def rmdir(folder):
     "remove a folder and its contents, ignoring errors (eg if it doesn't exist)"
     try:
         shutil.rmtree(folder)
+        # shutil.rmtree(folder, ignore_errors=True)
     except Exception, e:
         if e.errno==2: # [Error 3] The system cannot find the path specified
             pass
+        elif e.errno==41: # WindowsError: [Error 145] The directory is not empty
+            print 'warning: directory could not be removed:',folder
         else:
             print e
             print e.errno
@@ -613,20 +568,22 @@ def mkdir(path):
     rmdir(path) # remove it first
     try:
         os.mkdir(path)
-    except WindowsError as exc:
-        print exc
-        print exc.errno
-        pass
+    # except WindowsError as exc:
+        # print exc
+        # print exc.errno
+        # pass
     # except OSError as exc:
         # if exc.errno == errno.EEXIST and os.path.isdir(path):
             # pass
         # else:
             # raise
-    except WindowsError as exc:
-        if exc.errno == 5 and os.path.isdir(path):
+    except WindowsError as e:
+        if e.errno == 5 and os.path.isdir(path):
             pass
         else:
             print 'pokpok'
+            print 'e',e
+            print 'errno',e.errno
             raise
 
 
@@ -637,6 +594,8 @@ def mkdir_p(path):
     except OSError as e:
         if e.errno == errno.EEXIST and os.path.isdir(path):
             pass
+        elif e.errno == 13:
+            print 'warning: unable to make director', path
         else:
             print 'e',e
             print 'errno',e.errno

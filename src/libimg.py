@@ -893,8 +893,8 @@ def stretchHistogram16to8bit(im, maxvalue=None):
         maxvalue = 254
         for i in xrange(254,0,-1):
             # if hist[i]>0:
-            #. this is a fudge factor based on observing some histograms with noise. will want to decrease it after add vg denoise step
-            if hist[i]>13: #.param
+            # see config.py for more info
+            if hist[i] > config.adjustHistogramHotPixelCountCutoff:
                 maxvalue = i
                 break
 

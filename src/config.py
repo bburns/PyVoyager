@@ -74,10 +74,22 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # Adjust
 # ----------------------------------------
 
-# targets over this size (fraction of the image frame)
+# targets below this size (fraction of the image frame)
 # won't get histogram stretched (can blow out small targets)
 # see vgAdjust
 adjustHistogramImageFractionMinimum = 0.25
+
+
+# histogram bins with less than this number of pixels will be treated as noise
+# and ignored during stretch histogram process.
+# starts at 255 (highest brightness level) and counts down, until reach bin with this value.
+# this is because noise is often spread out through the histogram at low levels,
+# while the actual target image is off towards the left.
+# so this lets the image be brighter.
+#. this is a fudge factor based on observing some histograms with noise.
+#. will want to decrease it after add vg denoise step
+# adjustHistogramHotPixelCountCutoff = 13 # v0.46
+adjustHistogramHotPixelCountCutoff = 15 # v0.47-some of ganymede were too dark, redid individually
 
 
 # Denoise

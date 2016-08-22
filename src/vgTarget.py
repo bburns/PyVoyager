@@ -58,8 +58,8 @@ def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
         volumeOk = (volume==filterVolume if filterVolume else True)
         imageOk = (fileId==filterImageId if filterImageId else True)
         targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
-        if imageOk:
-            print fileId, volumeOk, imageOk, targetPathOk, volume, filterVolume
+        # if imageOk:
+            # print fileId, volumeOk, imageOk, targetPathOk, volume, filterVolume
         # note AND -
         # if volumeOk and targetPathOk:
         if volumeOk and imageOk and targetPathOk:

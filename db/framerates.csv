@@ -3,7 +3,8 @@
 # Slowdown/speed up movies for specific image ranges
 # --------------------------------------------------------------------------------
 
-# This file does NOT need to be sorted, since it's all read into a dictionary at the moment.
+# This file does NOT need to be sorted, since it's all read into a dictionary
+# at the moment.
 
 # nframes is the number of frames to show each image -
 # the default is 1, anything higher slows the movie down that amount -
@@ -371,37 +372,69 @@ C1642205+,5
 C1636904,60,closest composite shot
 C1649524,30,last frame - crescent
 
+
 # Ganymede
 # narrow
-# C1460413 start
-# C1640202,40
-# C1640322,40
+C1460413+,0,small and blownout
+C1615037-,,first good image
+C1616514,0,blownout
+C1617245,0,noise
+C1617515,0,blownout
+C1618919,0,blownout
+C1621128,0,blownout
+C1633439,0,missing 90%
+C1640132,0,corner
+C1640142,0,limb
+C1640152,0,cornerlimb
+#. turn these 3 back on when fix composites
+C1640202,0,limbcorner - fix
+C1640212,0,too blue - fix
+C1640222,0,too pink - fix
+C1640232,40,first good large image
+C1640332,0,blur
+C1640334,0,misaligned - fix
 C1640342,40
 C1640352,40
+C1640412,0,dark due to noise - fix
 C1640422,60
 C1640424,0,blur
 C1640426,0,blur
 C1640428,0,blur
 C1640438,0,blur
 C1640440,0,blur
+C1640442,0,blur and duplicate
 C1640444,60
 C1640446,60
-C1640454,30
+C1640448,0,dark due to noise - fix
+C1640450,0,dark edge
+C1640454,40
 C1640456,40
 C1640458,0,blur
+C1640500,0,blur
 C1640502,40
 C1640506,0,blur
 C1640508,0,blur
-C1640510,30
-C1640518,30
-C1640524,0,blur
+C1640510,40
+C1640514,0,blur
+C1640516,0,blur
+C1640518,40
+C1640524,0,blur limb
+C1640526,0,blur
 C1640528,60
+C1640534,0,blur
+C1640536,0,blur
+C1640538,0,blur
 C1640540,0,blur
 C1640542,40
-C1640548,30
-C1640550,20
+C1640544,0,blur corner
+C1640548,40
+C1640550,40
 C1640552,0,corner
-C1640723,20
+C1640554,0,corner
+C1640608,0,dark due to noise - fix
+C1640711,0,edge
+C1640723,40
+C1640725,0,duplicate
 C1669918,40,last shot crescent
 
 # wide

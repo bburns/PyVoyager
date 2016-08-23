@@ -2,13 +2,13 @@
 PyVoyager
 ========================================
 
-Version 0.47 inprogress
+Version 0.47
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
 The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate. 
 
-This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files. 
+<!-- This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files.  -->
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. 
 
@@ -21,6 +21,9 @@ Example Movies
 ----------------------------------------
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
+
+https://www.youtube.com/watch?v=lYUgU-Bc1_w  
+Voyager 1 Jupiter flyby, mostly false color (3mins) v0.47
 
 http://imgur.com/LO7Dnww  
 Voyager 2 Io approach v0.43
@@ -266,13 +269,14 @@ The data for each step is put into the following folders in the `data` subfolder
     step04_adjustments
     step05_denoised
     step06_centers
-    step07_composites
-    step08_mosaics
-    step09_annotations
-    step10_targets
-    step11_titles
-    step12_clips
-    step13_movies
+    step07_inpaint
+    step08_composites
+    step09_mosaics
+    step10_annotations
+    step11_targets
+    step12_titles
+    step13_clips
+    step14_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 
@@ -330,11 +334,15 @@ History
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
-Version 0.47 (2016-08-)
+Version 0.48 (2016-08-)
+----------------------------------------
+
+
+Version 0.47 (2016-08-22)
 ----------------------------------------
 - `vg movies` can assemble movies from arbitrary segments for more editorial control, e.g. mix wide angle with narrow angle segments
 
-
+Made Voyager 1 Jupiter encounter movies
 
 Version 0.46 (2016-08-20)
 ----------------------------------------

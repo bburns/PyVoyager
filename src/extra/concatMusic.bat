@@ -1,5 +1,7 @@
 
 :: Concatenate audio files together
+:: Combines all mp3 files in music folder to a file music.mp3 in main folder.
+
 :: See http://stackoverflow.com/questions/23188742/working-with-filter-complex-in-ffmpeg-with-a-batch-concat-array
 
 @echo off
@@ -9,12 +11,12 @@ set var=
 set array=
 set numfiles=
 
-for %%a in ("music\*.*") do call set var=%%var%% -i "%%a"
+for %%a in ("music\*.mp3") do call set var=%%var%% -i "%%a"
 :: echo %var%
 
 :: Give you the number of files
 :: for /f %%a in ('dir "music\*.*" /b /a-d ^|find /c /v "" ') do set "numfiles=%%a"
-for /f %%a in ('dir "music\*.*" /b /a-d ^|c:\windows\system32\find.exe /c /v "" ') do set "numfiles=%%a"
+for /f %%a in ('dir "music\*.mp3" /b /a-d ^|c:\windows\system32\find.exe /c /v "" ') do set "numfiles=%%a"
 echo There are "%numfiles%" files
 echo.
 

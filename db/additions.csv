@@ -5,6 +5,8 @@
 
 # Note: this file DOES need to be sorted so can be joined with files.csv.
 
+# Don't forget to add _composite etc after imageId!
+
 #. maybe specify insert before/after as flag?
 
 
@@ -14,6 +16,16 @@ fileId,additionId,nframes
 # Jupiter Voyager 1
 # ----------------------------------------
 
+# Jupiter
+# add some wide angle shots into the NA sequence
+C1636147,C1636153_composite,40
+C1637116,C1637117_composite,40
+C1637546,C1637549_composite,40
+C1637656,C1637657_composite,40
+C1638007,C1638008_composite,40
+# lightning!
+C1639630,C1639631_composite,40
+C1639638,C1639639_composite,40
 
 
 # Io

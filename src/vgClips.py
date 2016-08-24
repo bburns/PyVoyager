@@ -100,10 +100,10 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
         ignoreTarget = (target in config.clipsIgnoreTargets)
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
         # if targetOk:
-        if fileId=='C1474515':
-            print targetPathParts, system, craft, target, camera
-            print fileId, imageIdStart, imageIdStop
-            print volumeOk, targetOk, imageOk, ignoreTarget, addImage, ncopies
+        # if fileId=='C1474515':
+            # print targetPathParts, system, craft, target, camera
+            # print fileId, imageIdStart, imageIdStop
+            # print volumeOk, targetOk, imageOk, ignoreTarget, addImage, ncopies
         if addImage:
 
             if ncopies > 0:

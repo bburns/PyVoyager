@@ -34,8 +34,9 @@ def buildSegment(segmentId, subsegments):
     """
     print 'buildsegment',segmentId
     movieFolder = config.folders['movies']
+    pagesFolder = config.folders['pages']
     stageFolder = config.moviesStageFolder
-    subsegmentFilepaths = []
+    filepaths = []
     for subsegment in subsegments:
         print subsegment
         subsegmentId = subsegment[1].strip() # eg Neptune-Voyager2-Triton-Narrow
@@ -50,50 +51,66 @@ def buildSegment(segmentId, subsegments):
         # get name of subsegment movie file
         subsegmentFiletitle = subsegmentId # eg 'Jupiter-Voyager1-Jupiter@Clouds'
         qualifier = '-' + contents if contents else '' # eg '-C1550829-C1618136'
-        subsegmentFilepath = movieFolder + subsegmentFiletitle + qualifier + '.mp4' 
-        subsegmentFilepath = os.path.abspath(subsegmentFilepath)
-        
+        filepath = movieFolder + subsegmentFiletitle + qualifier + '.mp4' 
+        filepath = os.path.abspath(filepath)
+
         # build subsegment movie if doesn't already exist
-        if not os.path.isfile(subsegmentFilepath):
+        if not os.path.isfile(filepath):
+            
             subsegmentPath = subsegmentId
             subsegmentPath = subsegmentPath.replace('-','/')
             subsegmentPath = subsegmentPath.replace('@','/') # eg jupiter/voyager1/jupiter/clouds
-            subsegmentStageFolder = stageFolder + subsegmentPath
-            
+            subsegmentStageFolder = stageFolder + subsegmentPath + '/'
+
             # make stage folder
             print 'rmdir+mkdir',subsegmentStageFolder
             lib.rmdir(subsegmentStageFolder)
             lib.mkdir_p(subsegmentStageFolder)
-            
-            # stage images for ffmpeg
-            print 'stagefiles', subsegmentPath, contents, stageFolder
-            # can't pass a full array of imageids as there could be an interval of 200k,
-            # so pass string range in 'contents'
-            vgClips.stageFiles(None, subsegmentPath, contents, stageFolder)
 
-            # build mp4 files from all staged images
-            # subsegmentFilepathRelative = '../../../' + subsegmentFilepath
-            print 'makevideo with imagesToMp4 ->',subsegmentFilepath
-            # lib.imagesToMp4(subsegmentStageFolder, config.videoFilespec,
-                            # subsegmentFilepath, config.videoFrameRate)
-            lib.imagesToMp4(subsegmentStageFolder, subsegmentFilepath)
+            #. handle special subsegmentIds - Intro, Credits, Epilogue
+            if subsegmentId in ['Intro', 'Credits', 'Epilogue']:
+                
+                #. make a movie of credit jpg and add to filepaths
+                pageFilepath = pagesFolder + subsegmentId + config.extension
+                # pageFilepath = os.path.abspath(pageFilepath)
+                # add links to file
+                # targetFolder = stageFolder + subsegmentId + '/'
+                # lib.rmdir(subsegmentStageFolder)
+                # lib.mkdir_p(subsegmentStageFolder)
+                # lib.addImages(pageFilepath, targetFolder, ncopies)
+                # sourcePath = '../../../' + pageFilepath
+                sourcePath = '../../../../' + pageFilepath
+                ncopies = 50 #. param
+                lib.makeSymbolicLinks(sourcePath, subsegmentStageFolder, ncopies)
+                
+                # build mp4 files from all staged images
+                print 'makevideo with imagesToMp4 ->',filepath
+                lib.imagesToMp4(subsegmentStageFolder, filepath)
+            else:        
+                # stage images for ffmpeg
+                print 'stagefiles', subsegmentPath, contents, stageFolder
+                vgClips.stageFiles(None, subsegmentPath, contents, stageFolder)
+
+                # build mp4 files from all staged images
+                print 'makevideo with imagesToMp4 ->',filepath
+                lib.imagesToMp4(subsegmentStageFolder, filepath)
             
-        # add subsegment movie to filelist
-        print 'add subsegment to filelist', subsegmentFilepath
-        subsegmentFilepaths.append(subsegmentFilepath)
+        # add movie to filelist so can concatenate them later
+        print 'add subsegment to filelist', filepath
+        filepaths.append(filepath)
         
     # compile subsegment movies into single movie
     segmentFilepath = movieFolder + segmentId + '.mp4'
     print 'all subsegment movies created. now compile into single movie',segmentFilepath
-    print subsegmentFilepaths
-    lib.concatenateMovies(segmentFilepath, subsegmentFilepaths)
+    print filepaths
+    lib.concatenateMovies(segmentFilepath, filepaths)
     
     # now remove intermediaries below a certain level, eg don't really want
     # Jupiter-Voyager1-Europa-Narrow hanging around
     # but if they're gone they'll have to be rebuilt each time...
     # print 'cleanup'
     # if len(segmentId.split('-'))>=4:
-        # for filepath in subsegmentFilepaths:
+        # for filepath in filepaths:
             # lib.rm(filepath)
     print
 
@@ -109,8 +126,8 @@ def vgMovies(filterVolumes=None, filterTargetPath=None, keepLinks=False):
     
     # build each segment
     for segment in segments:
-        segmentId = segment[0]
-        subsegments = segment[1]
+        segmentId = segment[0] # eg 'Jupiter-Voyager1-Ganymede'
+        subsegments = segment[1] # array of associated rows from movies.csv
         buildSegment(segmentId, subsegments)
     
 

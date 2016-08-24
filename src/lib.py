@@ -84,15 +84,20 @@ def concatenateMovies(outputFilepath, inputFilepaths):
     os.remove(movieContentsFilepath)
 
 
-def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
+# def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
+def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles={}, targetKey=''):
     """
     add symbolic links from imageFilepath to target folder and update nfile count for target.
+    imageFilepath should be relative to top PyVoyager folder, e.g. data/step14_pages/Credits.jpg
     used by vgClips and vgMovies.
     """
     nfile = ntargetDirFiles.get(targetKey) or 0
-    # need to get out of the target dir - we're always this deep - could parameterize if needed
-    imagePathRelative = '../../../../../../../' + imageFilepath
-    makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
+    # need to get out of the target dir back to the top PyVoyager folder
+    nlevels = len(targetFolder.split('/'))
+    escapePath = '../' * nlevels # eg '../../../../../../../'
+    imagePathRelative = escapePath + imageFilepath
+    # makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
+    makeSymbolicLinks(imagePathRelative, targetFolder, ncopies, nfile)
     # increment the file number for the target folder
     nfile += ncopies
     ntargetDirFiles[targetKey] = nfile
@@ -144,8 +149,6 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
         # print 'got single framerate',fileId,ncopies,ncopiesMemory
 
     return ncopies
-
-
 
 
 def getImageFraction(csvPositions, fileId):
@@ -442,9 +445,14 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder):
                 imagesToMp4(stageFolderPath, videoFilepath)
 
 
-def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
+# def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
+def makeSymbolicLinks(sourcePath, targetFolder, ncopies, nfile=0):
     """
     Make ncopies of symbolic links from the source file to the target folder.
+    Note: sourcePath must be a relative link, e.g. '../../data/step05_centers/....'
+      i.e. it must 'escape' from the target folder to the top-level PyVoyager folder,
+      then go down to the file. Just how symbolic links work.
+    Make sure targetFolder ends with a slash.
     Numbers files sequentially using config.videoFilespec, starting with number nfile.
     config.videoFilespec is something like "img%05d.jpg".
     """
@@ -456,6 +464,7 @@ def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
         #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png
         cmd = 'mklink ' + targetPath + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
+        print cmd
         os.system(cmd)
 
 

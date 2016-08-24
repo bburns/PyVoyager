@@ -155,9 +155,9 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                 # tx = int(rowAdditions[config.colAdditionsTx])
                 # ty = int(rowAdditions[config.colAdditionsTy])
                 # scale = float(rowAdditions[config.colAdditionsScale])
-                tx = int(lib.getCol(rowAdditions, config.colAdditionsTx, 0))
-                ty = int(lib.getCol(rowAdditions, config.colAdditionsTy, 0))
-                scale = int(lib.getCol(rowAdditions, config.colAdditionsScale, 1))
+                # tx = int(lib.getCol(rowAdditions, config.colAdditionsTx, 0))
+                # ty = int(lib.getCol(rowAdditions, config.colAdditionsTy, 0))
+                # scale = int(lib.getCol(rowAdditions, config.colAdditionsScale, 1))
 
                 # get imagePath
                 #. how get volume from fileId like C2684338?
@@ -192,18 +192,6 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                             #... need to look up correct volume here - might be in different one!
                             imageFilepath = lib.getFilepath(stage, volume, additionId)
                             break
-                    # if additionId.endswith('_composite'):
-                    #     # additionId = additionId[:-10] # remove '_composite'
-                    #     additionId = additionId.split('_')[0] # remove '_composite'
-                    #     # imageFilepath = lib.getFilepath('composite', volume, fileId)
-                    #     imageFilepath = lib.getFilepath('composite', volume, additionId)
-                    # else:
-                    #     print 'unhandled addition', additionId
-                    #     imageFilepath = ''
-                    # elif '_centered':
-                    #     imageFilepath = lib.getCenteredFilepath(volume, fileId, filter)
-                    # elif '_adjusted':
-                    #     imageFilepath = lib.getAdjustedFilepath(volume, fileId, filter)
                     print imageFilepath
                     if os.path.isfile(imageFilepath):
                         # add nframes into stage

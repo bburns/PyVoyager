@@ -21,6 +21,12 @@ fileId,additionId,nframes,tx,ty,scale
 # Jupiter
 # add some wide angle shots into the NA sequence
 C1636147,C1636153_composite,40
+
+# Europa
+# C1636904,C1636904_composite,40,271,271,3
+C1636904,C1636904_crop,60
+
+# jup
 C1637116,C1637117_composite,40
 C1637546,C1637549_composite,40
 C1637656,C1637657_composite,40
@@ -29,9 +35,6 @@ C1638007,C1638008_composite,40
 C1639630,C1639631_composite,40
 C1639638,C1639639_composite,40
 
-# Europa
-# C1636904,C1636904_composite,40,271,271,3
-C1636904,C1636904_crop,40
 
 
 # Io

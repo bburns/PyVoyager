@@ -102,7 +102,7 @@ def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles={}, targetKe
     """
     nfile = ntargetDirFiles.get(targetKey) or 0
     # need to get out of the target dir back to the top PyVoyager folder
-    nlevels = len(targetFolder.split('/'))
+    nlevels = len(targetFolder.split('/')) - 1
     escapePath = '../' * nlevels # eg '../../../../../../../'
     imagePathRelative = escapePath + imageFilepath
     # makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
@@ -473,7 +473,7 @@ def makeSymbolicLinks(sourcePath, targetFolder, ncopies, nfile=0):
         #   ..\..\..\..\..\..\data\step04_centers\VGISS_8208\centered_C1159959_CALIB_Clear.png
         cmd = 'mklink ' + targetPath + ' ' + sourcePath + ' > nul'
         cmd = cmd.replace('/','\\')
-        print cmd
+        # print cmd
         os.system(cmd)
 
 

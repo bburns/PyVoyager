@@ -87,6 +87,14 @@ def buildSegment(segmentId, subsegments):
     print 'all subsegment movies created. now compile into single movie',segmentFilepath
     print subsegmentFilepaths
     lib.concatenateMovies(segmentFilepath, subsegmentFilepaths)
+    
+    # now remove intermediaries below a certain level, eg don't really want
+    # Jupiter-Voyager1-Europa-Narrow hanging around
+    # but if they're gone they'll have to be rebuilt each time...
+    # print 'cleanup'
+    # if len(segmentId.split('-'))>=4:
+        # for filepath in subsegmentFilepaths:
+            # lib.rm(filepath)
     print
 
 

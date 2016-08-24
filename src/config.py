@@ -375,7 +375,8 @@ folders = {
     'target':     onlineFolder  + "step11_target/",
     'titles':     onlineFolder  + "step12_titles/",
     'clips':      onlineFolder  + "step13_clips/",
-    'movies':     onlineFolder  + "step14_movies/",
+    'pages':      onlineFolder  + "step14_pages/",
+    'movies':     onlineFolder  + "step15_movies/",
     'additions':  onlineFolder  + "images/",
     }
 

@@ -6,16 +6,61 @@ Build title pages for different targets.
 Called by the vg clips command.
 """
 
-#. need to build titles for planets/systems and all.mp4 also
-
-
 import os
 import csv
+
+import PIL
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 
 import config
 import lib
 import libimg
 
+
+
+def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False):
+    """
+    Draw a title page, return a PIL image
+    """
+
+    font = ImageFont.truetype(config.titleFont, config.titleFontsize)
+
+    imgsize = [800,800]
+    bgcolor = (0,0,0)
+    fgcolor = (200,200,200)
+
+    img = Image.new("RGBA", imgsize, bgcolor)
+    draw = ImageDraw.Draw(img)
+
+    pos = [200,300]
+    s = title
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
+    draw.text(pos, s, fgcolor, font=font)
+
+    fgcolor = (120,120,120)
+
+    pos = [pos[0],pos[1]+h*1.6]
+    s = subtitle1
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = [pos[0],pos[1]+h*1.1]
+    s = subtitle2
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
+    draw.text(pos, s, fgcolor, font=font)
+
+    pos = [pos[0],pos[1]+h*1.1]
+    s = subtitle3
+    w,h = font.getsize(s)
+    if center: pos[0] = 400 - w/2
+    draw.text(pos, s, fgcolor, font=font)
+
+    return img
 
 
 def vgTitle(targetPath=None):
@@ -67,7 +112,8 @@ def vgTitle(targetPath=None):
                 subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
                 subtitle2 = system + " System" # eg Neptune System
                 subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
-                img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
+                # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
+                img = makeTitlePage(title, subtitle1, subtitle2, subtitle3)
 
                 # save it
                 # note: ffmpeg requires file type to match that of other frames in movie,
@@ -97,7 +143,8 @@ def vgTitle(targetPath=None):
                 subtitle1 = "Voyager " + craft[-1:] # eg Voyager 2
                 subtitle2 = ''
                 subtitle3 = ''
-                img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+                # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+                img = makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
 
                 # save it
                 # note: ffmpeg requires file type to match that of other frames in movie,
@@ -113,33 +160,35 @@ def vgTitle(targetPath=None):
     print
 
 
-    # make main title pages
-    title = "Voyager: The Grand Tour"
-    subtitle1 = "An open-source movie"
-    subtitle2 = ''
-    subtitle3 = ''
-    img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+    # # make main title pages
+    # title = "Voyager: The Grand Tour"
+    # subtitle1 = ''
+    # subtitle2 = ''
+    # subtitle3 = ''
+    # # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+    # img = makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
 
-    # save it
-    # note: ffmpeg requires file type to match that of other frames in movie,
-    # so use config.extension here
-    folder = config.folders['titles']
-    titlefilepath = folder + 'title' + config.extension
-    img.save(titlefilepath)
+    # # save it
+    # # note: ffmpeg requires file type to match that of other frames in movie,
+    # # so use config.extension here
+    # folder = config.folders['titles']
+    # titlefilepath = folder + 'title' + config.extension
+    # img.save(titlefilepath)
 
-    # make epilogue
-    title = "Voyager"
-    subtitle1 = "Dedicated to those who made it possible"
-    subtitle2 = 'This is an open source movie - you can help!'
-    subtitle3 = 'See grandtourmovie.org'
-    img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+    # # make epilogue
+    # title = "Voyager"
+    # subtitle1 = "Dedicated to those who made it possible"
+    # subtitle2 = 'This is an open source movie - you can help!'
+    # subtitle3 = 'See grandtourmovie.org'
+    # # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
+    # img = makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
 
-    # save it
-    # note: ffmpeg requires file type to match that of other frames in movie,
-    # so use config.extension here
-    folder = config.folders['titles']
-    titlefilepath = folder + 'epilogue' + config.extension
-    img.save(titlefilepath)
+    # # save it
+    # # note: ffmpeg requires file type to match that of other frames in movie,
+    # # so use config.extension here
+    # folder = config.folders['titles']
+    # titlefilepath = folder + 'epilogue' + config.extension
+    # img.save(titlefilepath)
     
 
 

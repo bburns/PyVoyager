@@ -13,11 +13,6 @@ import cv2
 import math
 import random
 
-import PIL
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-
 import config
 import lib
 import log
@@ -509,50 +504,6 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     pos = (pos[0],pos[1]+int(h*1.5))
 
     img.save(outfile)
-
-
-def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False):
-
-    """
-    Draw a title page, return a PIL image
-    """
-
-    font = ImageFont.truetype(config.titleFont, config.titleFontsize)
-
-    imgsize = [800,800]
-    bgcolor = (0,0,0)
-    fgcolor = (200,200,200)
-
-    img = Image.new("RGBA", imgsize, bgcolor)
-    draw = ImageDraw.Draw(img)
-
-    pos = [200,300]
-    s = title
-    w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
-    draw.text(pos, s, fgcolor, font=font)
-
-    fgcolor = (120,120,120)
-
-    pos = [pos[0],pos[1]+h*1.6]
-    s = subtitle1
-    w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
-    draw.text(pos, s, fgcolor, font=font)
-
-    pos = [pos[0],pos[1]+h*1.1]
-    s = subtitle2
-    w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
-    draw.text(pos, s, fgcolor, font=font)
-
-    pos = [pos[0],pos[1]+h*1.1]
-    s = subtitle3
-    w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
-    draw.text(pos, s, fgcolor, font=font)
-
-    return img
 
 
 def denoiseImageFile(infile, outfile):

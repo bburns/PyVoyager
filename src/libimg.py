@@ -25,6 +25,26 @@ import log
 import ransac
 
 
+
+
+def cropImageFile(infile, outfile, tx=0, ty=0, scale=1.0):
+    "crop/zoom in on image file - tx,ty are location of top-left corner in existing image"
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
+    im = cropImage(im, tx, ty, scale)
+    cv2.imwrite(outfile, im)
+
+
+def cropImage(im, tx=0, ty=0, scale=1.0):
+    "crop/zoom in on image - tx,ty are location of top-left corner in existing image"
+    im = shiftImage(im, tx,ty)
+    M = np.float32([[scale,0,0],[0,scale,0]])
+    # note: INTER_LINEAR (default) or INTER_CUBIC (slow) is preferred for zooming
+    # see http://docs.opencv.org/trunk/da/d6e/tutorial_py_geometric_transformations.html
+    # note: don't need to specify size/shape if not changing it - just pass None
+    im = cv2.warpAffine(im, M, None, flags=cv2.INTER_CUBIC)
+    return im
+
+
 class Page:
     """
     wrapper around PIL text writing routines
@@ -705,8 +725,17 @@ def resizeImage(im, w, h):
     else:
         newH = h
         newW = int(newH * aspectRatio)
-    # note: this takes w,h not h,w!
-    im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
+    # scale the image
+    # http://docs.opencv.org/trunk/da/d6e/tutorial_py_geometric_transformations.html
+    zooming = (newW<w) or (newH<h)
+    if zooming:
+        # INTER_LINEAR and INTER_CUBIC (slow) is preferred for zooming
+        # note: this takes w,h not h,w!
+        # im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
+        im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_CUBIC)
+    else:
+        # INTER_AREA is preferred for shrinking
+        im = cv2.resize(im, (newW,newH), interpolation=cv2.INTER_AREA)
 
     # add the new image to a blank canvas
     canvas = np.zeros(im.shape, np.uint8)

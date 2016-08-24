@@ -121,7 +121,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Composite - combine channels using auto+manual info
 * Mosaic - combine images using auto+manual info
 * Colorize - colorize bw images with lores color info - need to know viewing geometry, so after mosaic step
-* Crop - crop and zoom frames, eg io volcano
+* Crop - crop and zoom frames, eg io volcanoes
 * Annotate - add caption information, point out features, etc
 * Clips - combine images into short movies, one per target
 * Movies - combine clips into movies, add music
@@ -263,20 +263,22 @@ More details
 
 The data for each step is put into the following folders in the `data` subfolder:
 
-    step01_downloads
-    step02_unzips
-    step03_images
-    step04_adjustments
-    step05_denoised
-    step06_centers
+    step01_download
+    step02_unzip
+    step03_convert
+    step04_adjust
+    step05_denoise
+    step06_center
     step07_inpaint
-    step08_composites
-    step09_mosaics
-    step10_annotations
-    step11_targets
-    step12_titles
-    step13_clips
-    step14_movies
+    step08_composite
+    step09_mosaic
+    step10_crop
+    step11_annotate
+    step12_target
+    step13_title
+    step14_clips
+    step15_pages
+    step16_movies
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 
@@ -336,7 +338,7 @@ History
 
 Version 0.48 (2016-08-)
 ----------------------------------------
-
+- Add `vg crop` command and `crops.csv` to crop/zoom in on images
 
 Version 0.47 (2016-08-22)
 ----------------------------------------

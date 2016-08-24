@@ -371,12 +371,13 @@ folders = {
     'inpaint':    onlineFolder  + "step07_inpaint/",
     'composite':  onlineFolder  + "step08_composite/",
     'mosaic':     onlineFolder  + "step09_mosaic/",
-    'annotate':   onlineFolder  + "step10_annotate/",
-    'target':     onlineFolder  + "step11_target/",
-    'titles':     onlineFolder  + "step12_titles/",
-    'clips':      onlineFolder  + "step13_clips/",
-    'pages':      onlineFolder  + "step14_pages/",
-    'movies':     onlineFolder  + "step15_movies/",
+    'crop':       onlineFolder  + "step10_crop/",
+    'annotate':   onlineFolder  + "step11_annotate/",
+    'target':     onlineFolder  + "step12_target/",
+    'titles':     onlineFolder  + "step13_titles/",
+    'clips':      onlineFolder  + "step14_clips/",
+    'pages':      onlineFolder  + "step15_pages/",
+    'movies':     onlineFolder  + "step16_movies/",
     'additions':  onlineFolder  + "images/",
     }
 
@@ -402,6 +403,7 @@ suffixes = {
     'inpaint':   '_inpainted',
     'composite': '_composite',
     'mosaic':    '_mosaic',
+    'crop':      '_cropped',
     'annotate':  '_annotated',
     }
 
@@ -428,6 +430,7 @@ dbErrata             = dbFolder + 'errata.csv'
 dbAdditions          = dbFolder + 'additions.csv'
 dbDenoising          = dbFolder + 'denoising.csv'
 dbBrightness         = dbFolder + 'brightness.csv'
+dbCrops              = dbFolder + 'crops.csv'
 
 
 # index file folder
@@ -466,6 +469,33 @@ indexTranslations = {
     }
 
 
+# additions.csv columns
+colAdditionsFileId     = 0
+colAdditionsAdditionId = 1
+colAdditionsNFrames    = 2
+
+# centers.csv columns
+colCentersFileId = 0
+colCentersVolume = 1
+colCentersX      = 2
+colCentersY      = 3
+colCentersRadius = 4 # not sure yet
+
+# crops.csv columns
+colCropsFileId     = 0
+colCropsTx         = 1
+colCropsTy         = 2
+colCropsScale      = 3
+
+# composites.csv columns
+colCompositesCompositeId = 0
+colCompositesFileId      = 1
+colCompositesVolume      = 2
+colCompositesFilter      = 3
+colCompositesWeight      = 4
+colCompositesX           = 5
+colCompositesY           = 6
+
 # files.csv columns
 colFilesFileId = 0
 colFilesVolume = 1
@@ -477,31 +507,11 @@ colFilesCamera = 6
 colFilesFilter = 7
 colFilesNote   = 8
 
-# centers.csv columns
-colCentersFileId = 0
-colCentersVolume = 1
-colCentersX      = 2
-colCentersY      = 3
-colCentersRadius = 4 # not sure yet
-
-# composites.csv columns
-colCompositesCompositeId = 0
-colCompositesFileId      = 1
-colCompositesVolume      = 2
-colCompositesFilter      = 3
-colCompositesWeight      = 4
-colCompositesX           = 5
-colCompositesY           = 6
-
 # positions.csv columns
 colPositionsFileId        = 0
 colPositionsDistance      = 1
 colPositionsImageFraction = 2
 
-# additions.csv columns
-colAdditionsFileId     = 0
-colAdditionsAdditionId = 1
-colAdditionsNFrames    = 2
 
 # composite channels array
 colChannelFileId = 0

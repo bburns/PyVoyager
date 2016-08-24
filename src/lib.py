@@ -21,6 +21,15 @@ import config
 
 
 
+def getCol(row, colnum, default):
+    "get a column value from the given row, or the default value if column doesn't exist"
+    if len(row)>colnum:
+        value = row[colnum]
+    else:
+        value = default
+    return value
+
+
 def readCsvGroups(filename):
     """
     returns list of groups as gathered from given file, grouped on first column value.
@@ -616,7 +625,7 @@ def readCsv(filename):
 
 def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
-    rmdir(path) # remove it first
+    # rmdir(path) # remove it first
     try:
         os.mkdir(path)
     # except WindowsError as exc:
@@ -630,6 +639,9 @@ def mkdir(path):
             # raise
     except WindowsError as e:
         if e.errno == 5 and os.path.isdir(path):
+            pass
+        # WindowsError: [Error 183] Cannot create a file when that file already exists
+        elif e.errno == 17 and os.path.isdir(path):
             pass
         else:
             print 'pokpok'

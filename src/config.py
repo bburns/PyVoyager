@@ -293,24 +293,33 @@ videoFilespec = 'img%05d' + extension
 videoFrameRate = 25 # v0.43 needs to be a bit faster, for uranus
 # videoFrameRate = 30
 
+
 # ffmpeg options
+videoFfmpegOptions = ''
 # -y forces overwriting existing file
+videoFfmpegOptions += ' -y'
+# loglevel - seehttp://stackoverflow.com/questions/13233685/what-do-the-ffmpeg-loglevels-mean
+videoFfmpegOptions += " -loglevel error"
+
+# ffmpeg output options
 # -c:v specifies
+# videoFfmpegOutputOptions = "-c:v libx264"
 # -crf specifies constant rate factor
 #      see https://trac.ffmpeg.org/wiki/Encode/H.264#crf
 #      0 is completely lossless, 18 is very lossless, 23 is default, 51 is worst
+# videoFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
 # Use -pix_fmt yuv420p for compatibility with outdated media players
 #   (including Windows Media Player and Quicktime)
 # see http://superuser.com/questions/874583/lossless-h-264-mp4-file-created-from-images-cannot-be-played-in-quicktime
-videoFfmpegOptions = "-y -loglevel warning"
-# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
-# videoFfmpegOutputOptions = "-c:v libx264 -crf 18" # doubles size of mp4 file over crf23
-# videoFfmpegOutputOptions = "-c:v libx264 -crf 23"
-#. get warning: deprecated pixel format used, make sure you did set range correctly
+# get warning: deprecated pixel format used, make sure you did set range correctly
 # how get rid of it?
-# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p -crf 23"
-videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj420p -crf 23" # v0.46 and prior. note j
-# videoFfmpegOutputOptions = "-codec copy" # v0.47 for mjpeg (just store sequence of jpegs)
+# apparently you're supposed to just ignore it -
+# https://ffmpeg.zeranoe.com/forum/viewtopic.php?t=2181
+videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p" # works
+# warning: yuvj420p makes images in movie dimmer! levels not set right or something
+# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj420p" # too dim! v0.46 and prior. note j
+# videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuvj422p" # works ok, still warnings
+# videoFfmpegOutputOptions = "-codec copy" # v0.47 for mjpeg? (just store sequence of jpegs)
 
 # tells libx264 to prioritise encoding speed over output file size
 #. turn this off later

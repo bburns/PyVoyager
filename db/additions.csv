@@ -4,63 +4,40 @@
 # --------------------------------------------------------------------------------
 
 # Note: this file DOES need to be sorted so can be joined with files.csv.
+# That way can have more than one addition per fileId
 
-# Don't forget to add _composite etc after imageId!
+# Don't forget to add _composite or _crop etc after imageId!
 
 #. maybe specify insert before/after as flag?
 
-# can zoom in on image with tx,ty,scale
-# tx,ty is location of top-left corner on original image, scale is scale factor
-
-fileId,additionId,nframes,tx,ty,scale
-
+fileId,additionId,nframes,notes
 
 # Jupiter Voyager 1
 # ----------------------------------------
-
-# Jupiter
-# add some wide angle shots into the NA sequence
-C1636147,C1636153_composite,40
-
-# Europa
-# C1636904,C1636904_composite,40,271,271,3
-C1636904,C1636904_crop,60
-
-# jup
-C1637116,C1637117_composite,40
-C1637546,C1637549_composite,40
-C1637656,C1637657_composite,40
-C1638007,C1638008_composite,40
-# lightning!
-C1639630,C1639631_composite,40
-C1639638,C1639639_composite,40
-
-
-
-# Io
-# zoom in on volcanoes
-# to get zoom factor, if newsize=311, scale= 800/311
-# C1636852,C1636852_centered_Uv,40,529,265,3.3
-# C1637536,C1637536_composite,40,452,489,2.5
-C1637536,C1637536_crop,40
-# C1637750,C1637750_composite,40,74,512,2.7
-C1637750,C1637750_crop,40
-# nightside volcano, huge one on limb
-# C1648109,C1648109_composite,336,326,5.3
-C1648109,C1648109_crop,40
-
-# add a couple of wideangles into narrowangle clip
-C1639250,C1639259_composite,50
-C1639250,C1639301_composite,50
-# _,C1639222_composite, zoom in on mtn on top once composite aligned better
-# add some mosaics to test it out - works
+# keep sorted!
+C1635655,C1635655_crop,60,ganymede best image
+C1636147,C1636153_composite,40,jupiter wideangle
+C1636904,C1636904_crop,60,europa best image
+C1637116,C1637117_composite,40,jupiter wideangle
+C1637536,C1637536_crop,40,io volcano
+C1637546,C1637549_composite,40,jupiter wideangle
+C1637656,C1637657_composite,40,jupiter wideangle
+C1637750,C1637750_crop,40,io volcano
+C1638007,C1638008_composite,40,jupiter wideangle
+# C1639222,C1639222_composite,40,io mountain on top limb - add when composite looks nicer
+C1639250,C1639259_composite,50,io wideangle into narrow
+C1639250,C1639301_composite,50,io wideangle into narrow
+C1639630,C1639631_composite,40,jupiter lightning!
+C1639638,C1639639_composite,40,jupiter lightning!
+C1639948,C1639948_crop,60,callisto best image
+C1648109,C1648109_crop,60,io nightside volcano; huge one on limb
 # C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
 # C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
 
 
 # Uranus
 # ----------------------------------------
-
+# keep sorted!
 # ariel mosaic
 #. source? wikipedia, but... annotate the image
 # C2684539,images/uranus-voyager2-ariel-mosaic-sourceQ-800x800.jpg,60

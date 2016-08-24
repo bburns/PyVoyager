@@ -12,19 +12,28 @@
 # Don't forget to add the images to additions.csv if you want them to show up in clips and movies!
 
 
-fileId,tx,ty,scale
+fileId,tx,ty,scale,notes
 
 # Jupiter Voyager 1
 # ----------------------------------------
 
+# Callisto
+C1639948,161,156,1.6
+
 # Europa
 C1636904,271,271,3
 
+# Ganymede
+C1635655,275,276,3.1
+
 # Io
+# image to use for titlepage
+C136838,126,118,1.4
 # zoom in on volcanoes
 # C1636852,529,265,3.3
 C1637536,452,489,2.5
 C1637750,74,512,2.7
+C1639222,78,0,3.6,mountain on top limb
 # nightside volcano, huge one on limb
 C1648109,336,326,5.3
 

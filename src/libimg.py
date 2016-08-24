@@ -34,15 +34,17 @@ class Page:
         page.println(title, color=200, center=True)
         page.save(filepath)
     """
-    def __init__(self, sz=800):
+    def __init__(self, size=800):
         "create a page to write on"
-        self.sz = sz
-        self.imgsize = [sz,sz] #.param - will be 1000x1000
+        self.size = size
+        self.imgsize = [size,size] #.param - will be 1000x1000
         self.bgcolor = (0,0,0)
         self.img = Image.new("RGBA", self.imgsize, self.bgcolor)
         self.draw = ImageDraw.Draw(self.img)
         self.pos = [0,0]
-        self.size(config.titleFontsize)
+        self.fontpath = config.titleFont
+        self.fontsize = config.titleFontsize
+        self.setfont(self.fontpath, self.fontsize)
 
     def htab(self, col):
         "horizontal tab"
@@ -52,21 +54,22 @@ class Page:
         "vertical tab"
         self.pos[1] = row * self.charHeight
 
-    def size(self, fontsize):
-        "change font size"
-        self.font = ImageFont.truetype(config.titleFont, fontsize)
+    def setfont(self, fontpath=None, fontsize=None):
+        "change font/size"
+        fontpath = fontpath or self.fontpath
+        fontsize = fontsize or self.fontsize
+        self.font = ImageFont.truetype(fontpath, fontsize)
         self.charWidth, self.charHeight = self.font.getsize("M")
         self.charHeight *= 1.3 # fudge factor
 
-    # def println(self, s, color=200, center=False):
-    def println(self, s, color=128, center=False):
+    def println(self, s, color=160, center=False):
         "print a line or sequence of lines"
         lines = s.split('\n')
         fg = (color,color,color)
         for line in lines:
             w,h = self.font.getsize(line)
             if center:
-                self.pos[0] = (self.sz - w) / 2
+                self.pos[0] = (self.size - w) / 2
             self.draw.text(self.pos, line, fg, font=self.font)
             # self.pos[1] = self.pos[1] + h*1.25
             self.pos[1] = self.pos[1] + self.charHeight

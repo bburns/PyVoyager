@@ -123,6 +123,7 @@ Jupiter-Voyager1,Jupiter-Voyager1-Callisto
 # All together
 # --------------------------------------------------------------------------------
 All,Intro
+All,Prologue
 All,Jupiter-Voyager1
 # All,Saturn-Voyager1
 # All,Jupiter-Voyager2
@@ -130,5 +131,6 @@ All,Jupiter-Voyager1
 # All,Uranus-Voyager2
 # All,Neptune-Voyager2
 # All,Sol-Voyager2
-All,Credits
 All,Epilogue
+All,Dedication
+All,Credits

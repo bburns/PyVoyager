@@ -90,6 +90,7 @@ def vgInitPositions():
             frame = 'J2000'
             abberationCorrection = 'NONE'
             doCenter = True
+            # this will throw an error for unrecognized target, e.g 'Dark', etc.
             try:
                 position, lightTime = spice.spkpos(target, ephemerisTime, frame,
                                                    abberationCorrection, observer)

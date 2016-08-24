@@ -291,9 +291,10 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
         stageFiles(filterVolumes, filterTargetPath, None, config.clipsStageFolder)
 
     # build mp4 files from all staged images
-    lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',
-                                  config.videoFilespec, config.videoFrameRate,
-                                  config.clipsMinFrames)
+    # lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',
+                                  # config.videoFilespec, config.videoFrameRate,
+                                  # config.clipsMinFrames)
+    lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../')
 
 
 if __name__ == '__main__':

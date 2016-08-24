@@ -21,6 +21,45 @@ import config
 
 
 
+def readCsvGroups(filename):
+    """
+    returns list of groups as gathered from given file, grouped on first column value.
+    groups = [group1, group2, ...], with each group = [key,[row1,row2,...]]
+    (would return a dictionary but order of groups is sometimes important, eg movies.csv)
+    eg
+    key,field1,field2
+    12,cat,zoey
+    12,dog,crayon
+    13,lizard,ray
+    =>
+    [[12,[[12,cat,zoey],[12,dog,crayon]]],[13,[[13,...]]]]
+    eg
+    group = [12,[[12,cat,zoey],[12,dog,crayon]]]
+    so can say
+    for group in groups:
+        key = group[0]
+        rows = group[1]
+        for row in rows:
+            print row
+    """
+    csvReader, f = lib.openCsvReader(filename)
+    lastKey = ''
+    groups = []
+    rows = []
+    # gather rows for each key into array
+    for row in csvReader:
+        key = row[0]
+        if key != lastKey and lastKey != '':
+            group = [lastKey,rows]
+            groups.append(group)
+            rows = []
+        rows.append(row)
+        lastKey = key
+    group = [lastKey,rows]
+    groups.append(group)
+    f.close()
+    return groups
+
 
 def makeContentsFile(movieContentsFilepath, filepaths):
     "Make a text file containing a list of mp4 files that will be merged by ffmpeg"
@@ -370,21 +409,23 @@ def getFilepath(step, volume, fileId, filter=None):
     return filepath
 
 
-def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
+# def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
+def makeVideosFromStagedFiles(stageFolder, outputFolder):
     """
     Build mp4 videos using ffmpeg on sequentially numbered image files.
     stageFolder contains the sequentially number files, eg data/step10_clips/stage/.
     outputFolder is where the mp4 clips will go.
-    filespec describes the filenames, eg 'foo%04d.png'.
-    frameRate is in fps
-    minFrames is the minimum number of frames needed to build a video.
     """
+    # filespec describes the filenames, eg 'foo%04d.png'.
+    # frameRate is in fps
+    # minFrames is the minimum number of frames needed to build a video.
     print 'Making mp4 clips using ffmpeg'
     for root, dirs, files in os.walk(stageFolder):
         # print root, dirs
         if dirs==[]: # reached the leaf level
             nfiles = len(files)
-            if nfiles >= minFrames:
+            # if nfiles >= minFrames:
+            if nfiles >= config.clipsMinFrames:
                 # root = eg data/step10_clips/stage/Neptune\Voyager2\Triton\Narrow\Bw
                 print 'Directory', root
                 stageFolderPath = os.path.abspath(root)
@@ -397,7 +438,8 @@ def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, mi
                 # videoFilepath = '../../../../../../' + videoFiletitle
                 # videoFilepath = videoFiletitle
                 videoFilepath = outputFolder + videoFiletitle
-                imagesToMp4(stageFolderPath, filespec, videoFilepath, frameRate)
+                # imagesToMp4(stageFolderPath, filespec, videoFilepath, frameRate)
+                imagesToMp4(stageFolderPath, videoFilepath)
 
 
 def makeSymbolicLinks(sourcePath, targetFolder, nfile, ncopies):
@@ -602,22 +644,26 @@ def mkdir_p(path):
             raise
 
 
-def imagesToMp4(stageFolder, filenamePattern, outputFilename, framerate):
+# def imagesToMp4(stageFolder, filenamePattern, outputFilename, framerate):
+def imagesToMp4(stageFolder, outputFilename):
     """
     Convert a sequentially numbered set of images to an mp4 movie.
     stageFolder is the folder containing the sequentially numbered files.
-    filenamePattern specifies the filenames, e.g. img%05d.jpg
     outputFilename is the mp4 filename, e.g. Neptune-Voyager1.mp4
-    framerate is fps
     """
+    # filenamePattern specifies the filenames, e.g. img%05d.jpg
+    # framerate is fps
     # outputFilename = outputFilename.replace('mp4','mov') #.................
     savedir = os.getcwd()
     os.chdir(stageFolder)
     print 'cwd',os.getcwd()
     # eg "ffmpeg -y -framerate 25 -i img%05d.jpg output.mp4"
     cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % \
-          (config.videoFfmpegOptions, framerate, filenamePattern,
-           config.videoFfmpegOutputOptions, outputFilename)
+          # (config.videoFfmpegOptions, framerate, filenamePattern,
+           # config.videoFfmpegOutputOptions, outputFilename)
+          (config.videoFfmpegOptions, config.videoFrameRate,
+           config.videoFilespec, config.videoFfmpegOutputOptions,
+           outputFilename)
     print cmd
     os.system(cmd)
     os.chdir(savedir)

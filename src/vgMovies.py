@@ -111,70 +111,74 @@ import vgClips
 #         # print targetKey, imageIds
             
                 
-def buildSubtargetMovies(targetKey, subtargets):
-    print 'buildsubtargets for',targetKey
+def buildSegment(segmentId, subsegments):
+    """
+    build an mp4 movie segment from its mp4 subsegments
+    eg in movies.csv,
+    segmentId, subsegmentId, contents
+    Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
+    Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Wide, C1640141-C1640752
+    builds
+    Jupiter-Voyager1-Ganymede.mp4 
+    from
+    Jupiter-Voyager1-Ganymede-Narrow-C1460413-C1640725.mp4
+    Jupiter-Voyager1-Ganymede-Wide-C1640141-C1640752.mp4
+    building the latter if they don't already exist.
+    """
+    print 'buildsegment',segmentId
     movieFolder = config.folders['movies']
     stageFolder = config.moviesStageFolder
-    subtargetMoviePaths = []
-    for row in subtargets:
-        print row
-        subtargetKey = row[1].strip() # eg Neptune-Voyager2-Triton-Narrow
-        contents = row[2].strip() if len(row)>2 else None # eg C1550829-C1618136
+    subsegmentFilepaths = []
+    for subsegment in subsegments:
+        print subsegment
+        subsegmentId = subsegment[1].strip() # eg Neptune-Voyager2-Triton-Narrow
+        contents = subsegment[2].strip() if len(subsegment)>2 else None # eg C1550829-C1618136
         
-        #...... remove /arrival etc from subtargetKey
-        # a = subtargetKey.split('')
+        #.remove partname from segmentid
+        # a = subsegmentId.split('@')
         # if len(a)>1:
-            # qualifier = a[1]
-            # print 'got qualifier part',qualifier
-        # import re
-        # m = re.search(subtargetKey, '\((.*)\)')
-        # qualifier = ''
-        # if m:
-            # found = m.group(1)
-            # print found
-            # qualifier = found
-        qualifier = '-' + contents if contents else ''
-        print 'qualifier',qualifier
+            # partname = a[1]
+            # print 'got partname',partname
+            
+        # get name of subsegment movie file
+        subsegmentFiletitle = subsegmentId # eg 'Jupiter-Voyager1-Jupiter@Clouds'
+        qualifier = '-' + contents if contents else '' # eg '-C1550829-C1618136'
+        subsegmentFilepath = movieFolder + subsegmentFiletitle + qualifier + '.mp4' 
+        subsegmentFilepath = os.path.abspath(subsegmentFilepath)
         
-        # get name of subtarget movie file
-        subtargetMovieTitle = subtargetKey # eg Neptune-Voyager2-Triton-Narrow
-        # eg data/movies/neptune-voyager2.mp4
-        # subtargetMoviePath = movieFolder + subtargetMovieTitle + '.mp4' 
-        subtargetMoviePath = movieFolder + subtargetMovieTitle + qualifier + '.mp4' 
-        subtargetMoviePath = os.path.abspath(subtargetMoviePath)
-        
-        # build subtarget movie if doesn't already exist
-        if not os.path.isfile(subtargetMoviePath):
-            subtargetPath = subtargetKey.replace('-','/') # eg neptune/voyager2/triton/
-            subtargetStageFolder = stageFolder + subtargetPath
+        # build subsegment movie if doesn't already exist
+        if not os.path.isfile(subsegmentFilepath):
+            subsegmentPath = subsegmentId.replace('-','/')
+            subsegmentPath = subsegmentId.replace('@','/') # eg jupiter/voyager1/jupiter/clouds
+            subsegmentStageFolder = stageFolder + subsegmentPath
             
             # make stage folder
-            print 'rmdir+mkdir',subtargetStageFolder
-            lib.rmdir(subtargetStageFolder)
-            lib.mkdir_p(subtargetStageFolder)
+            print 'rmdir+mkdir',subsegmentStageFolder
+            lib.rmdir(subsegmentStageFolder)
+            lib.mkdir_p(subsegmentStageFolder)
             
             # stage images for ffmpeg
-            print 'stagefiles', subtargetPath, contents, stageFolder
+            print 'stagefiles', subsegmentPath, contents, stageFolder
             # can't pass a full array of imageids as there could be an interval of 200k,
             # so pass string range in 'contents'
-            #. this is not adding files
-            vgClips.stageFiles(None, subtargetPath, contents, stageFolder)
+            vgClips.stageFiles(None, subsegmentPath, contents, stageFolder)
 
             # build mp4 files from all staged images
-            # subtargetMoviePathRelative = '../../../' + subtargetMoviePath
-            print 'makevideo with imagesToMp4 ->',subtargetMoviePath
-            lib.imagesToMp4(subtargetStageFolder, config.videoFilespec,
-                            subtargetMoviePath, config.videoFrameRate)
+            # subsegmentFilepathRelative = '../../../' + subsegmentFilepath
+            print 'makevideo with imagesToMp4 ->',subsegmentFilepath
+            # lib.imagesToMp4(subsegmentStageFolder, config.videoFilespec,
+                            # subsegmentFilepath, config.videoFrameRate)
+            lib.imagesToMp4(subsegmentStageFolder, subsegmentFilepath)
             
-        # add subtarget movie to filelist
-        print 'add subtargetmovie to filelist', subtargetMoviePath
-        subtargetMoviePaths.append(subtargetMoviePath)
+        # add subsegment movie to filelist
+        print 'add subsegmentmovie to filelist', subsegmentFilepath
+        subsegmentFilepaths.append(subsegmentFilepath)
         
-    # compile subtarget movies into single movie
-    movieFilepath = movieFolder + targetKey + '.mp4'
-    print 'all subtarget movies created. now compile into single movie',movieFilepath
-    print subtargetMoviePaths
-    lib.concatenateMovies(movieFilepath, subtargetMoviePaths)
+    # compile subsegment movies into single movie
+    segmentFilepath = movieFolder + segmentId + '.mp4'
+    print 'all subsegment movies created. now compile into single movie',segmentFilepath
+    print subsegmentFilepaths
+    lib.concatenateMovies(segmentFilepath, subsegmentFilepaths)
     print
 
 
@@ -184,20 +188,14 @@ def vgMovies(filterVolumes=None, filterTargetPath=None, keepLinks=False):
     """
     
     # walk over movies.csv and build each segment listed there that matches given filters
-    csvMovies, fMovies = lib.openCsvReader(config.dbMovies)
-    lastTargetKey = ''
-    subtargets = []
-    # gather subtargets for each targetKey into array, then call buildSubtargetMovies
-    for row in csvMovies:
-        targetKey = row[0] # eg Neptune-Voyager2
-        if targetKey != lastTargetKey and lastTargetKey != '':
-            buildSubtargetMovies(lastTargetKey, subtargets)
-            subtargets = []
-        subtargets.append(row)
-        lastTargetKey = targetKey
-    buildSubtargetMovies(lastTargetKey, subtargets)
-    fMovies.close()
     
+    # get array of segments to add
+    segments = lib.readCsvGroups(config.dbMovies)
+    
+    for segment in segments:
+        key = segment[0]
+        rows = segment[1]
+        buildSegment(key, rows)
     
 
 if __name__ == '__main__':

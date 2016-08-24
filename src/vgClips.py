@@ -8,9 +8,6 @@ Build clips associated with target subfolders, eg
 This must be run in an admin console because mklink requires elevated privileges.
 """
 
-#. need to build clips for planet/system titles and all.mp4 titlepage
-
-
 import csv
 import os
 import os.path
@@ -24,71 +21,6 @@ import vgTitle
 
 
 
-# def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targetKey,
-#                framerateInfo, fileId):
-#     """
-#     How many copies of the given target do we need?
-#     Bases it on imageFraction, information in targets.csv, framerates.csv, etc.
-#     """
-
-#     # ncopies is basically proportional to imageFraction
-#     # framerateConstantInfoRecord = framerateConstantInfo.get(target)
-#     framerateConstantInfoRecord = framerateConstantInfo.get(targetKey)
-#     if framerateConstantInfoRecord:
-#         frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
-#     else:
-#         frameRateConstant = config.frameRateConstantDefault
-#     ncopies = int(frameRateConstant * imageFraction) + 1
-
-#     # but don't let it go too slowly
-#     if ncopies > config.frameRateNCopiesMax:
-#         ncopies = config.frameRateNCopiesMax
-
-#     # check for sticky setting off switch
-#     framerateInfoRecord = framerateInfo.get(fileId + '-') # eg C1234567-
-#     if not framerateInfoRecord is None:
-#         ncopiesMemory.pop(targetKey, None) # remove the sticky setting
-#         # print 'turned off sticky framerate',fileId
-
-#     # check for previous sticky setting override in framerates.csv
-#     if not ncopiesMemory.get(targetKey) is None:
-#         ncopies = ncopiesMemory[targetKey]
-#         # print 'remembering sticky framerate',fileId, ncopies
-
-#     # check for 'sticky' override from framerates.csv
-#     framerateInfoRecord = framerateInfo.get(fileId + '+') # eg C1234567+
-#     if not framerateInfoRecord is None:
-#         ncopies = int(framerateInfoRecord['nframes'])
-#         ncopiesMemory[targetKey] = ncopies # remember it
-#         # print 'got sticky framerate to remember',fileId,ncopies,ncopiesMemory
-
-#     # check for single image override from framerates.csv - temporary setting
-#     framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
-#     if not framerateInfoRecord is None:
-#         ncopies = int(framerateInfoRecord['nframes'])
-#         # print 'got single framerate',fileId,ncopies,ncopiesMemory
-
-#     return ncopies
-
-
-# def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
-#     """
-#     add symbolic links from imageFilepath to target folder and update nfile count for target.
-#     """
-#     nfile = ntargetDirFiles.get(targetKey) or 0
-#     # need to get out of the target dir - we're always this deep - could parameterize if needed
-#     imagePathRelative = '../../../../../../../' + imageFilepath
-#     lib.makeSymbolicLinks(imagePathRelative, targetFolder, nfile, ncopies)
-#     # increment the file number for the target folder
-#     nfile += ncopies
-#     ntargetDirFiles[targetKey] = nfile
-
-
-# def stageFiles(filterVolumes, targetPathParts):
-# def stageFiles(filterVolumes, targetPathParts, imageIds=None):
-# def stageFiles(filterVolumes, filterTargetPath, filterImageIds=None):
-# def stageFiles(stageFolder, filterVolumes, filterTargetPath, filterImageIds, ntargetDirFiles):
-# def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, ntargetDirFiles):
 def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
     """
     Make links from source files to clip stage folders.
@@ -162,19 +94,16 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                                  ncopiesMemory, targetKey, framerateInfo, fileId)
 
         # check if this image matches the volume and target path the user specified on the cmdline
-        # addImage = False
-        # volumeOk = (volume in filterVolumes)
         volumeOk = (volume in filterVolumes if filterVolumes else True)
         targetOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
         imageOk = (fileId >= imageIdStart and fileId <= imageIdStop) if filterImageIds else True
         ignoreTarget = (target in config.clipsIgnoreTargets)
-        # if volumeOk and targetOk: addImage = True # <- note AND here
-        # if target in config.clipsIgnoreTargets: addImage = False
-        # addImage = volumeOk and targetOk and (not ignoreTarget) # <- note AND here
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
         # if targetOk:
-        # if fileId=='C1617515':
-            # print addImage, volumeOk, targetOk, imageOk, ignoreTarget, ncopies
+        if fileId=='C1474515':
+            print targetPathParts, system, craft, target, camera
+            print fileId, imageIdStart, imageIdStop
+            print volumeOk, targetOk, imageOk, ignoreTarget, addImage, ncopies
         if addImage:
 
             if ncopies > 0:

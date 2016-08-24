@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.47
+Version 0.48 inprogress
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 

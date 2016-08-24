@@ -42,7 +42,7 @@ def readCsvGroups(filename):
         for row in rows:
             print row
     """
-    csvReader, f = lib.openCsvReader(filename)
+    csvReader, f = openCsvReader(filename)
     lastKey = ''
     groups = []
     rows = []
@@ -81,7 +81,7 @@ def concatenateMovies(outputFilepath, inputFilepaths):
         cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
         # print cmd
         os.system(cmd)
-    # os.remove(movieContentsFilepath)
+    os.remove(movieContentsFilepath)
 
 
 def addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey):
@@ -659,11 +659,11 @@ def imagesToMp4(stageFolder, outputFilename):
     print 'cwd',os.getcwd()
     # eg "ffmpeg -y -framerate 25 -i img%05d.jpg output.mp4"
     cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % \
-          # (config.videoFfmpegOptions, framerate, filenamePattern,
-           # config.videoFfmpegOutputOptions, outputFilename)
           (config.videoFfmpegOptions, config.videoFrameRate,
            config.videoFilespec, config.videoFfmpegOutputOptions,
            outputFilename)
+          # (config.videoFfmpegOptions, framerate, filenamePattern,
+           # config.videoFfmpegOutputOptions, outputFilename)
     print cmd
     os.system(cmd)
     os.chdir(savedir)

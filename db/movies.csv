@@ -34,14 +34,12 @@ segmentId, subsegmentId, contents
 
 # callisto
 # Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto,Title
-# Jupiter-Voyager1-Callisto,Intro
-Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Narrow,C1474515-C1642825
-Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
-# Jupiter-Voyager1-Callisto,Credits
-# Jupiter-Voyager1-Callisto,Epilogue
+# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Narrow,C1474515-C1642825
+# Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
 
 # # europa
-# Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
+# Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa,Title
+Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
 
 # # ganymede
 # Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
@@ -71,8 +69,8 @@ Jupiter-Voyager1-Callisto,Jupiter-Voyager1-Callisto-Wide,C1641829-C1643500
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter!Title
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter,Title
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter@Approach
-Jupiter-Voyager1,Jupiter-Voyager1-Callisto
-# Jupiter-Voyager1,Jupiter-Voyager1-Europa
+# Jupiter-Voyager1,Jupiter-Voyager1-Callisto
+Jupiter-Voyager1,Jupiter-Voyager1-Europa
 # Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
 # Jupiter-Voyager1,Jupiter-Voyager1-Io
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter@Clouds
@@ -131,6 +129,6 @@ All,Jupiter-Voyager1
 # All,Uranus-Voyager2
 # All,Neptune-Voyager2
 # All,Sol-Voyager2
-All,Epilogue
-All,Dedication
+# All,Epilogue
+# All,Dedication
 All,Credits

@@ -339,6 +339,9 @@ History
 Version 0.48 (2016-08-)
 ----------------------------------------
 - Add `vg crop` command and `crops.csv` to crop/zoom in on images
+- Add `vg pages` command to generate intro, epilogue, credits, etc.
+
+Added crop/zoom images into Voyager 1 Jupiter encounters - Io volcanoes, best moon images, etc.
 
 Version 0.47 (2016-08-22)
 ----------------------------------------

@@ -68,7 +68,7 @@ def buildSegment(segmentId, subsegments):
             lib.mkdir_p(subsegmentStageFolder)
 
             #. handle special subsegmentIds - Intro, Credits, Epilogue
-            if subsegmentId in ['Intro', 'Credits', 'Epilogue']:
+            if subsegmentId in ['Intro', 'Prologue', 'Credits', 'Epilogue']:
                 
                 #. make a movie of credit jpg and add to filepaths
                 pageFilepath = pagesFolder + subsegmentId + config.extension

@@ -25,6 +25,7 @@ def vgPages():
     
     
     # intro
+# def makeIntro():
     pagename = "Intro"
     title = "Voyager: The Grand Tour"
     page = libimg.Page()

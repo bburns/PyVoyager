@@ -4,12 +4,12 @@
 # or want kept out of sight.
 
 
-import os # for system, mkdir, mkdirs
-import os.path # for isfile
-import shutil # for rmtree
+import os
+import os.path
+import shutil
 from setuptools import archive_util # for unpack_archive
 import errno
-import re # for findall
+import re
 import csv
 import shutil
 import more_itertools
@@ -87,7 +87,8 @@ def concatenateMovies(outputFilepath, inputFilepaths):
         makeContentsFile(movieContentsFilepath, inputFilepaths)
         # now make the movie
         # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
-        cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
+        # cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
+        cmd = "ffmpeg -y -loglevel error -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
         # print cmd
         os.system(cmd)
     os.remove(movieContentsFilepath)
@@ -628,23 +629,15 @@ def mkdir(path):
     # rmdir(path) # remove it first
     try:
         os.mkdir(path)
-    # except WindowsError as exc:
-        # print exc
-        # print exc.errno
-        # pass
-    # except OSError as exc:
-        # if exc.errno == errno.EEXIST and os.path.isdir(path):
-            # pass
-        # else:
-            # raise
-    except WindowsError as e:
+    except Exception as e:
+        # already exists
         if e.errno == 5 and os.path.isdir(path):
             pass
         # WindowsError: [Error 183] Cannot create a file when that file already exists
         elif e.errno == 17 and os.path.isdir(path):
             pass
         else:
-            print 'pokpok'
+            print 'mkdir exception'
             print 'e',e
             print 'errno',e.errno
             raise
@@ -654,12 +647,15 @@ def mkdir_p(path):
     "Make a directory tree, ignoring any errors (eg if it already exists)"
     try:
         os.makedirs(path)
-    except OSError as e:
+    except Exception as e:
         if e.errno == errno.EEXIST and os.path.isdir(path):
             pass
         elif e.errno == 13:
-            print 'warning: unable to make director', path
+            print 'mkdir_p exception'
+            print 'e',e
+            print 'warning: unable to make directory', path
         else:
+            print 'mkdir_p exception'
             print 'e',e
             print 'errno',e.errno
             raise

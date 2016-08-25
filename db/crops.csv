@@ -10,6 +10,7 @@
 # to get zoom factor, scale=800/newsize
 
 # Don't forget to add the images to additions.csv if you want them to show up in clips and movies!
+# And don't forget to build these with vg crop <vols>!
 
 
 fileId,tx,ty,scale,notes
@@ -17,21 +18,25 @@ fileId,tx,ty,scale,notes
 # Jupiter Voyager 1
 # ----------------------------------------
 
+# Jupiter
+C1639639,271,90,1.68,lightning
+
 # Callisto
-C1639948,161,156,1.6
+C1639948,161,156,1.6,best image
 
 # Europa
-C1636904,271,271,3
+C1636904,271,271,3,best image
 
 # Ganymede
-C1635655,275,276,3.1
+C1635655,275,276,3.1,best image
 
 # Io
 # image to use for titlepage
-C136838,126,118,1.4
+C1636838,126,118,1.4,best image (at the moment)
 # zoom in on volcanoes
 # C1636852,529,265,3.3
 C1637536,452,489,2.5
+C1637544,440,509,2.9
 C1637750,74,512,2.7
 C1639222,78,0,3.6,mountain on top limb
 # nightside volcano, huge one on limb

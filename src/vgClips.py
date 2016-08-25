@@ -214,16 +214,13 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     if keepLinks==False:
 
         # make sure we have some titles
-        vgTitle.vgTitle(filterTargetPath)
+        # vgTitle.vgTitle(filterTargetPath)
 
         # stage images for ffmpeg
         lib.rmdir(config.clipsStageFolder)
         stageFiles(filterVolumes, filterTargetPath, None, config.clipsStageFolder)
 
     # build mp4 files from all staged images
-    # lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../',
-                                  # config.videoFilespec, config.videoFrameRate,
-                                  # config.clipsMinFrames)
     lib.makeVideosFromStagedFiles(config.clipsStageFolder, '../../../../../')
 
 

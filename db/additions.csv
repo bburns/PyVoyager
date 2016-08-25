@@ -15,11 +15,14 @@ fileId,additionId,nframes,notes
 # Jupiter Voyager 1
 # ----------------------------------------
 # keep sorted!
-C1635655,C1635655_crop,60,ganymede best image
+#. need a fn to read these in so can keep in diff order
+
+C1635657,C1635655_crop,60,ganymede best image
 C1636147,C1636153_composite,40,jupiter wideangle
 C1636904,C1636904_crop,60,europa best image
 C1637116,C1637117_composite,40,jupiter wideangle
 C1637536,C1637536_crop,40,io volcano
+C1637544,C1637544_crop,40,io volcano
 C1637546,C1637549_composite,40,jupiter wideangle
 C1637656,C1637657_composite,40,jupiter wideangle
 C1637750,C1637750_crop,40,io volcano
@@ -29,11 +32,11 @@ C1639250,C1639259_composite,50,io wideangle into narrow
 C1639250,C1639301_composite,50,io wideangle into narrow
 C1639630,C1639631_composite,40,jupiter lightning!
 C1639638,C1639639_composite,40,jupiter lightning!
-C1639948,C1639948_crop,60,callisto best image
+C1639638,C1639639_crop,40,zoom in on lightning
+C1640010,C1639948_crop,60,callisto best image
 C1648109,C1648109_crop,60,io nightside volcano; huge one on limb
 # C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
 # C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
-
 
 # Uranus
 # ----------------------------------------

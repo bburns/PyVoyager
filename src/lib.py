@@ -674,18 +674,16 @@ def imagesToMp4(stageFolder, outputFilename):
     """
     # filenamePattern specifies the filenames, e.g. img%05d.jpg
     # framerate is fps
-    # outputFilename = outputFilename.replace('mp4','mov') #.................
+    # outputFilename = outputFilename.replace('mp4','mov') #.
     savedir = os.getcwd()
     os.chdir(stageFolder)
-    print 'cwd',os.getcwd()
+    # print 'cwd',os.getcwd()
     # eg "ffmpeg -y -framerate 25 -i img%05d.jpg output.mp4"
     cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % \
           (config.videoFfmpegOptions, config.videoFrameRate,
            config.videoFilespec, config.videoFfmpegOutputOptions,
            outputFilename)
-          # (config.videoFfmpegOptions, framerate, filenamePattern,
-           # config.videoFfmpegOutputOptions, outputFilename)
-    print cmd
+    # print cmd
     os.system(cmd)
     os.chdir(savedir)
 

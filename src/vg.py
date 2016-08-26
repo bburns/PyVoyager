@@ -71,6 +71,7 @@ import vgAnnotate
 import vgTarget
 import vgTitle
 import vgClips
+import vgMaps
 import vgPages
 import vgMovies
 
@@ -240,6 +241,10 @@ elif cmd=="clips":
     # if filterVolumes is None:
         # filterVolumes = config.volumes
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
+    lib.beep()
+
+elif cmd=="maps":
+    vgMaps.vgMaps()
     lib.beep()
 
 elif cmd=="pages":

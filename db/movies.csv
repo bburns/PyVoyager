@@ -120,6 +120,7 @@ Jupiter-Voyager1,Jupiter-Voyager1-Europa
 
 # All together
 # --------------------------------------------------------------------------------
+# note: any special pages must be added to vgMovies.py
 All,Intro
 All,Prologue
 All,Jupiter-Voyager1

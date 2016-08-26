@@ -57,10 +57,10 @@ def vgInitPositions():
     spice.furnsh('kernels/naif0012.tls') # leap second data (5kb)
     spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 data (6mb)
     spice.furnsh('kernels/Voyager_2.m05016u.merged.bsp') # voyager 2 data (6mb)
-    spice.furnsh('kernels/jup100.bsp') # jupiter satellite data (20mb)
-    spice.furnsh('kernels/sat132.bsp') # saturn satellite data (63mb)
-    spice.furnsh('kernels/ura083.bsp') # uranus satellite data (81mb)
-    spice.furnsh('kernels/nep016-6.bsp') # neptune satellite data (9mb)
+    spice.furnsh('kernels/jup100.bsp') # jupiter and satellite data (20mb)
+    spice.furnsh('kernels/sat132.bsp') # saturn and satellite data (63mb)
+    spice.furnsh('kernels/ura083.bsp') # uranus and satellite data (81mb)
+    spice.furnsh('kernels/nep016-6.bsp') # neptune and satellite data (9mb)
     spice.furnsh('kernels/pck00010.tpc') # planetary constants (radius etc) (120kb)
 
     # read db into memory

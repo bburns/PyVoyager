@@ -1,7 +1,7 @@
 
 """
-vg maps command
-make maps of flybys using SPICE data
+vg plot command
+make plot of flybys using SPICE data
 
 To use, need SPICE kernels - download the following files and put them in the /kernels folder:
 
@@ -57,12 +57,11 @@ def plotMap(flyby, positions, minPos):
 
     title = observer + ' at ' + planet
     # title = observer + ' at ' + planet + ' (' + flyby.date[:4] + ')'
-    # axisMax = 1e6 # 1 million km
-    axisMax = flyby.axisMax # million km
+    axisMax = flyby.axisMax # km
     bgcolor = '0.05' # grayscale 0-1
-    labelsize = 12
     labelcolor = '0.9' # grayscale 0-1
-    labeloffset = int(2 * axisMax / 25) # label offset
+    labelsize = 12 # pts
+    labeloffset = int(2 * axisMax / 25) # km
 
     # set font etc
     # see http://matplotlib.org/users/customizing.html
@@ -77,7 +76,7 @@ def plotMap(flyby, positions, minPos):
     #legend.fontsize : large
     #figure.dpi : 80 # figure dots per inch
     mpl.rcParams['figure.dpi'] = 80 # figure dots per inch
-    mpl.rcParams['figure.figsize'] = (8,8) # figure size in inches
+    mpl.rcParams['figure.figsize'] = (8.26,8) # figure size in inches
     mpl.rcParams['figure.edgecolor'] = 'black' # figure edgecolor
 
     mpl.rcParams['savefig.edgecolor'] = 'black' # figure edgecolor when saving
@@ -138,9 +137,13 @@ def plotMap(flyby, positions, minPos):
     # ax.set_zlabel('z')
 
     # make it a cube
-    ax.set_xlim([-axisMax,axisMax])
-    ax.set_ylim([-axisMax,axisMax])
-    ax.set_zlim([-axisMax,axisMax])
+    # ax.set_xlim([-axisMax,axisMax])
+    # ax.set_ylim([-axisMax,axisMax])
+    # ax.set_zlim([-axisMax,axisMax])
+    cx,cy,cz = flyby.axisCenter
+    ax.set_xlim([cx-axisMax,cx+axisMax])
+    ax.set_ylim([cy-axisMax,cy+axisMax])
+    ax.set_zlim([cz-axisMax,cz+axisMax])
 
     # label planet, voyager, moons
     # labelcolor = 'w'
@@ -187,14 +190,15 @@ def plotMap(flyby, positions, minPos):
     # see http://stackoverflow.com/questions/11837979/
     #     removing-white-space-around-a-saved-image-in-matplotlib
     filename = 'map-' + planet + '-' + observer.replace(' ','') + '.png'
-    plt.savefig(filename, bbox_inches='tight', pad_inches=0.0)
+    filepath = config.folders['plot'] + filename
+    plt.savefig(filepath, bbox_inches='tight', pad_inches=0.0)
 
     # plt.show()
 
 
-def vgMaps():
+def vgPlot():
     
-    "create maps for each system flyby"
+    "create plot for each system flyby"
 
     loadSpice()
 
@@ -209,6 +213,8 @@ def vgMaps():
         bodies = None
         date = None
         ndays = None
+        axisMax = 1e6 # km
+        axisCenter = (0,0,0)
         azimuthElevation = None
 
     flybys = []
@@ -217,15 +223,17 @@ def vgMaps():
     flyby.bodies = ['Jupiter', 'Voyager 1', 'Io', 'Europa', 'Ganymede', 'Callisto']
     flyby.date = "1979-03-05"
     flyby.ndays = 4
-    flyby.axisMax = 1.2e6 # km
-    flyby.azimuthElevation = (46,101)
+    flyby.axisMax = 1e6 # km
+    flyby.axisCenter = (0.6e6,-0.2e6,0)
+    flyby.azimuthElevation = (-100,48)
     flybys.append(flyby)
 
     flyby = Flyby()
     flyby.bodies = ['Saturn', 'Voyager 1','Titan','Enceladus','Rhea','Mimas','Tethys','Dione']
     flyby.date = "1980-11-12"
     flyby.ndays = 3
-    flyby.axisMax = 0.8e6 # km
+    flyby.axisMax = 0.6e6 # km
+    flyby.axisCenter = (-0.4e6,-0.4e6,0)
     flyby.azimuthElevation = (80,97)
     flybys.append(flyby)
 
@@ -234,6 +242,7 @@ def vgMaps():
     flyby.date = "1979-07-09"
     flyby.ndays = 5
     flyby.axisMax = 1e6 # km
+    flyby.axisCenter = (-0.2e6,0,0)
     flyby.azimuthElevation = (102,107)
     flybys.append(flyby)
 
@@ -241,7 +250,8 @@ def vgMaps():
     flyby.bodies = ['Saturn','Voyager 2','Titan','Enceladus','Rhea','Mimas','Tethys','Dione']
     flyby.date = "1981-08-26"
     flyby.ndays = 2
-    flyby.axisMax = 0.7e6 # km
+    flyby.axisMax = 0.6e6 # km
+    flyby.axisCenter = (-0.2e6,0.1e6,0)
     flyby.azimuthElevation = (172,82)
     flybys.append(flyby)
 
@@ -266,6 +276,8 @@ def vgMaps():
 
         planet = flyby.bodies[0]
         observer = flyby.bodies[1]
+        
+        print 'Generating plot for %s at %s' % (observer, planet)
 
         nsteps = 100 # plot density
 
@@ -324,7 +336,7 @@ def vgMaps():
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgMaps()
+    vgPlot()
     print 'done'
 
 

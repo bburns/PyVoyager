@@ -383,10 +383,11 @@ folders = {
     'crop':       onlineFolder  + "step10_crop/",
     'annotate':   onlineFolder  + "step11_annotate/",
     'target':     onlineFolder  + "step12_target/",
-    'titles':     onlineFolder  + "step13_titles/",
-    'clips':      onlineFolder  + "step14_clips/",
-    'pages':      onlineFolder  + "step15_pages/",
-    'movies':     onlineFolder  + "step16_movies/",
+    'plot':       onlineFolder  + "step13_plot/",
+    'titles':     onlineFolder  + "step14_titles/",
+    'clips':      onlineFolder  + "step15_clips/",
+    'pages':      onlineFolder  + "step16_pages/",
+    'movies':     onlineFolder  + "step17_movies/",
     'additions':  onlineFolder  + "images/",
     }
 

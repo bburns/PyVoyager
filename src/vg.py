@@ -71,7 +71,7 @@ import vgAnnotate
 import vgTarget
 import vgTitle
 import vgClips
-import vgMaps
+import vgPlot
 import vgPages
 import vgMovies
 
@@ -243,8 +243,8 @@ elif cmd=="clips":
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
     lib.beep()
 
-elif cmd=="maps":
-    vgMaps.vgMaps()
+elif cmd=="plot":
+    vgPlot.vgPlot()
     lib.beep()
 
 elif cmd=="pages":

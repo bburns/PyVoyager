@@ -1,7 +1,7 @@
 
 """
 vg maps command
-make spice maps of flybys
+make maps of flybys using SPICE data
 
 To use, need SPICE kernels - download the following files and put them in the /kernels folder:
 

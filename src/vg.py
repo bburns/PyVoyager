@@ -13,6 +13,8 @@ PyVoyager commands
   vg center              - center images
   vg inpaint             - fill in missing pixels where possible
   vg composite           - create color images
+  vg map                 - build up 2d color maps
+  vg colorize            - colorize images using 2d color maps
   vg crop                - crop/zoom in on images
   vg target              - copy images into target subfolders
   vg clips               - create bw or color clips
@@ -66,6 +68,7 @@ import vgCenter
 import vgInpaint
 import vgComposite
 import vgMosaic
+import vgMap
 import vgCrop
 import vgAnnotate
 import vgTarget
@@ -207,9 +210,12 @@ elif cmd=="mosaic":
         vgMosaic.vgMosaic(filterVolume, optionOverwrite)
     lib.beep()
 
+elif cmd=="map":
+    for filterVolume in filterVolumes:
+        vgMap.vgMap(filterVolume, optionOverwrite)
+    lib.beep()
+
 elif cmd=="crop":
-    # for filterVolume in filterVolumes:
-        # vgCrop.vgCrop(filterVolume, optionOverwrite)
     vgCrop.vgCrop(filterVolumes)
     lib.beep()
 

@@ -2,8 +2,7 @@
 """
 vg composite command
 
-Build composite images from centered images,
-based on records in composites.csv.
+Build composite images from centered images, based on records in composites.csv.
 See also vgInitComposites.py, which builds initial pass at composites.csv.
 
 Note: even single channel images get a composite image (bw).

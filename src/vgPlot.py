@@ -189,7 +189,7 @@ def plotMap(flyby, positions, minPos):
     # save image without white border
     # see http://stackoverflow.com/questions/11837979/
     #     removing-white-space-around-a-saved-image-in-matplotlib
-    filename = 'map-' + planet + '-' + observer.replace(' ','') + '.png'
+    filename = 'plot-' + planet + '-' + observer.replace(' ','') + '.jpg'
     filepath = config.folders['plot'] + filename
     plt.savefig(filepath, bbox_inches='tight', pad_inches=0.0)
 

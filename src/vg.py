@@ -206,13 +206,14 @@ elif cmd=="composite":
     lib.beep()
 
 elif cmd=="mosaic":
+    if filterVolumes is None:
+        filterVolumes = volumes
     for filterVolume in filterVolumes:
         vgMosaic.vgMosaic(filterVolume, optionOverwrite)
     lib.beep()
 
 elif cmd=="map":
-    for filterVolume in filterVolumes:
-        vgMap.vgMap(filterVolume, optionOverwrite)
+    vgMap.vgMap(filterVolumes, optionOverwrite)
     lib.beep()
 
 elif cmd=="crop":

@@ -206,25 +206,14 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         # the instrument-fixed frame at the time `clkout'.
         # https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/ckgp_c.html
         C, clkout, found = spice.ckgp(instrument, sclkdp, tolerance, frame)
-        # C = np.array([[1,0,0],[0,0,1],[0,1,0]],np.float)
-        # C = np.eye(3)
         print 'C=camera pointing matrix - transform world to camera coords'
-        # C = np.array([[-0.7,-0.7,0],[0,0,1],[-0.7,0.7,0]],np.float)
-        # C = np.array([[1,0,0],[0,0,1],[0,1,0]],np.float)
         print C
         
         # get boresight vector
         # this is just the third row of the C-matrix, *per spice docs*
         boresight = C[2]
-        # boresight = np.array([-0.627, 0.779, 0])
         print 'boresight pointing vector',boresight
         
-        # i think it's C[1] that's really stable - pointing up
-        
-        # Cinv is the inverse of C, translating from camera frame to world frame - dont need it now
-        # Cinv = np.linalg.inv(C)
-        # print 'Cinv',Cinv
-        # yaxis = Cinv[1]
         
         # get world to target frame matrix
         B = spice.tipbod(frame, targetId, ephemerisTime)
@@ -233,11 +222,18 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         
         # get target spin axis
         # the last row of the matrix is the north pole vector, *per spice docs*
-        # and it seems correct, as it's nearly 0,0,1
+        # seems correct, as it's nearly 0,0,1
         bz = B[2]
-        # bz = np.array([0,0,1])
         print 'bz=north pole spin axis',bz
         print
+        
+        # get location of prime meridian
+        rotationRate = 870.5366420 # deg/day
+        primeMeridian = rotationRate /24/60/60 * ephemerisTime # deg
+        print 'primeMeridian (deg)', primeMeridian % 360
+        # rotationRateRadiansPerSec = rotationRateDegPerDay * math.pi/180 /24/60/60
+        # primeMeridianRadians = rotationRateRadiansPerSec * ephemerisTime % math.pi*2
+        primeMeridianRadians = primeMeridian * math.pi/180
         
         # get target position
         # direction from craft to target
@@ -354,44 +350,62 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         
         # sys.exit(0)
         
+        # what longitudes are visible?
+        #. get from position of craft
+        visibleLongitudesMin = 0
+        visibleLongitudesMax = math.pi
         
-        # get rotation matrix
+        # get axial tilt matrix
         cc = math.cos(npRadians)
         ss = math.sin(npRadians)
-        M = np.array([[cc,-ss],[ss,cc]])
+        mTilt = np.array([[cc,-ss],[ss,cc]])
 
         # build hx,hy arrays, which tell map where to pull pixels from in source image
         r = targetRadius # pixels
-        for mx in xrange(mxmax/2): # 0 to 800 -> 0 to pi = front half of sphere
+        # m: map (0 to mxmax, 0 to mymax)
+        # for mx in xrange(mxmax/2): # 0 to 800 -> 0 to pi = front half of sphere
+        for mx in xrange(mxmax): # 0 to 800 -> 0 to pi = front half of sphere
+            
             for my in xrange(mymax): # 0 to 800
                 
-                # q: map
-                qx = mx * 2 * math.pi / mxmax # 0 to 2pi
+                # q: map (0 to 2pi, -1 to 1)
+                qx = float(mx) / mxmax * 2 * math.pi + primeMeridianRadians
+                qx = qx % (2 * math.pi) # 0 to 2pi
                 qy = -float(my-mycenter)/mycenter # 1 to -1
                 
-                # p: image
+                # p: image (-1 to 1, -1 to 1)
                 px = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
                 py = qy # 1 to -1
                 
                 # rotate p to account for axial tilt relative to camera up axis
+                # ie p = mTilt * p
                 p = np.array([px,py])
-                p = np.dot(M,p)
+                p = np.dot(mTilt,p)
                 px,py = p
                 
-                # s: image
+                # s: image (0 to 800, 0 to 800)
                 sx = px * r + 400 # 0 to 800
                 sy = -py * r + 400 # 0 to 800
                 
-                hx[my][mx] = sx
-                hy[my][mx] = sy
+                # hx[my][mx] = sx
+                # hy[my][mx] = sy
+                
+                visible = (qx >= visibleLongitudesMin) and (qx <= visibleLongitudesMax)
+                if visible:
+                    hx[my][mx] = sx
+                    hy[my][mx] = sy
+                else:
+                    hx[my][mx] = 0
+                    hy[my][mx] = 0
         
         # do remapping
         map = cv2.remap(im, hx, hy, cv2.INTER_LINEAR)
         libimg.show(map)
 
-        #. now need to blend this into the main map
+        #. now need to blend this into the main map for this filter
         
         
+        # if nfile>0:
         if nfile>5:
             sys.exit(0)
         

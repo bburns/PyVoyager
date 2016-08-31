@@ -164,6 +164,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         
         # get filename
         infile = lib.getFilepath('center', volume, fileId, filter)
+        # infile = lib.getFilepath('adjust', volume, fileId, filter)
         if not os.path.isfile(infile):
             print 'warning file not found', infile
             continue
@@ -299,7 +300,8 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print 'sNP=screen space north pole (-1 to 1)',sNP
         
         npDelta = sNP-s
-        npAngle = math.atan(npDelta[0]/npDelta[1]) * 180/math.pi
+        npRadians = math.atan(npDelta[0]/npDelta[1])
+        npAngle = npRadians * 180/math.pi
         print 'npAngle',npAngle
         
         # get image coordinate
@@ -351,6 +353,12 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         libimg.show(im)
         
         # sys.exit(0)
+        
+        
+        # get rotation matrix
+        cc = math.cos(npRadians)
+        ss = math.sin(npRadians)
+        M = np.array([[cc,-ss],[ss,cc]])
 
         # build hx,hy arrays, which tell map where to pull pixels from in source image
         r = targetRadius # pixels
@@ -365,6 +373,11 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
                 px = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
                 py = qy # 1 to -1
                 
+                # rotate p to account for axial tilt relative to camera up axis
+                p = np.array([px,py])
+                p = np.dot(M,p)
+                px,py = p
+                
                 # s: image
                 sx = px * r + 400 # 0 to 800
                 sy = -py * r + 400 # 0 to 800
@@ -378,7 +391,9 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
 
         #. now need to blend this into the main map
         
-        sys.exit(0)
+        
+        if nfile>5:
+            sys.exit(0)
         
 
     fPositions.close()

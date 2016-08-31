@@ -5,7 +5,8 @@ vg map command
 Build up 2d color maps of targets
 
 kernels from
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ck/vgr1_super.bc
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ck/vgr1_super.bc
+http://pds-rings.seti.org/voyager/ck/vg1_jup_version1_type1_iss_sedr.bc
 http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/sclk/vg100019.tsc
 http://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
@@ -67,7 +68,8 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
 
     # load SPICE kernels (data files)
     # see above for sources
-    spice.furnsh('kernels/vgr1_super.bc') # voyager 1 pointing data, continuous (11mb)
+    # spice.furnsh('kernels/vgr1_super.bc') # voyager 1 pointing data, continuous (11mb)
+    spice.furnsh('kernels/vg1_jup_version1_type1_iss_sedr.bc') # voyager 1 jupiter pointing, discrete (700kb)
     spice.furnsh('kernels/vg100019.tsc') # voyager 1 clock data (76kb)
     spice.furnsh('kernels/naif0012.tls') # leap second data (5kb)
     spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 position data (6mb)
@@ -104,18 +106,27 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     f = 1.0 / math.tan(fov/2)
     # f = 1.0
     
+    # print help(spice.bodn2c)
 
-    camera = 'VG1_ISSNA'
-    cameraId, found = spice.bodn2c(camera)
-    print camera, cameraId, found
-    # spice.getfov(
-    stop
-    
+    # camera = 'VG1_ISSNA'
+    # cameraId = spice.bodn2c(camera)
+    # print camera, cameraId, found
+    cameraId = -31101
+    # print help(spice.getfov)
+    # shape, dref, bsight, n, bounds = spice.getfov(cameraId, 4, 20,20)
+    shape, cameraName, cameraBoresight, nbounds, bounds = spice.getfov(cameraId, 4)
+    # print shape, cameraName, cameraBoresight, nbounds, bounds
+    # RECTANGLE VG1_ISSNA [ 0.  0.  1.] 4 [[ 0.0037001  0.0037001  1.       ]
+    #  [-0.0037001  0.0037001  1.       ]
+    #  [-0.0037001 -0.0037001  1.       ]
+    #  [ 0.0037001 -0.0037001  1.       ]]
     
     
     # size of 2d map
-    mxmax = 1600
-    mymax = 800
+    # mxmax = 1600
+    # mymax = 800
+    mxmax = 800
+    mymax = 400
     mxcenter = mxmax/2
     mycenter = mymax/2
     
@@ -162,23 +173,30 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         nfile += 1
 
         
+        # get target code
+        targetId = spice.bodn2c(target) # eg 'Jupiter'->599
+        # print target, targetId
         
-        
-        
-        
-        # get camera pointing matrix
+        # get instrument        
         spacecraft = -31 if craft=='Voyager1' else -32
-        instrument = spacecraft * 1000 # spacecraft bus
-        instrument = -31100 # scan platform
+        spacecraftBus = spacecraft * 1000
+        spacecraftScanPlatform = spacecraftBus - 100
+        spacecraftNarrowCamera = spacecraftScanPlatform - 1
+        spacecraftWideCamera = spacecraftScanPlatform - 2
+        # instrument = spacecraft * 1000 # spacecraft bus - use for NAIF continuous kernels
+        # instrument = -31100 # scan platform - use for PDS discrete kernels
         # instrument = -31101 # na
+        # instrument = spacecraftBus # use for NAIF continuous kernels
+        instrument = spacecraftScanPlatform # use for PDS discrete kernels
+        
+        # get ephemeris time
         ephemerisTime = spice.str2et(time) # seconds since J2000 (will be negative)
         # sclkch = spice.sce2s(spacecraft, ephemerisTime) # spacecraft clock string
         sclkdp = spice.sce2c(spacecraft, ephemerisTime) # spacecraft clock double
+        print 'sclkdp',sclkdp
         tolerance = spice.sctiks(spacecraft, "0:00:800") # time tolerance
         frame = 'ECLIPB1950' # coordinate frame
-        
-        targetId = spice.bodn2c(target) # eg 'Jupiter'->599
-        # print target, targetId
+        # frame = 'J2000' # coordinate frame
         
         print
         
@@ -190,11 +208,14 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         # C = np.array([[1,0,0],[0,0,1],[0,1,0]],np.float)
         # C = np.eye(3)
         print 'C=camera pointing matrix - transform world to camera coords'
+        # C = np.array([[-0.7,-0.7,0],[0,0,1],[-0.7,0.7,0]],np.float)
+        # C = np.array([[1,0,0],[0,0,1],[0,1,0]],np.float)
         print C
         
         # get boresight vector
         # this is just the third row of the C-matrix, *per spice docs*
         boresight = C[2]
+        # boresight = np.array([-0.627, 0.779, 0])
         print 'boresight pointing vector',boresight
         
         # i think it's C[1] that's really stable - pointing up
@@ -212,24 +233,31 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         # get target spin axis
         # the last row of the matrix is the north pole vector, *per spice docs*
         # and it seems correct, as it's nearly 0,0,1
-        # bz = B[2]
-        bz = np.array([0,0,1])
+        bz = B[2]
+        # bz = np.array([0,0,1])
         print 'bz=north pole spin axis',bz
-
-        # get direction from craft to target
+        print
+        
+        # get target position
+        # direction from craft to target
         observer = 'Voyager ' + craft[-1] # eg Voyager 1
         abberationCorrection = 'NONE'
+        frame = 'ECLIPB1950' # coordinate frame
+        # print target, observer, ephemerisTime
         position, lightTime = spice.spkpos(target, ephemerisTime, frame,
                                            abberationCorrection, observer)
-        # position = np.array([-6,7,0])
+        # position = np.array([-63,78,1])
+        # position = np.array([-1,1,0])
+        # position = np.array([-1,1.2,.1])
+        # position = np.array([.1,100,0])
         print 'target position relative to observer',position
         
         # get distance
-        d = libspice.getDistance(position)
-        print 'd distance in km',d
+        distance = libspice.getDistance(position)
+        print 'distance in km',distance
         
         # # normalize position vector
-        posnormal = position / d
+        posnormal = position / distance
         print 'position normalized', posnormal
         
         dot = np.dot(boresight, posnormal)
@@ -244,17 +272,19 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         targetRadiusPoles = radii[2]
         targetRadius = sum(radii) / 3
         flatteningCoefficient = (targetRadiusEquator - targetRadiusPoles) / targetRadiusEquator
-        print 'target radius in km', targetRadius
+        # print 'target radius in km', targetRadius
         
         # get north pole location
-        # wNP = position + targetRadius * bz
-        # print 'wNP=north pole in world coords', wNP
+        positionNP = position + targetRadius * bz
+        print 'positionNP=north pole in world coords', positionNP
         
-        # get camera space coordinate
-        # c = np.dot(C, wNP)
-        # print 'c=north pole in camera space',c
+        print
+        
+        # get target position in camera space
         c = np.dot(C, position)
+        cNP = np.dot(C, positionNP)
         print 'c=position in camera space',c
+        print 'cNP=north pole in camera space',cNP
         
         # get screen coordinate
         print 'f=focal length',f
@@ -263,72 +293,92 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print 'fz=f/cz',fz
         S = np.array([[fz,0,0],[0,fz,0]])
         s = np.dot(S, c)
+        sNP = np.dot(S, cNP)
         # ie sx=cx*f/cz; sy=cy*f/cz
         print 's=screen space (-1 to 1)',s
+        print 'sNP=screen space north pole (-1 to 1)',sNP
+        
+        npDelta = sNP-s
+        npAngle = math.atan(npDelta[0]/npDelta[1]) * 180/math.pi
+        print 'npAngle',npAngle
         
         # get image coordinate
-        p = s * 800/2.0
-        p = p + 400
+        p = -s * 800/2.0
+        p[0] = p[0]+400
+        p[1] = p[1]+400
+        pNP = -sNP * 800/2.0
+        pNP[0] = pNP[0]+400
+        pNP[1] = pNP[1]+400
         print 'p=pixel space (0 to 800)',p
+        print 'pNP=pixel space north pole (0 to 800)',pNP
         
+        
+        angularSize = 2*math.asin(float(targetRadius)/distance) * 180/math.pi
+
+        # get field of view of camera, degrees
+        cameraFOV = config.cameraFOVs[camera] # Narrow -> 0.424 or Wide -> 3.169
+
+        # get size of target relative to the camera fov, dimensionless
+        imageSize = angularSize/cameraFOV # 1.0 = full frame
+        imageSize = int(imageSize*100000)/100000.0 # trim down
+        print 'angularsize',angularSize
+        print 'fov',cameraFOV
+        print 'imagesize',imageSize
+        
+        imagePixels = imageSize * 800
+        print 'imagepixels',imagePixels
+
+    
         print
         print
+        # sys.exit(0)
+        
+        
+        # get expected angular size (as fraction of frame) and radius
+        imageFraction = lib.getImageFraction(csvPositions, fileId)
+        targetRadius = int(400*imageFraction) #.param
+
+        # read image
+        im = cv2.imread(infile)
+        
+        # draw north pole on image
+        pt1 = tuple([int(x) for x in p])
+        pt2 = tuple([int(x) for x in pNP])
+        # print pt1
+        im = cv2.line(im, pt1, pt2, 128)
+        
+        
+        libimg.show(im)
+        
+        # sys.exit(0)
+
+        # build hx,hy arrays, which tell map where to pull pixels from in source image
+        r = targetRadius # pixels
+        for mx in xrange(mxmax/2): # 0 to 800 -> 0 to pi = front half of sphere
+            for my in xrange(mymax): # 0 to 800
+                
+                # q: map
+                qx = mx * 2 * math.pi / mxmax # 0 to 2pi
+                qy = -float(my-mycenter)/mycenter # 1 to -1
+                
+                # p: image
+                px = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
+                py = qy # 1 to -1
+                
+                # s: image
+                sx = px * r + 400 # 0 to 800
+                sy = -py * r + 400 # 0 to 800
+                
+                hx[my][mx] = sx
+                hy[my][mx] = sy
+        
+        # do remapping
+        map = cv2.remap(im, hx, hy, cv2.INTER_LINEAR)
+        libimg.show(map)
+
+        #. now need to blend this into the main map
+        
         sys.exit(0)
-        
-        
-        # get orientation of target - north pole and meridian
-        # ra = north pole right ascension (0 to 2pi?)
-        # dec = north pole declination (-pi/2 to pi/2?)
-        # pm = location of prime meridian (0 to 2pi?)
-        #. this gives you info in J2000 - want it in B1950, or convert those to J2000 also
-        # ra, dec, pm, lambda_ = spice.bodeul(targetId, ephemerisTime) #. need this
-        # ra = 0
-        # dec = math.pi/2 # straight up
-        # pm = 0
-        # lambda_ = 0        
-        # print ra, dec, pm, lambda_
-        
-        # print
-        # stop
-        
-        # # get expected angular size (as fraction of frame) and radius
-        # imageFraction = lib.getImageFraction(csvPositions, fileId)
-        # targetRadius = int(400*imageFraction) #.param
-
-        # # read image
-        # im = cv2.imread(infile)
-        
-        # #. draw azimuth on image
-        
-        
-        # libimg.show(im)
-
-        # # build hx,hy arrays, which tell map where to pull pixels from in source image
-        # r = targetRadius # pixels
-        # for mx in xrange(mxmax/2): # 0 to 800 -> 0 to pi = front half of sphere
-        #     for my in xrange(mymax): # 0 to 800
-                
-        #         # q: map
-        #         qx = mx * 2 * math.pi / mxmax # 0 to 2pi
-        #         qy = -float(my-mycenter)/mycenter # 1 to -1
-                
-        #         # p: image
-        #         px = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
-        #         py = qy # 1 to -1
-                
-        #         # s: image
-        #         sx = px * r + 400 # 0 to 800
-        #         sy = -py * r + 400 # 0 to 800
-                
-        #         hx[my][mx] = sx
-        #         hy[my][mx] = sy
-        
-        # # do remapping
-        # # map = cv2.remap(im, hx, hy, cv2.INTER_LINEAR)
-        # # libimg.show(map)
-
-        # #. now need to blend this into the main map
-        
         
 
     fPositions.close()

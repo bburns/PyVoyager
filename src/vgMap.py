@@ -135,6 +135,11 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     hx = np.zeros((mymax,mxmax),np.float32)
     hy = np.zeros((mymax,mxmax),np.float32)
 
+    # make blank maps for each color channel
+    # bluemap = np.zeros((mymax,mxmax),np.float32)
+    bluemap = np.zeros((mymax,mxmax),np.uint8)
+    countmap = np.zeros((mymax,mxmax),np.int)
+    
     # iterate through all available images, filter on desired volume or image
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
     nfile = 1
@@ -346,7 +351,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         im = cv2.line(im, pt1, pt2, 128)
         
         
-        libimg.show(im)
+        # libimg.show(im)
         
         # sys.exit(0)
         
@@ -373,40 +378,63 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
                 qx = qx % (2 * math.pi) # 0 to 2pi
                 qy = -float(my-mycenter)/mycenter # 1 to -1
                 
-                # p: image (-1 to 1, -1 to 1)
-                px = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
-                py = qy # 1 to -1
+                # s: image (-1 to 1, -1 to 1)
+                sx = -math.sqrt(1 - qy**2) * math.cos(qx) # -1 to 1
+                sy = qy # 1 to -1
                 
-                # rotate p to account for axial tilt relative to camera up axis
-                # ie p = mTilt * p
-                p = np.array([px,py])
-                p = np.dot(mTilt,p)
-                px,py = p
+                # rotate s to account for axial tilt relative to camera up axis
+                # ie s = mTilt * s
+                s = np.array([sx,sy])
+                s = np.dot(mTilt,s)
+                sx,sy = s
                 
-                # s: image (0 to 800, 0 to 800)
-                sx = px * r + 400 # 0 to 800
-                sy = -py * r + 400 # 0 to 800
+                # p: image (0 to 800, 0 to 800)
+                px = sx * r + 400 # 0 to 800
+                py = -sy * r + 400 # 0 to 800
                 
-                # hx[my][mx] = sx
-                # hy[my][mx] = sy
-                
+                # hx[my][mx] = px
+                # hy[my][mx] = py
                 visible = (qx >= visibleLongitudesMin) and (qx <= visibleLongitudesMax)
                 if visible:
-                    hx[my][mx] = sx
-                    hy[my][mx] = sy
+                    hx[my][mx] = px
+                    hy[my][mx] = py
                 else:
                     hx[my][mx] = 0
                     hy[my][mx] = 0
         
         # do remapping
         map = cv2.remap(im, hx, hy, cv2.INTER_LINEAR)
-        libimg.show(map)
+        map = map[:,:,0]
+        # map = np.array(map, np.float32)
+        # libimg.show(map)
 
-        #. now need to blend this into the main map for this filter
         
+        #. now need to blend this into the main map for this filter
+        # print type(map[0][0])
+        # print type(bluemap[0][0])
+        # bluemap = cv2.addWeighted(bluemap, 0.5, map, 0.5, 0)
+        
+        ret, mapMask = cv2.threshold(map, 1, 255, cv2.THRESH_BINARY)
+        # libimg.show(mapMask)
+        mapMaskInv = 255-mapMask
+        # libimg.show(mapMaskInv)
+        
+        bluemapSame = cv2.bitwise_and(bluemap, mapMaskInv)
+        bluemapChange = cv2.bitwise_and(bluemap, mapMask)
+        bluemapChange = cv2.addWeighted(bluemapChange, 0.5, map, 0.5, 0)
+        
+        bluemap = bluemapSame + bluemapChange
+        libimg.show(bluemap)
+        
+        # bluemap = cv2.bitwise_and(bluemap, mapMaskInv)
+        # libimg.show(bluemap)
+        # bluemap = bluemap + map
+        # libimg.show(bluemap)
         
         # if nfile>0:
-        if nfile>5:
+        # if nfile>2:
+        # if nfile>5:
+        if nfile>10:
             sys.exit(0)
         
 

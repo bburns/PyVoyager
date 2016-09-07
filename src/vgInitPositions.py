@@ -54,14 +54,14 @@ def vgInitPositions():
 
     # load SPICE kernels (data files)
     # see above for sources
-    spice.furnsh('kernels/naif0012.tls') # leap second data (5kb)
-    spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 position data (6mb)
-    spice.furnsh('kernels/Voyager_2.m05016u.merged.bsp') # voyager 2 position data (6mb)
-    spice.furnsh('kernels/jup100.bsp') # jupiter and satellite position data (20mb)
-    spice.furnsh('kernels/sat132.bsp') # saturn and satellite position data (63mb)
-    spice.furnsh('kernels/ura083.bsp') # uranus and satellite position data (81mb)
-    spice.furnsh('kernels/nep016-6.bsp') # neptune and satellite position data (9mb)
-    spice.furnsh('kernels/pck00010.tpc') # planetary constants (radii etc) (120kb)
+    spice.furnsh('kernels/lsk/naif0012.tls') # leap second data (5kb)
+    spice.furnsh('kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 position data (6mb)
+    spice.furnsh('kernels/spk/Voyager_2.m05016u.merged.bsp') # voyager 2 position data (6mb)
+    spice.furnsh('kernels/spk/jup100.bsp') # jupiter and satellite position data (20mb)
+    spice.furnsh('kernels/spk/sat132.bsp') # saturn and satellite position data (63mb)
+    spice.furnsh('kernels/spk/ura083.bsp') # uranus and satellite position data (81mb)
+    spice.furnsh('kernels/spk/nep016-6.bsp') # neptune and satellite position data (9mb)
+    spice.furnsh('kernels/pck/pck00010.tpc') # planetary constants (radii etc) (120kb)
 
     # read db into memory
     targetInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets

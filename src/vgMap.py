@@ -69,22 +69,22 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     # load SPICE kernels (data files)
     # see above for sources
     # spice.furnsh('kernels/vgr1_super.bc') # voyager 1 pointing data, continuous (11mb)
-    spice.furnsh('kernels/vg1_jup_version1_type1_iss_sedr.bc') # voyager 1 jupiter pointing, discrete (700kb)
-    spice.furnsh('kernels/vg100019.tsc') # voyager 1 clock data (76kb)
-    spice.furnsh('kernels/naif0012.tls') # leap second data (5kb)
-    spice.furnsh('kernels/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 position data (6mb)
-    # spice.furnsh('kernels/Voyager_2.m05016u.merged.bsp') # voyager 2 position data (6mb)
-    spice.furnsh('kernels/jup100.bsp') # jupiter and satellite position data (20mb)
-    # spice.furnsh('kernels/sat132.bsp') # saturn and satellite position data (63mb)
-    # spice.furnsh('kernels/ura083.bsp') # uranus and satellite position data (81mb)
-    # spice.furnsh('kernels/nep016-6.bsp') # neptune and satellite position data (9mb)
-    spice.furnsh('kernels/pck00010.tpc') # planetary constants (radii etc) (120kb)
-    spice.furnsh('kernels/vg1_issna_v02.ti') # instrument data (2kb)
-    spice.furnsh('kernels/vg1_isswa_v01.ti') # instrument data (2kb)
-    spice.furnsh('kernels/vg2_issna_v02.ti') # instrument data (2kb)
-    spice.furnsh('kernels/vg2_isswa_v01.ti') # instrument data (2kb)
-    spice.furnsh('kernels/vg1_v02.tf') # voyager 1 frames (12kb)
-    spice.furnsh('kernels/vg2_v02.tf') # voyager 2 frames (12kb)
+    spice.furnsh('kernels/ck/vg1_jup_version1_type1_iss_sedr.bc') # voyager 1 jupiter pointing, discrete (700kb)
+    spice.furnsh('kernels/sclk/vg100019.tsc') # voyager 1 clock data (76kb)
+    spice.furnsh('kernels/lsk/naif0012.tls') # leap second data (5kb)
+    spice.furnsh('kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp') # voyager 1 position data (6mb)
+    # spice.furnsh('kernels/spk/Voyager_2.m05016u.merged.bsp') # voyager 2 position data (6mb)
+    spice.furnsh('kernels/spk/jup100.bsp') # jupiter and satellite position data (20mb)
+    # spice.furnsh('kernels/spk/sat132.bsp') # saturn and satellite position data (63mb)
+    # spice.furnsh('kernels/spk/ura083.bsp') # uranus and satellite position data (81mb)
+    # spice.furnsh('kernels/spk/nep016-6.bsp') # neptune and satellite position data (9mb)
+    spice.furnsh('kernels/pck/pck00010.tpc') # planetary constants (radii etc) (120kb)
+    spice.furnsh('kernels/ik/vg1_issna_v02.ti') # instrument data (2kb)
+    spice.furnsh('kernels/ik/vg1_isswa_v01.ti') # instrument data (2kb)
+    spice.furnsh('kernels/ik/vg2_issna_v02.ti') # instrument data (2kb)
+    spice.furnsh('kernels/ik/vg2_isswa_v01.ti') # instrument data (2kb)
+    spice.furnsh('kernels/fk/vg1_v02.tf') # voyager 1 frames (12kb)
+    spice.furnsh('kernels/fk/vg2_v02.tf') # voyager 2 frames (12kb)
 
     # read small dbs into memory
     # centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
@@ -138,7 +138,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     # make blank maps for each color channel
     # bluemap = np.zeros((mymax,mxmax),np.float32)
     bluemap = np.zeros((mymax,mxmax),np.uint8)
-    countmap = np.zeros((mymax,mxmax),np.int)
+    countmap = np.zeros((mymax,mxmax),np.uint8)
     
     # iterate through all available images, filter on desired volume or image
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
@@ -164,7 +164,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
 
         #. skip others
         if target!='Jupiter': continue
-        if fileId < 'C1462331': continue # blownout images
+        if fileId < 'C1462335': continue # blownout images
         if filter != 'Blue': continue # just one filter for now
         
         # get filename
@@ -368,10 +368,8 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         # build hx,hy arrays, which tell map where to pull pixels from in source image
         r = targetRadius # pixels
         # m: map (0 to mxmax, 0 to mymax)
-        # for mx in xrange(mxmax/2): # 0 to 800 -> 0 to pi = front half of sphere
-        for mx in xrange(mxmax): # 0 to 800 -> 0 to pi = front half of sphere
-            
-            for my in xrange(mymax): # 0 to 800
+        for mx in xrange(mxmax): # eg 0 to 1600
+            for my in xrange(mymax): # eg 0 to 800
                 
                 # q: map (0 to 2pi, -1 to 1)
                 qx = float(mx) / mxmax * 2 * math.pi + primeMeridianRadians
@@ -406,25 +404,62 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         map = cv2.remap(im, hx, hy, cv2.INTER_LINEAR)
         map = map[:,:,0]
         # map = np.array(map, np.float32)
-        # libimg.show(map)
+        libimg.show(map)
 
         
         #. now need to blend this into the main map for this filter
+        
         # print type(map[0][0])
         # print type(bluemap[0][0])
+        
         # bluemap = cv2.addWeighted(bluemap, 0.5, map, 0.5, 0)
         
-        ret, mapMask = cv2.threshold(map, 1, 255, cv2.THRESH_BINARY)
-        # libimg.show(mapMask)
-        mapMaskInv = 255-mapMask
-        # libimg.show(mapMaskInv)
+        # ret, countzero = cv2.threshold(countmap, 0,255, cv2.THRESH_BINARY)
+        # ret, countone = cv2.threshold(countmap, 0,255, cv2.THRESH_BINARY)
+        # countzero = 255-countone
+        # ret, mapMask = cv2.threshold(map, 1, 255, cv2.THRESH_BINARY)
+        # mapMask = cv2.bitwise_and(countzero, mapMask)
+        # c = mapMask & 1
+        # countmap += c
         
-        bluemapSame = cv2.bitwise_and(bluemap, mapMaskInv)
-        bluemapChange = cv2.bitwise_and(bluemap, mapMask)
-        bluemapChange = cv2.addWeighted(bluemapChange, 0.5, map, 0.5, 0)
+        # libimg.show(countmap)
         
-        bluemap = bluemapSame + bluemapChange
+        # ret, mapnonzero = cv2.threshold(map, 0,1, cv2.THRESH_BINARY)
+        ret, mapnonzero = cv2.threshold(map, 1,1, cv2.THRESH_BINARY)
+        
+        countmapPlusOne = countmap + 1
+        countmap2 = countmap + 1-mapnonzero
+        base = np.array(bluemap, np.float32)
+        # base = base * countmap / countmapPlusOne
+        base = base * countmap2 / countmapPlusOne
+        newmap = np.array(map, np.float32)
+        newmap = newmap / countmapPlusOne
+        newbase = base + newmap
+        newbase = np.array(newbase, np.uint8)
+        
+        # increment countmap where map image data exists
+        countmap += mapnonzero
+        # countmap = cv2.bitwise_and(countmap, mapnonzero)
+        countmap = np.clip(countmap, 0, 4)
+        
+        bluemap = newbase
         libimg.show(bluemap)
+        
+        
+        
+        # # libimg.show(mapMask)
+        # mapMaskInv = 255-mapMask
+        # # libimg.show(mapMaskInv)
+        
+        # bluemapSame = cv2.bitwise_and(bluemap, mapMaskInv)
+        # bluemapChange = cv2.bitwise_and(bluemap, mapMask)
+        # bluemapChange = cv2.addWeighted(bluemapChange, 0.5, map, 0.5, 0)
+        # # bluemapNew = cv2.bitwise_and(map, mapMask)
+        
+        # bluemap = bluemapSame + bluemapChange
+        # # bluemap = bluemapSame + bluemapNew
+        # libimg.show(bluemap)
+        
         
         # bluemap = cv2.bitwise_and(bluemap, mapMaskInv)
         # libimg.show(bluemap)
@@ -432,9 +467,9 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         # libimg.show(bluemap)
         
         # if nfile>0:
-        # if nfile>2:
+        # if nfile>3:
         # if nfile>5:
-        if nfile>10:
+        if nfile>8:
             sys.exit(0)
         
 

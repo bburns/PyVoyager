@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.49
+Version 0.5 inprogress
 
 (I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives). 
 
@@ -398,9 +398,19 @@ History
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
+Version 0.5 (2016-08-)
+----------------------------------------
+- Steps download, unzip handle EDR archives
+- Step import converts EDR IMQ files to ISIS CUB files in reorganized folders, per newer PDS conventions
+- Steps ___
+
 Version 0.49 (2016-08-07)
 ----------------------------------------
 - Switching to Linux and EDR archives so can use ISIS - `vg download` downloads EDR volumes 1-33 now
+
+Version 0.485 (2016-08-07)
+----------------------------------------
+- Working on `vg map` - preliminary results working okay - could project Jupiter approach frames into cylindrical map, though without photometric corrections. Decided to switch to using ISIS. 
 
 Version 0.48 (2016-08-07)
 ----------------------------------------

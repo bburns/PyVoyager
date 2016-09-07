@@ -13,17 +13,16 @@ import lib
 import vgDownload
 
 
-def vgUnzip(volnum, overwrite=False, directCall=True):
+def vgUnzip(edrVol, overwrite=False, directCall=True):
 
-    "Unzip the given volume number, if it doesn't exist yet."
+    "Unzip the given EDR volume number, if it doesn't exist yet."
 
-    volnum = str(volnum)
-
-    # get zipfilepath, eg data/step01_downloads/vgiss_5101.tar.gz
-    zipfilepath = config.folders['download'] + 'VGISS_' + volnum + '.tar.gz'
+    # get zipfilepath, eg data/step01_downloads/vg_0013.tar.gz
+    edrVol = int(edrVol)
+    zipfilepath = config.folders['download'] + 'VG_%04d.tar.gz' % edrVol
 
     # get output location
-    outputSubfolder = lib.getSubfolder('unzip', volnum)
+    outputSubfolder = lib.getSubfolder('unzip', edrVol)
 
     # quit if volume folder exists
     if os.path.isdir(outputSubfolder) and overwrite==False:
@@ -31,7 +30,7 @@ def vgUnzip(volnum, overwrite=False, directCall=True):
         return
 
     # download the zipfile if not already there
-    vgDownload.vgDownload(volnum, overwrite=False, directCall=False)
+    vgDownload.vgDownload(edrVol, overwrite=False, directCall=False)
 
     # unzip the file
     print "Unzipping " + zipfilepath

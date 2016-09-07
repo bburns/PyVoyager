@@ -398,9 +398,15 @@ def cp(src, dst):
 
 
 def getSubfolder(step, volume):
-    "get a volume subfolder, eg ('adjust','5101') -> 'data/step03_adjusted/VGISS_5101/'"
+    """
+    Get a volume subfolder, eg ('adjust','5101') -> 'data/step03_adjust/VGISS_5101/'
+    volume can be a string or integer
+    """
     folder = config.folders[step]
-    subfolder = folder + 'VGISS_' + volume + '/'
+    if step in ['download','unzip','import']:
+        subfolder = folder + 'VG_%04d' % int(volume) + '/'
+    else:
+        subfolder = folder + 'VGISS_' + str(volume) + '/'
     return subfolder
 
 
@@ -707,33 +713,49 @@ def getDownloadUrl(edrVol):
 
 
 def unzipFile(zipfile, destfolder, overwrite=False):
-    "Unzip a file to a destination folder."
-    # eg unzipFile('test/unzip_test.tar', 'test/unzip_test/')
+    """
+    Unzip a file to a destination folder.
+    eg unzipFile('test/unzip_test.tar', 'test/unzip_test/')
 
-    # assumes zip file is a .tar or .tar.gz file.
-    # by default doesn't unzip file if destination folder already exists.
+    assumes zip file is a .tar or .tar.gz file.
+    by default doesn't unzip file if destination folder already exists.
 
     #. but note - tar file can have a top-level folder, or not -
-    # this is assuming that it does, which is why we actually extract the tarfile
-    # to the parent folder of destfolder.
+    this is assuming that it does, which is why we actually extract the tarfile
+    to the parent folder of destfolder.
+    """
 
     if os.path.isdir(destfolder) and overwrite==False:
         print "Folder " + destfolder + " already exists - not unzipping"
         return False
     else:
         rmdir(destfolder)
-        # tried just building a commandline tar cmd but had issues with windows paths etc
-        # this is just as fast anyway
-        parentfolder = destfolder + "/.."
-        archive_util.unpack_archive(zipfile, parentfolder)
+        mkdir_p(destfolder)
+        parentfolder = destfolder + ".."
+        # archive_util.unpack_archive(zipfile, parentfolder) # throws error - folder exists
+        # archive_util.unpack_archive(zipfile, destfolder) # extracts to a subfolder
+        # cmd = 'tar -x -f %s --directory %s --totals' % (zipfile, parentfolder)
+
+        # tar:
+        # -x extract
+        # -f file
+        # --directory is the output folder
+        # --checkpoint specifies block interval to print status.
+        # --checkpoint-action specifies the status line to print.
+        # note the %'s need doubling in the action string
+        # --totals shows status at the end
+        cmd = 'tar -x -f %s --directory %s' % (zipfile, parentfolder)
+        cmd += ' --checkpoint=100 --checkpoint-action="ttyout=Unzipping - %T output\r" --totals'
+        print cmd.replace('\r','')
+        # os.system(cmd)
+        import subprocess
+        subprocess.check_output(cmd, shell=True)
         return True
 
 
 
 if __name__ == '__main__':
     os.chdir('..')
-
-    # print getFilepath('inpaint', '5102', 'C1234567')
 
     # print getDownloadUrl(14)
 
@@ -746,6 +768,12 @@ if __name__ == '__main__':
     # print getVolumeNumbers('13')
     # print getVolumeNumbers('13-20')
 
+    print getSubfolder('download','3')
+    print getSubfolder('unzip','9')
+    print getSubfolder('import',9)
+    # print getSubfolder('spice',5101)
+
+    # print getFilepath('inpaint', '5102', 'C1234567')
 
     # print getImageIds('c1352753')
     # print getImageIds('c1352753-c1352764')

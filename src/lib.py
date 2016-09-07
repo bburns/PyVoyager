@@ -496,43 +496,46 @@ def getImageIds(s):
 
 
 def getVolumeNumbers(s):
-    # "parse a string like 5101-5108 or 5104 or 51* to an array of volnum integers"
-    "parse a string like 5101-5108 or 5104 or 51* to an array of volnum strings"
-    # eg getVolumeNumber('5201-5203') => ['5201','5202','5203']
+    """
+    Parse a string like 5101-5108 or 5104 or 51* to an array of volnum strings
+    eg getVolumeNumber('5201-5203') => ['5201','5202','5203']
+    String can also be an EDR volume or range, eg 15, or 13-20, but not a wildcard.
+    """
 
     # handle ranges, eg 8201-8204
     vols = s.split('-')
     if len(vols)==2:
-        vols = [int(vol) for vol in vols]
-        volrange = range(vols[0],vols[1]+1)
-        volrange = [str(vol) for vol in volrange]
-        return volrange # eg ['8201','8202','8203','8204']
+        vols = [int(vol) for vol in vols] # eg [8201,8204]
+        volrange = range(vols[0],vols[1]+1) # eg [8201,8202,8203,8204]
+        volrange = [str(vol) for vol in volrange] # eg ['8201','8202','8203','8204']
+        return volrange
 
-    # handle invidual volumes or wildcards
-    sregex = s.replace('*','.*') # eg '52.*'
-    regex = re.compile(sregex)
-    vols = []
-    svolumes = [str(vol) for vol in config.volumes] # all available volumes
-    for svolume in svolumes:
-        if re.match(regex, svolume):
-            # vols.append(int(svolume))
-            vols.append(svolume)
+    # handle wildcards
+    if '*' in s:
+        sregex = s.replace('*','.*') # eg '52.*'
+        regex = re.compile(sregex)
+        vols = []
+        svolumes = [str(vol) for vol in config.volumes] # all available PDS volumes
+        for svolume in svolumes:
+            if re.match(regex, svolume):
+                vols.append(svolume)
+        return vols
+
+    # handle single volume
+    vols = [s]
     return vols
 
 
 def rm(filepath):
     "remove a file, ignore error (eg if doesn't exist)"
-    #. add specific error handlers
-    # os.remove(filepath)
     try:
         os.remove(filepath)
     except Exception, e:
-        print e
-        print e.errno
-        # if e.errno==2: # [Error 3] The system cannot find the path specified:
-            # pass
-        # else:
-            # raise
+        if e.errno==2: # [Error 2] No such file or directory
+            pass
+        else:
+            print e
+            print e.errno
 
 
 def rmdir(folder):
@@ -548,11 +551,7 @@ def rmdir(folder):
         else:
             print e
             print e.errno
-            raise
-        # print e.message
-        # print exc
-        # print exc.errno
-        # pass
+            # raise
 
 
 def targetMatches(targetPathParts, system, craft, target, camera):
@@ -697,13 +696,14 @@ def downloadFile(url, filepath):
         return True
 
 
-def getDownloadUrl(volnum):
-    "Get url to download a volume"
-    # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
-    volprefix = str(volnum)[0:1] # first digit (=planet number)
-    url = config.downloadUrl.format(volprefix, volnum)
+def getDownloadUrl(edrVol):
+    """
+    Get url to download an EDR volume
+    eg http://pds-rings.seti.org/archives/VG_0xxx/VG_0006.tar.gz
+    """
+    edrVol = int(edrVol)
+    url = config.downloadUrl % edrVol
     return url
-
 
 
 def unzipFile(zipfile, destfolder, overwrite=False):
@@ -733,16 +733,19 @@ def unzipFile(zipfile, destfolder, overwrite=False):
 if __name__ == '__main__':
     os.chdir('..')
 
-    print getFilepath('inpaint', '5102', 'C1234567')
+    # print getFilepath('inpaint', '5102', 'C1234567')
 
+    # print getDownloadUrl(14)
 
-
-    # print getDownloadUrl(5101)
     # print getVolumeNumbers('5104')
     # print getVolumeNumbers('5104-5108')
     # print getVolumeNumbers('51*')
     # print getVolumeNumbers('5*')
     # print getVolumeNumbers('*')
+
+    # print getVolumeNumbers('13')
+    # print getVolumeNumbers('13-20')
+
 
     # print getImageIds('c1352753')
     # print getImageIds('c1352753-c1352764')

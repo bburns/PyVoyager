@@ -33,7 +33,9 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 # ----------------------------------------
 
 # voyager archive url
-downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+# downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+# eg http://pds-rings.seti.org/archives/VG_0xxx/VG_0006.tar.gz
+downloadUrl = "http://pds-rings.seti.org/archives/VG_0xxx/VG_%04d.tar.gz"
 
 
 # Convert
@@ -366,7 +368,7 @@ clipsMinFrames = 20
 # convention: all folders should end with /
 
 # folders for data and images
-# use offline folder for large datasets (multi gigabyte)
+# could use offline folder for large datasets (multi gigabyte)
 onlineFolder  = "data/"
 offlineFolder = "data/" # e.g. could be f:/...
 

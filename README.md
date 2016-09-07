@@ -2,9 +2,9 @@
 PyVoyager
 ========================================
 
-Version 0.5 inprogress
+Version 0.49
 
-(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives also). 
+(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives). 
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
@@ -194,6 +194,10 @@ $ sudo pip install spiceypy
 $ sudo pip install tabulate
 $ sudo pip install more_itertools
 $ sudo pip install python-dateutil
+
+# get some other commands
+$ sudo apt install beep
+
 </pre>
 
 
@@ -394,7 +398,11 @@ History
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
 
-Version 0.48 (2016-08-)
+Version 0.49 (2016-08-07)
+----------------------------------------
+- Switching to Linux and EDR archives so can use ISIS - `vg download` downloads EDR volumes 1-33 now
+
+Version 0.48 (2016-08-07)
 ----------------------------------------
 - Add `vg crop` command and `crops.csv` to crop/zoom in on images
 - Add `vg pages` command to generate intro, epilogue, credits, etc.

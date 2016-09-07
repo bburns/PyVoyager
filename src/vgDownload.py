@@ -12,19 +12,19 @@ import config
 import lib
 
 
-def vgDownload(volnum, overwrite=False, directCall=True):
+def vgDownload(edrVol, overwrite=False, directCall=True):
 
-    "Download the given volume number, if it doesn't exist yet."
+    "Download the given EDR volume number, if it doesn't exist yet."
 
-    volnum = str(volnum)
+    edrVol = str(edrVol)
 
     # get url
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
-    url = lib.getDownloadUrl(volnum)
+    url = lib.getDownloadUrl(edrVol)
 
     # get download location
-    filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-    filepath = config.folders['download'] + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
+    filetitle = url.split('/')[-1] # eg VG_0013.tar.gz
+    filepath = config.folders['download'] + filetitle # eg data/step01_download/VG_0013.tar.gz
 
     # quit if volume folder exists
     if os.path.isfile(filepath) and overwrite==False:

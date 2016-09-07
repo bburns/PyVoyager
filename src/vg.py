@@ -5,28 +5,33 @@
 """
 PyVoyager commands
 
-  vg download            - download volume(s)
-  vg unzip               - unzip volume(s)
-  vg convert             - convert IMGs to PNGs
-  vg adjust              - adjust images (rotate and enhance)
-  vg denoise             - remove noise from images
-  vg center              - center images
-  vg inpaint             - fill in missing pixels where possible
-  vg composite           - create color images
-  vg map                 - build up 2d color maps
-  vg colorize            - colorize images using 2d color maps
-  vg crop                - crop/zoom in on images
+  vg download <edrvols>  - download EDR volume(s)
+  vg unzip <edrvols>     - unzip EDR volume(s)
+  vg import <edrvols>    - convert IMQs to CUBs and reorganize folders
+
+  <edrvols>    = 13..20 Voyager 1 Jupiter
+                 20..25 Voyager 2 Jupiter
+                 26..33 Voyager 1 Saturn
+                 33..38 Voyager 2 Saturn
+                 01..03 Voyager 2 Uranus
+                 09..12 Voyager 2 Neptune
+                 (ranges like 13-20 are ok)
+
+  vg adjust <filter>     - adjust images (rotate and enhance)
+  vg denoise <filter>    - remove noise from images
+  vg center <filter>     - center images
+  vg inpaint <filter>    - fill in missing pixels where possible
+  vg composite <filter>  - create color images
+  vg map <filter>        - build up 2d color maps
+  vg colorize <filter>   - colorize images using 2d color maps
+  vg crop <filter>       - crop/zoom in on images
   vg target              - copy images into target subfolders
   vg clips               - create bw or color clips
   vg movies              - create movies from clips
-  vg list                - show status of local datasets
+  vg list [<vols>]       - show status of local datasets
   vg clear <step> <vols> - remove volume folders
 
-  vg test denoise        - run denoising tests
-  vg test center         - run centering tests
-  vg test composite      - run compositing tests
-
-where most commands can be followed by <filter> and <options>, where
+Most commands can be followed by <filter> and <options>, where
 
   <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
                  (all are anded together)
@@ -39,14 +44,21 @@ where most commands can be followed by <filter> and <options>, where
                  (ranges and wildcards like 5101-5104 or 51* are ok)
   <imageIds>   = imageId or range, like C1234567, C1234567-C1234569
   <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
-  <system>     = Jupiter|Saturn|Uranus|Neptune
-  <spacecraft> = Voyager1|Voyager2
-  <target>     = Jupiter|Io|Europa|, etc.
-  <camera>     = Narrow|Wide
+  <system>     = Jupiter | Saturn | Uranus | Neptune
+  <spacecraft> = Voyager1 | Voyager2
+  <target>     = Jupiter | Io | Europa | , etc.
+  <camera>     = Narrow | Wide
+
   <options>    = -y overwrite existing volume data
 
 e.g. vg clips 8205 //triton
 """
+
+# also...
+  # vg test denoise        - run denoising tests
+  # vg test center         - run centering tests
+  # vg test composite      - run compositing tests
+
 
 import sys
 import os

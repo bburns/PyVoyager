@@ -2,17 +2,20 @@
 PyVoyager
 ========================================
 
-Version 0.48 inprogress
+Version 0.5 inprogress
+
+(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives also). 
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
-The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate. 
+<!-- The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate.  -->
 
 <!-- This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files.  -->
 
 It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. 
 
-There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore!
+<!-- There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore! -->
+There are a total of 70k+ images in the Voyager archives, so there is a lot to explore!
 
 You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
 
@@ -130,13 +133,68 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 Installation
 ----------------------------------------
 
-You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** version 3 [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], **more-itertools** [14], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12]. 
+<!-- You'll need **Windows**, **Python 2.7**, **img2png** [2], **OpenCV** version 3 [4], **SciPy** [3], **NumPy** [5], **Matplotlib** [6], **Pillow** [8], **tabulate** [10], **more-itertools** [14], and **ffmpeg** [7]. Building one of the included .csv data files (positions.csv) requires **SpiceyPy** [11], a Python interface to **SPICE** [12].  -->
 
-I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**, and added the rest with `pip`. 
+<!-- I started with an installation of **Anaconda** [9], a Python distribution with lots of pre-installed scientific libraries, including **Matplotlib**, **NumPy**, **Pillow**, and **SciPy**, and added the rest with `pip`.  -->
 
-At this point I'm not sure how rough the installation process might be. 
+<!-- At this point I'm not sure how rough the installation process might be.  -->
 
-Note that **img2png** is only available on Windows - in the future, the PNG images (or JPGs) could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use, if the editing needs to be distributed.
+<!-- Note that **img2png** is only available on Windows - in the future, the PNG images (or JPGs) could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use, if the editing needs to be distributed. -->
+
+### Setting up a virtual machine on Windows
+
+* Install VirtualBox [22]
+* Create a VM - set disk space at least 20GB, Memory at least 1GB
+* Install a 64-bit Linux distro on it, e.g. Ubuntu or Xubuntu
+* Install the Guest Additions (for higher screen resolutions and clipboard support)
+
+### Starting from Ubuntu 16.04 (Python 2.7 included) 
+
+<pre>
+# get Java, for ISIS installer
+$ sudo apt-get install default-jre
+$ sudo add-apt-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install oracle-java8-installer
+
+# get ISIS
+$ curl -O https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
+$ chmod +x isisInstall.sh
+$ ./isisInstall.sh
+
+add to ~/.profile:
+ISISROOT=/home/bburns/Isis/isis
+export ISISROOT
+. $ISISROOT/scripts/isis3Startup.sh
+
+# get libblas3gf and libjpeg62
+$ curl -O http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+$ sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+$ sudo apt-get install libjpeg62
+
+# get opencv2
+$ sudo apt-get install libopencv-dev
+
+# get libvpx
+$ curl -O http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
+$ sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
+
+# get pip
+$ sudo apt install python-pip
+$ sudo pip install --upgrade pip
+
+# get numpy, scipy, matplotlib
+$ sudo apt-get install python-numpy python-scipy python-matplotlib
+
+# get cv2
+$ sudo apt-get install python-opencv
+
+# get some other python libraries
+$ sudo pip install spiceypy
+$ sudo pip install tabulate
+$ sudo pip install more_itertools
+$ sudo pip install python-dateutil
+</pre>
 
 
 Usage
@@ -523,3 +581,5 @@ This software is released under the MIT license - see LICENSE.md.
 [18]: https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)
 [19]: https://en.wikipedia.org/wiki/RANSAC
 [20]: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_orb/py_orb.html
+[21]: https://isis.astrogeology.usgs.gov/
+[22]: https://www.virtualbox.org/

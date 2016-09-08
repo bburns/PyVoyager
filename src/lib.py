@@ -403,7 +403,7 @@ def getSubfolder(step, volume):
     volume can be a string or integer
     """
     folder = config.folders[step]
-    if step in ['download','unzip','import']:
+    if step in ['download','unzip']:
         subfolder = folder + 'VG_%04d' % int(volume) + '/'
     else:
         subfolder = folder + 'VGISS_' + str(volume) + '/'
@@ -753,9 +753,28 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         return True
 
 
+def getEdrVols(pdsVol):
+    """
+    get EDR volumes associated with the given PDS volume.
+    pdsVol can be a number or string like 5104.
+    will return an array with EDR volume numbers as strings, eg ['13','14'].
+    """
+    pdsVol = str(pdsVol)
+    edrVols = []
+    for line in config.pdsToEdr:
+        pdsVols = line[0]
+        edrVol = line[1][-2:] # just the last 2 digits
+        pdsVolArray = getVolumeNumbers(pdsVols)
+        if pdsVol in pdsVolArray:
+            edrVols.append(edrVol)
+    return edrVols
+
 
 if __name__ == '__main__':
     os.chdir('..')
+
+    # print getEdrVols('5101')
+    # print getEdrVols('5104')
 
     # print getDownloadUrl(14)
 
@@ -768,9 +787,9 @@ if __name__ == '__main__':
     # print getVolumeNumbers('13')
     # print getVolumeNumbers('13-20')
 
-    print getSubfolder('download','3')
-    print getSubfolder('unzip','9')
-    print getSubfolder('import',9)
+    # print getSubfolder('download','3')
+    # print getSubfolder('unzip','9')
+    # print getSubfolder('import',9)
     # print getSubfolder('spice',5101)
 
     # print getFilepath('inpaint', '5102', 'C1234567')

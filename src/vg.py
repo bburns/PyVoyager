@@ -7,7 +7,6 @@ PyVoyager commands
 
   vg download <edrvols>  - download EDR volume(s)
   vg unzip <edrvols>     - unzip EDR volume(s)
-  vg import <edrvols>    - convert IMQs to CUBs and reorganize folders
 
   <edrvols>    = 13..20 Voyager 1 Jupiter
                  20..25 Voyager 2 Jupiter
@@ -17,6 +16,7 @@ PyVoyager commands
                  09..12 Voyager 2 Neptune
                  (ranges like 13-20 are ok)
 
+  vg import <volnums>    - convert IMQs to CUBs and reorganize folders
   vg adjust <filter>     - adjust images (rotate and enhance)
   vg denoise <filter>    - remove noise from images
   vg center <filter>     - center images
@@ -73,6 +73,7 @@ import log
 
 import vgDownload
 import vgUnzip
+import vgImport
 import vgConvert
 import vgAdjust
 import vgDenoise
@@ -152,6 +153,11 @@ if cmd=="download":
 elif cmd=="unzip":
     for filterVolume in filterVolumes:
         vgUnzip.vgUnzip(filterVolume, optionOverwrite)
+    lib.beep()
+
+elif cmd=="import":
+    for filterVolume in filterVolumes:
+        vgImport.vgImport(filterVolume, optionOverwrite)
     lib.beep()
 
 elif cmd=="convert":

@@ -20,6 +20,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
 
     pdsVol = str(pdsVol)
     edrVols = lib.getEdrVols(pdsVol) # eg ['13','14']
+    # edrVols,fileRange = lib.getEdrVols(pdsVol) # eg ['13','14']
     # print edrVols
     
     outputSubfolder = lib.getSubfolder('import', pdsVol)
@@ -33,28 +34,43 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
     # create dest folder
     lib.mkdir(outputSubfolder)
 
+    # unzip the downloads, if not already there
     for edrVol in edrVols:
-        inputSubfolder = lib.getSubfolder('unzip', edrVol)
-        # print inputSubfolder
-
-        # unzip the download, if not already there
         vgUnzip.vgUnzip(edrVol, directCall=False)
 
-        # run voy2isis on each imq file in subdirs
-        print "Importing imqs to cubs for " + inputSubfolder
-        exclude = set(['BROWSE', 'CALIB', 'DOCUMENT', 'INDEX', 'LABEL', 'RESTORED', 'SOFTWARE'])
-        for root, dirs, files in os.walk(inputSubfolder, topdown=True):
-            dirs[:] = [d for d in dirs if d not in exclude]
-            ndirs = len(dirs)
-            if ndirs == 0: # ie we're at a leaf, with just files
-                # print inputSubfolder, root, outputSubfolder
-                for filename in files:
-                    sourceFile = root + '/' + filename
-                    destFile = outputSubfolder + filename[:-4] + '.cub'
-                    cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
-                    print cmd + '               \r',
-                    os.system(cmd)
-        print
+    # open files.csv for reading
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
+
+    # iterate over all available files
+    for row in csvFiles:
+        vol = row[config.colFilesVolume]
+        if vol==pdsVol:
+            fileId = row[config.colFilesFileId]
+            target = row[config.colFilesTarget]
+            
+            edrVol = lib.getEdrVol(fileId)
+            
+            inputSubfolder = lib.getSubfolder('unzip', edrVol)
+            subfolder = fileId[:5] + 'XXX/'
+            sourceFile = inputSubfolder + target + '/' + subfolder + fileId + '.IMQ'
+        
+            if os.path.isfile(sourceFile):
+                destFile = outputSubfolder + fileId + '.cub'
+                cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
+                # print cmd
+                print cmd + '               \r',
+                os.system(cmd)
+                # stop
+            else:
+                #. missing file may be in RESTORED folder - check there
+                if target!='Dark':
+                    print
+                    print 'Warning: missing file - edr%s pds%s, %s' % (edrVol,pdsVol,sourceFile)
+                    print
+    
+    fFiles.close()
+    
+    print
 
 
 if __name__ == '__main__':

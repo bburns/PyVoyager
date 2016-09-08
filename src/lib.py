@@ -762,16 +762,36 @@ def getEdrVols(pdsVol):
     pdsVol = str(pdsVol)
     edrVols = []
     for line in config.pdsToEdr:
-        pdsVols = line[0]
-        edrVol = line[1][-2:] # just the last 2 digits
+        pdsVols = line[1]
+        edrVol = line[2][-2:] # just the last 2 digits
         pdsVolArray = getVolumeNumbers(pdsVols)
         if pdsVol in pdsVolArray:
             edrVols.append(edrVol)
     return edrVols
 
 
+def getEdrVol(fileId):
+    """
+    get the EDR volume associated with the given fileId
+    """
+    lastEdrVol = ''
+    for line in config.pdsToEdr:
+        edrVol = line[2][-2:] # just last 2 digits
+        fileIdMin = line[3]
+        if fileId < fileIdMin:
+            edrVol = lastEdrVol
+            break
+        lastEdrVol = edrVol
+    return edrVol
+
+
 if __name__ == '__main__':
     os.chdir('..')
+
+    # print getEdrVol('C0896631')
+    # print getEdrVol('C1234567')
+    # print getEdrVol('C1460413')
+    # print getEdrVol('C4430452')
 
     # print getEdrVols('5101')
     # print getEdrVols('5104')

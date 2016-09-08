@@ -2,7 +2,8 @@
 """
 vg import command
 
-Import Voyager .imq files to cube (.cub) files using ISIS voy2isis.
+Import Voyager .imq files to cube (.cub) files using ISIS voy2isis and
+attach SPICE information with spiceinit.
 """
 
 import os.path
@@ -20,19 +21,16 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
 
     pdsVol = str(pdsVol)
     edrVols = lib.getEdrVols(pdsVol) # eg ['13','14']
-    # edrVols,fileRange = lib.getEdrVols(pdsVol) # eg ['13','14']
-    # print edrVols
     
-    outputSubfolder = lib.getSubfolder('import', pdsVol)
-    # print outputSubfolder
+    importSubfolder = lib.getSubfolder('import', pdsVol)
     
     # quit if volume folder exists
-    if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-        if directCall: print "Folder exists: " + outputSubfolder
+    if os.path.isdir(importSubfolder) and optionOverwrite==False:
+        if directCall: print "Folder exists: " + importSubfolder
         return
 
     # create dest folder
-    lib.mkdir(outputSubfolder)
+    lib.mkdir(importSubfolder)
 
     # unzip the downloads, if not already there
     for edrVol in edrVols:
@@ -42,6 +40,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
     csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
 
     # iterate over all available files
+    nfile = 1
     for row in csvFiles:
         vol = row[config.colFilesVolume]
         if vol==pdsVol:
@@ -55,11 +54,15 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             sourceFile = inputSubfolder + target + '/' + subfolder + fileId + '.IMQ'
         
             if os.path.isfile(sourceFile):
-                destFile = outputSubfolder + fileId + '.cub'
+                destFile = importSubfolder + fileId + '.cub'
                 cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
                 # print cmd
                 print cmd + '               \r',
-                os.system(cmd)
+                lib.system(cmd)
+                nfile += 1
+                if nfile>10:
+                    print
+                    stop
                 # stop
             else:
                 #. missing file may be in RESTORED folder - check there

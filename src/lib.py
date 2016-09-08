@@ -5,6 +5,7 @@
 
 
 import os
+import subprocess
 import os.path
 import shutil
 from setuptools import archive_util # for unpack_archive
@@ -748,8 +749,8 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         cmd += ' --checkpoint=100 --checkpoint-action="ttyout=Unzipping - %T output\r" --totals'
         print cmd.replace('\r','')
         # os.system(cmd)
-        import subprocess
-        subprocess.check_output(cmd, shell=True)
+        # subprocess.check_output(cmd, shell=True)
+        system(cmd)
         return True
 
 
@@ -783,6 +784,11 @@ def getEdrVol(fileId):
             break
         lastEdrVol = edrVol
     return edrVol
+
+
+def system(cmd):
+    "run the console command, showing output along the way"
+    subprocess.check_output(cmd, shell=True)
 
 
 if __name__ == '__main__':

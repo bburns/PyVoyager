@@ -152,51 +152,68 @@ Installation
 
 <pre>
 # get Java, for ISIS installer
-$ sudo apt-get install default-jre
-$ sudo add-apt-repository ppa:webupd8team/java
-$ sudo apt-get update
-$ sudo apt-get install oracle-java8-installer
+sudo apt install default-jre
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt update
+sudo apt install oracle-java8-installer
 
 # get ISIS
-$ curl -O https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
-$ chmod +x isisInstall.sh
-$ ./isisInstall.sh
+curl -O https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
+chmod +x isisInstall.sh
+./isisInstall.sh
 
-add to ~/.profile:
-ISISROOT=/home/bburns/Isis/isis
-export ISISROOT
-. $ISISROOT/scripts/isis3Startup.sh
+# add startup commands
+echo export ISISROOT=~/Isis/isis >> ~/.profile
+echo . $ISISROOT/scripts/isis3Startup.sh >> ~/.profile
+source ~/.profile
+
+# get spice
+
+# get spice kernels locally
+pushd $ISIS3DATA
+rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager1 .
+rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager2 .
+popd
+
+# get some different voyager 1 and jupiter spk kernels
+#. make a $Voyager variable
+#. could just add these to git
+pushd ~/Desktop/Voyager/kernels/spk
+curl -O ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+curl -O ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+popd
 
 # get libblas3gf and libjpeg62
-$ curl -O http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
-$ sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
-$ sudo apt-get install libjpeg62
+curl -O http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+sudo apt install libjpeg62
 
 # get opencv2
-$ sudo apt-get install libopencv-dev
+sudo apt install libopencv-dev
 
 # get libvpx
-$ curl -O http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
-$ sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
+curl -O http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
+sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
 
 # get pip
-$ sudo apt install python-pip
-$ sudo pip install --upgrade pip
+sudo apt install python-pip
+sudo pip install --upgrade pip
 
 # get numpy, scipy, matplotlib
-$ sudo apt-get install python-numpy python-scipy python-matplotlib
+sudo apt install python-numpy python-scipy python-matplotlib
 
 # get cv2
-$ sudo apt-get install python-opencv
+sudo apt install python-opencv
 
 # get some other python libraries
-$ sudo pip install spiceypy
-$ sudo pip install tabulate
-$ sudo pip install more_itertools
-$ sudo pip install python-dateutil
+sudo pip install spiceypy
+sudo pip install tabulate
+sudo pip install more_itertools
+sudo pip install python-dateutil
 
 # get some other commands
-$ sudo apt install beep
+sudo apt install beep
+sudo apt install parallel
 
 </pre>
 
@@ -400,8 +417,8 @@ History
 
 Version 0.5 (2016-08-)
 ----------------------------------------
-- Steps download, unzip handle EDR archives
-- Step import converts EDR IMQ files to ISIS CUB files in reorganized folders, per newer PDS conventions
+- `vg download`, `vg unzip` handle EDR archives
+- `vg import` converts EDR IMQ files to ISIS CUB files in reorganized folders, per newer PDS conventions
 - Steps ___
 
 Version 0.49 (2016-08-07)

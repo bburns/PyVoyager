@@ -424,7 +424,8 @@ def getFilepath(step, volume, fileId, filter=None):
         filetitle = fileId + suffix + '_' + filter + config.extension
     else:
         # eg C1641820_composite.jpg
-        filetitle = fileId + suffix + config.extension
+        # filetitle = fileId + suffix + config.extension
+        filetitle = fileId + suffix + '.cub'
     filepath = subfolder + filetitle
     return filepath
 

@@ -52,9 +52,11 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             inputSubfolder = lib.getSubfolder('unzip', edrVol)
             subfolder = fileId[:5] + 'XXX/'
             sourceFile = inputSubfolder + target + '/' + subfolder + fileId + '.IMQ'
+            # sourceFile = lib.getFilepath('unzip', edrVol, target
         
             if os.path.isfile(sourceFile):
-                destFile = importSubfolder + fileId + '.cub'
+                # destFile = importSubfolder + fileId + '.cub'
+                destFile = lib.getFilepath('import', edrVol, fileId)
                 cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
                 # print cmd
                 print cmd + '               \r',

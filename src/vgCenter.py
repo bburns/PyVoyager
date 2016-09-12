@@ -35,37 +35,35 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
     #. will eventually also want to fine tune stability in relation to previous and next image.
 
-    # #. if file contains the given volume, either stop or remove those lines
-    # s = ',' + filterVolume + ','
-    # if lib.fileContainsString(config.dbCenters, s):
-    #     if optionOverwrite:
-    #         lib.removeLinesFromFile(config.dbCenters, s)
-    #     else:
-    #         print 'Centers.csv already contains volume ' + filterVolume + ' - run with -y to optionOverwrite'
-    #         return
-
+    
     if filterVolume!='':
 
-        #. just do adjust for now
-        # inputSubfolder = lib.getSubfolder('denoise', filterVolume)
-        inputSubfolder = lib.getSubfolder('adjust', filterVolume)
-        outputSubfolder = lib.getSubfolder('center', filterVolume)
-
-        # quit if volume folder exists
-        if os.path.isdir(outputSubfolder) and optionOverwrite==False:
-            if directCall: print "Folder exists: " + outputSubfolder
-            return
-
-        # build the previous images for the volume, if not already there
-        #. handle indiv images also - could lookup volume by fileid, call vgadjust here
-        vgAdjust.vgAdjust(filterVolume, '', optionOverwrite=False, directCall=False)
-        # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
+        importSubfolder = lib.getSubfolder('import', filterVolume)
         
-        # create folder
-        lib.mkdir(outputSubfolder)
+        jpegSubfolder = importSubfolder + 'jpegs/'
+        lib.mkdir(jpegSubfolder)
+        
+    #     # #. just do adjust for now
+    #     # # inputSubfolder = lib.getSubfolder('denoise', filterVolume)
+    #     # inputSubfolder = lib.getSubfolder('adjust', filterVolume)
+    #     # outputSubfolder = lib.getSubfolder('center', filterVolume)
+
+    #     # # quit if volume folder exists
+    #     # if os.path.isdir(outputSubfolder) and optionOverwrite==False:
+    #     #     if directCall: print "Folder exists: " + outputSubfolder
+    #     #     return
+
+    #     # # build the previous images for the volume, if not already there
+    #     # #. handle indiv images also - could lookup volume by fileid, call vgadjust here
+    #     # vgAdjust.vgAdjust(filterVolume, '', optionOverwrite=False, directCall=False)
+    #     # # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
+        
+    #     # # create folder
+    #     # lib.mkdir(outputSubfolder)
 
         # get number of files to process
-        nfiles = len(os.listdir(inputSubfolder))
+        # nfiles = len(os.listdir(inputSubfolder))
+        nfiles = len(os.listdir(importSubfolder))
     else:
         nfiles = 1
 
@@ -104,53 +102,67 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(retargetingInfo, fileId, target)
 
         # get filenames
-        infile = lib.getFilepath('denoise', volume, fileId, filter)
-        if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
-            infile = lib.getFilepath('adjust', volume, fileId, filter)
-        # infile = lib.getFilepath('adjust', volume, fileId, filter)
-        outfile = lib.getFilepath('center', volume, fileId, filter)
+        # infile = lib.getFilepath('denoise', volume, fileId, filter)
+        # if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
+        #     infile = lib.getFilepath('adjust', volume, fileId, filter)
+        # # infile = lib.getFilepath('adjust', volume, fileId, filter)
+        # outfile = lib.getFilepath('center', volume, fileId, filter)
+        cubefile = lib.getFilepath('import', volume, fileId)
 
-        log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
+        # log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))
+        # log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,cubefile))
+        # print 'Volume %s centering %d/%d: %s              \r' % (volume,nfile,nfiles,cubefile),
         nfile += 1
 
-        # get expected angular size (as fraction of frame) and radius
-        imageFraction = lib.getImageFraction(csvPositions, fileId)
-        targetRadius = int(400*imageFraction) #.param
+        if os.path.isfile(cubefile):
 
-        # do we actually need to center this image?
-        doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
-        if doCenter:
+            # export to jpg
+            # png takes about same amt of time
+            # imagefile = cubefile[:-4] + '.png'
+            # cmd = "isis2std from=%s to=%s format=png" % (cubefile, imagefile)
+            imagefile = jpegSubfolder + fileId + '.jpg'
+            cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile, imagefile)
+            print cmd
+            os.system(cmd)
 
-            # find center of target using blob and hough, then alignment to fixedimage.
-            x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
-            if stabilizationOk:
-                x += int(round(dx))
-                y += int(round(dy))
+            # # get expected angular size (as fraction of frame) and radius
+            # imageFraction = lib.getImageFraction(csvPositions, fileId)
+            # targetRadius = int(400*imageFraction) #.param
 
-            # write x,y,radius to newcenters file
-            rowNew = [fileId, volume, x, y, foundRadius]
-            csvNewCenters.writerow(rowNew)
-            
-        # don't really need to do this as further stages could just fall back on adjusted images
-        # else: # don't need to center image, so just copy as is
-            #. should outfile keep the _denoised or _adjusted tag?
-            # lib.cp(infile, outfile)
+            # # do we actually need to center this image?
+            # doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
+            # if doCenter:
+
+            #     # find center of target using blob and hough, then alignment to fixedimage.
+            #     x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
+            #     dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
+            #     if stabilizationOk:
+            #         x += int(round(dx))
+            #         y += int(round(dy))
+
+            #     # write x,y,radius to newcenters file
+            #     rowNew = [fileId, volume, x, y, foundRadius]
+            #     csvNewCenters.writerow(rowNew)
+
+            # # don't really need to do this as further stages could just fall back on adjusted images
+            # # else: # don't need to center image, so just copy as is
+            #     #. should outfile keep the _denoised or _adjusted tag?
+            #     # lib.cp(infile, outfile)
             
 
     fPositions.close()
     fNewCenters.close()
     fFiles.close()
 
-    # now append newcenters records to centers file
-    if os.path.isfile(config.dbCentersNew):
-        lib.concatFiles(config.dbCenters, config.dbCentersNew)
-        lib.rm(config.dbCentersNew)
-        print
-        print 'New records appended to centers.csv file - please make sure any ' + \
-              'older records are removed and the file is sorted before committing it to git'
-    else:
-        print
+    # # now append newcenters records to centers file
+    # if os.path.isfile(config.dbCentersNew):
+    #     lib.concatFiles(config.dbCenters, config.dbCentersNew)
+    #     lib.rm(config.dbCentersNew)
+    #     print
+    #     print 'New records appended to centers.csv file - please make sure any ' + \
+    #           'older records are removed and the file is sorted before committing it to git'
+    # else:
+    #     print
 
 
 if __name__ == '__main__':

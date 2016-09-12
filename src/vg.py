@@ -182,14 +182,14 @@ elif cmd=="denoise":
     lib.beep()
 
 elif cmd=="center":
-    log.start()
+    # log.start()
     if filterImageIds:
         for imageId in filterImageIds:
             vgCenter.vgCenter('', imageId, optionOverwrite)
     else:
         for filterVolume in filterVolumes:
             vgCenter.vgCenter(filterVolume, '', optionOverwrite)
-    log.stop()
+    # log.stop()
     lib.beep()
 
 elif cmd=="inpaint":

@@ -4,7 +4,7 @@ PyVoyager
 
 Version 0.5 inprogress
 
-(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives). 
+(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will also require switching from PDS archives to EDR archives). 
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
@@ -214,6 +214,7 @@ sudo pip install python-dateutil
 # get some other commands
 sudo apt install beep
 sudo apt install parallel
+sudo apt install eog
 
 </pre>
 

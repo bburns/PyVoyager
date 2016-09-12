@@ -3,26 +3,29 @@
 vg map command
 
 Build up 2d color maps of targets
-
-kernels from
-# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ck/vgr1_super.bc
-http://pds-rings.seti.org/voyager/ck/vg1_jup_version1_type1_iss_sedr.bc
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/sclk/vg100019.tsc
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
-http://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_issna_v02.ti
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_isswa_v01.ti
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_issna_v02.ti
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_isswa_v01.ti
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg1_v02.tf
-http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg2_v02.tf
 """
+
+#. this code is very long and hard to understand - break up into descriptive fns
+
+
+# kernels from
+# # http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ck/vgr1_super.bc
+# http://pds-rings.seti.org/voyager/ck/vg1_jup_version1_type1_iss_sedr.bc
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/sclk/vg100019.tsc
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_issna_v02.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_isswa_v01.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_issna_v02.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_isswa_v01.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg1_v02.tf
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg2_v02.tf
 
 import os
 import os.path
@@ -103,8 +106,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     # cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
     fov = config.cameraFOVs['Narrow'] * math.pi / 180
     # fov = config.cameraFOVs['Wide'] * math.pi / 180
-    f = 1.0 / math.tan(fov/2)
-    # f = 1.0
+    f = 1.0 / math.tan(fov/2) # focal length (relative to screen halfwidth of 1.0)
     
     # print help(spice.bodn2c)
 
@@ -116,10 +118,12 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     # shape, dref, bsight, n, bounds = spice.getfov(cameraId, 4, 20,20)
     shape, cameraName, cameraBoresight, nbounds, bounds = spice.getfov(cameraId, 4)
     # print shape, cameraName, cameraBoresight, nbounds, bounds
-    # RECTANGLE VG1_ISSNA [ 0.  0.  1.] 4 [[ 0.0037001  0.0037001  1.       ]
+    # RECTANGLE VG1_ISSNA [ 0.  0.  1.] 4
+    # [[ 0.0037001  0.0037001  1.       ]
     #  [-0.0037001  0.0037001  1.       ]
     #  [-0.0037001 -0.0037001  1.       ]
     #  [ 0.0037001 -0.0037001  1.       ]]
+    # so the boresight is along the z axis (in camera space)
     
     
     # size of 2d map
@@ -233,7 +237,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print
         
         # get location of prime meridian
-        rotationRate = 870.5366420 # deg/day
+        rotationRate = 870.5366420 # deg/day for great red spot
         primeMeridian = rotationRate /24/60/60 * ephemerisTime # deg
         print 'primeMeridian (deg)', primeMeridian % 360
         # rotationRateRadiansPerSec = rotationRateDegPerDay * math.pi/180 /24/60/60
@@ -258,7 +262,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         distance = libspice.getDistance(position)
         print 'distance in km',distance
         
-        # # normalize position vector
+        # normalize position vector
         posnormal = position / distance
         print 'position normalized', posnormal
         

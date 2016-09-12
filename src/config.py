@@ -410,6 +410,7 @@ musicFolder = 'music/'
 
 # parts of filenames
 suffixes = {
+    'import':    '',
     'convert':   '',
     'adjust':    '_adjusted',
     'denoise':   '_denoised',

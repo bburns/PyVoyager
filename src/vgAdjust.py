@@ -43,36 +43,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #     nfiles = 1
 
 
-    voydir = os.getcwd()
     os.chdir(importSubfolder)
-
-    # add spice info (spiceinit)
-    print "Adding SPICE geometry info (spiceinit)..."
-    # voydir = os.getcwd()
-    # os.chdir(importSubfolder)
-    # cmd = "parallel spiceinit from={} web=yes ::: *.cub" # error on some imq's
-    # parallel spiceinit from={} \
-    #     TSPK=/home/bburns/Desktop/Voyager/kernels/spk/jup100.bsp \
-    #     SPK=/home/bburns/Desktop/Voyager/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp \
-    #     ::: *.cub
-    # parallel spiceinit from={} \
-        # TSPK=$VOYAGER/kernels/spk/jup100.bsp \
-        # SPK=$VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp \
-        # ::: *.cub
-    # tspk = "../../../kernels/spk/jup100.bsp"
-    # spk = "../../../kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
-    # tspk = "$VOYAGER/kernels/spk/jup100.bsp"
-    # spk = "$VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
-
-    tspk = voydir + "/kernels/spk/jup100.bsp"
-    spk = voydir + "/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
-    cmd = "parallel spiceinit from={} TSPK=%s SPK=%s ::: C???????.cub" % (tspk, spk)
-    print cmd
-    lib.system(cmd)
-    print
-
-    # now we have level 0 files
-
 
     # remove reseau marks
     print "Removing reseau marks (findrx, remrx)..."

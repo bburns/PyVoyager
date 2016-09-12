@@ -842,9 +842,9 @@ def centerImageFileAt(infile, outfile, x, y):
     imwrite(outfile, im)
 
 
-def centerImageFile(infile, outfile, targetRadius=None):
+def centerImageFile(infile, outfile=None, targetRadius=None):
     """
-    Center the given image file on a target and save it to outfile.
+    Center the given image file on a target and save it to outfile, if given.
     Returns x,y,foundRadius
     """
 
@@ -857,7 +857,8 @@ def centerImageFile(infile, outfile, targetRadius=None):
     # center the image on the target
     im = centerImage(im, boundingBox)
 
-    imwrite(outfile, im)
+    if outfile:
+        imwrite(outfile, im)
 
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
@@ -1271,7 +1272,8 @@ def findCircle(im, expectedRadius=None):
     # Note: internally the HoughCircles function calls the Canny edge detector
 
     # only available method now
-    method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
+    method = cv2.cv.CV_HOUGH_GRADIENT # opencv v2
+    # method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
 
     # size of accumulator space relative to input image
     dp = config.houghAccumulatorSize # eg 1.0

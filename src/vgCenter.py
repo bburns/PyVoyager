@@ -114,31 +114,35 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # print 'Volume %s centering %d/%d: %s              \r' % (volume,nfile,nfiles,cubefile),
         nfile += 1
 
-        if os.path.isfile(cubefile):
-
+        if not os.path.isfile(cubefile):
+            # print 'warning: missing file ' + cubefile
+            pass #. for now
+        else:
             # export to jpg
             # png takes about same amt of time
-            # imagefile = cubefile[:-4] + '.png'
-            # cmd = "isis2std from=%s to=%s format=png" % (cubefile, imagefile)
             imagefile = jpegSubfolder + fileId + '.jpg'
-            cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile, imagefile)
-            print cmd
-            os.system(cmd)
+            if not os.path.isfile(imagefile):
+                cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile, imagefile)
+                print cmd
+                os.system(cmd)
 
-            # # get expected angular size (as fraction of frame) and radius
-            # imageFraction = lib.getImageFraction(csvPositions, fileId)
-            # targetRadius = int(400*imageFraction) #.param
+            # get expected angular size (as fraction of frame) and radius
+            imageFraction = lib.getImageFraction(csvPositions, fileId)
+            targetRadius = int(400*imageFraction) #.param
 
-            # # do we actually need to center this image?
-            # doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
-            # if doCenter:
+            # do we actually need to center this image?
+            doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
+            if doCenter:
 
-            #     # find center of target using blob and hough, then alignment to fixedimage.
-            #     x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            #     dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
-            #     if stabilizationOk:
-            #         x += int(round(dx))
-            #         y += int(round(dy))
+                # find center of target using blob and hough, then alignment to fixedimage.
+                # x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
+                x,y,foundRadius = libimg.centerImageFile(imagefile, None, targetRadius)
+                # dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
+                # if stabilizationOk:
+                #     x += int(round(dx))
+                #     y += int(round(dy))
+                print x,y
+                
 
             #     # write x,y,radius to newcenters file
             #     rowNew = [fileId, volume, x, y, foundRadius]

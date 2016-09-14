@@ -58,17 +58,39 @@ void IsisMain() {
   SpiceDouble M[3][3];
   q2m_c(q, M);
 
+  // convert angles to radians
+  // const double pi = 3.14159265358979323846;
+  // const double degToRad = pi / 180;
+  // double horizontalRads = horizontal * degToRad;
+  // double verticalRads   = vertical   * degToRad;
+  // double twistRads      = twist      * degToRad;
+  horizontal *= rpd_c();
+  vertical   *= rpd_c();
+  twist      *= rpd_c();
+
   // rotate the rotation matrix to get a new one using SPICE rotmat
-  const double pi = 3.14159265358979323846;
-  const double degToRad = pi / 180;
+  // rotmat_c(M, horizontalRads, 2, M); // 2 is the y axis
+  // rotmat_c(M, verticalRads,   1, M); // 1 is the x axis
+  // rotmat_c(M, twistRads,      3, M); // 3 is the z axis
 
-  double horizontalRads = horizontal * degToRad; // convert to radians
-  double verticalRads   = vertical   * degToRad;
-  double twistRads      = twist      * degToRad;
+  // get axes to rotate about
+  // ConstSpiceDouble axis0 = M[0]; // x-axis
+  // ConstSpiceDouble axis1 = M[1]; // y-axis
+  // ConstSpiceDouble axis2 = M[2]; // z-axis
 
-  rotmat_c(M, horizontalRads, 2, M); // 2 is the y axis
-  rotmat_c(M, verticalRads,   1, M); // 1 is the x axis
-  rotmat_c(M, twistRads,      3, M); // 3 is the z axis
+  // get rotation matrices about the different axes using SPICE axisar
+  SpiceDouble R0[3][3];
+  SpiceDouble R1[3][3];
+  SpiceDouble R2[3][3];
+  //. not sure M[0] etc is valid for getting the axes
+  axisar_c ( &M[0], vertical,   R0 );
+  axisar_c ( &M[1], horizontal, R1 );
+  axisar_c ( &M[2], twist,      R2 );
+
+  // rotate camera pointing matrix by rotation matrices
+  mxm_c ( M, R0, M );
+  mxm_c ( M, R1, M );
+  mxm_c ( M, R2, M );
 
   // translate rotation matrix to a quaternion using SPICE m2q
   SpiceDouble qnew[4];

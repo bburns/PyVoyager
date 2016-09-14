@@ -292,7 +292,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print 'c=position in camera space',c
         print 'cNP=north pole in camera space',cNP
         
-        # get screen coordinate
+        # get screen coordinate (-1 to 1, -1 to 1)
         print 'f=focal length',f
         cz = c[2]
         fz = f/cz
@@ -309,7 +309,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         npAngle = npRadians * 180/math.pi
         print 'npAngle',npAngle
         
-        # get image coordinate
+        # get image coordinate (0 to 800, 0 to 800)
         p = -s * 800/2.0
         p[0] = p[0]+400
         p[1] = p[1]+400

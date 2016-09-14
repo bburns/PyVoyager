@@ -37,57 +37,54 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # make new folder
         lib.mkdir(importSubfolder)
 
-    #     # get number of files to process
-    #     nfiles = len(os.listdir(importSubfolder))
-    # else:
-    #     nfiles = 1
+        # get number of files to process
+        #. ignore any folders incl . and ..
+        nfiles = len(os.listdir(importSubfolder))
+    else:
+        nfiles = 1
 
 
-    os.chdir(importSubfolder)
+    # os.chdir(importSubfolder)
 
-    # remove reseau marks
-    print "Removing reseau marks (findrx, remrx)..."
-    cmd = "parallel findrx from={} ::: C???????.cub"
-    print cmd
-    lib.system(cmd)
-    #. fails unless write to diff file, but shouldn't
-    # cmd = 'parallel remrx from={} to="" ::: *.cub'
-    cmd = 'parallel remrx from={} to={.}rx.cub ::: C???????.cub'
-    print cmd
-    lib.system(cmd)
-    print
+    # # remove reseau marks
+    # print "Removing reseau marks (findrx, remrx)..."
+    # cmd = "parallel findrx from={} ::: C???????.cub"
+    # print cmd
+    # lib.system(cmd)
+    # #. fails unless write to a different file, but shouldn't
+    # # cmd = 'parallel remrx from={} to="" ::: *.cub'
+    # cmd = 'parallel remrx from={} to={.}rx.cub ::: C???????.cub'
+    # # cmd = 'parallel remrx from={} to={.}rx.cub && rm {} && mv {.}rx.cub {} ::: C???????.cub'
+    # print cmd
+    # lib.system(cmd)
+    # print
 
-    #. remove noise, hotpixels, etc
+    # #. remove noise, hotpixels, etc
 
-    # rotate 180
-    print "Rotating 180 degrees..."
-    # cmd = "parallel rotate from={} to={} degrees=180 interp=nearestneighbor ::: *.cub"
-    # fails if write to same file
-    # **I/O ERROR** Unable to open Table [InstrumentPointing] in file [C1462329.cub].
-    # **I/O ERROR** Unable to read Table [InstrumentPointing].
-    # **I/O ERROR** Error reading data from Table [InstrumentPointing].
-    cmd = "parallel rotate from={} to={.}rot.cub degrees=180 interp=nearestneighbor ::: *rx.cub"
-    print cmd
-    lib.system(cmd)
-    print
+    # # rotate 180
+    # print "Rotating 180 degrees..."
+    # # cmd = "parallel rotate from={} to={} degrees=180 interp=nearestneighbor ::: *.cub"
+    # # fails if write to same file
+    # # **I/O ERROR** Unable to open Table [InstrumentPointing] in file [C1462329.cub].
+    # # **I/O ERROR** Unable to read Table [InstrumentPointing].
+    # # **I/O ERROR** Error reading data from Table [InstrumentPointing].
+    # cmd = "parallel rotate from={} to={.}rot.cub degrees=180 interp=nearestneighbor ::: *rx.cub"
+    # print cmd
+    # lib.system(cmd)
+    # print
 
-    # calibrate (voycal)
-    print "Calibrating (voycal)..."
-    # cmd = "parallel voycal from={} to={} ::: *.cub"
-    cmd = "parallel voycal from={} to={.}cal.cub ::: *rxrot.cub"
-    # fails if write to same file
-    # **ERROR** Unable to initialize camera model from group [Instrument].
-    # **I/O ERROR** Unable to open Table [SunPosition] in file [C1460413rot.cub].
-    # **I/O ERROR** Unable to read Table [SunPosition].
-    # **PROGRAMMER ERROR** Unable to find Table [SunPosition].
-    print cmd
-    lib.system(cmd)
-    print
-
-
-    # now we have level 1 files in *rxrotcal.cub
-
-
+    # # calibrate (voycal)
+    # print "Calibrating (voycal)..."
+    # # cmd = "parallel voycal from={} to={} ::: *.cub"
+    # cmd = "parallel voycal from={} to={.}cal.cub ::: *rxrot.cub"
+    # # fails if write to same file
+    # # **ERROR** Unable to initialize camera model from group [Instrument].
+    # # **I/O ERROR** Unable to open Table [SunPosition] in file [C1460413rot.cub].
+    # # **I/O ERROR** Unable to read Table [SunPosition].
+    # # **PROGRAMMER ERROR** Unable to find Table [SunPosition].
+    # print cmd
+    # lib.system(cmd)
+    # print
 
     #---
 
@@ -97,24 +94,85 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     # # read in brightness.csv file, which contains settings for problem images
     # brightnessInfo = lib.readCsv(config.dbBrightness)
 
-    # # iterate through all available images
-    # csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
-    # nfile = 1
-    # for row in csvFiles:
-    #     volume = row[config.colFilesVolume]
-    #     fileId = row[config.colFilesFileId]
-    #     filter = row[config.colFilesFilter]
+    # iterate through all available images
+    csvFiles, fFiles = lib.openCsvReader(config.dbFiles)
+    nfile = 1
+    for row in csvFiles:
+        volume = row[config.colFilesVolume]
+        fileId = row[config.colFilesFileId]
+        filter = row[config.colFilesFilter]
 
-    #     # if volume!=filterVolume: continue # filter on desired volume
-    #     if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
+        # if volume!=filterVolume: continue # filter on desired volume
+        if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
+
+        # get filenames
+        filename = lib.getFilepath('import', volume, fileId)
+
+        if not os.path.isfile(filename):
+            # print 'warning: missing file', filename
+            continue
+
+        # print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,filename),
+        print 'Volume %s adjusting %d/%d: %s     ' % (volume,nfile,nfiles,filename)
+
+
+        #. get history so can see what steps we've done before
+        # history =
+
+
+        # remove reseau marks
+        print "Removing reseau marks (findrx, remrx)..."
+
+        cmd = "findrx from=%s" % filename
+        print cmd
+        lib.system(cmd)
+
+        #. fails unless write to a different file, but shouldn't
+        # cmd = "remrx from=%s to=%s.rx" % (filename, filename)
+        rxname = filename[:-4] + "rx.cub"
+        cmd = "remrx from=%s to=%s && rm %s && mv %s %s" % \
+              (filename, rxname, filename, rxname, filename)
+        print cmd
+        lib.system(cmd)
+
+        #. remove noise, hotpixels, etc
+
+        # rotate 180
+        print "Rotating 180 degrees..."
+        # cmd = "parallel rotate from={} to={} degrees=180 interp=nearestneighbor ::: *.cub"
+        # fails if write to same file
+        # **I/O ERROR** Unable to open Table [InstrumentPointing] in file [C1462329.cub].
+        # **I/O ERROR** Unable to read Table [InstrumentPointing].
+        # **I/O ERROR** Error reading data from Table [InstrumentPointing].
+        # cmd = "parallel rotate from={} to={.}rot.cub degrees=180 interp=nearestneighbor ::: *rx.cub"
+        rotname = filename[:-4] + 'rot.cub'
+        cmd = "rotate from=%s to=%s degrees=180 interp=nearestneighbor && rm %s && mv %s %s" % \
+              (filename, rotname, filename, rotname, filename)
+        print cmd
+        lib.system(cmd)
+
+        # calibrate (voycal)
+        print "Calibrating (voycal)..."
+        # cmd = "parallel voycal from={} to={} ::: *.cub"
+        # cmd = "parallel voycal from={} to={.}cal.cub ::: *rxrot.cub"
+        # fails if write to same file
+        # **ERROR** Unable to initialize camera model from group [Instrument].
+        # **I/O ERROR** Unable to open Table [SunPosition] in file [C1460413rot.cub].
+        # **I/O ERROR** Unable to read Table [SunPosition].
+        # **PROGRAMMER ERROR** Unable to find Table [SunPosition].
+        calname = filename[:-4] + 'cal.cub'
+        cmd = "voycal from=%s to=%s && rm %s && mv %s %s" % \
+              (filename, calname, filename, calname, filename)
+        print cmd
+        lib.system(cmd)
+
+
+
+        print
+
 
     #     # get expected angular size (as fraction of frame) - joins on positions.csv file
     #     imageFraction = lib.getImageFraction(csvPositions, fileId)
-
-    #     # get filenames
-    #     infile = lib.getFilepath('convert', volume, fileId, filter)
-    #     outfile = lib.getFilepath('adjust', volume, fileId, filter)
-    #     print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
 
     #     # get max brightness value to override noise/hot pixels in some images
     #     # maxvalue = lib.getMaxValue(csvBrightness, fileId) # will be None if no record avail
@@ -136,10 +194,16 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         libimg.adjustImageFile(infile, outfile, maxvalue)
     #     else:
     #         print 'Warning: missing image file', infile
-    #     nfile += 1
+
+
+
+        # now we have level 1 files in *rxrotcal.cub
+
+
+        nfile += 1
 
     # fPositions.close()
-    # fFiles.close()
+    fFiles.close()
     print
 
 if __name__ == '__main__':

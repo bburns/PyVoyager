@@ -783,6 +783,44 @@ def getImageAlignmentECC(imFixed, im, dx=0, dy=0):
     return dx,dy,alignmentOk
 
 
+def centerAndStabilizeImageFile(infile, targetRadius):
+    """
+    Center the given image file on a target and return x,y.
+    Stabilize infile against disc of radius targetRadius and write to outfile.
+    Returns dx,dy,stabilizationOk
+    targetRadius is the expected radius, in pixels
+    """
+
+    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
+
+    # find the bounding box of biggest object
+    # either a blob or a circle
+    boundingBox = findBoundingBox(im, targetRadius)
+
+    # center the image on the target
+    im = centerImage(im, boundingBox)
+
+    x = int((boundingBox[0] + boundingBox[2])/2)
+    y = int((boundingBox[1] + boundingBox[3])/2)
+
+    # this is pretty approximate when it's just a blob
+    # foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
+    # return x, y, foundRadius
+
+    # get fixed image of filled target disc
+    imFixed = np.zeros((800,800), np.uint8) #.params
+    cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
+
+    # align the image to the target disc
+    dx, dy, alignmentOk = getImageAlignmentECC(imFixed, im)
+    if alignmentOk:
+        im = shiftImage(im, dx, dy)
+        x += dx
+        y += dy
+
+    return x,y
+
+
 def stabilizeImageFile(infile, outfile, targetRadius):
     """
     Stabilize infile against disc of radius targetRadius and write to outfile.
@@ -812,7 +850,8 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     #     im = gray2rgb(im)
     #     circle = (399,399,targetRadius) #.params
     #     drawCircle(im, circle, color = (0,255,255)) # yellow circle
-    imwrite(outfile, im)
+    if outfile:
+        imwrite(outfile, im)
     return dx,dy,alignmentOk
 
 
@@ -1272,8 +1311,8 @@ def findCircle(im, expectedRadius=None):
     # Note: internally the HoughCircles function calls the Canny edge detector
 
     # only available method now
-    method = cv2.cv.CV_HOUGH_GRADIENT # opencv v2
-    # method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
+    # method = cv2.cv.CV_HOUGH_GRADIENT # for OpenCV v2
+    method = cv2.HOUGH_GRADIENT # if get error here, upgrade to OpenCV v3
 
     # size of accumulator space relative to input image
     dp = config.houghAccumulatorSize # eg 1.0

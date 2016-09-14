@@ -789,7 +789,8 @@ def getEdrVol(fileId):
 
 def system(cmd):
     "run the console command, showing output along the way"
-    subprocess.check_output(cmd, shell=True)
+    s = subprocess.check_output(cmd, shell=True)
+    return s
 
 
 if __name__ == '__main__':

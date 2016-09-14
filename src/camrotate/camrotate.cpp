@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "CameraFactory.h"
 #include "Table.h"
+#include "History.h"
 
 #include <SpiceUsr.h>
 
@@ -110,6 +111,15 @@ void IsisMain() {
   cube.write(table);
 
   //. add a history record
+  History hist = History("IsisCube");
+  try {
+    cube.read(hist); // read history from cube, if it exists.
+  }
+  catch (IException &e) {
+    // if the history does not exist in the cube, the cube's write method will add it.
+  }
+  hist.AddEntry();
+  cube.write(hist);
 
   // close cube file
   cube.close();

@@ -48,6 +48,10 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             fileId = row[config.colFilesFileId]
             target = row[config.colFilesTarget]
             
+            #. for testing, just want 3 files
+            if fileId<'C1465335' or fileId>'C1465339': continue
+            
+            
             # what edr volume does this image come from? 
             edrVol = lib.getEdrVol(fileId)
             

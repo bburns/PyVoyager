@@ -122,13 +122,9 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # remove reseau marks
         print "Removing reseau marks (findrx, remrx)..."
-
         cmd = "findrx from=%s" % filename
         print cmd
         lib.system(cmd)
-
-        #. fails unless write to a different file, but shouldn't
-        # cmd = "remrx from=%s to=%s.rx" % (filename, filename)
         rxname = filename[:-4] + "rx.cub"
         cmd = "remrx from=%s to=%s && rm %s && mv %s %s" % \
               (filename, rxname, filename, rxname, filename)
@@ -139,32 +135,20 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # rotate 180
         print "Rotating 180 degrees..."
-        # cmd = "parallel rotate from={} to={} degrees=180 interp=nearestneighbor ::: *.cub"
-        # fails if write to same file
-        # **I/O ERROR** Unable to open Table [InstrumentPointing] in file [C1462329.cub].
-        # **I/O ERROR** Unable to read Table [InstrumentPointing].
-        # **I/O ERROR** Error reading data from Table [InstrumentPointing].
-        # cmd = "parallel rotate from={} to={.}rot.cub degrees=180 interp=nearestneighbor ::: *rx.cub"
         rotname = filename[:-4] + 'rot.cub'
         cmd = "rotate from=%s to=%s degrees=180 interp=nearestneighbor && rm %s && mv %s %s" % \
               (filename, rotname, filename, rotname, filename)
         print cmd
         lib.system(cmd)
 
-        # calibrate (voycal)
-        print "Calibrating (voycal)..."
-        # cmd = "parallel voycal from={} to={} ::: *.cub"
-        # cmd = "parallel voycal from={} to={.}cal.cub ::: *rxrot.cub"
-        # fails if write to same file
-        # **ERROR** Unable to initialize camera model from group [Instrument].
-        # **I/O ERROR** Unable to open Table [SunPosition] in file [C1460413rot.cub].
-        # **I/O ERROR** Unable to read Table [SunPosition].
-        # **PROGRAMMER ERROR** Unable to find Table [SunPosition].
-        calname = filename[:-4] + 'cal.cub'
-        cmd = "voycal from=%s to=%s && rm %s && mv %s %s" % \
-              (filename, calname, filename, calname, filename)
-        print cmd
-        lib.system(cmd)
+        #. this is segfaulting on C1465339 and killing virtualbox - why?
+        # # calibrate (voycal)
+        # print "Calibrating (voycal)..."
+        # calname = filename[:-4] + 'cal.cub'
+        # cmd = "voycal from=%s to=%s && rm %s && mv %s %s" % \
+        #       (filename, calname, filename, calname, filename)
+        # print cmd
+        # lib.system(cmd)
 
 
 

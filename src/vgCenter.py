@@ -28,10 +28,33 @@ import vgAdjust
 # config.drawCrosshairs = True
 # config.drawTarget = True
 
+    
+
+def getCubeHistory(cubefile):
+    """
+    get history of commands applied to given cubefile, as a list
+    """
+    
+    # run ISIS cathist command
+    cmd = "cathist from=%s" % cubefile
+    s = lib.system(cmd)
+    
+    # parse the output
+    history = []
+    for line in s.split('\n'):
+        if line.startswith('Object = '):
+            obj = line[9:]
+            history.append(obj)
+            
+    return history
+
+
+
 
 def getExpectedTargetCenter(target, craft, camera, time):
     """
     get expected coordinates of target center px,py, in pixel space (0 to 800).
+    returns px,py
     assumes libimg.loadKernels has been called.
     target is the target name, eg Jupiter.
     craft is Voyager1 or Voyager2.
@@ -119,6 +142,7 @@ def getExpectedTargetCenter(target, craft, camera, time):
     print 'p=pixel space (0 to 800)',p
     px,py = p[0],p[1]
     
+    # return px,py,fov
     return px,py
 
 
@@ -217,6 +241,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
             # print 'warning: missing file ' + cubefile
             pass #. for now
         else:
+                        
             # get expected angular size (as fraction of frame) and radius
             imageFraction = lib.getImageFraction(csvPositions, fileId)
             targetRadius = int(400*imageFraction) #.param
@@ -232,17 +257,14 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 if not os.path.isfile(imagefile):
                     cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile, imagefile)
                     print cmd
-                    os.system(cmd)
+                    lib.system(cmd)
 
+                # find center of target using blob and hough, then alignment to fixedimage
+                # x,y is in pixels (0-800)
                 # outfile = jpegSubfolder + fileId + '_centered.jpg'
-                # find center of target using blob and hough, then alignment to fixedimage.
                 # x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
                 # x,y,foundRadius = libimg.centerImageFile(imagefile, outfile, targetRadius)
                 # x,y,foundRadius = libimg.centerImageFile(imagefile, None, targetRadius)
-                #. stabilize
-                #. oh, do need to save the file? or rework to pass it the image,
-                #. or combine the fns, since pass targetRadius to both,
-                # could just pass (imageFile, targetRadius)
                 # dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
                 # if stabilizationOk:
                 #     x += int(round(dx))
@@ -250,9 +272,48 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 x,y = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
                 print 'target actual',x,y
                 
-                #. get expected target location
+                # get expected target location in pixels (0-800)
+                # px, py = getExpectedTargetCenter(target, craft, camera, time)
                 px, py = getExpectedTargetCenter(target, craft, camera, time)
                 print 'target expected',px,py
+                
+                #. draw target circle on image to verify centering fn
+                # and expected location
+                import cv2
+                im = cv2.imread(imagefile)
+                libimg.drawCircle(im,(int(x),int(y),targetRadius))
+                libimg.drawCircle(im,(int(px),int(py),targetRadius), (0,0,255))
+                cv2.imwrite(imagefile[:-4]+'circle.jpg', im)
+                                  
+                deltax = x - px
+                deltay = y - py
+                print 'deltax,y (px)',deltax, deltay
+                
+                #. use ik
+                fov = config.cameraFOVs[camera] # degrees - 0.424 or 3.169
+                
+                angleDeltax = fov * deltax / 800 # degrees #. param
+                angleDeltay = fov * deltay / 800
+                print 'angledeltax,y (deg)',angleDeltax, angleDeltay
+                
+                # don't update the camera pointing angle twice!
+                history = getCubeHistory(cubefile)
+                print 'history',history
+                if 'camrotate' in history:
+                    angleDeltax = angleDeltay = 0
+            
+                #. build camrotate and put in a bin folder, add that to path
+                camrotate = "/media/sf_bburns/Documents/@Projects/Voyager/src/camrotate/camrotate"
+                cmd = "%s from=%s horizontal=%f vertical=%f twist=0" % \
+                      (camrotate, cubefile, angleDeltax, angleDeltay)
+                print cmd
+                s = lib.system(cmd)
+                print s
+                
+                #. parse s to get camera pointing matrix C
+                # why? just for testing? 
+                
+                
                 
                 # stop
                 
@@ -284,6 +345,11 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
 if __name__ == '__main__':
     os.chdir('..')
-    vgCenter(5101)
+    # vgCenter(5101)
+    
+    cubefile = 'data/step03_import/vgiss_5101/C1465335.cub'
+    hist = getCubeHistory(cubefile)
+    print hist
+    
     print 'done'
 

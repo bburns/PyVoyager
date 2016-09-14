@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<application name="spisis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://isis.astrogeology.usgs.gov/Schemas/Application/application.xsd">
+<application name="camrotate" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://isis.astrogeology.usgs.gov/Schemas/Application/application.xsd">
   <brief>
       Rotate the camera pointing matrix associated with a cube.
   </brief>
@@ -47,7 +47,7 @@
         <description>
             This is the angular offset to apply to the camera pointing matrix by rotating about the y-axis.
         </description>
-        <default>0.0</default>
+        <default><item>0.0</item></default>
       </parameter>
 
       <parameter name="VERTICAL">
@@ -58,7 +58,7 @@
         <description>
             This is the angular offset to apply to the camera pointing matrix by rotating about the x-axis.
         </description>
-        <default>0.0</default>
+        <default><item>0.0</item></default>
       </parameter>
 
       <parameter name="TWIST">
@@ -69,7 +69,7 @@
         <description>
             This is the amount to rotate the camera pointing matrix about the z-axis.
         </description>
-        <default>0.0</default>
+        <default><item>0.0</item></default>
       </parameter>
 
     </group>

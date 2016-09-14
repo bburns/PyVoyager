@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<application name="spisis" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://isis.astrogeology.usgs.gov/Schemas/Application/application.xsd">
+  <brief>
+      Rotate the camera pointing matrix associated with a cube.
+  </brief>
+
+  <description>
+    <p>
+    </p>
+      Camrotate rotates the camera pointing matrix associated with a cube about the x, y, and z axes by specified amounts.
+    <p>
+    </p>
+  </description>
+
+  <category>
+    <categoryItem>Cameras</categoryItem>
+  </category>
+
+  <history>
+    <change name="Brian Burns" date="2016-09-12">
+      Original version
+    </change>
+  </history>
+
+  <groups>
+    <group name="Files">
+      <parameter name="FROM">
+        <type>cube</type>
+        <fileMode>input</fileMode>
+        <brief>
+          Input Cube
+        </brief>
+        <description>
+            This is the cube containing the pointing information table to update.
+        </description>
+        <filter>*.cub</filter>
+      </parameter>
+    </group>
+
+    <group name="Angles">
+      <parameter name="HORIZONTAL">
+        <type>double</type>
+        <brief>
+          Horizontal offset in degrees
+        </brief>
+        <description>
+            This is the angular offset to apply to the camera pointing matrix by rotating about the y-axis.
+        </description>
+        <default>0.0</default>
+      </parameter>
+
+      <parameter name="VERTICAL">
+        <type>double</type>
+        <brief>
+          Vertical offset in degrees
+        </brief>
+        <description>
+            This is the angular offset to apply to the camera pointing matrix by rotating about the x-axis.
+        </description>
+        <default>0.0</default>
+      </parameter>
+
+      <parameter name="TWIST">
+        <type>double</type>
+        <brief>
+          Twist in degrees
+        </brief>
+        <description>
+            This is the amount to rotate the camera pointing matrix about the z-axis.
+        </description>
+        <default>0.0</default>
+      </parameter>
+
+    </group>
+  </groups>
+
+</application>

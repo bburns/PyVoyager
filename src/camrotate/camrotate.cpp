@@ -69,31 +69,34 @@ void IsisMain() {
   vertical   *= rpd_c();
   twist      *= rpd_c();
 
-  // rotate the rotation matrix to get a new one using SPICE rotmat
-  // rotmat_c(M, horizontalRads, 2, M); // 2 is the y axis
-  // rotmat_c(M, verticalRads,   1, M); // 1 is the x axis
-  // rotmat_c(M, twistRads,      3, M); // 3 is the z axis
+  // // rotate the rotation matrix to get a new one using SPICE rotmat
+  // rotmat_c(M, horizontal, 2, M); // 2 is the y axis
+  // rotmat_c(M, vertical,   1, M); // 1 is the x axis
+  // rotmat_c(M, twist,      3, M); // 3 is the z axis
 
   // get axes to rotate about
-  // ConstSpiceDouble axis0 = M[0]; // x-axis
-  // ConstSpiceDouble axis1 = M[1]; // y-axis
-  // ConstSpiceDouble axis2 = M[2]; // z-axis
+  //. must be a better way to do this
+  ConstSpiceDouble axisX[] = {M[0][0],M[0][1],M[0][2]};
+  ConstSpiceDouble axisY[] = {M[1][0],M[1][1],M[1][2]};
+  ConstSpiceDouble axisZ[] = {M[2][0],M[2][1],M[2][2]};
+  // ConstSpiceDouble axisX[] = {M[0][0],M[1][0],M[2][0]};
+  // ConstSpiceDouble axisY[] = {M[0][1],M[1][1],M[2][1]};
+  // ConstSpiceDouble axisZ[] = {M[0][2],M[1][2],M[2][2]};
 
   // get rotation matrices about the different axes using SPICE axisar
-  SpiceDouble R0[3][3];
-  SpiceDouble R1[3][3];
-  SpiceDouble R2[3][3];
-  //. not sure M[0] etc is valid for getting the axes
-  axisar_c ( &M[0], vertical,   R0 );
-  axisar_c ( &M[1], horizontal, R1 );
-  axisar_c ( &M[2], twist,      R2 );
+  SpiceDouble Rx[3][3];
+  SpiceDouble Ry[3][3];
+  SpiceDouble Rz[3][3];
+  axisar_c ( axisX, vertical,   Rx );
+  axisar_c ( axisY, horizontal, Ry );
+  axisar_c ( axisZ, twist,      Rz );
 
   // rotate camera pointing matrix by rotation matrices
-  mxm_c ( M, R0, M );
-  mxm_c ( M, R1, M );
-  mxm_c ( M, R2, M );
+  mxm_c ( M, Rx, M );
+  mxm_c ( M, Ry, M );
+  mxm_c ( M, Rz, M );
 
-  // translate rotation matrix to a quaternion using SPICE m2q
+  // translate rotation matrix back to a quaternion using SPICE m2q
   SpiceDouble qnew[4];
   m2q_c(M, qnew);
 
@@ -110,7 +113,7 @@ void IsisMain() {
   // save table to the cube file
   cube.write(table);
 
-  //. add a history record
+  // add a history record for this command and parameters
   History hist = History("IsisCube");
   try {
     cube.read(hist); // read history from cube, if it exists.

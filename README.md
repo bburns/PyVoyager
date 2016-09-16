@@ -2,7 +2,7 @@
 PyVoyager
 ========================================
 
-Version 0.5 inprogress
+Version 0.5
 
 (I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will also require switching from PDS archives to EDR archives). 
 
@@ -12,7 +12,7 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 <!-- This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files.  -->
 
-It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. 
+<!-- It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies.  -->
 
 <!-- There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore! -->
 There are a total of 70k+ images in the Voyager archives, so there is a lot to explore!
@@ -25,11 +25,11 @@ Example Movies
 
 These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
 
-https://www.youtube.com/watch?v=lYUgU-Bc1_w  
-Voyager 1 Jupiter flyby, mostly false color (3mins) v0.47
-
 http://imgur.com/LO7Dnww  
 Voyager 2 Io approach v0.43
+
+https://www.youtube.com/watch?v=lYUgU-Bc1_w  
+Voyager 1 Jupiter flyby (no moons), mostly false color (3mins) v0.47
 
 https://www.youtube.com/watch?v=i38gzr6j5q4  
 Rough draft of Voyager 1 flyby of Jupiter system (13mins) v0.45
@@ -109,25 +109,28 @@ Here is an image showing what the feature-matching process looks like, and the r
 Pipeline
 ----------------------------------------
 
-Voyager consists of a command line interface to a pipeline of Python programs with the following steps (many not completed yet):
+Voyager consists of a command line interface to a pipeline of Python programs with the following steps (some in progress):
 
-* Download - download archives from **PDS archives** [1]
-* Unzip - decompress archive volumes
-* Convert - convert RAW images to pngs using **img2png** [2]
-* Flatfield - subtract good flatfields
-* Denoise - identify/eliminate noise where possible
-* Adjust - rotate180, histogram stretch
-* Center - center and stabilize images
-* Dereseau - remove reseau marks cleanly
-* Inpaint - fill in black/white areas with pixels from prior frame
-* Undistort - geometric correction 800x800->1000x1000
-* Composite - combine channels using auto+manual info
-* Mosaic - combine images using auto+manual info
-* Colorize - colorize bw images with lores color info - need to know viewing geometry, so after mosaic step
-* Crop - crop and zoom frames, eg io volcanoes
-* Annotate - add caption information, point out features, etc
-* Clips - combine images into short movies, one per target
-* Movies - combine clips into movies, add music
+* Download - download archives from **PDS EDR (raw) archives** [1]
+* Unzip - decompress archive volumes to IMQ files
+<!-- * Convert - convert RAW images to pngs using **img2png** [2] -->
+<!-- * Adjust - rotate180, histogram stretch -->
+* Import - import IMQ files to ISIS cube files, attach SPICE geometry data with spiceinit
+* Adjust - rotate 180 degrees, calibrate images
+* Flatfield - subtract good flatfields (dark images)
+* Dereseau - remove reseau marks cleanly (set to null)
+* Denoise - identify/eliminate noise where possible (set to null)
+* Inpaint - fill in missing information with pixels from prior frame or average of surrounding pixels - be careful with reseau marks on limbs of target
+<!-- * Undistort - geometric correction 800x800->1000x1000 -->
+* Center - center and stabilize images where entire target is visible
+* Map - project image to cylindrical map using SPICE information, fit there with ISIS jigsaw to refine pointing information
+* Colorize - colorize images by pulling missing channels from the map
+<!-- * Composite - combine channels -->
+<!-- * Mosaic - combine images using auto+manual info -->
+* Crop - crop and zoom frames, e.g. volcanoes on Io
+* Annotate - add caption information, point out features, etc.
+<!-- * Clips - combine images into short movies, one per target -->
+* Movies - combine images into movies, add music
 
 
 Installation
@@ -141,86 +144,181 @@ Installation
 
 <!-- Note that **img2png** is only available on Windows - in the future, the PNG images (or JPGs) could be hosted elsewhere for download, to skip the tarfile and extraction and conversion steps, and allow for cross-platform use, if the editing needs to be distributed. -->
 
-### Setting up a virtual machine on Windows
+### For Windows, set up a Linux virtual machine
 
 * Install VirtualBox [22]
 * Create a VM - set disk space at least 20GB, Memory at least 1GB
-* Install a 64-bit Linux distro on it, e.g. Ubuntu or Xubuntu
-* Install the Guest Additions (for higher screen resolutions and clipboard support)
+* Install a 64-bit Linux distro on it (ISIS is only 64-bit), e.g. Ubuntu or Xubuntu
+* Install the VirtualBox Guest Additions (for higher screen resolutions and clipboard support)
 
-### Starting from Ubuntu 16.04 (Python 2.7 included) 
+### Starting from Ubuntu 16.04
 
-<pre>
-# get Java, for ISIS installer
-sudo apt install default-jre
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt update
-sudo apt install oracle-java8-installer
+(put these into an install script)
 
-# get ISIS
-curl -O https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
+``` bash
+
+# set a location for applications, e.g. ~/Apps
+mkdir ~/Apps
+export APPS=~/Apps
+
+# install PyVoyager
+# (if using a virtual machine, can install on Windows instead so can access the image files from there also)
+cd $APPS
+git clone https://github.com/bburns/PyVoyager.git
+
+# install CSPICE (C language version of SPICE)
+# see https://naif.jpl.nasa.gov/naif/toolkit_C_PC_Linux_GCC_64bit.html
+cd $APPS
+wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/cspice.tar.Z
+wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/importCSpice.csh
+/bin/csh -f importCSpice.csh
+rm cspice.tar.Z
+rm importCSpice.csh
+
+## install Java, for the ISIS installer
+#sudo apt install default-jre
+#sudo add-apt-repository ppa:webupd8team/java
+#sudo apt update
+#sudo apt install oracle-java8-installer
+
+# install ISIS
+cd $APPS
+wget https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
 chmod +x isisInstall.sh
-./isisInstall.sh
+mkdir Isis
+./isisInstall.sh -n -d $APPS/Isis
 
-# add startup commands
-echo export ISISROOT=~/Isis/isis >> ~/.profile
-echo . $ISISROOT/scripts/isis3Startup.sh >> ~/.profile
+# add to .profile:
+export APPS=~/Apps
+export PYVOYAGER=$APPS/PyVoyager
+export SPICEROOT=$APPS/cspice
+export ISISROOT=$APPS/Isis/isis
+. $ISISROOT/scripts/isis3Startup.sh
+
 source ~/.profile
 
-# get spice
 
-# get spice kernels locally
+# build camrotate
+#. or just include the binary - is it static?
+
+# get some libraries for building ISIS programs
+$ sudo apt install libxerces-c-dev
+$ sudo apt install libsuperlu-dev
+
+# change a line in $ISISROOT/make/config.linux-x86_64 as I couldn't get it to
+# recognize superlu4 as superlu4.3. superlu4.3 isn't available yet as a package - 
+# it would require compiling it from source, which I didn't want to get into. 
+# not sure if any ISIS programs need the 4.3 version. 
+from 
+SUPERLULIB    = -lsuperlu_4.3 -lblas -lgfortran
+to 
+SUPERLULIB    = -lsuperlu -lblas -lgfortran
+
+# comment out a couple of lines in $ISISROOT/inc/SpecialPixel.h to turn off
+# some unused variable warnings - couldn't get pragma diagnostic to work
+line 101   // const double ValidMinimum   = IVALID_MIN8.d;
+line 162   // const int IVALID_MAX4  = (*((const int *) &VALID_MAX4));
+
+# make the program
+cd $PYVOYAGER/src/camrotate
+. setpaths.sh
+make
+
+#. add camrotate to PATH
+
+
+# get Voyager SPICE kernels locally
 pushd $ISIS3DATA
 rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager1 .
 rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager2 .
 popd
 
-# get some different voyager 1 and jupiter spk kernels
-#. make a $Voyager variable
+# get some different Voyager 1 and Jupiter SPICE SPK kernels
 #. could just add these to git
-pushd ~/Desktop/Voyager/kernels/spk
-curl -O ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
-curl -O ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+mkdir ~/PyVoyager/kernels/spk
+pushd ~/PyVoyager/kernels/spk
+wget ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+wget ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
 popd
 
-# get libblas3gf and libjpeg62
-curl -O http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+
+# get some libraries for ISIS (don't need if using earlier Ubuntu, e.g. 12.04)
+
+## libblas3gf
+wget http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
 sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+
+## libjpeg62
 sudo apt install libjpeg62
 
-# get opencv2
-sudo apt install libopencv-dev
-
-# get libvpx
-curl -O http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
+## libvpx
+wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
 sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
 
-# get pip
+
+# install OpenCV version 3
+## (Ubuntu package is version 2)
+## sudo apt install libopencv-dev
+sudo apt install build-essential
+sudo apt install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+sudo apt install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+cd $APPS
+wget https://github.com/Itseez/opencv/archive/3.1.0.zip
+unzip 3.1.0.zip
+rm 3.1.0.zip
+cd opencv-3.1.0
+mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+cd ..
+make
+sudo make install
+## release is >2gb, so remove it
+rmdir release
+## can keep opencv-3.1.0 around though, as contains source code
+cd ~
+
+# get some Python libraries
+# Python 2.7 is included with Ubuntu
+
+## pip
 sudo apt install python-pip
 sudo pip install --upgrade pip
 
-# get numpy, scipy, matplotlib
+## numpy, scipy, matplotlib
 sudo apt install python-numpy python-scipy python-matplotlib
 
-# get cv2
+## cv2 (OpenCV Python interface)
 sudo apt install python-opencv
 
-# get some other python libraries
+## SpiceyPy (SPICE Python interface)
 sudo pip install spiceypy
+
+## miscellaneous
 sudo pip install tabulate
 sudo pip install more_itertools
 sudo pip install python-dateutil
 
+
 # get some other commands
+
+## make a beep sound
 sudo apt install beep
+
+## convenient way to run batch commands
 sudo apt install parallel
+
+## image viewer, e.g. for jpegs
 sudo apt install eog
 
-</pre>
+```
 
 
 Usage
 ----------------------------------------
+
+(This is a bit obsolete)
 
 Entering `vg` will show the available commands:
 
@@ -341,24 +439,13 @@ All configuration settings are stored in `config.py` - the goal is for the same 
 More details
 ----------------------------------------
 
+(Update this)
+
 The data for each step is put into the following folders in the `data` subfolder:
 
     step01_download
     step02_unzip
-    step03_convert
-    step04_adjust
-    step05_denoise
-    step06_center
-    step07_inpaint
-    step08_composite
-    step09_mosaic
-    step10_crop
-    step11_annotate
-    step12_target
-    step13_title
-    step14_clips
-    step15_pages
-    step16_movies
+    step03_import
 
 There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
 
@@ -415,12 +502,12 @@ History
 <!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
 <!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
+<!-- - `vg center` in progress -->
 
-Version 0.5 (2016-08-)
+Version 0.5 (2016-09-16)
 ----------------------------------------
 - `vg download`, `vg unzip` handle EDR archives
-- `vg import` converts EDR IMQ files to ISIS CUB files in reorganized folders, per newer PDS conventions
-- Steps ___
+- `vg import` converts EDR IMQ files to ISIS CUB files in reorganized folders, with newer PDS volume organization (e.g. volume 5101)
 
 Version 0.49 (2016-08-07)
 ----------------------------------------

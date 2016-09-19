@@ -133,13 +133,14 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         #. remove noise, hotpixels, etc
 
-        # rotate 180
-        print "Rotating 180 degrees..."
-        rotname = filename[:-4] + 'rot.cub'
-        cmd = "rotate from=%s to=%s degrees=180 interp=nearestneighbor && rm %s && mv %s %s" % \
-              (filename, rotname, filename, rotname, filename)
-        print cmd
-        lib.system(cmd)
+        # don't need this, as cam2map does it automatically
+        # # rotate 180
+        # print "Rotating 180 degrees..."
+        # rotname = filename[:-4] + 'rot.cub'
+        # cmd = "rotate from=%s to=%s degrees=180 interp=nearestneighbor && rm %s && mv %s %s" % \
+        #       (filename, rotname, filename, rotname, filename)
+        # print cmd
+        # lib.system(cmd)
 
         #. this is segfaulting on C1465339 and killing virtualbox - why?
         # # calibrate (voycal)

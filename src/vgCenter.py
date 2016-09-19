@@ -166,6 +166,7 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     craft is Voyager1 or Voyager2.
     camera is Narrow or Wide.
     time is utc time as string.
+    Can also pass the camera pointing matrix C instead of using spice kernels. 
     """
     
     if C is None:
@@ -173,18 +174,6 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
         
     w = getTargetPosition(target, craft, camera, time)
     
-    # # get target code
-    # targetId = spice.bodn2c(target) # eg 'Jupiter'->599
-
-    # # get spacecraft instrument        
-    # spacecraft = -31 if craft=='Voyager1' else -32
-    # spacecraftBus = spacecraft * 1000
-    # spacecraftScanPlatform = spacecraftBus - 100
-    # spacecraftNarrowCamera = spacecraftScanPlatform - 1
-    # spacecraftWideCamera = spacecraftScanPlatform - 2
-    # # instrument = spacecraftBus # use for NAIF continuous kernels
-    # instrument = spacecraftScanPlatform # use for PDS discrete kernels
-
     # get field of view and focal length
     # f is the focal length relative to the screen halfwidth of 1.0
     # i.e. screen coordinates are -1.0 to 1.0
@@ -195,39 +184,6 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     f = screenHalfwidth / math.tan(fov/2 * math.pi/180) 
     # print 'f=focal length',f
     
-    # # get ephemeris time
-    # # note: target and spacecraft locations are stored relative to J2000
-    # # time is utc time as string
-    # ephemerisTime = spice.str2et(time) # seconds since J2000 (will be negative)
-    # # sclkch = spice.sce2s(spacecraft, ephemerisTime) # spacecraft clock ticks, string
-    # # sclkdp = spice.sce2c(spacecraft, ephemerisTime) # spacecraft clock ticks, double
-    # clockTicks = spice.sce2c(spacecraft, ephemerisTime) # spacecraft clock ticks, double
-    # # print 'clockTicks',clockTicks
-
-    # # get position of target relative to spacecraft
-    # # this is the direction from craft to target in ECLIPB1950 frame
-    # observer = 'Voyager ' + craft[-1] # eg 'Voyager 1'
-    # frame = 'ECLIPB1950' # coordinate frame
-    # abberationCorrection = 'NONE'
-    # position, lightTime = spice.spkpos(target, ephemerisTime, frame,
-    #                                    abberationCorrection, observer)
-    # print 'target position relative to observer', position
-
-    # # get camera pointing matrix C
-    # # C is the world-to-camera transformation matrix.
-    # # ie C is a rotation matrix from the base frame 'frame' to
-    # # the instrument-fixed frame at the time clockTicks +/- tolerance.
-    # # https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/ckgp_c.html
-    # tolerance = spice.sctiks(spacecraft, "0:00:800") # time tolerance
-    # frame = 'ECLIPB1950' # coordinate frame
-    # # ckgp is 'camera kernel get pointing'
-    # # note: the pointing information is stored in the time frame J2000,
-    # # but the coordinates are in the ECLIPB1950 coordinate frame.
-    # if C is None:
-    #     C, clkout, found = spice.ckgp(instrument, clockTicks, tolerance, frame)
-    # print 'C=camera pointing matrix - transform world to camera coords'
-    # print C
-
     # get position of target in camera space
     # position is in ECLIPB1950 units, but relative to camera space
     c = np.dot(C, w)
@@ -251,6 +207,7 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     # p[0] = p[0]+400
     # p[1] = p[1]+400
     p = -s * 800/2.0 + 400 #.params
+    p = 800 - p # rotate 180 degrees
     print 'p=pixel space (0 to 800)',p
     px,py = p[0],p[1]
     
@@ -365,7 +322,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 # (pngs take about same amt of time)
                 print 'export to jpeg so can analyze with opencv'
                 imagefile = jpegSubfolder + fileId + '.jpg'
-                if not os.path.isfile(imagefile):
+                # if not os.path.isfile(imagefile):
+                if 1:
                     cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile, imagefile)
                     print cmd
                     lib.system(cmd)
@@ -374,7 +332,12 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 # try solving for C given one worldpoint and pixelpoint
                 # ---------------------------------------------------------------
                 
-                # nowork yet with solvePnP - needs 3+ points
+                #. nowork yet with solvePnP - needs 3+ points
+                
+                #. this is possible with an interative soln - not sure how many points are required
+                # but might need to program it to have more control over it,
+                # eg use the existing roll amount
+                # see http://mathworld.wolfram.com/EulerAngles.html
                 
                 # # world-to-camera transform (existing)
                 # # get existing camera pointing matrix C,
@@ -424,7 +387,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 # # ie we already have a rough C matrix, and translation is w?
                 # # E = cv2.pnp(K)
                 # # rvecs, tvecs, inliers = cv2.solvePnPRansac(objp, corners2, mtx, dist)
-                # # retval, rvec, tvec = cv2.solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, rvec, tvec, useExtrinsicGuess, flags)
+                # # retval, rvec, tvec = cv2.solvePnP(objectPoints, imagePoints, cameraMatrix, distCoeffs, useExtrinsicGuess, flags)
                 # # objectPoints = np.array(w)
                 # # imagePoints = np.array(p)
                 # # objectPoints = np.array([w])
@@ -493,11 +456,14 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 # print 'q',q
                 
                 
-                # get new C by rotating existing C by angle deltas 
+                
+                
+                
+                # try translating target to expected location
                 # -------------------------------------------------------------------------
                 
-                # angle deltas are based on target expected vs actual in pixelspace
-                # nowork yet - get sx,sy ~10,100
+                #. this seems to correctly translate the target to the correct spot,
+                # but cam2map doesn't project the entire target - distorted, missing redspot.
                 
                 # get actual target location in pixelspace
                 # find center of target using blob and hough, then alignment to fixedimage
@@ -508,7 +474,6 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 
                 # get expected target location in pixelspace
                 # based on existing C pointing kernels and spacecraft and target positions
-                # px, py = getExpectedTargetCenter(target, craft, camera, time)
                 ex, ey = getExpectedTargetCenter(target, craft, camera, time)
                 print 'target expected in pixelspace',ex,ey
                 
@@ -516,59 +481,124 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 deltay = py - ey
                 print 'deltax,y (pixels)',deltax,deltay
                 
-                # get field of view and focal length
-                # f is the focal length relative to the screen halfwidth
-                # screen coordinates are -1.0 to 1.0
-                #. use ik
-                fov = config.cameraFOVs[camera] # degrees - 0.424 or 3.169
-                screenHalfwidth = 1.0
-                f = screenHalfwidth / math.tan(fov/2 * math.pi/180) 
+                cubefile2 = cubefile[:-4] + 'tr.cub'
                 
-                # get angle deltas
-                angleDeltax = fov * deltax / 800 # degrees #. param
-                angleDeltay = fov * deltay / 800
-                angleTwist = 0
-                print 'angledeltax,y (deg)',angleDeltax, angleDeltay
-                
-                # don't update the camera pointing angle twice!
-                history = getCubeHistory(cubefile)
-                # print 'history',history
-                if 'camrotate' in history:
-                    angleDeltax = angleDeltay = 0
-                
-                #. build camrotate and put in a bin folder, add that to path
-                # camrotate = "/media/sf_bburns/Documents/@Projects/Voyager/src/camrotate/camrotate"
-                camrotate = "camrotate"
-                cmd = "%s from=%s horizontal=%.20f vertical=%.20f twist=%.20f" % \
-                      (camrotate, cubefile, angleDeltax, angleDeltay, angleTwist)
+                cmd = "translate from=%s to=%s ltrans=%f strans=%f" % \
+                      (cubefile, cubefile2, -deltay, -deltax)
                 print cmd
                 s = lib.system(cmd)
                 print s
                 
-                # get camera pointing matrix C, for testing
-                line = s.split('\n')[3]
-                values = line.split(',')[0:4]
-                q = [float(value) for value in values]
-                print 'new q',q
-                C = spice.q2m(q)
-                print 'new C'
-                print C
+                print 'draw grid'
+                gridfile = cubefile[:-4] + '-grid.cub'
+                cmd = "grid from=%s to=%s" % (cubefile2, gridfile)
+                # cmd = "grid from=%s to=%s" % (cubefile, gridfile)
+                print cmd
+                lib.system(cmd)
                 
-                # get new expected target location in pixelspace
-                ex2, ey2 = getExpectedTargetCenter(target, craft, camera, time, C)
-                print 'new target expected location, pixelspace', ex2,ey2
-                print 'actual - new expected target location, pixels (want near zero)', px-ex2, py-ey2
+                print 'export to jpeg so can draw test circle'
+                # imagefile2 = imagefile[:-4] + 'tr.jpg'
+                imagefile2 = imagefile[:-4] + 'grid.jpg'
+                # cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile2, imagefile2)
+                cmd = "isis2std from=%s to=%s format=jpeg" % (gridfile, imagefile2)
+                print cmd
+                lib.system(cmd)
                 
-                # draw target circle on image to verify centering fn
-                # and expected location and updated location
-                print 'draw circles'
+                print 'draw circles, export jpeg'
                 import cv2
-                im = cv2.imread(imagefile)
-                libimg.drawCircle(im,(int(px),int(py),targetRadius))
-                libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255))
-                libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
-                cv2.imwrite(imagefile[:-4]+'circle.jpg', im)
+                im = cv2.imread(imagefile2)
+                libimg.drawCircle(im,(int(px),int(py),targetRadius), (0,255,0)) # green
+                libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255)) # red
+                # libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
+                cv2.imwrite(imagefile2[:-4]+'-circles.jpg', im)
+                
+                
+                
+                
+                
+                # get new C by rotating existing C by angle deltas 
+                # -------------------------------------------------------------------------
+                
+                # angle deltas are based on target expected vs actual in pixelspace
+                
+                #. nowork yet - get sx,sy ~20-200
+                
+                # # get actual target location in pixelspace
+                # # find center of target using blob and hough, then alignment to fixedimage
+                # # px,py is in pixels (0-800)
+                # px,py = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
+                # p = np.array([px,py])
+                # print 'target actual in pixelspace',p
+                
+                # # get expected target location in pixelspace
+                # # based on existing C pointing kernels and spacecraft and target positions
+                # # px, py = getExpectedTargetCenter(target, craft, camera, time)
+                # ex, ey = getExpectedTargetCenter(target, craft, camera, time)
+                # print 'target expected in pixelspace',ex,ey
+                
+                # deltax = px - ex
+                # deltay = py - ey
+                # print 'deltax,y (pixels)',deltax,deltay
+                                
+                # # don't update the camera pointing angle twice!
+                # history = getCubeHistory(cubefile)
+                # # print 'history',history
+                # if 'camrotate' in history:
+                #     angleDeltax = angleDeltay = 0
+                
+                # # get field of view and focal length
+                # # f is the focal length relative to the screen halfwidth
+                # # screen coordinates are -1.0 to 1.0
+                # #. use ik
+                # fov = config.cameraFOVs[camera] # degrees - 0.424 or 3.169
+                # screenHalfwidth = 1.0
+                # f = screenHalfwidth / math.tan(fov/2 * math.pi/180) 
+                
+                # # get angle deltas
+                # angleDeltax = fov * deltax / 800 # degrees #. param
+                # angleDeltay = fov * deltay / 800
+                # angleTwist = 0
+                # print 'angledeltax,y (deg)',angleDeltax, angleDeltay
+                
+                # #. build camrotate and put in a bin folder, add that to path
+                # # camrotate = "/media/sf_bburns/Documents/@Projects/Voyager/src/camrotate/camrotate"
+                # camrotate = "camrotate"
+                # cmd = "%s from=%s horizontal=%.20f vertical=%.20f twist=%.20f" % \
+                #       (camrotate, cubefile, angleDeltax, angleDeltay, angleTwist)
+                # print cmd
+                # s = lib.system(cmd)
+                # print s
+                
+                # # get camera pointing matrix C, for testing
+                # # get from new quaternion and convert to matrix with spice q2m
+                # line = s.split('\n')[3]
+                # values = line.split(',')[0:4]
+                # q = [float(value) for value in values]
+                # print 'new q',q
+                # C = spice.q2m(q)
+                # print 'new C'
+                # print C
+                
+                # # get new expected target location in pixelspace
+                # ex2, ey2 = getExpectedTargetCenter(target, craft, camera, time, C)
+                # print 'new target expected location, pixelspace', ex2,ey2
+                # print 'actual - new expected target location, pixels (want near zero)', px-ex2, py-ey2
+                
+                # # draw target circle on image to verify centering fn
+                # # and expected location and updated location
+                # print 'draw circles'
+                # import cv2
+                # im = cv2.imread(imagefile)
+                # libimg.drawCircle(im,(int(px),int(py),targetRadius))
+                # libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255))
+                # libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
+                # cv2.imwrite(imagefile[:-4]+'circle.jpg', im)
                                   
+                
+                
+                
+                
+                
                 print
                 
                 # stop

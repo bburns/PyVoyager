@@ -24,9 +24,9 @@ void IsisMain() {
   QString filename = ui.GetFileName("FROM");
 
   // get rotation amounts about x,y,z axes
-  double horizontal = ui.GetDouble("HORIZONTAL"); // y-axis (NOT x-axis)
-  double vertical = ui.GetDouble("VERTICAL"); // x-axis (NOT y-axis)
-  double twist = ui.GetDouble("TWIST"); // z-axis
+  double vertical = ui.GetDouble("VERTICAL"); // x-axis pitch
+  double horizontal = ui.GetDouble("HORIZONTAL"); // y-axis yaw
+  double twist = ui.GetDouble("TWIST"); // z-axis roll
 
   // open cube file
   Cube cube;
@@ -74,26 +74,27 @@ void IsisMain() {
   // rotmat_c(M, vertical,   1, M); // 1 is the x axis
   // rotmat_c(M, twist,      3, M); // 3 is the z axis
 
-  // get axes to rotate about
-  //. must be a better way to do this
-  ConstSpiceDouble axisX[] = {M[0][0],M[0][1],M[0][2]};
-  ConstSpiceDouble axisY[] = {M[1][0],M[1][1],M[1][2]};
-  ConstSpiceDouble axisZ[] = {M[2][0],M[2][1],M[2][2]};
+  // rotate the matrix M by the three angles given
+
+  // x-axis rotation: vertical (pitch)
+  ConstSpiceDouble axisX[] = {M[0][0],M[0][1],M[0][2]}; // get x-axis //. better way?
   // ConstSpiceDouble axisX[] = {M[0][0],M[1][0],M[2][0]};
-  // ConstSpiceDouble axisY[] = {M[0][1],M[1][1],M[2][1]};
-  // ConstSpiceDouble axisZ[] = {M[0][2],M[1][2],M[2][2]};
-
-  // get rotation matrices about the different axes using SPICE axisar
   SpiceDouble Rx[3][3];
-  SpiceDouble Ry[3][3];
-  SpiceDouble Rz[3][3];
-  axisar_c ( axisX, vertical,   Rx );
-  axisar_c ( axisY, horizontal, Ry );
-  axisar_c ( axisZ, twist,      Rz );
+  axisar_c ( axisX, vertical, Rx ); // get rotation matrix Rx
+  mxm_c ( M, Rx, M ); // rotate matrix M by Rx
 
-  // rotate camera pointing matrix by rotation matrices
-  mxm_c ( M, Rx, M );
+  // y-axis rotation: horizontal (yaw)
+  ConstSpiceDouble axisY[] = {M[1][0],M[1][1],M[1][2]};
+  // ConstSpiceDouble axisY[] = {M[0][1],M[1][1],M[2][1]};
+  SpiceDouble Ry[3][3];
+  axisar_c ( axisY, horizontal, Ry );
   mxm_c ( M, Ry, M );
+
+  // z-axis rotation: twist (roll)
+  ConstSpiceDouble axisZ[] = {M[2][0],M[2][1],M[2][2]};
+  // ConstSpiceDouble axisZ[] = {M[0][2],M[1][2],M[2][2]};
+  SpiceDouble Rz[3][3];
+  axisar_c ( axisZ, twist, Rz );
   mxm_c ( M, Rz, M );
 
   // translate rotation matrix back to a quaternion using SPICE m2q

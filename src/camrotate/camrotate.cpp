@@ -23,10 +23,15 @@ void IsisMain() {
   // get cube filename
   QString filename = ui.GetFileName("FROM");
 
-  // get rotation amounts about x,y,z axes
+  // get rotation amounts about x,y,z axes (degrees)
   double vertical = ui.GetDouble("VERTICAL"); // x-axis pitch
   double horizontal = ui.GetDouble("HORIZONTAL"); // y-axis yaw
   double twist = ui.GetDouble("TWIST"); // z-axis roll
+
+  // convert angles to radians
+  horizontal *= rpd_c();
+  vertical   *= rpd_c();
+  twist      *= rpd_c();
 
   // open cube file
   Cube cube;
@@ -53,46 +58,42 @@ void IsisMain() {
   double q1 = record[1];
   double q2 = record[2];
   double q3 = record[3];
+  ConstSpiceDouble q[4] = {q0,q1,q2,q3};
+  // SpiceDouble q[4] = {q0,q1,q2,q3};
 
   // translate quaternion to a rotation matrix using SPICE q2m
-  ConstSpiceDouble q[4] = {q0,q1,q2,q3};
   SpiceDouble M[3][3];
   q2m_c(q, M);
 
-  // convert angles to radians
-  // const double pi = 3.14159265358979323846;
-  // const double degToRad = pi / 180;
-  // double horizontalRads = horizontal * degToRad;
-  // double verticalRads   = vertical   * degToRad;
-  // double twistRads      = twist      * degToRad;
-  horizontal *= rpd_c();
-  vertical   *= rpd_c();
-  twist      *= rpd_c();
+
+
+  // translate to rotation matrix C and rotate with rotation matrices R
+  // nowork
 
   // // rotate the rotation matrix to get a new one using SPICE rotmat
   // rotmat_c(M, horizontal, 2, M); // 2 is the y axis
   // rotmat_c(M, vertical,   1, M); // 1 is the x axis
   // rotmat_c(M, twist,      3, M); // 3 is the z axis
 
-  // rotate the matrix M by the three angles given
+  // rotate the matrix M by the three angles
 
   // x-axis rotation: vertical (pitch)
   ConstSpiceDouble axisX[] = {M[0][0],M[0][1],M[0][2]}; // get x-axis //. better way?
-  // ConstSpiceDouble axisX[] = {M[0][0],M[1][0],M[2][0]};
+  // ConstSpiceDouble axisX[] = {-1,0,0};
   SpiceDouble Rx[3][3];
   axisar_c ( axisX, vertical, Rx ); // get rotation matrix Rx
   mxm_c ( M, Rx, M ); // rotate matrix M by Rx
 
   // y-axis rotation: horizontal (yaw)
   ConstSpiceDouble axisY[] = {M[1][0],M[1][1],M[1][2]};
-  // ConstSpiceDouble axisY[] = {M[0][1],M[1][1],M[2][1]};
+  // ConstSpiceDouble axisY[] = {0,1,0};
   SpiceDouble Ry[3][3];
   axisar_c ( axisY, horizontal, Ry );
   mxm_c ( M, Ry, M );
 
   // z-axis rotation: twist (roll)
   ConstSpiceDouble axisZ[] = {M[2][0],M[2][1],M[2][2]};
-  // ConstSpiceDouble axisZ[] = {M[0][2],M[1][2],M[2][2]};
+  // ConstSpiceDouble axisZ[] = {0,0,1};
   SpiceDouble Rz[3][3];
   axisar_c ( axisZ, twist, Rz );
   mxm_c ( M, Rz, M );
@@ -107,6 +108,32 @@ void IsisMain() {
   record[2] = qnew[2];
   record[3] = qnew[3];
   table.Update(record, 0); // 0 is the record number
+
+
+
+
+  // // rotate quaternion by other quaternions
+  // // nowork - new quaternion was WAY different from original one
+
+  // // get rotation quaternions
+  // ConstSpiceDouble qPitch[] = {vertical,   M[0][0], M[1][0], M[2][0]};
+  // ConstSpiceDouble qYaw[]   = {horizontal, M[0][1], M[1][1], M[2][1]};
+  // ConstSpiceDouble qRoll[]  = {twist,      M[0][2], M[1][2], M[2][2]};
+
+  // // rotate original quaternion
+  // qxq_c ( q, qPitch, q );
+  // qxq_c ( q, qYaw,   q );
+  // qxq_c ( q, qRoll,  q );
+
+  // // save the new quaternion to the table
+  // record[0] = q[0];
+  // record[1] = q[1];
+  // record[2] = q[2];
+  // record[3] = q[3];
+  // table.Update(record, 0); // 0 is the record number
+
+
+
 
   // print the new table
   cout << Table::toString(table);

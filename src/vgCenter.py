@@ -187,7 +187,7 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     # get position of target in camera space
     # position is in ECLIPB1950 units, but relative to camera space
     c = np.dot(C, w)
-    print 'c=position in camera space',c
+    # print 'c=position in camera space',c
 
     # get screen coordinates of target (-1 to 1, -1 to 1)
     # S is the camera-to-screen transformation matrix.
@@ -197,7 +197,7 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     # print 'fz=f/cz',fz
     S = np.array([[fz,0,0],[0,fz,0]]) 
     s = np.dot(S, c)
-    print 's=screen space (-1 to 1)',s
+    # print 's=screen space (-1 to 1)',s
 
     # get image coordinate (0 to 800, 0 to 800)
     # P would be a screen-to-pixel transformation matrix,
@@ -208,7 +208,7 @@ def getExpectedTargetCenter(target, craft, camera, time, C=None):
     # p[1] = p[1]+400
     p = -s * 800/2.0 + 400 #.params
     p = 800 - p # rotate 180 degrees
-    print 'p=pixel space (0 to 800)',p
+    # print 'p=pixel space (0 to 800)',p
     px,py = p[0],p[1]
     
     return px,py
@@ -462,55 +462,54 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 # try translating target to expected location
                 # -------------------------------------------------------------------------
                 
-                #. this seems to correctly translate the target to the correct spot,
-                # but cam2map doesn't project the entire target - distorted, missing redspot.
+                # # works, but will lose info as get closer to target
                 
-                # get actual target location in pixelspace
-                # find center of target using blob and hough, then alignment to fixedimage
-                # px,py is in pixels (0-800)
-                px,py = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
-                p = np.array([px,py])
-                print 'target actual in pixelspace',p
+                # # get actual target location in pixelspace
+                # # find center of target using blob and hough, then alignment to fixedimage
+                # # px,py is in pixels (0-800)
+                # px,py = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
+                # p = np.array([px,py])
+                # print 'target actual in pixelspace',p
                 
-                # get expected target location in pixelspace
-                # based on existing C pointing kernels and spacecraft and target positions
-                ex, ey = getExpectedTargetCenter(target, craft, camera, time)
-                print 'target expected in pixelspace',ex,ey
+                # # get expected target location in pixelspace
+                # # based on existing C pointing kernels and spacecraft and target positions
+                # ex, ey = getExpectedTargetCenter(target, craft, camera, time)
+                # print 'target expected in pixelspace',ex,ey
                 
-                deltax = px - ex
-                deltay = py - ey
-                print 'deltax,y (pixels)',deltax,deltay
+                # deltax = px - ex
+                # deltay = py - ey
+                # print 'deltax,y (pixels)',deltax,deltay
                 
-                cubefile2 = cubefile[:-4] + 'tr.cub'
+                # cubefile2 = cubefile[:-4] + 'tr.cub'
                 
-                cmd = "translate from=%s to=%s ltrans=%f strans=%f" % \
-                      (cubefile, cubefile2, -deltay, -deltax)
-                print cmd
-                s = lib.system(cmd)
-                print s
+                # cmd = "translate from=%s to=%s ltrans=%f strans=%f" % \
+                #       (cubefile, cubefile2, -deltay, -deltax)
+                # print cmd
+                # s = lib.system(cmd)
+                # print s
                 
-                print 'draw grid'
-                gridfile = cubefile[:-4] + '-grid.cub'
-                cmd = "grid from=%s to=%s" % (cubefile2, gridfile)
-                # cmd = "grid from=%s to=%s" % (cubefile, gridfile)
-                print cmd
-                lib.system(cmd)
+                # print 'draw grid'
+                # gridfile = cubefile[:-4] + '-grid.cub'
+                # cmd = "grid from=%s to=%s" % (cubefile2, gridfile)
+                # # cmd = "grid from=%s to=%s" % (cubefile, gridfile)
+                # print cmd
+                # lib.system(cmd)
                 
-                print 'export to jpeg so can draw test circle'
-                # imagefile2 = imagefile[:-4] + 'tr.jpg'
-                imagefile2 = imagefile[:-4] + 'grid.jpg'
-                # cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile2, imagefile2)
-                cmd = "isis2std from=%s to=%s format=jpeg" % (gridfile, imagefile2)
-                print cmd
-                lib.system(cmd)
+                # print 'export to jpeg so can draw test circle'
+                # # imagefile2 = imagefile[:-4] + 'tr.jpg'
+                # imagefile2 = imagefile[:-4] + 'grid.jpg'
+                # # cmd = "isis2std from=%s to=%s format=jpeg" % (cubefile2, imagefile2)
+                # cmd = "isis2std from=%s to=%s format=jpeg" % (gridfile, imagefile2)
+                # print cmd
+                # lib.system(cmd)
                 
-                print 'draw circles, export jpeg'
-                import cv2
-                im = cv2.imread(imagefile2)
-                libimg.drawCircle(im,(int(px),int(py),targetRadius), (0,255,0)) # green
-                libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255)) # red
-                # libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
-                cv2.imwrite(imagefile2[:-4]+'-circles.jpg', im)
+                # print 'draw circles, export jpeg'
+                # import cv2
+                # im = cv2.imread(imagefile2)
+                # libimg.drawCircle(im,(int(px),int(py),targetRadius), (0,255,0)) # green
+                # libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255)) # red
+                # # libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
+                # cv2.imwrite(imagefile2[:-4]+'-circles.jpg', im)
                 
                 
                 
@@ -523,79 +522,103 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 
                 #. nowork yet - get sx,sy ~20-200
                 
-                # # get actual target location in pixelspace
-                # # find center of target using blob and hough, then alignment to fixedimage
-                # # px,py is in pixels (0-800)
-                # px,py = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
-                # p = np.array([px,py])
-                # print 'target actual in pixelspace',p
+                # get actual target location in pixelspace
+                # find center of target using blob and hough, then alignment to fixedimage
+                # px,py is in pixels (0-800)
+                px,py = libimg.centerAndStabilizeImageFile(imagefile, targetRadius)
+                p = np.array([px,py])
+                print 'target actual in pixelspace',p
                 
-                # # get expected target location in pixelspace
-                # # based on existing C pointing kernels and spacecraft and target positions
-                # # px, py = getExpectedTargetCenter(target, craft, camera, time)
-                # ex, ey = getExpectedTargetCenter(target, craft, camera, time)
-                # print 'target expected in pixelspace',ex,ey
+                # get expected target location in pixelspace
+                # based on existing C pointing kernels and spacecraft and target positions
+                ex, ey = getExpectedTargetCenter(target, craft, camera, time)
+                print 'target expected in pixelspace',[ex,ey]
                 
-                # deltax = px - ex
-                # deltay = py - ey
-                # print 'deltax,y (pixels)',deltax,deltay
-                                
-                # # don't update the camera pointing angle twice!
-                # history = getCubeHistory(cubefile)
-                # # print 'history',history
-                # if 'camrotate' in history:
-                #     angleDeltax = angleDeltay = 0
-                
-                # # get field of view and focal length
-                # # f is the focal length relative to the screen halfwidth
-                # # screen coordinates are -1.0 to 1.0
-                # #. use ik
-                # fov = config.cameraFOVs[camera] # degrees - 0.424 or 3.169
+                deltax = ex - px
+                deltay = ey - py
+                print 'deltax,y (pixels)',[deltax,deltay]
+
+                # get field of view and focal length
+                # f is the focal length relative to the screen halfwidth
+                # screen coordinates are -1.0 to 1.0
+                #. use ik
+                fov = config.cameraFOVs[camera] # degrees - 0.424 or 3.169
                 # screenHalfwidth = 1.0
                 # f = screenHalfwidth / math.tan(fov/2 * math.pi/180) 
                 
-                # # get angle deltas
-                # angleDeltax = fov * deltax / 800 # degrees #. param
-                # angleDeltay = fov * deltay / 800
-                # angleTwist = 0
-                # print 'angledeltax,y (deg)',angleDeltax, angleDeltay
+                # get angle deltas
+                angleDeltax = fov * deltax / 800 # degrees #. param
+                angleDeltay = fov * deltay / 800
                 
-                # #. build camrotate and put in a bin folder, add that to path
-                # # camrotate = "/media/sf_bburns/Documents/@Projects/Voyager/src/camrotate/camrotate"
-                # camrotate = "camrotate"
-                # cmd = "%s from=%s horizontal=%.20f vertical=%.20f twist=%.20f" % \
-                #       (camrotate, cubefile, angleDeltax, angleDeltay, angleTwist)
-                # print cmd
-                # s = lib.system(cmd)
-                # print s
+                # angleDeltax = 0 #... just do vertical rotation for now (pitch)
+                # angleDeltay = 0 #... just do YAW
                 
-                # # get camera pointing matrix C, for testing
-                # # get from new quaternion and convert to matrix with spice q2m
-                # line = s.split('\n')[3]
-                # values = line.split(',')[0:4]
-                # q = [float(value) for value in values]
+                # note: this just depends on if you get rotation axes from rows or columns of C,
+                # because the inverse of C is just the transpose, since it's a rotation matrix.
+                # angleDeltax *= -1
+                # angleDeltay *= -1
+                
+                angleTwist = 0
+                print 'angle deltas (deg)',[angleDeltax, angleDeltay, angleTwist]
+                
+                # don't update the camera pointing angle twice!
+                #. actually these should come out to be ~zero if attempted twice, but check
+                history = getCubeHistory(cubefile)
+                # print 'history',history
+                if 'camrotate' in history:
+                    angleDeltax = angleDeltay = 0
+                
+                #. install should build camrotate and put in a bin folder, add that to path
+                # the angles in order are aka pitch, yaw, rotate
+                cmd = "camrotate from=%s vertical=%.17f horizontal=%.17f twist=%.17f" % \
+                      (cubefile, angleDeltay, angleDeltax, angleTwist)
+                print cmd
+                # camrotate outputs the starting quaternion and end quaternion
+                s = lib.system(cmd)
+                print s
+                
+                # get camera pointing matrix C, for testing
+                # get from new quaternion and convert to matrix with spice q2m
+                line = s.strip().split('\n')[-1]
+                values = line.split(',')[0:4]
+                q = [float(value) for value in values]
                 # print 'new q',q
-                # C = spice.q2m(q)
+                C = spice.q2m(q)
                 # print 'new C'
                 # print C
                 
+                # nowork - not sure why
                 # # get new expected target location in pixelspace
                 # ex2, ey2 = getExpectedTargetCenter(target, craft, camera, time, C)
-                # print 'new target expected location, pixelspace', ex2,ey2
-                # print 'actual - new expected target location, pixels (want near zero)', px-ex2, py-ey2
+                # print 'new target expected location, pixelspace', [ex2,ey2]
+                # # deltax2, deltay2 = px-ex2, py-ey2
+                # deltax2, deltay2 = ex2-px, ey2-py
+                # print 'actual-new expected target location, px (want ~zero)', [deltax2, deltay2]
+                # angleDeltax2, angleDeltay2 = fov * deltax2/800, fov * deltay2/800
+                # print 'angle deltas (deg)', [angleDeltax2, angleDeltay2]
                 
-                # # draw target circle on image to verify centering fn
-                # # and expected location and updated location
-                # print 'draw circles'
-                # import cv2
-                # im = cv2.imread(imagefile)
-                # libimg.drawCircle(im,(int(px),int(py),targetRadius))
-                # libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255))
+                
+                print 'draw grid'
+                gridfile = cubefile[:-4] + 'rot-grid.cub'
+                cmd = "grid from=%s to=%s" % (cubefile, gridfile)
+                print cmd
+                lib.system(cmd)
+                
+                print 'export to jpeg'
+                imagefile2 = imagefile[:-4] + 'rot-grid.jpg'
+                cmd = "isis2std from=%s to=%s format=jpeg" % (gridfile, imagefile2)
+                print cmd
+                lib.system(cmd)
+                    
+                # draw target circle on image to verify centering fn
+                # and expected location and updated location
+                print 'draw circles'
+                import cv2
+                im = cv2.imread(imagefile2)
+                libimg.drawCircle(im,(int(px),int(py),targetRadius), (0,255,0))
+                libimg.drawCircle(im,(int(ex),int(ey),targetRadius), (0,0,255))
                 # libimg.drawCircle(im,(int(ex2),int(ey2),targetRadius), (255,0,255))
-                # cv2.imwrite(imagefile[:-4]+'circle.jpg', im)
-                                  
-                
-                
+                cv2.imwrite(imagefile2[:-4]+'-circles.jpg', im)
                 
                 
                 

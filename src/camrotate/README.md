@@ -10,6 +10,9 @@ $ make
 
 Note: when I first compiled this it found the xml file without a problem,
 but now it looks for it in an Isis xml folder, so I just copied it there.
+
+$ cp camrotate.xml $ISISROOT/bin/xml
+
 So for now, if update xml file, copy it there.
 
 

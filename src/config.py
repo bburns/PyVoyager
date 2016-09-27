@@ -259,7 +259,8 @@ drawTarget = False # draw expected target size/location with yellow circle
 # Annotate
 # ----------------------------------------
 
-annotationsFont = "c:/windows/fonts/!futura-light.ttf"
+# annotationsFont = "c:/windows/fonts/!futura-light.ttf"
+annotationsFont = "fonts/!futura-light.ttf"
 annotationsFontsize = 18
 
 
@@ -275,7 +276,8 @@ targetsIgnore = dontCenterTargets
 # titleSecondsToShow = 4
 titleSecondsToShow = 3.5
 
-titleFont = "c:/windows/fonts/!futura-light.ttf"
+# titleFont = "c:/windows/fonts/!futura-light.ttf"
+titleFont = "fonts/!futura-light.ttf"
 titleFontsize = 48
 
 

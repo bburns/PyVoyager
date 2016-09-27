@@ -22,7 +22,8 @@ def vgPages():
 
     folderPages = lib.getFolder('pages')
     #.. move into /fonts folder
-    italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
+    # italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
+    italicfont = 'fonts\\GARAIT.TTF' # garamond italic
     
     
     # intro

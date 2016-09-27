@@ -50,15 +50,15 @@ def vgGrab():
                 print volume
                 if 'centered' in filename:
                     # filepath = config.centersFolder + 'VGISS_' + volume + '/' + filename
-                    filepath = config.folders['center'] + 'VGISS_' + volume + '/' + filename
+                    filepath = lib.getFolder('center') + 'VGISS_' + volume + '/' + filename
                     filename = filename.replace('centered','adjusted')
                 else:
                     # filepath = config.adjustmentsFolder + 'VGISS_' + volume + '/' + filename
-                    filepath = config.folders['adjust'] + 'VGISS_' + volume + '/' + filename
+                    filepath = lib.getFolder('adjust') + 'VGISS_' + volume + '/' + filename
                 print filename
                 print filepath
                 # origpath = config.adjustmentsFolder + 'VGISS_' + volume + '/' + filename
-                origpath = config.folders['adjust'] + 'VGISS_' + volume + '/' + filename
+                origpath = lib.getFolder('adjust') + 'VGISS_' + volume + '/' + filename
                 print origpath
                 if lib.cp(origpath, config.grabbedFolder):
                     # now remove from grab folder

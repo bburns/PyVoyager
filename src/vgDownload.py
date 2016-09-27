@@ -24,7 +24,7 @@ def vgDownload(edrVol, overwrite=False, directCall=True):
 
     # get download location
     filetitle = url.split('/')[-1] # eg VG_0013.tar.gz
-    filepath = config.folders['download'] + filetitle # eg data/step01_download/VG_0013.tar.gz
+    filepath = lib.getFolder('download') + filetitle # eg data/step01_download/VG_0013.tar.gz
 
     # quit if volume folder exists
     if os.path.isfile(filepath) and overwrite==False:

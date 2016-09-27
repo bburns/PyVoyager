@@ -102,7 +102,7 @@ def vgTitle(targetPath=None):
                 # get subfolder and make sure it exists
                 # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system + '/' + craft + '/' + target + '/' + camera + '/'
-                targetfolder = config.folders['titles'] + subfolder
+                targetfolder = lib.getFolder('titles') + subfolder
                 lib.mkdir_p(targetfolder)
 
                 print subfolder + '                                         \r',
@@ -133,7 +133,7 @@ def vgTitle(targetPath=None):
                 # get subfolder and make sure it exists
                 # eg data/step8_movies/Jupiter/Voyager1/Io/Narrow/
                 subfolder = system + '/' + craft + '/'
-                systemfolder = config.folders['titles'] + subfolder
+                systemfolder = lib.getFolder('titles') + subfolder
                 lib.mkdir_p(systemfolder)
 
                 print subfolder + '                                         \r',
@@ -171,7 +171,7 @@ def vgTitle(targetPath=None):
     # # save it
     # # note: ffmpeg requires file type to match that of other frames in movie,
     # # so use config.extension here
-    # folder = config.folders['titles']
+    # folder = lib.getFolder('titles')
     # titlefilepath = folder + 'title' + config.extension
     # img.save(titlefilepath)
 
@@ -186,7 +186,7 @@ def vgTitle(targetPath=None):
     # # save it
     # # note: ffmpeg requires file type to match that of other frames in movie,
     # # so use config.extension here
-    # folder = config.folders['titles']
+    # folder = lib.getFolder('titles')
     # titlefilepath = folder + 'epilogue' + config.extension
     # img.save(titlefilepath)
     

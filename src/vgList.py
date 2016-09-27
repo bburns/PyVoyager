@@ -37,7 +37,9 @@ def vgList(filterVolumes=''):
     # then convert to an array of arrays and display
     grid = {}
     for header in headers[1:]:
-        parseFilenames(config.folders[header.lower()], header, grid)
+        step = header.lower()
+        folder = getFolder(step)
+        parseFilenames(folder, header, grid)
 
     # tabulate lib works like this -
     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])

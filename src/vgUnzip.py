@@ -19,7 +19,7 @@ def vgUnzip(edrVol, overwrite=False, directCall=True):
 
     # get zipfilepath, eg data/step01_downloads/vg_0013.tar.gz
     edrVol = int(edrVol)
-    zipfilepath = config.folders['download'] + 'VG_%04d.tar.gz' % edrVol
+    zipfilepath = lib.getFolder('download') + 'VG_%04d.tar.gz' % edrVol
 
     # get output location
     outputSubfolder = lib.getSubfolder('unzip', edrVol)

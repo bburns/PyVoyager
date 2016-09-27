@@ -398,12 +398,20 @@ def cp(src, dst):
         return False
 
 
+def getFolder(step):
+    """
+    Get folder for the given step.
+    """
+    folder = config.folders[step]
+    return folder
+
+
 def getSubfolder(step, volume):
     """
     Get a volume subfolder, eg ('adjust','5101') -> 'data/step03_adjust/VGISS_5101/'
     volume can be a string or integer
     """
-    folder = config.folders[step]
+    folder = getFolder(step)
     if step in ['download','unzip']:
         subfolder = folder + 'VG_%04d' % int(volume) + '/'
     else:
@@ -413,7 +421,7 @@ def getSubfolder(step, volume):
 
 def getFilepath(step, volume, fileId, filter=None):
     "Get the filepath for the image specified, relative to the main PyVoyager folder."
-    folder = config.folders[step] # eg 'adjust' -> 'data/step04_adjusted/'
+    folder = getFolder(step) # eg 'adjust' -> 'data/step04_adjusted/'
     suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
     subfolder = folder + 'VGISS_' + volume + '/'
     if step=='convert':

@@ -22,7 +22,7 @@ def vgRetarget(oldTarget, newTarget):
 
     print 'imageId,oldTarget,newTarget,x,y'
     # folder = config.grabFolder
-    # folder = config.folders['grab']
+    # folder = lib.getFolder('grab')
     for root, dirs, files in os.walk(config.grabFolder):
         nfiles = len(files)
         for filename in files:

@@ -20,7 +20,8 @@ def vgPages():
     # note: ffmpeg requires file type to match that of other frames in movie,
     # so use config.extension.
 
-    folderPages = config.folders['pages']
+    folderPages = lib.getFolder('pages')
+    #.. move into /fonts folder
     italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
     
     

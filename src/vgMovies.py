@@ -33,8 +33,8 @@ def buildSegment(segmentId, subsegments):
     building the latter if they don't already exist.
     """
     print 'buildsegment',segmentId
-    movieFolder = config.folders['movies']
-    pagesFolder = config.folders['pages']
+    movieFolder = lib.getFolder('movies')
+    pagesFolder = lib.getFolder('pages')
     stageFolder = config.moviesStageFolder
     filepaths = []
     for subsegment in subsegments:

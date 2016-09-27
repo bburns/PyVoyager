@@ -61,7 +61,7 @@ def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
 
             # create subfolder
             subfolder = system + '/' + craft + '/' + target +'/' + camera + '/'
-            targetFolder = config.folders['target'] + subfolder
+            targetFolder = lib.getFolder('target') + subfolder
             lib.mkdir_p(targetFolder)
 
             # print 'Volume %s copying %s         \r' % (volume, fileId),

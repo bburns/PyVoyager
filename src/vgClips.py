@@ -131,7 +131,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     # # if we haven't seen this subfolder before add titlepage a few times.
                     # # titlepages are created in the previous step, vgTitle.
                     # if config.includeTitles and nfile==0:
-                    #     titleFilepath = config.folders['titles'] + subfolder + 'title' + \
+                    #     titleFilepath = lib.getFolder('titles') + subfolder + 'title' + \
                     #                          config.extension
                     #     ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
                     #     lib.addImages(titleFilepath, targetFolder, ntitleCopies,
@@ -178,7 +178,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                 if additionId.startswith('images/'):
                     print 'adding',additionId,targetKey
                     filetitle = additionId[7:] # trim off images/
-                    folder = config.folders['additions'] # data/images/
+                    folder = lib.getFolder('additions') # data/images/
                     imageFilepath = folder + filetitle
                     print imageFilepath
                     # add nframes into stage

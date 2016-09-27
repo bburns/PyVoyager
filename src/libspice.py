@@ -5,6 +5,26 @@ import spiceypy as spice
 
 
 
+# kernels from
+# # http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ck/vgr1_super.bc
+# http://pds-rings.seti.org/voyager/ck/vg1_jup_version1_type1_iss_sedr.bc
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/sclk/vg100019.tsc
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/sat132.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/ura083.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/nep016-6.bsp
+# http://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_issna_v02.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg1_isswa_v01.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_issna_v02.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/ik/vg2_isswa_v01.ti
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg1_v02.tf
+# http://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/fk/vg2_v02.tf
+
+
 def loadKernels():
     "load SPICE kernels (data files)"
     # see above for sources
@@ -30,8 +50,6 @@ def loadKernels():
 
 
 
-
-
 def et2str(et):
     "Convert an ephemeris time (seconds after J2000) to a UTC string."
     # see https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/C/cspice/et2utc_c.html
@@ -45,4 +63,25 @@ def getDistance(position):
     return math.sqrt(x**2 + y**2 + z**2)
 
 
+
+
+
+# other
+
+    # # print help(spice.bodn2c)
+
+    # # camera = 'VG1_ISSNA'
+    # # cameraId = spice.bodn2c(camera)
+    # # print camera, cameraId, found
+    # cameraId = -31101
+    # # print help(spice.getfov)
+    # # shape, dref, bsight, n, bounds = spice.getfov(cameraId, 4, 20,20)
+    # shape, cameraName, cameraBoresight, nbounds, bounds = spice.getfov(cameraId, 4)
+    # # print shape, cameraName, cameraBoresight, nbounds, bounds
+    # # RECTANGLE VG1_ISSNA [ 0.  0.  1.] 4
+    # # [[ 0.0037001  0.0037001  1.       ]
+    # #  [-0.0037001  0.0037001  1.       ]
+    # #  [-0.0037001 -0.0037001  1.       ]
+    # #  [ 0.0037001 -0.0037001  1.       ]]
+    # # so the boresight is along the z axis (in camera space)
 

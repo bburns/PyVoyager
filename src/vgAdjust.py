@@ -109,6 +109,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         filename = lib.getFilepath('import', volume, fileId)
 
         if not os.path.isfile(filename):
+            #.
             # print 'warning: missing file', filename
             continue
 

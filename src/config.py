@@ -285,7 +285,7 @@ titleFontsize = 48
 # filename used for frames
 videoFilespec = 'img%05d' + extension
 
-# frame rate - frames per second
+# frame rate - fps (frames per second)
 # videoFrameRate = 5 # nowork - gets stuck after a bit - why?
 # videoFrameRate = 8 # nice for ariel flyby
 # videoFrameRate = 10

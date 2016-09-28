@@ -9,6 +9,7 @@ import os
 import tabulate
 
 import config
+import lib
 
 
 def parseFilenames(folder, section, grid):
@@ -16,13 +17,44 @@ def parseFilenames(folder, section, grid):
     for root, dirnames, filenames in os.walk(folder):
         itemnames = dirnames
         itemnames.extend(filenames)
-        for itemname in itemnames: # eg VGISS_5101.tar.gz
-            if itemname[:6]=='VGISS_':
+        for itemname in itemnames: # eg VGISS_5101.tar.gz, VG_0013.tar.gz
+            if itemname.startswith('VGISS_'):
                 volnum = itemname[6:10] # eg 5101
                 if not grid.get(volnum): grid[volnum] = {}
                 grid[volnum]['Volume'] = volnum
                 grid[volnum][section] = 'x'
+            elif itemname.startswith('VG_'):
+                volnum = itemname[3:7] # eg 0013
+                if not grid.get(volnum): grid[volnum] = {}
+                grid[volnum]['Volume'] = volnum
+                grid[volnum][section] = 'x'
         del dirnames[:] # don't recurse
+
+
+def getGrid(headers):
+    """
+    build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
+    """
+    grid = {}
+    for header in headers[1:]:
+        step = header.lower()
+        folder = lib.getFolder(step)
+        parseFilenames(folder, header, grid)
+    return grid
+
+
+def getTable(grid, volumes, headers):
+    """
+    convert grid to a table (array of arrays)
+    """
+    table = []
+    for volume in volumes:
+        # only include a row if it has some data
+        gridrow = grid.get(volume)
+        if gridrow:
+            row = [gridrow.get(header) for header in headers]
+            table.append(row)
+    return table
 
 
 # def vgList(volnums=None, imageIds=None, targetPath=None):
@@ -30,41 +62,36 @@ def vgList(filterVolumes=''):
 
     "Get a listing of volumes and what stages they are at"
 
-    headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
-               'Denoise', 'Center', 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
-
-    # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
-    # then convert to an array of arrays and display
-    grid = {}
-    for header in headers[1:]:
-        step = header.lower()
-        folder = getFolder(step)
-        parseFilenames(folder, header, grid)
-
-    # tabulate lib works like this -
+    # uses tabulate, which works like this -
     # print tabulate.tabulate([['Alice', 24], ['Bob', 19]], headers=['Name', 'Age'])
     # Name      Age
     # ------  -----
     # Alice      24
     # Bob        19
 
-    rows = []
-    volumes = filterVolumes or config.volumes
-    for volume in volumes:
-        # only include a row if it has some data
-        gridrow = grid.get(volume)
-        if gridrow:
-            row = [gridrow.get(header) for header in headers]
-            rows.append(row)
+
+    # headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
+               # 'Denoise', 'Center', 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
+
+    headers = ['Volume', 'Download', 'Unzip']
+
+    grid = getGrid(headers)
+    volumes = filterVolumes or config.edrVolumes
+    table = getTable(grid, volumes, headers)
+
     print
-    print tabulate.tabulate(rows, headers)
+    print tabulate.tabulate(table, headers)
     print
+
+    # pdsHeaders = ['PDS Vol', 'Import', 'Convert', 'Adjust', 'Denoise', 'Center',
+                  # 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
 
 
 if __name__ == '__main__':
     os.chdir('..')
-    # vgList()
-    vgList(['5101','5102','5103'])
+    vgList()
+    # vgList(['0013','0014','0015'])
+    # vgList(['5101','5102','5103'])
     print 'done'
 
 

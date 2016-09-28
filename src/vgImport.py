@@ -91,29 +91,32 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             # get destination cubefile
             # eg step03_import/VGISS_5101/C1234567.cub
             destFile = lib.getFilepath('import', pdsVol, fileId)
-            cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
-            # print cmd
-            print "File %d: %s" % (nfile, cmd)
-            # print cmd + '               \r',
-            lib.system(cmd)
 
-            # add spice info using ISIS spiceinit
-            # print "Adding SPICE geometry info (using ISIS spiceinit)..."
-            # this fails due to incomplete kernels - need to download and use some other kernels.
-            # filed bugreport with isis - https://isis.astrogeology.usgs.gov/fixit/issues/4352
-            # cmd = "spiceinit from=%s web=yes" % (destFile)
-            # print cmd
-            # lib.system(cmd)
-            tspk = "kernels/spk/jup100.bsp"
-            spk = "kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
-            cmd = "spiceinit from=%s TSPK=%s SPK=%s" % (destFile, tspk, spk)
-            # print cmd
-            print "File %d: %s" % (nfile, cmd)
-            # print cmd + '               \r',
-            lib.system(cmd)
-            # print
+            #. if cubefile exists, check history - if just has voy2isis and spiceinit, leave it -
+            # but reimport otherwise
+            if os.path.isfile(destFile):
+                #. just pass for now
+                pass
 
-            # now we have level 0 files
+            else:
+
+                # import IMQ file to CUB file
+                cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
+                print "File %d: %s" % (nfile, cmd)
+                lib.system(cmd)
+
+                # add spice info using ISIS spiceinit
+                # print "Adding SPICE geometry info (using ISIS spiceinit)..."
+                # this fails due to incomplete kernels - need to download and use some other kernels.
+                # filed bugreport with isis - https://isis.astrogeology.usgs.gov/fixit/issues/4352
+                # cmd = "spiceinit from=%s web=yes" % (destFile)
+                tspk = "kernels/spk/jup100.bsp"
+                spk = "kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
+                cmd = "spiceinit from=%s TSPK=%s SPK=%s" % (destFile, tspk, spk)
+                print "File %d: %s" % (nfile, cmd)
+                lib.system(cmd)
+
+                # now we have level 0 files
 
             nfile += 1
 

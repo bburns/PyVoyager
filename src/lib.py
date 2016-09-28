@@ -742,23 +742,19 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         rmdir(destfolder)
         mkdir_p(destfolder)
         parentfolder = destfolder + ".."
-        # archive_util.unpack_archive(zipfile, parentfolder) # throws error - folder exists
-        # archive_util.unpack_archive(zipfile, destfolder) # extracts to a subfolder
-        # cmd = 'tar -x -f %s --directory %s --totals' % (zipfile, parentfolder)
 
-        # tar:
+        # tar options:
         # -x extract
         # -f file
         # --directory is the output folder
-        # --checkpoint specifies block interval to print status.
-        # --checkpoint-action specifies the status line to print.
+        # --checkpoint specifies block interval to print status
+        # --checkpoint-action specifies the status line to print
         # note the %'s need doubling in the action string
         # --totals shows status at the end
+
         cmd = 'tar -x -f %s --directory %s' % (zipfile, parentfolder)
-        cmd += ' --checkpoint=100 --checkpoint-action="ttyout=Unzipping - %T output\r" --totals'
-        print cmd.replace('\r','')
-        # os.system(cmd)
-        # subprocess.check_output(cmd, shell=True)
+        cmd += ' --checkpoint=100 --checkpoint-action="ttyout=Unzipping - %T output\\r" --totals'
+        print cmd
         system(cmd)
         return True
 

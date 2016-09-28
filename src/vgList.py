@@ -69,18 +69,23 @@ def vgList(filterVolumes=''):
     # Alice      24
     # Bob        19
 
+    edrAndPdsVolumes = list(config.edrVolumes)
+    edrAndPdsVolumes.extend(config.volumes)
+    volumes = filterVolumes or edrAndPdsVolumes
 
     # headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
                # 'Denoise', 'Center', 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
 
-    headers = ['Volume', 'Download', 'Unzip']
+    # headers = ['Volume', 'Download', 'Unzip']
+
+    headers = ['Volume', 'Download', 'Unzip', 'Import']
 
     grid = getGrid(headers)
-    volumes = filterVolumes or config.edrVolumes
     table = getTable(grid, volumes, headers)
+    s = tabulate.tabulate(table, headers)
 
     print
-    print tabulate.tabulate(table, headers)
+    print s
     print
 
     # pdsHeaders = ['PDS Vol', 'Import', 'Convert', 'Adjust', 'Denoise', 'Center',

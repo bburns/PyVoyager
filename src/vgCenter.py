@@ -33,6 +33,15 @@ import vgAdjust
 
     
 
+#. can just use brief mode
+# Brief printout of a .cub history
+# Description
+# This example shows the cathist application in the brief mode.
+# mirror from=peaks.cub to=temp.cub
+# circle from=temp.cub to=temp2.cub
+# Command Line
+# cathist from=temp2.cub mode=brief
+# Run the cahist application on a .cub file in brief mode.
 def getCubeHistory(cubefile):
     """
     get history of commands applied to given cubefile, as a list

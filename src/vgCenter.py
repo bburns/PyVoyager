@@ -22,6 +22,7 @@ import config
 import lib
 import libimg
 import libspice
+import libisis
 import log
 
 import vgDenoise
@@ -32,33 +33,6 @@ import vgAdjust
 # config.drawTarget = True
 
     
-
-#. can just use brief mode
-# Brief printout of a .cub history
-# Description
-# This example shows the cathist application in the brief mode.
-# mirror from=peaks.cub to=temp.cub
-# circle from=temp.cub to=temp2.cub
-# Command Line
-# cathist from=temp2.cub mode=brief
-# Run the cahist application on a .cub file in brief mode.
-def getCubeHistory(cubefile):
-    """
-    get history of commands applied to given cubefile, as a list
-    """
-    
-    # run ISIS cathist command
-    cmd = "cathist from=%s" % cubefile
-    s = lib.system(cmd)
-    
-    # parse the output
-    history = []
-    for line in s.split('\n'):
-        if line.startswith('Object = '):
-            obj = line[9:]
-            history.append(obj)
-            
-    return history
 
 
 
@@ -571,7 +545,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 
                 # # don't update the camera pointing angle twice!
                 # #. actually these should come out to be ~zero if attempted twice, but check
-                # history = getCubeHistory(cubefile)
+                # history = libisis.getHistory(cubefile)
                 # # print 'history',history
                 # if 'camrotate' in history:
                 #     angleDeltax = angleDeltay = 0
@@ -665,7 +639,7 @@ if __name__ == '__main__':
     # vgCenter(5101)
     
     cubefile = 'data/step03_import/vgiss_5101/C1465335.cub'
-    hist = getCubeHistory(cubefile)
+    hist = libisis.getHistory(cubefile)
     print hist
     
     print 'done'

@@ -806,6 +806,13 @@ def getNfiles(folder):
     return nfiles
 
 
+def replaceFile(oldfile, newfile):
+    "replace oldfile with newfile, cleanup"
+    cmd = "mv %s %s.bak && mv %s %s && rm %s.bak" % \
+          (oldfile, oldfile, newfile, oldfile, oldfile)
+    lib.system(cmd)
+
+
 
 if __name__ == '__main__':
     os.chdir('..')

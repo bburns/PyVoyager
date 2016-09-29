@@ -74,8 +74,6 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
             lib.system(cmd)
         if not 'remrx' in history:
             rxname = cubefile[:-4] + "rx.cub"
-            # cmd = "remrx from=%s to=%s && rm %s && mv %s %s" % \
-                  # (cubefile, rxname, cubefile, rxname, cubefile)
             cmd = "remrx from=%s to=%s" % (cubefile, rxname)
             print cmd
             lib.system(cmd)
@@ -95,6 +93,9 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         #     lib.replaceFile(cubefile, rotname)
 
         # #. this is segfaulting on C1465339 and killing virtualbox - why?
+        # #. plus it triples the filespace needed, as stores as floating points,
+        # #  for little gain (?), so maybe skip this?
+        # #. does this step do the flatfield correction? could we do it better ourselves?
         # # calibrate (voycal)
         # print "Calibrating (voycal)..."
         # if not 'voycal' in history:

@@ -26,51 +26,6 @@ import vgUnzip
 
 
 
-def getNextRecord(f):
-    "Get next variable-length record and the position of its contents in the file"
-    low = ord(f.read(1))
-    high = ord(f.read(1))
-    nbytes = high * 256 + low
-    startPos = f.tell()
-    s = f.read(nbytes)
-    if (nbytes % 2) == 1:
-        f.read(1) # read padding byte
-    return s, startPos
-
-def getImageTimeRecord(f):
-    "Search through records for IMAGE_TIME and return entire record and start file position"
-    imageTimeRecord = None
-    startPos = None
-    while True:
-        s, startPos = getNextRecord(f)
-        if s.startswith('IMAGE_TIME'):
-            imageTimeRecord = s
-            break
-        if s == 'END':
-            break
-    return imageTimeRecord, startPos
-
-def updateImageTime(sourceFile, time):
-    "Replace IMAGE_TIME=UNKNOWN label in the given file with a UTC time"
-    # the IMQ file record fortunately has lots of spaces in it so can
-    # fit the new time into it
-    f = open(sourceFile, 'rb+')
-    imageTimeRecord, startPos = getImageTimeRecord(f)
-    if imageTimeRecord.endswith('UNKNOWN'):
-        # print "IMAGE_TIME is UNKNOWN - replacing with time value from dbFiles.csv"
-        # print sourceFile
-        # print imageTimeRecord
-        # print time
-        # print startPos
-        newImageTimeRecord = 'IMAGE_TIME = ' + time + 'Z'
-        nspaces = len(imageTimeRecord) - len(newImageTimeRecord)
-        newImageTimeRecord += ' ' * nspaces
-        # print newImageTimeRecord
-        f.seek(startPos)
-        f.write(newImageTimeRecord)
-        # print
-    f.close()
-
 
 
 def vgImport(pdsVol, optionOverwrite=False, directCall=True):
@@ -155,8 +110,9 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
                 # provided by NAIF is [SPICE(INVALIDTIMESTRING)]. The Naif error is [The input
                 # string contains an unrecognizable substring beginning at the character marked
                 # by <U>: "<U>NKNOWN"].
-                # but it does create the cubefile, so can edit the label with the actual time
-                # from files.csv.
+                # filed issue here https://isis.astrogeology.usgs.gov/fixit/issues/4414
+                # it does create a cubefile, but if use editlab on that, spiceinit fails
+                # due to missing reseau info, so need to edit the IMQ file.
                 try:
                     cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
                     print "File %d: %s" % (nfile, cmd)
@@ -166,7 +122,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
                     print "IMQ missing image time - adding value %s from files.csv" % time
 
                     # make sure IMQ file has an IMAGE_TIME
-                    updateImageTime(sourceFile, time)
+                    libisis.updateImageTime(sourceFile, time)
 
                     # try command again
                     print

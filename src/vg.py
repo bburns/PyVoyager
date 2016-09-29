@@ -104,6 +104,7 @@ import vgInitPositions
 import vgInitErrata
 import vgRetarget
 import vgUncenter
+import vgCatIMQ
 
 
 # get command and arguments
@@ -332,6 +333,10 @@ elif cmd=="init":
         vgInitErrata.vgInitErrata()
     log.stop()
     lib.beep()
+
+elif cmd=="catimq":
+    filename = args[0]
+    vgCatIMQ.catimq(filename)
 
 elif cmd=="help":
     pass

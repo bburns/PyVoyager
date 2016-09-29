@@ -24,6 +24,10 @@ import libimg
 import vgUnzip
 
 
+
+
+
+
 def vgImport(pdsVol, optionOverwrite=False, directCall=True):
 
     """
@@ -32,7 +36,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
     """
 
     pdsVol = str(pdsVol) # eg '5104'
-    edrVols = lib.getEdrVols(pdsVol) # eg ['13','14'] - will pad with zeroes
+    edrVols = lib.getEdrVols(pdsVol) # eg ['0013','0014']
 
     importSubfolder = lib.getSubfolder('import', pdsVol) # eg 'step03_import/VGISS_5104'
 
@@ -59,6 +63,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
 
             fileId = row[config.colFilesFileId]
             target = row[config.colFilesTarget]
+            time = row[config.colFilesTime]
 
             #. for testing, just want 3 files
             # if fileId!='C1465335': continue
@@ -75,6 +80,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             subfolder = fileId[:5] + 'XXX/' # eg C1234XXX
             sourceFile = inputSubfolder + target + '/' + subfolder + fileId + '.IMQ'
 
+            # missing source IMQ file?
             if not os.path.isfile(sourceFile):
                 # missing file may be in RESTORED folder - check there.
                 # this happened twice for voyager 1 at jupiter - not sure about other encounters.
@@ -92,18 +98,37 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
             # eg step03_import/VGISS_5101/C1234567.cub
             destFile = lib.getFilepath('import', pdsVol, fileId)
 
-            #. if cubefile exists, check history - if just has voy2isis and spiceinit, leave it -
-            # but reimport otherwise
+            # if need to reimport a volume, can just use vg clear to remove it
             if os.path.isfile(destFile):
-                #. just pass for now
-                pass
+                print "File %d: %s already exists" % (nfile, destFile)
 
             else:
 
+                # make sure IMQ file has an IMAGE_TIME
+                # updateImageTime(sourceFile, time)
+
+                # stop
+
                 # import IMQ file to CUB file
-                cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
-                print "File %d: %s" % (nfile, cmd)
-                lib.system(cmd)
+                # if image time is UNKNOWN, this will return nonzero, which throws an error -
+                #   **ERROR** An unknown NAIF error has been encountered. The short explanation
+                # provided by NAIF is [SPICE(INVALIDTIMESTRING)]. The Naif error is [The input
+                # string contains an unrecognizable substring beginning at the character marked
+                # by <U>: "<U>NKNOWN"].
+                # but it does create the cubefile, so can edit the label with the actual time
+                # from files.csv.
+                try:
+                    cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
+                    print "File %d: %s" % (nfile, cmd)
+                    lib.system(cmd)
+                except: # voy2isis will return a non-zero status value, which throws an error
+                    # update the image time
+                    print "IMQ missing image time - update with value from files.csv..."
+                    #. how split this across lines?
+                    cmd = "editlab from=%s option=modkey grpname=Instrument keyword=StartTime value=%s" % (destFile, time)
+                    print cmd
+                    lib.system(cmd)
+                    #. this works, but then spiceinit fails due to missing reseaus!
 
                 # add spice info using ISIS spiceinit
                 # print "Adding SPICE geometry info (using ISIS spiceinit)..."
@@ -115,6 +140,7 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
                 cmd = "spiceinit from=%s TSPK=%s SPK=%s" % (destFile, tspk, spk)
                 print "File %d: %s" % (nfile, cmd)
                 lib.system(cmd)
+
 
                 # now we have level 0 files
 

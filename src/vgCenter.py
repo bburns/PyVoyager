@@ -263,8 +263,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #     # lib.mkdir(outputSubfolder)
 
         # get number of files to process
-        # nfiles = len(os.listdir(inputSubfolder))
-        nfiles = len(os.listdir(importSubfolder))
+        nfiles = lib.getNfiles(importSubfolder)
     else:
         nfiles = 1
 

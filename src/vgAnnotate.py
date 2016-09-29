@@ -44,7 +44,7 @@ def vgAnnotate(filterVolume, optionOverwrite=False, directCall=True):
         lib.mkdir(outputSubfolder)
 
     # get number of files to process
-    nfiles = len(os.listdir(inputSubfolder))
+    nfiles = lib.getNfiles(inputSubfolder)
 
     # open positions.csv file for target distance
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)

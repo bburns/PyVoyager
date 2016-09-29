@@ -46,7 +46,7 @@ def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
 
 
         # get number of files to process
-        nfiles = len(os.listdir(inputSubfolder))
+        nfiles = lib.getNfiles(importSubfolder)
     else:
         nfiles = 1
 

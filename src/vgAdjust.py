@@ -38,8 +38,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         lib.mkdir(importSubfolder)
 
         # get number of files to process
-        #. ignore any folders incl . and ..
-        nfiles = len(os.listdir(importSubfolder))
+        nfiles = lib.getNfiles(importSubfolder)
     else:
         nfiles = 1
 

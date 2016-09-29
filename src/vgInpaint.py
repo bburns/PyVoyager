@@ -46,7 +46,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
         lib.mkdir(outputSubfolder)
 
         # get number of files to process
-        nfiles = len(os.listdir(inputSubfolder))
+        nfiles = lib.getNfiles(importSubfolder)
     else:
         nfiles = 1
 

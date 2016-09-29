@@ -797,8 +797,20 @@ def system(cmd):
     return s
 
 
+def getNfiles(folder):
+    "get number of files in the given folder"
+    # nfiles = len(os.listdir(importSubfolder)) # includes folders
+    for root, dirs, files in os.walk(folder):
+        nfiles = len(files)
+        break
+    return nfiles
+
+
+
 if __name__ == '__main__':
     os.chdir('..')
+
+    # print getNfiles('.')
 
     # print getEdrVol('C0896631')
     # print getEdrVol('C1234567')

@@ -87,7 +87,7 @@ def updateImageTime(sourceFile, time):
     """
     f = open(sourceFile, 'rb+')
     imageTimeRecord, startPos = getImageTimeRecord(f)
-    if imageTimeRecord.endswith('UNKNOWN'):
+    if imageTimeRecord.endswith('UNKNOWN') or imageTimeRecord.endswith('?'):
         # print "IMAGE_TIME is UNKNOWN - replacing with time value from dbFiles.csv"
         # print sourceFile
         # print imageTimeRecord

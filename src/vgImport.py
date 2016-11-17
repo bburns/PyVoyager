@@ -20,6 +20,7 @@ import os.path
 import config
 import lib
 import libimg
+import libisis
 
 import vgUnzip
 
@@ -113,21 +114,40 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
                 # filed issue here https://isis.astrogeology.usgs.gov/fixit/issues/4414
                 # it does create a cubefile, but if use editlab on that, spiceinit fails
                 # due to missing reseau info, so need to edit the IMQ file.
+                s = "" # need to define this outside of the try block to pass it into except block
                 try:
                     cmd = "voy2isis from=%s to=%s" % (sourceFile, destFile)
+                    # cmd = "voy2isis from=%s to=%s 2>&1" % (sourceFile, destFile) #. nowork
                     print "File %d: %s" % (nfile, cmd)
-                    lib.system(cmd)
+                    s = lib.system(cmd)
+                    #. how get the error string?
                 except: # voy2isis will return nonzero, which throws an error
-                    print
-                    print "IMQ missing image time - adding value %s from files.csv" % time
+                    # print 's is',s #. nowork - s is always blank
+                    # if "INVALIDTIMESTRING" in s:
+                    try:
+                        print "IMQ file missing image time - adding value %s from files.csv" % time
 
-                    # make sure IMQ file has an IMAGE_TIME
-                    libisis.updateImageTime(sourceFile, time)
+                        # make sure IMQ file has an IMAGE_TIME
+                        libisis.updateImageTime(sourceFile, time)
 
-                    # try command again
-                    print
-                    print "File %d: %s" % (nfile, cmd)
-                    lib.system(cmd)
+                        # try command again
+                        print
+                        print "File %d: %s" % (nfile, cmd)
+                        lib.system(cmd)
+                        print
+
+                    # elif "Unable to set PDS file" in s:
+                    # else:
+                    except:
+                        print "voy2isis - error processing IMQ file - no cube file will be produced."
+                        # print s
+                        # continue
+                    # else:
+                        # print 'ss',s
+                        # raise
+                    # print
+
+
 
                 # add spice info using ISIS spiceinit
                 # print "Adding SPICE geometry info (using ISIS spiceinit)..."
@@ -138,7 +158,13 @@ def vgImport(pdsVol, optionOverwrite=False, directCall=True):
                 spk = "kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp"
                 cmd = "spiceinit from=%s TSPK=%s SPK=%s" % (destFile, tspk, spk)
                 print "File %d: %s" % (nfile, cmd)
-                lib.system(cmd)
+                try:
+                    lib.system(cmd)
+                except:
+                    # also fails if missing target info, e.g. amalthea - assume that is the case here.
+                    #.. but will catch error due to wrong kernels also, so will need to handle more kernels.
+                    print "spiceinit - error attaching SPICE data - no camera pointing information available."
+                    # continue
 
 
                 # now we have level 0 files

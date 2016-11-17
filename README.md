@@ -5,22 +5,45 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate - it's generally to within 100 or so pixels of an 800x800 pixel image. This is due to limitations of the Voyager spacecraft pointing systems. 
 
-You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
+You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
 
 There are a total of 70k+ images in the Voyager archives, so there is a lot to explore!
+
+
+## Contents
+
+1. [Example Movies](#example-movies)
+1. [Issues](#issues)
+1. [Contributing](#contributing)
+1. [Centering Images](#centering-images)
+1. [Aligning Composites](#aligning-composites)
+1. [Pipeline](#pipeline)
+1. [Installation](#installation)
+1. [Usage](#usage)
+1. [Parameters](#parameters)
+1. [More details](#more-details)
+1. [Testing](#testing)
+1. [History](#history)
+1. [License](#license)
 
 
 ## Example Movies
 
 These movies are still in early stages, so pardon any jitters and mini 'volcanoes' (leftover from removal of reseau marks).
 
-<img src="http://imgur.com/LO7Dnww" />
+<img src="http://imgur.com/LO7Dnww.gif" />
+
 Voyager 2 Io approach v0.43
 
-<a href="https://www.youtube.com/watch?v=lYUgU-Bc1_w"><img src="https://img.youtube.com/vi/lYUgU-Bc1_w/0.jpg" /></a>
-Voyager 1 Jupiter flyby (no moons), mostly false color (3mins) v0.47
+----
 
-[Complete playlist](https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP)
+<a href="https://www.youtube.com/watch?v=lYUgU-Bc1_w"><img src="https://img.youtube.com/vi/lYUgU-Bc1_w/0.jpg" /></a>
+
+Voyager 1 Jupiter flyby (no moons), mostly false color (3mins) v0.47 (link to YouTube video)
+
+----
+
+[Complete playlist on YouTube][playlist]
 
 
 <!-- https://www.youtube.com/watch?v=i38gzr6j5q4   -->
@@ -47,42 +70,14 @@ Voyager 1 Jupiter flyby (no moons), mostly false color (3mins) v0.47
 
 ## Issues
 
-I'm in the process of moving the system from Windows to Linux so it can use ISIS [21], which also requires switching from PDS archives to EDR archives. 
+There's a Trello board to track issues and progress [here][trello].
 
-There's a Trello board to track issues and progress here - https://trello.com/b/kEkGDMYR/voyager
-
-
-<!-- Denoising Images -->
-<!-- ---------------------------------------- -->
-
-<!-- The images are denoised using ___ -->
+I'm in the process of moving the system from Windows to Linux so it can use [ISIS][isis], which also requires switching from PDS archives to EDR archives. 
 
 
-## Centering Images
+## Contributing
 
-Images where the target fits completely in the frame are centered using blob detection [17], Hough circle detection [16], and ECC Maximization [15]. The expected target radius is calculated through SPICE data [12], from which the spacecraft and target position can be determined - this is used to help limit the Hough circle search, and then to draw a disc with the expected target size to which the image is aligned using ECC Maximization. The Hough circle detection is only accurate to a few pixels, so the ECC Maximization is needed for the final stabilization. 
-
-Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
-
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg" width="400">
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg" width="400">
-
-Centering is turned off at closest approach by determining when the target size is over a threshold (e.g. when the diameter is over 80% of the image width). 
-
-
-## Aligning Composites
-
-Composite channels for closeup images are aligned using feature detection [18] and matching, with RANSAC [19] to eliminate outliers from a least-squares fit model for the translation (which amounts to the translation tx, ty between images being an average of the feature movements).
-
-In more detail, 'interesting' features are detected using ORB [20] in one image, and matched with their corresponding point in another image. This is done for dozens-hundreds of interest points - they are each described with a feature vector, also obtained by ORB, then matched up with their corresponding point by a brute-force search. The RANSAC algorithm is used to throw out outliers, which would otherwise throw off the determined average translation. 
-
-If this approach fails to find a good translation (due to lack of enough corresponding points, for instance), it will fall back on ECC Maximization [15] to try to align the images. 
-
-Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
-
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg" width="800">
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg" width="400">
-
+Contributors are very welcome - take a look at the [Trello board][trello] and see if there's anything you'd like to work on! 
 
 <!-- ## What you can do -->
 
@@ -96,13 +91,45 @@ Here is an image showing what the feature-matching process looks like, and the r
 <!-- - And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file.  -->
 
 
+<!-- Denoising Images -->
+<!-- ---------------------------------------- -->
+
+<!-- The images are denoised using ___ -->
+
+
+## Centering Images
+
+Images where the target fits completely in the frame are centered using [blob detection][17], [Hough circle detection][16], and [ECC Maximization][ecc]. The expected target radius is calculated through [SPICE data][12], from which the spacecraft and target position can be determined - this is used to help limit the Hough circle search, and then to draw a disc with the expected target size to which the image is aligned using ECC Maximization. The Hough circle detection is only accurate to a few pixels, so the ECC Maximization is needed for the final stabilization. 
+
+Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
+
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg" width="400">
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg" width="400">
+
+Centering is turned off at closest approach by determining when the target size is over a threshold (e.g. when the diameter is over 80% of the image width). 
+
+
+## Aligning Composites
+
+Composite channels for closeup images are aligned using [feature detection][18] and matching, with [RANSAC][19] to eliminate outliers from a least-squares fit model for the translation (which amounts to the translation tx, ty between images being an average of the feature movements).
+
+In more detail, 'interesting' features are detected using [ORB][20] in one image, and matched with their corresponding point in another image. This is done for dozens-hundreds of interest points - they are each described with a feature vector, also obtained by ORB, then matched up with their corresponding point by a brute-force search. The RANSAC algorithm is used to throw out outliers, which would otherwise throw off the determined average translation. 
+
+If this approach fails to find a good translation (due to lack of enough corresponding points, for instance), it will fall back on [ECC Maximization][ecc] to try to align the images. 
+
+Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
+
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg" width="800">
+<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg" width="400">
+
+
 ## Pipeline
 
 Voyager consists of a command line interface to a pipeline of Python programs with the following steps (some in progress):
 
-* Download - download archives from **PDS EDR (raw) archives** [1]
+* Download - download archives from [PDS EDR (raw) archives][1]
 * Unzip - decompress archive volumes to IMQ files
-<!-- * Convert - convert RAW images to pngs using **img2png** [2] -->
+<!-- * Convert - convert RAW images to pngs using [img2png][img2png] -->
 <!-- * Adjust - rotate180, histogram stretch -->
 * Import - import IMQ files to ISIS cube files, attach SPICE geometry data with spiceinit
 * Adjust - rotate 180 degrees, calibrate images
@@ -134,171 +161,171 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 
 ### For Windows, set up a Linux virtual machine
 
-* Install VirtualBox [22]
+* Install [VirtualBox][22]
 * Create a VM - set disk space at least 20GB, Memory at least 1GB
 * Install a 64-bit Linux distro on it (ISIS is only 64-bit), e.g. Ubuntu or Xubuntu
 * Install the VirtualBox Guest Additions (for higher screen resolutions and clipboard support)
 
 ### Starting from Ubuntu 16.04
 
-(put these into an install script)
+<!-- (put these into an install script) -->
 
 ``` bash
 
-# set a location for applications, e.g. ~/Apps
-mkdir ~/Apps
-export APPS=~/Apps
+    # set a location for applications, e.g. ~/Apps
+    mkdir ~/Apps
+    export APPS=~/Apps
 
-# install PyVoyager
-# (if using a virtual machine, can install on Windows instead so can access the image files from there also)
-cd $APPS
-git clone https://github.com/bburns/PyVoyager.git
+    # install PyVoyager
+    # (if using a virtual machine, can install on Windows instead so can access the image files from there also)
+    cd $APPS
+    git clone https://github.com/bburns/PyVoyager.git
 
-# install CSPICE (C language version of SPICE)
-# see https://naif.jpl.nasa.gov/naif/toolkit_C_PC_Linux_GCC_64bit.html
-cd $APPS
-wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/cspice.tar.Z
-wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/importCSpice.csh
-/bin/csh -f importCSpice.csh
-rm cspice.tar.Z
-rm importCSpice.csh
+    # install CSPICE (C language version of SPICE)
+    # see https://naif.jpl.nasa.gov/naif/toolkit_C_PC_Linux_GCC_64bit.html
+    cd $APPS
+    wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/cspice.tar.Z
+    wget http://naif.jpl.nasa.gov/pub/naif/toolkit//C/PC_Linux_GCC_64bit/packages/importCSpice.csh
+    /bin/csh -f importCSpice.csh
+    rm cspice.tar.Z
+    rm importCSpice.csh
 
-## install Java, for the ISIS installer
-#sudo apt install default-jre
-#sudo add-apt-repository ppa:webupd8team/java
-#sudo apt update
-#sudo apt install oracle-java8-installer
+    ## install Java, for the ISIS installer
+    #sudo apt install default-jre
+    #sudo add-apt-repository ppa:webupd8team/java
+    #sudo apt update
+    #sudo apt install oracle-java8-installer
 
-# install ISIS
-cd $APPS
-wget https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
-chmod +x isisInstall.sh
-mkdir Isis
-./isisInstall.sh -n -d $APPS/Isis
+    # install ISIS
+    cd $APPS
+    wget https://isis.astrogeology.usgs.gov/documents/InstallGuide/assets/isisInstall.sh
+    chmod +x isisInstall.sh
+    mkdir Isis
+    ./isisInstall.sh -n -d $APPS/Isis
 
-# add to .profile:
-export APPS=~/Apps
-export PYVOYAGER=$APPS/PyVoyager
-export SPICEROOT=$APPS/cspice
-export ISISROOT=$APPS/Isis/isis
-. $ISISROOT/scripts/isis3Startup.sh
+    # add to .profile:
+    export APPS=~/Apps
+    export PYVOYAGER=$APPS/PyVoyager
+    export SPICEROOT=$APPS/cspice
+    export ISISROOT=$APPS/Isis/isis
+    . $ISISROOT/scripts/isis3Startup.sh
 
-source ~/.profile
-
-
-# build camrotate
-#. or just include the binary - is it static?
-
-# get some libraries for building ISIS programs
-$ sudo apt install libxerces-c-dev
-$ sudo apt install libsuperlu-dev
-
-# change a line in $ISISROOT/make/config.linux-x86_64 as I couldn't get it to
-# recognize superlu4 as superlu4.3. superlu4.3 isn't available yet as a package - 
-# it would require compiling it from source, which I didn't want to get into. 
-# not sure if any ISIS programs need the 4.3 version. 
-from 
-SUPERLULIB    = -lsuperlu_4.3 -lblas -lgfortran
-to 
-SUPERLULIB    = -lsuperlu -lblas -lgfortran
-
-# comment out a couple of lines in $ISISROOT/inc/SpecialPixel.h to turn off
-# some unused variable warnings - couldn't get pragma diagnostic to work
-line 101   // const double ValidMinimum   = IVALID_MIN8.d;
-line 162   // const int IVALID_MAX4  = (*((const int *) &VALID_MAX4));
-
-# make the program
-cd $PYVOYAGER/src/camrotate
-. setpaths.sh
-make
-
-#. add camrotate to PATH
+    source ~/.profile
 
 
-# get Voyager SPICE kernels locally
-pushd $ISIS3DATA
-rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager1 .
-rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager2 .
-popd
+    # build camrotate
+    #. or just include the binary - is it static?
 
-# get some different Voyager 1 and Jupiter SPICE SPK kernels
-#. could just add these to git
-mkdir ~/PyVoyager/kernels/spk
-pushd ~/PyVoyager/kernels/spk
-wget ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
-wget ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
-popd
+    # get some libraries for building ISIS programs
+    $ sudo apt install libxerces-c-dev
+    $ sudo apt install libsuperlu-dev
 
+    # change a line in $ISISROOT/make/config.linux-x86_64 as I couldn't get it to
+    # recognize superlu4 as superlu4.3. superlu4.3 isn't available yet as a package - 
+    # it would require compiling it from source, which I didn't want to get into. 
+    # not sure if any ISIS programs need the 4.3 version. 
+    from 
+    SUPERLULIB    = -lsuperlu_4.3 -lblas -lgfortran
+    to 
+    SUPERLULIB    = -lsuperlu -lblas -lgfortran
 
-# get some libraries for ISIS (don't need if using earlier Ubuntu, e.g. 12.04)
+    # comment out a couple of lines in $ISISROOT/inc/SpecialPixel.h to turn off
+    # some unused variable warnings - couldn't get pragma diagnostic to work
+    line 101   // const double ValidMinimum   = IVALID_MIN8.d;
+    line 162   // const int IVALID_MAX4  = (*((const int *) &VALID_MAX4));
 
-## libblas3gf
-wget http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
-sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+    # make the program
+    cd $PYVOYAGER/src/camrotate
+    . setpaths.sh
+    make
 
-## libjpeg62
-sudo apt install libjpeg62
-
-## libvpx
-wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
-sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
-
-
-# install OpenCV version 3
-## (Ubuntu package is version 2)
-## sudo apt install libopencv-dev
-sudo apt install build-essential
-sudo apt install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
-sudo apt install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
-
-cd $APPS
-wget https://github.com/Itseez/opencv/archive/3.1.0.zip
-unzip 3.1.0.zip
-rm 3.1.0.zip
-cd opencv-3.1.0
-mkdir release
-cd release
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
-cd ..
-make
-sudo make install
-## release is >2gb, so remove it
-rmdir release
-## can keep opencv-3.1.0 around though, as contains source code
-cd ~
-
-# get some Python libraries
-# Python 2.7 is included with Ubuntu
-
-## pip
-sudo apt install python-pip
-sudo pip install --upgrade pip
-
-## numpy, scipy, matplotlib
-sudo apt install python-numpy python-scipy python-matplotlib
-
-## cv2 (OpenCV Python interface)
-sudo apt install python-opencv
-
-## SpiceyPy (SPICE Python interface)
-sudo pip install spiceypy
-
-## miscellaneous
-sudo pip install tabulate
-sudo pip install more_itertools
-sudo pip install python-dateutil
+    #. add camrotate to PATH
 
 
-# get some other commands
+    # get Voyager SPICE kernels locally
+    pushd $ISIS3DATA
+    rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager1 .
+    rsync -avz --partial --progress --delete isisdist.wr.usgs.gov::isis3data/data/voyager2 .
+    popd
 
-## make a beep sound
-sudo apt install beep
+    # get some different Voyager 1 and Jupiter SPICE SPK kernels
+    #. could just add these to git
+    mkdir ~/PyVoyager/kernels/spk
+    pushd ~/PyVoyager/kernels/spk
+    wget ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/a_old_versions/jup100.bsp
+    wget ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
+    popd
 
-## convenient way to run batch commands
-sudo apt install parallel
 
-## image viewer, e.g. for jpegs
-sudo apt install eog
+    # get some libraries for ISIS (don't need if using earlier Ubuntu, e.g. 12.04)
+
+    ## libblas3gf
+    wget http://mirrors.kernel.org/ubuntu/pool/main/b/blas/libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+    sudo dpkg -i libblas3gf_1.2.20110419-2ubuntu1_amd64.deb
+
+    ## libjpeg62
+    sudo apt install libjpeg62
+
+    ## libvpx
+    wget http://ftp.us.debian.org/debian/pool/main/libv/libvpx/libvpx1_1.3.0-3_amd64.deb
+    sudo dpkg -i libvpx1_1.3.0-3_amd64.deb
+
+
+    # install OpenCV version 3
+    ## (Ubuntu package is version 2)
+    ## sudo apt install libopencv-dev
+    sudo apt install build-essential
+    sudo apt install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+    sudo apt install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+    cd $APPS
+    wget https://github.com/Itseez/opencv/archive/3.1.0.zip
+    unzip 3.1.0.zip
+    rm 3.1.0.zip
+    cd opencv-3.1.0
+    mkdir release
+    cd release
+    cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+    cd ..
+    make
+    sudo make install
+    ## release is >2gb, so remove it
+    rmdir release
+    ## can keep opencv-3.1.0 around though, as contains source code
+    cd ~
+
+    # get some Python libraries
+    # Python 2.7 is included with Ubuntu
+
+    ## pip
+    sudo apt install python-pip
+    sudo pip install --upgrade pip
+
+    ## numpy, scipy, matplotlib
+    sudo apt install python-numpy python-scipy python-matplotlib
+
+    ## cv2 (OpenCV Python interface)
+    sudo apt install python-opencv
+
+    ## SpiceyPy (SPICE Python interface)
+    sudo pip install spiceypy
+
+    ## miscellaneous
+    sudo pip install tabulate
+    sudo pip install more_itertools
+    sudo pip install python-dateutil
+
+
+    # get some other commands
+
+    ## make a beep sound
+    sudo apt install beep
+
+    ## convenient way to run batch commands
+    sudo apt install parallel
+
+    ## image viewer, e.g. for jpegs
+    sudo apt install eog
 
 ```
 
@@ -360,7 +387,7 @@ Unzip the tarfile
 
     > vg unzip 5101
 
-Convert the IMG files to PNGs with **img2png**
+Convert the IMG files to PNGs with [img2png][img2png]
 
     > vg convert 5101
 
@@ -430,7 +457,7 @@ The data for each step is put into the following folders in the `data` subfolder
     step02_unzip
     step03_import
 
-There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described here http://pds-rings.seti.org/voyager/iss/calib_images.html.
+There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described [here](http://pds-rings.seti.org/voyager/iss/calib_images.html).
 
 Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
@@ -441,7 +468,7 @@ Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.
 
-After downloading the tar.gz files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, the expected target radius, and ECC maximization [3] for stabilization. See the section on centering below for more details. 
+After downloading the tar.gz files, unzipping them, extracting the PNGs, adjusting and denoising them, the CALIB images are centered based on blob detection, Hough circle detection, the expected target radius, and [ECC maximization][ecc] for stabilization. See the section on centering below for more details. 
 
 The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv` (included in the distribution). This helps with the Hough circle detection, and also to stabilize the image. 
 
@@ -466,7 +493,7 @@ The master list of files (`db/files.csv`) has been compiled into a list of compo
 
 This file is used by the `vg composite <volume>` command to generate the color frames.
 
-The clips are generated with the `vg clips [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running **ffmpeg** to generate an mp4 clip for each. The target size is also used to control the speed of the movie, slowing down when the target is closer, but the framerate can also be controlled via the `framerateConstants.csv` and `framerates.csv` files. 
+The clips are generated with the `vg clips [targetpath]` command, which links all the images into target subfolders (arranged by planet/spacecraft/target/camera), numbering them sequentially, and running [ffmpeg][ffmpeg] to generate an mp4 clip for each. The target size is also used to control the speed of the movie, slowing down when the target is closer, but the framerate can also be controlled via the `framerateConstants.csv` and `framerates.csv` files. 
 
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
@@ -477,10 +504,6 @@ Some centering test images are included in the `test/center` folder, and their c
 
 Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
 
-
-## Contributing
-
-Contributors are very welcome - take a look at the Trello board and see if there's anything you'd like to work on! https://trello.com/b/kEkGDMYR/voyager
 
 
 ## History
@@ -493,13 +516,19 @@ See [history.md](history.md).
 This software is released under the MIT license - see LICENSE.md.
 
 
+[pds]: http://www.planetary.org/explore/space-topics/space-imaging/data.html
+[playlist]: https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
+[trello]: https://trello.com/b/kEkGDMYR/voyager
+[isis]: https://isis.astrogeology.usgs.gov/
+[img2png]: http://www.mmedia.is/bjj/utils/img2png/
+[ffmpeg]: https://ffmpeg.org/
+[ecc]: http://xanthippi.ceid.upatras.gr/people/evangelidis/ecc/
+
 [1]: http://pds-rings.seti.org/voyager/
-[2]: http://www.mmedia.is/bjj/utils/img2png/
 [3]: https://www.scipy.org/
 [4]: http://docs.opencv.org/3.0-beta/modules/imgproc/doc/feature_detection.html#cv2.HoughCircles
 [5]: http://www.numpy.org/
 [6]: http://matplotlib.org/
-[7]: https://ffmpeg.org/
 [8]: https://python-pillow.org/
 [9]: https://www.continuum.io/downloads
 [10]: https://pypi.python.org/pypi/tabulate
@@ -507,11 +536,9 @@ This software is released under the MIT license - see LICENSE.md.
 [12]: http://naif.jpl.nasa.gov/naif/
 [13]: https://www.learnopencv.com/image-alignment-ecc-in-opencv-c-python/
 [14]: https://github.com/erikrose/more-itertools
-[15]: http://xanthippi.ceid.upatras.gr/people/evangelidis/ecc/
 [16]: https://en.wikipedia.org/wiki/Circle_Hough_Transform
 [17]: https://en.wikipedia.org/wiki/Blob_detection
 [18]: https://en.wikipedia.org/wiki/Feature_detection_(computer_vision)
 [19]: https://en.wikipedia.org/wiki/RANSAC
 [20]: http://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_orb/py_orb.html
-[21]: https://isis.astrogeology.usgs.gov/
 [22]: https://www.virtualbox.org/

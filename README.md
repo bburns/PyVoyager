@@ -70,9 +70,9 @@ Voyager 1 Jupiter flyby (no moons), mostly false color (3mins) v0.47 (link to Yo
 
 ## Issues
 
-There's a Trello board to track issues and progress [here][trello].
+There's a [Trello board][trello] to track issues and progress.
 
-I'm in the process of moving the system from Windows to Linux so it can use [ISIS][isis], which also requires switching from PDS archives to EDR archives. 
+I'm in the process of moving the system from Windows to Linux so it can use [ISIS][isis], which also requires switching from PDS archives to EDR archives - some of the README documentation is still geared towards the older system - the new one is in transition. 
 
 
 ## Contributing
@@ -131,7 +131,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Unzip - decompress archive volumes to IMQ files
 <!-- * Convert - convert RAW images to pngs using [img2png][img2png] -->
 <!-- * Adjust - rotate180, histogram stretch -->
-* Import - import IMQ files to ISIS cube files, attach SPICE geometry data with spiceinit
+* Import - import IMQ files to ISIS cube files, attach SPICE geometry data with `spiceinit`
 * Adjust - rotate 180 degrees, calibrate images
 * Flatfield - subtract good flatfields (dark images)
 * Dereseau - remove reseau marks cleanly (set to null)

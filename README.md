@@ -1,38 +1,45 @@
-
-PyVoyager
-========================================
-
-Version 0.5 inprogress
-
-(I'm in the process of moving the system from Windows to Linux so it can use ISIS [21] - will require switching from PDS archives to EDR archives also). 
+# PyVoyager
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
-<!-- The most challenging part will be reconstructing the geometry and assembling the mosaics automatically, as the camera pointing information available is not very accurate.  -->
+Voyager I and II sent back over 70,000 images, so there is a lot to explore! 
 
-<!-- This is a large project, so it's designed to be split up among different people working on different segments, coordinated through .csv files.  -->
+Unfortunately the cameras were not able to point very accurately at their targets, resulting in jittery image sequences. PyVoyager centers the target planet or moon in the frame, and creates movies from the image sequences.
 
-It's in an early stage of development, but is still usable for downloading and extracting datasets, and assembling rough movies. 
 
-<!-- There are a total of 70k+ images in the Voyager archives - the datasets are rather large - 1-3GB per compressed volume, with 87 volumes in total, so there is a lot to explore! -->
-There are a total of 70k+ images in the Voyager archives, so there is a lot to explore!
+## Contents
 
-You can read more about the Planetary Data System (PDS) which hosts the archives here - http://www.planetary.org/explore/space-topics/space-imaging/data.html.
+1. [Example Movies](#example-movies)
+1. [Issues](#issues)
+1. [Contributing](#contributing)
+1. [Centering Images](#centering-images)
+1. [Aligning Composites](#aligning-composites)
+1. [Pipeline](#pipeline)
+1. [Installation](#installation)
+1. [Usage](#usage)
+1. [Parameters](#parameters)
+1. [More details](#more-details)
+1. [Testing](#testing)
+1. [Sources](#sources)
+1. [History](#history)
+1. [License](#license)
 
 
 Example Movies
 ----------------------------------------
 
-These movies are still in early stages, so pardon the jitters and the mini 'volcanoes' (leftover from removal of reseau marks).
+<!-- Here is an example raw image sequence -  -->
+
+<!-- and here it is, centered -  -->
+
+
+
+Here is Voyager 2's flyby of Io - pardon any mini 'volcanoes' (leftover from removal of reseau marks) -
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
 Voyager 1 Jupiter flyby, mostly false color (3mins) v0.47
 
 http://imgur.com/LO7Dnww  
-Voyager 2 Io approach v0.43
-
-https://www.youtube.com/watch?v=i38gzr6j5q4  
-Rough draft of Voyager 1 flyby of Jupiter system (13mins) v0.45
 
 https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43
@@ -387,8 +394,12 @@ Some centering test images are included in the `test/center` folder, and their c
 Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
 
 
-History
-----------------------------------------
+## Sources
+
+You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
+
+
+## History
 
 <!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
 <!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
@@ -560,6 +571,13 @@ License
 
 This software is released under the MIT license - see LICENSE.md.
 
+[pds]: https://pds.nasa.gov/
+[playlist]: https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
+[trello]: https://trello.com/b/kEkGDMYR/voyager
+[isis]: https://isis.astrogeology.usgs.gov/
+[img2png]: http://www.mmedia.is/bjj/utils/img2png/
+[ffmpeg]: https://ffmpeg.org/
+[ecc]: http://xanthippi.ceid.upatras.gr/people/evangelidis/ecc/
 
 [1]: http://pds-rings.seti.org/voyager/
 [2]: http://www.mmedia.is/bjj/utils/img2png/

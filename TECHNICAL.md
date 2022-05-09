@@ -52,7 +52,7 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Dereseau - remove reseau marks cleanly (set to null)
 * Denoise - identify/eliminate noise where possible (set to null)
 * Inpaint - fill in missing information with pixels from prior frame or average of surrounding pixels - be careful with reseau marks on limbs of target
-<!-- * Undistort - geometric correction 800x800->1000x1000 -->
+<!-- * Undistort - geometric correction using reseau marks 800x800->1000x1000 -->
 * Center - center and stabilize images where entire target is visible
 * Map - project image to cylindrical map using SPICE information, fit there with ISIS jigsaw to refine pointing information
 * Colorize - colorize images by pulling missing channels from the map

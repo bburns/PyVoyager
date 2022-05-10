@@ -123,7 +123,7 @@ filterVolumes = None
 filterImageIds = None
 filterTargetPath = None
 for arg in args:
-    if arg[0] in '0123456789':
+    if arg[0] in '0123456789*':
         filterVolumes = lib.getVolumeNumbers(arg)
     elif arg[0].lower()=='c':
         filterImageIds = lib.getImageIds(arg)

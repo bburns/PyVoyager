@@ -1,1 +1,1 @@
-python2 src/vg.py %*
+@python2 src/vg.py %*

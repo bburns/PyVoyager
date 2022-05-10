@@ -539,6 +539,7 @@ colChannelIm = -1
 
 
 # Voyager PDS volumes - 87 total
+# first digit is planet, second is spacecraft
 voyager1jupiter = range(5101,5120+1)
 voyager1saturn  = range(6101,6121+1)
 voyager2jupiter = range(5201,5214+1)

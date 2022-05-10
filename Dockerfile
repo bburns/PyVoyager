@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src src
 
-#. need a wildcard download, vg download *
+#. need a wildcard download, vg download *, or vg download all
 RUN python src/vg.py download 5101
 
 # this is python 2

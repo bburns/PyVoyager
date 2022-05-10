@@ -50,6 +50,7 @@ def vgConvert(volnum, optionOverwrite=False, directCall=True):
             for filespec in config.imageFilespecs: # eg ['*RAW.IMG','*CALIB.IMG']
                 libimg.img2png(subdirabsolute, filespec, outputSubfolder)
             ndir += 1
+    print 'Done'
     print
 
 

@@ -884,7 +884,7 @@ def img2png(srcdir, filespec, destdir, quiet=True):
 
     # first convert img's to png's, then move them to the dest dir
 
-    savedir = os.getcwd() # full path
+    savedir = os.getcwd() # save full path
     os.chdir(srcdir)
     # eg "img2png *CALIB.img -fnamefilter > nul"
     cmd = savedir + "/vendor/img2png/img2png " + filespec + " " + config.img2pngOptions
@@ -896,23 +896,14 @@ def img2png(srcdir, filespec, destdir, quiet=True):
     os.system(cmd)
 
 
+    # now move the png files to destdir
+    os.chdir(savedir) # go back to original dir (fullpath)
+    files = glob.glob(srcdir + '/*.png') # find all pngs
     if os.name == 'nt':
         destdir = destdir.replace('/', '\\')
-
-    # now move the png files to destdir
-    # go back to original dir
-    # (srcdir is relative to the python program so need to switch back to that dir)
-    os.chdir(savedir)
-    # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes
-    # cmd = "move " + srcdir +"\\*.png " + destdir + " > nul"
-    # os.system(cmd)
-    # os.rename(srcdir + '/*.png', destdir)
-    # shutil.move(srcdir + '/*.png', destdir)
-    files = glob.glob(srcdir + '/*.png')
     print 'Move/rename files to', destdir, ':', files
     for file in files:
         print 'Rename', file, destdir
-        # os.rename(file, destdir)
         try:
             shutil.move(file, destdir)
         except:

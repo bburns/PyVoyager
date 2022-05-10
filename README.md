@@ -28,7 +28,7 @@ Example Movies
 
 Here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
-![](http://imgur.com/LO7Dnww)
+<img src="http://imgur.com/LO7Dnww.gif" />
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
 Voyager 1 Jupiter flyby, mostly false color (3mins) v0.47

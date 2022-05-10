@@ -33,7 +33,8 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 # ----------------------------------------
 
 # voyager archive url
-downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+# downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+downloadUrl = "https://pds-rings.seti.org:443/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
 # Convert
@@ -68,7 +69,6 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 # so just keep using the dim CALIB images and histogram stretching, which works well.
 # img2pngOptions = "-fnamefilter -loglevel0 -s10"
 img2pngOptions = "-fnamefilter -loglevel0"
-
 
 
 # Adjust

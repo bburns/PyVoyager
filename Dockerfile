@@ -15,5 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src src
 
+# RUN python src/vg.py download 5101
+
 # this is python 2
-ENTRYPOINT [ "python", "src/vg.py" ]
+# ENTRYPOINT [ "python", "src/vg.py" ]
+# can override this with docker run
+CMD [ "python", "src/vg.py" ]

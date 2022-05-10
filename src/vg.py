@@ -1,4 +1,3 @@
-
 # vg
 # voyager command line interface
 
@@ -85,7 +84,7 @@ import vgTestCenter
 import vgTestComposite
 import vgGrab
 import vgInitFiles
-import vgInitCenters
+# import vgInitCenters
 import vgInitComposites
 import vgInitPositions
 import vgInitErrata

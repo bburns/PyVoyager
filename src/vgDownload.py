@@ -24,7 +24,9 @@ def vgDownload(volnum, overwrite=False, directCall=True):
 
     # get download location
     filetitle = url.split('/')[-1] # eg VGISS_5101.tar.gz
-    filepath = config.folders['download'] + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
+    # filepath = config.folders['download'] + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
+    folder = config.folders['download'] # eg data/step1_downloads/
+    filepath = folder + filetitle # eg data/step1_downloads/VGISS_5101.tar.gz
 
     # quit if volume folder exists
     if os.path.isfile(filepath) and overwrite==False:
@@ -35,7 +37,7 @@ def vgDownload(volnum, overwrite=False, directCall=True):
     print "Downloading " + url
     print "         to " + filepath
     lib.rm(filepath)
-    lib.downloadFile(url, filepath)
+    lib.downloadFile(url, folder, filepath)
 
 
 if __name__ == '__main__':

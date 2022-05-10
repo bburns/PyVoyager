@@ -684,13 +684,14 @@ def imagesToMp4(stageFolder, outputFilename):
     os.chdir(savedir)
 
 
-def downloadFile(url, filepath):
+def downloadFile(url, folder, filepath):
     "Download a file from a url to a given filepath using curl"
     # eg http://pds-rings.seti.org/archives/VGISS_5xxx/VGISS_5101.tar.gz
     if os.path.isfile(filepath):
         print "File " + filepath + " already exists"
         return False
     else:
+        os.makedirs(folder)
         cmd = "curl -o " + filepath + " " + url
         print cmd
         os.system(cmd)

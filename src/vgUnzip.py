@@ -19,10 +19,10 @@ def vgUnzip(volnum, overwrite=False, directCall=True):
 
     volnum = str(volnum)
 
-    # get zipfilepath, eg data/step01_downloads/vgiss_5101.tar.gz
+    # get zipfilepath, eg data/step01_downloads/VGISS_5101.tar.gz
     zipfilepath = config.folders['download'] + 'VGISS_' + volnum + '.tar.gz'
 
-    # get output location
+    # get output location, eg data/step02_unzip/VGISS_5101
     outputSubfolder = lib.getSubfolder('unzip', volnum)
 
     # quit if volume folder exists

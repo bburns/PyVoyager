@@ -13,6 +13,8 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+#. download img2png, unzip to vendor folder
+
 COPY src src
 
 #. need a wildcard download, vg download *, or vg download all

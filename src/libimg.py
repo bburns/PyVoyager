@@ -8,6 +8,7 @@ Most of these are specific to PyVoyager
 import os
 import os.path
 import glob
+import shutil
 import scipy.ndimage as ndimage # n-dimensional images - for blob detection
 import numpy as np
 import cv2
@@ -878,21 +879,28 @@ def drawCrosshairs(im):
     im[0:ymax-1, cx] = color
 
 
-def img2png(srcdir, filespec, destdir):
+def img2png(srcdir, filespec, destdir, quiet=True):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
 
     # first convert img's to png's, then move them to the dest dir
+
     savedir = os.getcwd() # full path
     os.chdir(srcdir)
     # eg "img2png *CALIB.img -fnamefilter > nul"
-    # cmd = "img2png " + filespec + " " + config.img2pngOptions + " > nul"
-    cmd = savedir + "/vendor/img2png/img2png " + filespec + " " + config.img2pngOptions + " > nul"
+    cmd = savedir + "/vendor/img2png/img2png " + filespec + " " + config.img2pngOptions
     if os.name == 'nt':
         cmd = cmd.replace('/', '\\')
+    if quiet:
+        cmd = cmd + " > nul"
+    print 'Running', cmd
     os.system(cmd)
 
+
+    if os.name == 'nt':
+        destdir = destdir.replace('/', '\\')
+
     # now move the png files to destdir
-    #. use os.rename - should be faster
+    # go back to original dir
     # (srcdir is relative to the python program so need to switch back to that dir)
     os.chdir(savedir)
     # cmd = "mv " + srcdir +"*.png " + destdir + " > nul" # nowork on windows due to backslashes
@@ -900,10 +908,16 @@ def img2png(srcdir, filespec, destdir):
     # os.system(cmd)
     # os.rename(srcdir + '/*.png', destdir)
     # shutil.move(srcdir + '/*.png', destdir)
-    files = glob.glob(srcdir + '*.png')
+    files = glob.glob(srcdir + '/*.png')
+    print 'Move/rename files to', destdir, ':', files
     for file in files:
-        os.rename(srcdir + file, destdir)
-
+        print 'Rename', file, destdir
+        # os.rename(file, destdir)
+        try:
+            shutil.move(file, destdir)
+        except:
+            print 'Error - does file already exist?'
+            pass
 
 # def stretchHistogram(im, nHotPixels=100):
 def stretchHistogram16to8bit(im, maxvalue=None):

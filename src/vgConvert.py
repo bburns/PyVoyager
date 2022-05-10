@@ -47,10 +47,7 @@ def vgConvert(volnum, optionOverwrite=False, directCall=True):
             subdir = os.path.join(root, subdir)
             subdirabsolute = os.path.abspath(subdir)
             print 'Directory %d/%d: %s          \r' % (ndir,ndirs,subdirabsolute),
-            # libimg.img2png(subdirabsolute, config.imageFilespec,
-                           # imagesSubfolder, config.img2pngOptions)
             for filespec in config.imageFilespecs: # eg ['*RAW.IMG','*CALIB.IMG']
-                # libimg.img2png(subdirabsolute, filespec, imagesSubfolder,
                 libimg.img2png(subdirabsolute, filespec, outputSubfolder)
             ndir += 1
     print

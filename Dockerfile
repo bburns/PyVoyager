@@ -1,4 +1,8 @@
 # PyVoyager Docker image build instructions
+#
+# To build and run,
+#   docker build -t vg .
+#   docker run -it --rm --name vg vg
 
 FROM python:2
 

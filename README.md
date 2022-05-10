@@ -82,7 +82,7 @@ For the program and movie version history see [HISTORY.md](HISTORY.md).
 
 ## License
 
-This software is released under the MIT license - see LICENSE.md.
+This software is released under the MIT license - see [LICENSE.md](LICENSE.md).
 
 [pds]: https://pds.nasa.gov/
 [playlist]: https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP

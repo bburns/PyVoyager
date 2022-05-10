@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# run pyvoyager image in docker container
-@docker run -it --rm --name vg vg $*

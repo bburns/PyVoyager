@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+# see https://stackoverflow.com/questions/63346648/python-2-7-installing-opencv-via-pip-virtual-environment
+opencv-python==4.2.0.32
+spiceypy
+tabulate
+more_itertools
+python-dateutil

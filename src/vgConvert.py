@@ -32,7 +32,7 @@ def vgConvert(volnum, optionOverwrite=False, directCall=True):
     vgUnzip.vgUnzip(volnum, directCall=False)
 
     # create dest folder
-    lib.mkdir(outputSubfolder)
+    lib.mkdir_p(outputSubfolder)
 
     # now convert the images
 

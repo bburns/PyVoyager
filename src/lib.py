@@ -624,6 +624,7 @@ def readCsv(filename):
 
 def mkdir(path):
     "Make a directory, ignoring any errors (eg if it already exists)"
+    # see also mkdir_p
     # rmdir(path) # remove it first
     try:
         os.mkdir(path)
@@ -643,6 +644,7 @@ def mkdir(path):
 
 def mkdir_p(path):
     "Make a directory tree, ignoring any errors (eg if it already exists)"
+    # see also mkdir
     try:
         os.makedirs(path)
     except Exception as e:

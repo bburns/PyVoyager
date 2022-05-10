@@ -15,7 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src src
 
-# RUN python src/vg.py download 5101
+#. need a wildcard download, vg download *
+RUN python src/vg.py download 5101
 
 # this is python 2
 # ENTRYPOINT [ "python", "src/vg.py" ]

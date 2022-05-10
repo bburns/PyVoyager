@@ -34,7 +34,8 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 # voyager archive url
 # downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
-downloadUrl = "https://pds-rings.seti.org:443/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
+# downloadUrl = "https://pds-rings.seti.org/link/archives-volumes/VGISS_{}xxx/VGISS_{}.tar.gz"
+downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
 # Convert

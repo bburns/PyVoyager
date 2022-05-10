@@ -7,3 +7,4 @@ spiceypy
 tabulate
 more_itertools
 python-dateutil
+pillow

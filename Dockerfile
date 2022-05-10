@@ -14,8 +14,6 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src src
-COPY vg .
 
-RUN chmod +x vg
-
-CMD [ "./vg" ]
+# this is python 2
+ENTRYPOINT [ "python", "src/vg.py" ]

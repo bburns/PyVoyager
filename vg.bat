@@ -1,6 +1,5 @@
-:: launch vg.py command handler
+:: build pyvoyager image named 'vg' - see Dockerfile
+docker build -t vg .
 
-:: note: %~dp0 gives you the drive and path of the current batch file,
-:: so you can refer to other files in this same folder.
-:: -tt throws an error if it finds tabs mixed with spaces
-@python -tt %~dp0\src\vg.py %*
+:: run pyvoyager image 'vg' in docker container named 'vg' also
+docker run -it --rm --name vg vg %*

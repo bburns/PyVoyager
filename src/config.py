@@ -12,9 +12,9 @@
 # includeTitles = True
 includeTitles = False
 
-# use jpegs for faster development time, less space
-useJpegs = True
-# useJpegs = False
+# can use jpegs for faster development time, less space
+# useJpegs = True
+useJpegs = False
 extension = '.jpg' if useJpegs else '.png'
 
 logfile = 'log.txt'

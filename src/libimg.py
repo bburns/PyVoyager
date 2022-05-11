@@ -970,7 +970,6 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     return im
 
 
-# def adjustImageFile(infile, outfile, doStretchHistogram=True):
 def adjustImageFile(infile, outfile, maxvalue=None):
     """
     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.

@@ -1,4 +1,3 @@
-
 # library routines for voyager
 # not independent from PyVoyager, but things that might get reused,
 # or want kept out of sight.

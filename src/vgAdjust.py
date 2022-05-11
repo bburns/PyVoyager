@@ -36,7 +36,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         vgConvert.vgConvert(filterVolume, optionOverwrite=False, directCall=False)
 
         # make new folder
-        lib.mkdir(outputSubfolder)
+        lib.mkdir_p(outputSubfolder)
 
         # get number of files to process
         nfiles = len(os.listdir(inputSubfolder))
@@ -69,7 +69,6 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
 
         # get max brightness value to override noise/hot pixels in some images
-        # maxvalue = lib.getMaxValue(csvBrightness, fileId) # will be None if no record avail
         brightnessInfoRecord = brightnessInfo.get(fileId)
         if brightnessInfoRecord:
             maxvalue = int(brightnessInfoRecord['maxvalue'])
@@ -77,14 +76,12 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
             maxvalue = None
 
         # only stretch the histogram if target is large enough (small moons get blown out)
-        # doStretchHistogram = (imageFraction > config.adjustHistogramImageFractionMinimum)
         dontStretchHistogram = (imageFraction <= config.adjustHistogramImageFractionMinimum)
         if dontStretchHistogram:
             maxvalue = 255
 
         # adjust the image
         if os.path.isfile(infile):
-            # libimg.adjustImageFile(infile, outfile, doStretchHistogram)
             libimg.adjustImageFile(infile, outfile, maxvalue)
         else:
             print 'Warning: missing image file', infile

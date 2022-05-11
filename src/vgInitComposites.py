@@ -38,6 +38,7 @@ volume,compositeId,centerId,filter
 
 ie when it catches the repeated Uv filter, it writes out the intervening records as a group -
 a composite record.
+
 Different targets and cameras are sometimes interleaved in files.csv,
 but it can disentangle them because it keeps different circular buffers
 for each target/camera combination.

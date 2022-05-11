@@ -18,11 +18,8 @@ Voyager 1 and 2 sent back over 70,000 images, so there is a lot to explore!
 
 Unfortunately the cameras were not able to point very accurately at their targets, resulting in jittery image sequences. PyVoyager centers the target planet or moon in the frame, and creates movies from the image sequences.
 
-<!-- Before:  -->
-<!-- After: -->
 
-Example Movies
-----------------------------------------
+## Example Movies
 
 <!-- Here is an example raw image sequence -  -->
 
@@ -33,7 +30,7 @@ Here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover fro
 <img src="http://imgur.com/LO7Dnww.gif" />
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
-Voyager 1 Jupiter flyby, mostly false color (3mins) v0.47
+Voyager 1 Jupiter flyby, mostly false color (3 mins) v0.47
 
 <!-- https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43
@@ -56,8 +53,6 @@ Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks) -->
 
 ## Contributing
 
-What you can do
-
 Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required - 
 
 - Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command.
@@ -66,6 +61,8 @@ Although the goal is to complete the movies in as automated fashion as possible,
 - Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
 - Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
 - And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file. 
+
+There are also more technical tasks listed in the Trello board [here][trello].
 
 
 ## Usage

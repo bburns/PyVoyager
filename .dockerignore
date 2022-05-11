@@ -1,3 +1,6 @@
 .git
-images
-test
+data/
+images/
+# ?
+kernels/
+test/

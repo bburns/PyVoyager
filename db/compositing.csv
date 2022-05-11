@@ -1,4 +1,3 @@
-
 # compositing.csv
 # turn compositing on/off
 # --------------------------------------------------------------------------------
@@ -10,10 +9,4 @@ imageId,doComposite
 # voyager 1 jupiter approach - want bw for now
 C1464337+,n
 C1534823,y
-
-
-
-
-
-
 

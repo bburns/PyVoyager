@@ -1,10 +1,9 @@
-
 # brightness
 # override brightness adjustments with this file
 # --------------------------------------------------------------------------------
 
-# some images come out too dim because of noise or hot pixels
-# throwing off the histogram stretching - so can use this file to
+# some images come out too dim because of noise or hot pixels,
+# throwing off the histogram stretching - use this file to
 # set the highest pixel value to stretch to.
 
 # this file does NOT need to be sorted, as it is read into a dictionary in memory,

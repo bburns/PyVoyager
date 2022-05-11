@@ -43,9 +43,9 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         lib.mkdir_p(outputSubfolder)
 
         # get number of files to process
-        nfiles = len(os.listdir(inputSubfolder))
-    else:
-        nfiles = 1
+        # nfiles = len(os.listdir(inputSubfolder))
+    # else:
+    #     nfiles = 1
 
     # open positions.csv file for target angular size info
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
@@ -71,7 +71,8 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         infile = lib.getFilepath('convert', volume, fileId, filter)
         outfile = lib.getFilepath('adjust', volume, fileId, filter)
         # print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-        print 'Volume %s adjusting %d/%d: %s     ' % (volume,nfile,nfiles,infile)
+        # print 'Volume %s adjusting %d/%d: %s     ' % (volume,nfile,nfiles,infile)
+        print 'Volume %s adjusting %d: %s     ' % (volume,nfile,infile)
 
         # get max brightness value to override noise/hot pixels in some images
         brightnessInfoRecord = brightnessInfo.get(fileId)

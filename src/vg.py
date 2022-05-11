@@ -13,7 +13,7 @@ with commands
   vg download            - download volume(s)
   vg unzip               - unzip volume(s)
   vg convert             - convert IMGs to PNGs
-  vg adjust              - adjust images (rotate and enhance)
+  vg adjust [--raw]      - adjust images (enhance and rotate)
   vg denoise             - remove noise from images
   vg center              - center images
   vg inpaint             - fill in missing pixels where possible
@@ -34,6 +34,7 @@ with commands
 Most commands can be followed by <options> and <filter>, where
 
   <options>    = -y - overwrite existing volume data
+                 --raw - start from raw images - flatfield, dewarp, dereseau, etc
                  --align - attempt to automatically align composite channels
                  --keeplinks
 

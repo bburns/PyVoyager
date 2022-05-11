@@ -16,9 +16,13 @@ import libimg
 import vgConvert
 
 
-def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True):
+def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True, optionRaw=False):
 
     "Build adjusted images for given volume, if they don't exist yet"
+
+    if optionRaw:
+        print '--raw option is not yet implemented'
+        return
 
     filterVolume = str(filterVolume) # eg '5101'
 

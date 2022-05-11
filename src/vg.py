@@ -113,13 +113,16 @@ else:
 
 # pick out and remove options from argument list
 optionOverwrite = False
-optionKeepLinks = False
+optionRaw = False
 optionAlign = False
+optionKeepLinks = False
 optionList = [arg for arg in args if arg[0]=='-']
 args = [arg for arg in args if arg[0]!='-']
 for option in optionList:
     if option=='-y':
         optionOverwrite = True
+    elif option=='--raw':
+        optionRaw = True
     elif option=='--align':
         optionAlign = True
     elif option=='--keeplinks':
@@ -160,10 +163,10 @@ elif cmd=="convert":
 elif cmd=="adjust":
     if filterImageIds:
         for imageId in filterImageIds:
-            vgAdjust.vgAdjust('', imageId, optionOverwrite=True)
+            vgAdjust.vgAdjust('', imageId, optionOverwrite=True, optionRaw=optionRaw)
     else:
         for filterVolume in filterVolumes:
-            vgAdjust.vgAdjust(filterVolume, '', optionOverwrite)
+            vgAdjust.vgAdjust(filterVolume, '', optionOverwrite, optionRaw=optionRaw)
     lib.beep()
 
 elif cmd=="denoise":

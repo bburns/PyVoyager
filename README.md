@@ -28,7 +28,7 @@ Unfortunately the cameras were not able to point very accurately at their target
 
 Here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
-<img src="http://imgur.com/LO7Dnww.gif" />
+<img src="http://imgur.com/LO7Dnww.gif" style="width:800px" />
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
 Voyager 1 Jupiter flyby, mostly false color (3 mins) v0.47

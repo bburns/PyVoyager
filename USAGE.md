@@ -1,8 +1,5 @@
-This document explains how to install and use PyVoyager.
+This document explains how to use PyVoyager.
 
-- [Goal](#goal)
-- [Requirements](#requirements)
-- [Installation](#installation)
 - [Pipeline](#pipeline)
 - [Images](#images)
 - [Processing](#processing)
@@ -11,26 +8,9 @@ This document explains how to install and use PyVoyager.
 - [Composites](#composites)
 - [Clips](#clips)
 - [Movies](#movies)
+- [Usage](#usage)
+- [Parameters](#parameters)
 - [Testing](#testing)
-
-
-## Goal
-
-The goal is to make contributing to the project as easy as possible - so we'll be making a Docker image that contains the base PNG image files. Then users can contribute changes to the `db/*.csv` files, which control lighting, centering, alignment, framerate, annotations, etc.
-
-The Docker image will contain png files in the `data/step03_convert` folder. Subsequent steps can be run with `vg` commands, e.g. `vg adjust 5101`. 
-
-
-## Requirements
-
-To run the complete pipeline requires Windows for the `img2png` program, which is used in the `vg convert` step. 
-
-
-## Installation
-
-You'll need Python 2.7 with pip - you can say `winget python2`, and it will install them to `C:\Python27`.
-
-Then run `pip2 install -r requirements.txt` to install the Python dependencies. 
 
 
 ## Pipeline
@@ -124,9 +104,127 @@ The clips are generated with the `vg clips [targetpath]` command, which links al
 The `vg movies` command then concatenates all available clips into movies, using the order specified in `db/movies.csv`. 
 
 
+## Usage
+
+Entering `vg` will show the available commands:
+
+    PyVoyager commands
+
+      vg download       - download volume(s)
+      vg unzip          - unzip volume(s)
+      vg convert        - convert IMGs to PNGs
+      vg adjust         - adjust images (rotate and enhance)
+      vg denoise        - remove noise from images
+      vg center         - center images
+      vg inpaint        - fill in missing pixels where possible
+      vg composite      - create color images
+      vg target         - copy images into target subfolders
+      vg clips          - create bw or color clips
+      vg movies         - create movies from clips
+      vg list           - show status of local datasets
+
+      vg test center    - run centering tests
+      vg test denoise   - run denoising tests
+
+    where most commands can be followed by <filter> and <options>, where
+
+      <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
+                     (all are anded together)
+      <volnums>    = 5101..5120 Voyager 1 Jupiter
+                     6101..6121 Voyager 1 Saturn
+                     5201..5214 Voyager 2 Jupiter
+                     6201..6215 Voyager 2 Saturn
+                     7201..7207 Voyager 2 Uranus
+                     8201..8210 Voyager 2 Neptune
+                     (ranges and wildcards like 5101-5104 or 51* are ok)
+      <imageIds>   = imageId or range, like C1234567, C1234567-C1234569
+      <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
+      <system>     = Jupiter|Saturn|Uranus|Neptune
+      <spacecraft> = Voyager1|Voyager2
+      <target>     = Jupiter|Io|Europa|, etc.
+      <camera>     = Narrow|Wide
+      <options>    = -y overwrite existing volume data
+
+    e.g. vg clips 8205 //triton
+
+Most commands will fill in any missing intermediate steps, so for example, to download, denoise, center, infill, composite, mosaic, and annotate all the Uranus images (which might take a while - there are 7 volumes of 1-3GB each), enter
+
+    > vg annotate 7*
+
+Or you can be more explicit and run them individually, as follows (and note, many steps are optional, like denoise, infill, mosaic, annotate - though might need to tweak the code to turn off the automatic running of previous step) -
+
+Download a tarfile volume, e.g. volume 5101 - the first dataset, Jupiter approach
+
+    > vg download 5101
+
+Unzip the tarfile
+
+    > vg unzip 5101
+
+Convert the IMG files to PNGs with [img2png][img2png]
+
+    > vg convert 5101
+
+Adjust the contrast levels and rotate the images
+
+    > vg adjust 5101
+
+Remove noise where possible
+
+    > vg denoise 5101
+
+Center the images on the main body in the images
+
+    > vg center 5101
+
+Colorize the images
+
+    > vg composite 5101
+
+Annotate the images
+
+    > vg annotate 5101
+
+Then you can make short movies of all the downloaded datasets, organized by planet/spacecraft/target/camera (this step must be performed in an Admin console, because it uses `mklink` to make symbolic links, which require elevated privileges)
+
+    > vg clips [targetpath]
+
+e.g.
+
+    > vg clips //triton/narrow
+
+to generate the narrow angle Triton flyby movies, or
+
+    > vg clips
+
+to generate all available movies.
+
+Then these clips can be assembled into movies (one per system and then one overall movie, as specified in db/movies.csv) with
+
+    > vg movies
+
+Use the `vg list [volnums]` command to keep track of what stages different volumes are at, e.g.:
+
+      Volume  Download    Unzip    Convert   Adjust    Center    Composite
+    --------  ----------  -------  --------  --------  --------  -----------
+        5101  x           x        x
+        5102  x           x        x
+        5103  x           x        x
+        5201  x           x        x         x         x         x
+        6201  x           x
+        7201  x           x
+        7202  x           x
+
+
+## Parameters
+
+All configuration settings are stored in `config.py` - the goal is for the same set of parameters to work across all datasets as much as possible.
+
+
 ## Testing
 
 Some centering test images are included in the `test/center` folder, and their correct center values in `test/testCenterFiles.csv`. You can run the tests on them with `vg test center`. The goal is to include some easy targets and lots of edge cases to test the centering/stabilizing routines.
 
 Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
+
 

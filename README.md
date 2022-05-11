@@ -7,6 +7,7 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
   - [Example Movies](#example-movies)
   - [Contributing](#contributing)
   - [Usage](#usage)
+  - [Install](#install)
   - [Technical](#technical)
   - [History](#history)
   - [Sources](#sources)
@@ -67,7 +68,12 @@ There are also more technical tasks listed in the Trello board [here][trello].
 
 ## Usage
 
-For more on how to install and use the program, see [USAGE.md](USAGE.md).
+For more on how to use the program, see [USAGE.md](USAGE.md).
+
+
+## Install
+
+For more on how to install the program, see [INSTALL.md](INSTALL.md).
 
 
 ## Technical

@@ -881,6 +881,7 @@ def drawCrosshairs(im):
 
 def img2png(srcdir, filespec, destdir, quiet=True):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
+    #. split up this fn
 
     # first convert imgs to pngs, then move pngs to the dest dir
 

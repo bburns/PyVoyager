@@ -409,6 +409,7 @@ def getFilepath(step, volume, fileId, filter=None):
     suffix = config.suffixes[step] # eg 'adjust' -> '_adjusted'
     subfolder = folder + 'VGISS_' + volume + '/'
     if step=='convert':
+        # convert the main processing image type, eg CALIB or RAW
         # eg C1641820_CALIB_GREEN.png
         filetitle = fileId + '_' + config.imageType + '_' + filter.upper() + '.png'
     elif filter:

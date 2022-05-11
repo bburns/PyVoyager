@@ -1,5 +1,8 @@
-This document explains how to use PyVoyager.
+This document explains how to install and use PyVoyager.
 
+- [Goal](#goal)
+- [Requirements](#requirements)
+- [Installation](#installation)
 - [Pipeline](#pipeline)
 - [Images](#images)
 - [Processing](#processing)
@@ -9,6 +12,26 @@ This document explains how to use PyVoyager.
 - [Clips](#clips)
 - [Movies](#movies)
 - [Testing](#testing)
+
+
+## Goal
+
+The goal is to make contributing to the project as easy as possible - so we'll be making a Docker image that contains the base PNG image files. Then users can contribute changes to the `db/*.csv` files, which control lighting, centering, alignment, framerate, annotations, etc.
+
+The Docker image will contain png files in the `data/step03_convert` folder. Subsequent steps can be run with `vg` commands, e.g. `vg adjust 5101`. 
+
+
+## Requirements
+
+To run the complete pipeline requires Windows for the `img2png` program, which is used in the `vg convert` step. 
+
+
+## Installation
+
+You'll need Python 2.7 with pip - you can say `winget python2`, and it will install them to `C:\Python27`.
+
+Then run `pip2 install -r requirements.txt` to install the Python dependencies. 
+
 
 ## Pipeline
 
@@ -52,9 +75,10 @@ Ideally the RAW images would be used with a better reseau removal algorithm, but
 
 ## Processing
 
-After downloading the tar.gz files, unzipping them, extracting the CALIB images to PNGs, adjusting and denoising them, the images are centered based on blob detection, Hough circle detection, the expected target radius, and [ECC maximization][ecc] for stabilization. See the section on centering below for more details. 
+After downloading the tar.gz files, unzipping them, extracting the CALIB images to PNGs, adjusting and denoising them, the images are centered based on blob detection, Hough circle detection, the expected target radius, and [ECC maximization][ecc] for stabilization. 
 
 The expected radius of the target is determined in advance by the `vg init positions` command, which uses SPICE position data, target position, target size, and camera FOV to determine size of target in image, which is stored in `db/positions.csv` (included in the distribution). This helps with the Hough circle detection, and also to stabilize the image. 
+
 
 ## File Index
 
@@ -67,6 +91,7 @@ The PDS volumes come with index files for all the images they contain, which hav
     ...
 
 though different targets and camera records can be also interleaved with others.
+
 
 ## Multiple Targets
 
@@ -104,6 +129,4 @@ The `vg movies` command then concatenates all available clips into movies, using
 Some centering test images are included in the `test/center` folder, and their correct center values in `test/testCenterFiles.csv`. You can run the tests on them with `vg test center`. The goal is to include some easy targets and lots of edge cases to test the centering/stabilizing routines.
 
 Denoising test images are located in `test/denoise` - you can run the tests with `vg test denoise` - check the results in the same denoise folder.
-
-
 

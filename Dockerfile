@@ -14,6 +14,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 #. download img2png, unzip to vendor folder
+# http://bjj.mmedia.is/utils/img2png/img2png.zip
 
 COPY src src
 

@@ -724,7 +724,8 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         rmdir(destfolder)
         # tried just building a commandline tar cmd but had issues with windows paths etc
         # this is just as fast anyway
-        parentfolder = destfolder + ".."
+        # parentfolder = destfolder + ".."
+        parentfolder = os.path.normpath(os.path.join(destfolder, os.pardir))
         archive_util.unpack_archive(zipfile, parentfolder)
         return True
 

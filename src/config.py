@@ -40,6 +40,23 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 # Convert
 # ----------------------------------------
 
+# image types to extract from step02 using img2png.
+# can extract more than one, then do processing on just one, 
+# as set with imageType below.
+# currently we'll get raw and calib images, then depending on the algorithm
+# chosen for the `vg adjust` step, will do
+#   raw, dewarp, flatfield, dereseau, histogram, rotate
+# or
+#   calib, histogram, rotate
+# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imageTypes = ['RAW', 'CLEANED', 'CALIB']
+# imageTypes = ['CLEANED', 'CALIB']
+# imageTypes = ['CLEANED']
+# imageTypes = ['RAW']
+# imageTypes = ['CALIB']
+imageTypes = ['RAW','CALIB']
+imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
+
 # imagetype for main processing
 # RAW images can have overly bright backgrounds.
 # CLEANED images have the riseau marks removed, but not very well.
@@ -48,16 +65,6 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 # and are upped to 1000x1000.
 # imageType = 'RAW'
 imageType = 'CALIB'
-
-# image types to extract using img2png
-# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
-# imageTypes = ['RAW', 'CLEANED', 'CALIB']
-# imageTypes = ['CLEANED', 'CALIB']
-# imageTypes = ['CLEANED']
-# imageTypes = ['RAW']
-imageTypes = ['CALIB']
-# imageTypes = ['RAW','CALIB']
-imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options
 # -fnamefilter - append filter name, eg _ORANGE

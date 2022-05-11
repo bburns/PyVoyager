@@ -4,6 +4,12 @@
 """
 PyVoyager commands
 
+Usage:
+
+  vg <command> [<options>] [<filter>]
+
+with commands
+
   vg download            - download volume(s)
   vg unzip               - unzip volume(s)
   vg convert             - convert IMGs to PNGs
@@ -11,12 +17,12 @@ PyVoyager commands
   vg denoise             - remove noise from images
   vg center              - center images
   vg inpaint             - fill in missing pixels where possible
-  vg composite           - create color images
+  vg composite [--align] - create color images
   vg map                 - build up 2d color maps
   vg colorize            - colorize images using 2d color maps
   vg crop                - crop/zoom in on images
   vg target              - copy images into target subfolders
-  vg clips               - create bw or color clips
+  vg clips [--keeplinks] - create bw or color clips
   vg movies              - create movies from clips
   vg list                - show status of local datasets
   vg clear <step> <vols> - remove volume folders
@@ -25,10 +31,15 @@ PyVoyager commands
   vg test center         - run centering tests
   vg test composite      - run compositing tests
 
-where most commands can be followed by <filter> and <options>, where
+Most commands can be followed by <options> and <filter>, where
+
+  <options>    = -y - overwrite existing volume data
+                 --align - attempt to automatically align composite channels
+                 --keeplinks
 
   <filter>     = [<volnums>] [<imageIds>] [<targetpath>]
                  (all are anded together)
+
   <volnums>    = 5101..5120 Voyager 1 Jupiter
                  6101..6121 Voyager 1 Saturn
                  5201..5214 Voyager 2 Jupiter
@@ -36,15 +47,14 @@ where most commands can be followed by <filter> and <options>, where
                  7201..7207 Voyager 2 Uranus
                  8201..8210 Voyager 2 Neptune
                  (ranges and wildcards like 5101-5104 or 51* are ok)
+
   <imageIds>   = imageId or range, like C1234567, C1234567-C1234569
+
   <targetpath> = [<system>]/[<spacecraft>]/[<target>]/[<camera>]
   <system>     = Jupiter|Saturn|Uranus|Neptune
   <spacecraft> = Voyager1|Voyager2
   <target>     = Jupiter|Io|Europa|, etc.
   <camera>     = Narrow|Wide
-  <options>    = -y overwrite existing volume data
-
-e.g. vg clips 8205 //triton
 """
 
 import sys
@@ -98,7 +108,7 @@ nargs = len(args)
 if nargs==0:
     cmd = "help"
 else:
-    cmd = args.pop(0) # first item
+    cmd = args.pop(0) # first item, eg 'adjust'
 
 # pick out and remove options from argument list
 optionOverwrite = False
@@ -109,9 +119,9 @@ args = [arg for arg in args if arg[0]!='-']
 for option in optionList:
     if option=='-y':
         optionOverwrite = True
-    elif option=='-align':
+    elif option=='--align':
         optionAlign = True
-    elif option=='-keeplinks':
+    elif option=='--keeplinks':
         optionKeepLinks = True
     else:
         print 'Error: unknown option',option
@@ -147,8 +157,6 @@ elif cmd=="convert":
     lib.beep()
 
 elif cmd=="adjust":
-    # for filterVolume in filterVolumes:
-        # vgAdjust.vgAdjust(filterVolume, optionOverwrite)
     if filterImageIds:
         for imageId in filterImageIds:
             vgAdjust.vgAdjust('', imageId, optionOverwrite=True)
@@ -244,8 +252,6 @@ elif cmd=="title":
     lib.beep()
 
 elif cmd=="clips":
-    # if filterVolumes is None:
-        # filterVolumes = config.volumes
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
     lib.beep()
 

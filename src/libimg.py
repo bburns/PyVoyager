@@ -882,12 +882,14 @@ def drawCrosshairs(im):
 def img2png(srcdir, filespec, destdir, quiet=True):
     "Convert all IMG files matching filespec in srcdir to PNG files in destdir"
 
-    # first convert img's to png's, then move them to the dest dir
+    # first convert imgs to pngs, then move pngs to the dest dir
 
+    # convert imgs to pngs
     savedir = os.getcwd() # save full path
     os.chdir(srcdir)
-    # eg "img2png *CALIB.img -fnamefilter > nul"
-    cmd = savedir + "/vendor/img2png/img2png " + filespec + " " + config.img2pngOptions
+    # get cmd, eg "img2png *CALIB.img -fnamefilter > nul"
+    img2png = savedir + "/vendor/img2png/img2png.exe"
+    cmd = img2png + " " + filespec + " " + config.img2pngOptions
     if os.name == 'nt':
         cmd = cmd.replace('/', '\\')
     if quiet:
@@ -895,13 +897,11 @@ def img2png(srcdir, filespec, destdir, quiet=True):
     print 'Running', cmd
     os.system(cmd)
 
-
-    # now move the png files to destdir
+    # move pngs to destdir
     os.chdir(savedir) # go back to original dir (fullpath)
     files = glob.glob(srcdir + '/*.png') # find all pngs
     if os.name == 'nt':
         destdir = destdir.replace('/', '\\')
-    # print 'Move/rename files to', destdir, ':', files
     for file in files:
         print 'Move', file
         try:

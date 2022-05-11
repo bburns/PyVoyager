@@ -211,6 +211,8 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     """
     Build clips associated with the given volumes AND target path (eg '//Io').
     """
+
+    #. what does this do? update vg.py help
     if keepLinks==False:
 
         # make sure we have some titles

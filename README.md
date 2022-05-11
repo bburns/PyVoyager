@@ -5,9 +5,11 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 - [PyVoyager](#pyvoyager)
   - [About](#about)
   - [Example Movies](#example-movies)
-  - [Sources](#sources)
+  - [Contributing](#contributing)
+  - [Usage](#usage)
   - [Technical](#technical)
   - [History](#history)
+  - [Sources](#sources)
   - [License](#license)
   
 ## About
@@ -52,32 +54,38 @@ https://www.youtube.com/watch?v=o4zh8C-ma_A
 Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks) -->
 
 
-<!-- ## Contributing -->
+## Contributing
 
-<!-- ## What you can do -->
+What you can do
 
-<!-- Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required -  -->
+Although the goal is to complete the movies in as automated fashion as possible, there are still places where manual intervention is required - 
 
-<!-- - Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command. -->
-<!-- - Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`.  -->
-<!-- - Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file. -->
-<!-- - Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there.  -->
-<!-- - Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file.  -->
-<!-- - And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file.  -->
+- Some frames don't get centered correctly due to noise, or being on the edge of an image, etc., so they need to be manually centered by editing the `db/centersOverride.csv` file, or (eventually) using the `vg center <imageId> <x offset>, <y offset>` command.
+- Centering needs to be manually turned off at close approach and back on again at departure - this is done in `db/centering.csv`. 
+- Multi-target images often need to be relabelled to the largest target in the image (or whatever the centering routines center on) - this is done in the `db/retargeting.csv` file.
+- Close-up composite images need to be manually aligned - e.g. the closeups of the clouds of Jupiter, by editing the `db/composites.csv` file. The weight of the different filters can also be adjusted there. 
+- Movie frame rates need to be adjusted so interesting images stay on the screen longer - this is done in the `db/framerates.csv` file. 
+- And eventually, mosaics would need to be specified manually in a `db/mosaics.csv` file. 
 
-## Sources
 
-You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
+## Usage
+
+For more on how to install and use the program, see [USAGE.md](USAGE.md).
 
 
 ## Technical
 
-For more details, including how to run the program, see [TECHNICAL.md](TECHNICAL.md).
+For more technical details on the algorithms used, see [TECHNICAL.md](TECHNICAL.md).
 
 
 ## History
 
 For the program and movie version history see [HISTORY.md](HISTORY.md).
+
+
+## Sources
+
+You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
 
 
 ## License

@@ -66,7 +66,8 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # get filenames
         infile = lib.getFilepath('convert', volume, fileId, filter)
         outfile = lib.getFilepath('adjust', volume, fileId, filter)
-        print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+        # print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
+        print 'Volume %s adjusting %d/%d: %s     ' % (volume,nfile,nfiles,infile)
 
         # get max brightness value to override noise/hot pixels in some images
         brightnessInfoRecord = brightnessInfo.get(fileId)

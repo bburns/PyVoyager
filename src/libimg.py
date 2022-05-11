@@ -910,7 +910,6 @@ def img2png(srcdir, filespec, destdir, quiet=True):
             print 'Error - does file already exist?'
             pass
 
-# def stretchHistogram(im, nHotPixels=100):
 def stretchHistogram16to8bit(im, maxvalue=None):
     """
     stretch the histogram of the given 16bit image and return it as an 8bit image.
@@ -960,7 +959,10 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     np.clip(im, 0, maxvalue, im)
 
     # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
-    if type(im[0][0])==np.uint16:
+    # need guard for data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png,
+    # which fails here - why?
+    # if type(im[0][0])==np.uint16:
+    if (not im is None) and im[0][0] and type(im[0][0])==np.uint16:
         # stretch image values to brightest amount
         im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
         # max level in the 16-bit image is 32767, and (/ 32767 128) = 255
@@ -979,9 +981,13 @@ def adjustImageFile(infile, outfile, maxvalue=None):
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
 
     # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
-    # if doStretchHistogram:
-        # im = stretchHistogram(im)
     im = stretchHistogram16to8bit(im, maxvalue)
+
+    # need this in case stretch failed, eg for
+    # data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png
+    if im is None:
+        print "Warning: im is None - no image written"
+        return None
 
     # rotate image by 180
     im = np.rot90(im, 2)

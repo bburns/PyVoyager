@@ -901,9 +901,9 @@ def img2png(srcdir, filespec, destdir, quiet=True):
     files = glob.glob(srcdir + '/*.png') # find all pngs
     if os.name == 'nt':
         destdir = destdir.replace('/', '\\')
-    print 'Move/rename files to', destdir, ':', files
+    # print 'Move/rename files to', destdir, ':', files
     for file in files:
-        print 'Rename', file, destdir
+        print 'Move', file
         try:
             shutil.move(file, destdir)
         except:

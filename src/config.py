@@ -34,7 +34,6 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 # voyager archive url
 # downloadUrl = "http://pds-rings.seti.org/archives/VGISS_{}xxx/VGISS_{}.tar.gz"
-# downloadUrl = "https://pds-rings.seti.org/link/archives-volumes/VGISS_{}xxx/VGISS_{}.tar.gz"
 downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
@@ -45,11 +44,10 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 # RAW images can have overly bright backgrounds.
 # CLEANED images have the riseau marks removed, but not very well.
 # CALIB images have darker backgrounds, but can dim the planet too much.
-# GEOMED images are corrected for geometric distortions also, but are upped to 1000x1000.
+# GEOMED images are CALIB images corrected for geometric distortions, 
+# and are upped to 1000x1000.
 # imageType = 'RAW'
 imageType = 'CALIB'
-# imageFilespec = "*" + imageType + ".IMG" # eg *CALIB.IMG
-# imageFilespec = "*" # do all image types
 
 # image types to extract using img2png
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
@@ -57,8 +55,8 @@ imageType = 'CALIB'
 # imageTypes = ['CLEANED', 'CALIB']
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
-# imageTypes = ['CALIB']
-imageTypes = ['RAW','CALIB']
+imageTypes = ['CALIB']
+# imageTypes = ['RAW','CALIB']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # img2png options

@@ -14,6 +14,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 #. download img2png, unzip to vendor folder
+#. uhoh it's a windows program - what do?
+# i guess i'll have to bake the pngs into the image, skip steps 1 and 2
 # http://bjj.mmedia.is/utils/img2png/img2png.zip
 
 COPY src src

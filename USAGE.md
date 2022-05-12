@@ -19,13 +19,16 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 
 * Download - download archives from [PDS EDR (raw) archives][1]
 * Unzip - decompress archive volumes to IMQ files
-* Convert - convert RAW images to pngs using [img2png][img2png]
-* Import - import IMQ files to ISIS cube files, attach SPICE geometry data with `spiceinit` [future]
-* Adjust - rotate 180 degrees, calibrate images
+* Convert - convert RAW (8bit) or CALIB (16bit) images to pngs using [img2png][img2png]
+* Adjust - stretch image histogram and rotate 180 degrees, saves 8-bit pngs
+* --
+* Denoise - identify/eliminate noise where possible (set to null) [future]
 * Flatfield - subtract good flatfields (dark images) [future]
-* Dereseau - remove reseau marks cleanly (set to null) [future]
-* Denoise - identify/eliminate noise where possible (set to null)
 * Undistort - geometric correction using reseau marks 800x800->1000x1000 [future]
+* Dereseau - remove reseau marks cleanly (set to null) [future]
+* --
+* Import - import IMQ files to ISIS cube files, attach SPICE geometry data with `spiceinit` [future]
+* --
 * Center - center and stabilize images where entire target is visible
 * Inpaint - fill in missing information with pixels from prior frame or average of surrounding pixels - be careful with reseau marks on limbs of target
 * Map - project image to cylindrical map using SPICE information, fit there with ISIS jigsaw to refine pointing information [future]
@@ -38,6 +41,14 @@ Voyager consists of a command line interface to a pipeline of Python programs wi
 * Clips - combine images into short movies, one per target
 * Movies - combine images and clips into movies, add music
 
+The current approach is to use CALIB images, adjust them, center them, etc.
+
+Next might try starting from GEOMED images to remove geometric distortion.
+
+Next might try starting from RAW images and doing our own corrections.
+
+Next might try importing IMQ images to ISIS cube files so can attach SPICE geometry data.
+
 
 ## Images
 
@@ -45,9 +56,9 @@ There are 87 PDS volumes for all the Voyager images, each ~1-3GB, as described [
 
 Each image comes in 4 formats - RAW, CLEANED, CALIB, and GEOMED.
 
-- RAW images are the least processed images available - they're 800x800 pixels, and include the reseau marks (the grid of dots) used for calibration.
+- RAW images are the least processed images available - they're 800x800 pixels with 8 bit depth, and include the reseau marks (the grid of dots) used for calibration.
 - CLEANED images have had the reseau marks removed, but leave noticeable artifacts that look like volcanoes on the limbs of planets.
-- CALIB images have had dark images subtracted from the CLEANED images, and
+- CALIB images have had dark images subtracted from the CLEANED images, and are 16 bits.
 - GEOMED are the CALIB images geometrically corrected and projected to 1000x1000 pixels.
 
 Ideally the RAW images would be used with a better reseau removal algorithm, but for now the CALIB images are used.

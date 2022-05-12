@@ -44,7 +44,6 @@ def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
         # make folder
         lib.mkdir(outputSubfolder)
 
-
         # get number of files to process
         nfiles = len(os.listdir(inputSubfolder))
     else:
@@ -83,7 +82,8 @@ def vgDenoise(volnum='', optionOverwrite=False, directCall=True):
             imageFraction = float(rowPositions[config.colPositionsImageFraction])
         else:
             imageFraction = 0 # just rhea
-        if imageFraction>0.7: doDenoise = False #.param
+        if imageFraction>0.7: doDenoise = False #. param arbitrary
+
         # check for override in denoising.csv
         denoisingRecord = denoisingInfo.get(fileId)
         if denoisingRecord:

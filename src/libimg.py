@@ -589,25 +589,23 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
 
 
 def denoiseImageFile(infile, outfile):
-
     """
     attempt to remove noise from the given image file and save to outfile
     """
 
-    im = cv2.imread(infile, 0) #.param
+    im = cv2.imread(infile, 0) #. param
 
-    # blank out bottom 3 pixels
-    im[-3:,:] = 0
+    # trim off bottom and right edges, since those often have noise in them (?)
+    #. arbitrary params!
+    im[-3:,:] = 0 # blank out bottom 3 pixels
+    im[:,-3:] = 0 # blank out right 3 pixels
 
-    # blank out right 3 pixels
-    im[:,-3:] = 0
-
-    # nowork - blurs some nice images - jupiter, triton ice
     # remove salt and pepper noise, and thin lines
+    #. nowork - blurs some nice images - jupiter, triton ice
     # im = cv2.medianBlur(im, 5)
 
-    # nowork - inpainting doesn't look very good
     # remove larger blocks of noise by inpainting
+    #. nowork - inpainting doesn't look very good
     # first detect regions with lots of variation
     # mag = getGradientMagnitude(im)
     # mask = cv2.adaptiveThreshold(im, maxValue=255,
@@ -622,10 +620,9 @@ def denoiseImageFile(infile, outfile):
     # # im = cv2.inpaint(im, mask, inpaintRadius=3, flags=cv2.INPAINT_TELEA)
     # im = cv2.inpaint(im, mask, inpaintRadius=5, flags=cv2.INPAINT_TELEA)
 
-
     # black out large blocks of noise
 
-    # # detect contours of noisy areas
+    # # detect contours of 'noisy' areas #. what does that mean?
     # mask = cv2.adaptiveThreshold(im, maxValue=255,
     #                              adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     #                              thresholdType=cv2.THRESH_BINARY_INV,
@@ -640,7 +637,9 @@ def denoiseImageFile(infile, outfile):
     #     if w>100 and w>h*3:
     #         cv2.rectangle(im, (x,y), (x+w,y+h), 0, -1) # filled black rectangle
 
-    #
+    # i think what this does is find long horizontal or vertical lines of noise,
+    # and tries to remove them. 
+    # but ehh, i don't mind the noise.
     mask = getGradientMagnitude(im)
     mask = cv2.adaptiveThreshold(mask, maxValue=255,
                                adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -649,14 +648,13 @@ def denoiseImageFile(infile, outfile):
                                # C=25)
                                C=30)
     # this extracts any long horizontal segments
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (120,1));
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (120,1)); #. arbitrary param
     mask = cv2.dilate(mask, kernel)
-    # this __
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,5));
+    # this extracts any long vertical segments
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20,5)); #. arbitrary param
     mask = cv2.dilate(mask, kernel)
     mask = cv2.erode(mask, kernel)
     im = im & (255-mask)
-
 
     # try removing noise near sharp edges (median blur)
     # the larger C is, the less noise will be removed
@@ -672,7 +670,6 @@ def denoiseImageFile(infile, outfile):
     mask = cv2.medianBlur(mask, 5) # remove dots from mask
     imblurred = cv2.medianBlur(im, 5) # remove noise from image
     im = im + ((imblurred - im) & mask) # combine image with blurred version
-
 
     # nowork
     # # fill in single pixel horizontal lines
@@ -912,6 +909,19 @@ def img2png(srcdir, filespec, destdir, quiet=True):
             pass
 
 
+def convert16to8bit(im):
+    "convert 16-bit image to 8-bit, stretching the values from 0 to 255 for most contrast."
+    if type(im[0][0])==np.uint16:
+        # stretch image values to brightest amount.
+        # the max level in a 16-bit image is 32767, and (/ 32767 128) = 255,
+        # so could just divide array by 128 here, but could be too much - 
+        # using cv2.normalize is safer.
+        # im = im / 128
+        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+        im = np.array(im, np.uint8)
+    return im
+
+
 def stretchHistogram(im, maxvalue=None):
     """
     stretch histogram of the given (8 bit) image.
@@ -960,19 +970,6 @@ def stretchHistogram(im, maxvalue=None):
     return im
 
 
-def convert16to8bit(im):
-    "convert 16-bit image to 8-bit, stretching the values from 0 to 255 for most contrast."
-    if type(im[0][0])==np.uint16:
-        # stretch image values to brightest amount.
-        # the max level in a 16-bit image is 32767, and (/ 32767 128) = 255,
-        # so could just divide array by 128 here, but could be too much - 
-        # using cv2.normalize is safer.
-        # im = im / 128
-        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-        im = np.array(im, np.uint8)
-    return im
-
-
 def imread(infile, imtype=None):
     "read an image file using opencv"
     # made this so caller doesn't need to import cv2
@@ -982,30 +979,6 @@ def imread(infile, imtype=None):
         options = cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH
     im = cv2.imread(infile, options)
     return im
-
-
-# def adjustImageFile(infile, outfile, maxvalue=None):
-#     """
-#     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
-#     """
-
-#     # need ANYDEPTH flag as the pngs are 16-bit
-#     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
-
-#     # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
-#     im = stretchHistogram16to8bit(im, maxvalue)
-
-#     # need this in case stretch failed, eg for
-#     # data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png
-#     if im is None:
-#         print "Warning: im is None - no image written"
-#         return None
-
-#     # rotate image by 180
-#     im = np.rot90(im, 2)
-
-#     retval = imwrite(outfile, im)
-#     return retval
 
 
 def imrotate(im):

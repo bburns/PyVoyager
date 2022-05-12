@@ -31,7 +31,7 @@ def vgList(filterVolumes=''):
     "Get a listing of volumes and what stages they are at"
 
     headers = ['Volume', 'Download', 'Unzip', 'Convert', 'Adjust',
-               'Denoise', 'Center', 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
+               'Center', 'Inpaint', 'Composite', 'Mosaic', 'Annotate']
 
     # build a dictionary like {5101: {'Downloads':'x','Unzips':'',...}, }
     # then convert to an array of arrays and display

@@ -62,7 +62,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
-        lib.mkdir(outputSubfolder)
+        lib.mkdir_p(outputSubfolder)
 
         # get number of files to process
         nfiles = len(os.listdir(inputSubfolder))
@@ -104,10 +104,10 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(retargetingInfo, fileId, target)
 
         # get filenames
-        infile = lib.getFilepath('denoise', volume, fileId, filter)
-        if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
-            infile = lib.getFilepath('adjust', volume, fileId, filter)
-        # infile = lib.getFilepath('adjust', volume, fileId, filter)
+        # infile = lib.getFilepath('denoise', volume, fileId, filter)
+        # if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
+        #     infile = lib.getFilepath('adjust', volume, fileId, filter)
+        infile = lib.getFilepath('adjust', volume, fileId, filter)
         outfile = lib.getFilepath('center', volume, fileId, filter)
 
         log.logr('Volume %s centering %d/%d: %s' % (volume,nfile,nfiles,infile))

@@ -592,6 +592,7 @@ def denoiseImageFile(infile, outfile):
     """
     attempt to remove noise from the given image file and save to outfile
     """
+    # wip
 
     im = cv2.imread(infile, 0) #. param
 

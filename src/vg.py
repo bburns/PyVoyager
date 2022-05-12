@@ -14,7 +14,7 @@ with commands
   vg unzip               - unzip volume(s)
   vg convert             - convert IMGs to PNGs
   vg adjust [--raw]      - adjust images (enhance and rotate)
-  vg denoise             - remove noise from images
+  vg denoise             - remove noise from images [future]
   vg center              - center images
   vg inpaint             - fill in missing pixels where possible
   vg composite [--align] - create color images
@@ -169,10 +169,10 @@ elif cmd=="adjust":
             vgAdjust.vgAdjust(filterVolume, '', optionOverwrite, optionRaw=optionRaw)
     lib.beep()
 
-elif cmd=="denoise":
-    for filterVolume in filterVolumes:
-        vgDenoise.vgDenoise(filterVolume, optionOverwrite)
-    lib.beep()
+# elif cmd=="denoise":
+#     for filterVolume in filterVolumes:
+#         vgDenoise.vgDenoise(filterVolume, optionOverwrite)
+#     lib.beep()
 
 elif cmd=="center":
     log.start()

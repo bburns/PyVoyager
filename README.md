@@ -21,7 +21,7 @@ Unfortunately the cameras were not able to point very accurately at their target
 
 ## Example Movies
 
-Here is an example raw image sequence, followed by the centered version - 
+Here is an example image sequence, followed by the centered version - 
 
 <img src="https://i.imgur.com/WDAlWlN.gif" style="width:800px" />
 <br/>

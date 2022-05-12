@@ -1,9 +1,20 @@
 # PyVoyager History
 
-<!-- - Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks -->
-<!-- - Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings) -->
-<!-- - Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values) -->
-<!-- - `vg center` in progress -->
+Note: Abandoned 0.49-0.51 - switching to EDR archives was a too much to bite off and it slowed momentum on the project. So marked that as the 'isis' branch and backed up to 0.485 and continued on with that in the 'main' branch. Will revisit the isis branch someday, when get more into mapping images to spheres. 
+
+
+Version 0.6 (2022-05-12+) [wip]
+----------------------------------------
+- added Dockerfile to build a Docker image containing step03_convert images, kernels, Linux programs
+
+------------
+
+Version 0.51 [wip]
+----------------------------------------
+- Add `vg denoise` step - black out bottom and right 3 pixels, fill in single pixel horizontal lines, black out rectangular blocks
+- Add `db/denoising.csv` file to control turning denoising step off for certain images (e.g. moons orbiting Uranus, faint rings)
+- Add `brightness.csv` file for `vg adjust` step - override histogram stretching for certain files where noise throws off the brightness adjustment. (first try ignoring 255 values)
+- `vg center` in progress
 
 Version 0.5 (2016-09-16)
 ----------------------------------------
@@ -13,6 +24,9 @@ Version 0.5 (2016-09-16)
 Version 0.49 (2016-08-07)
 ----------------------------------------
 - Switching to Linux and EDR archives so can use ISIS - `vg download` downloads EDR volumes 1-33 now
+
+------------
+
 
 Version 0.485 (2016-08-07)
 ----------------------------------------

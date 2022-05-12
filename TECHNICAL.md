@@ -1,17 +1,8 @@
-# Technical
+This document explains some of how PyVoyager works.
 
-- [Technical](#technical)
-  - [Centering Images](#centering-images)
-  - [Aligning Composites](#aligning-composites)
-  - [Pipeline](#pipeline)
-  - [Installation](#installation)
-    - [For Windows, set up a Linux virtual machine](#for-windows-set-up-a-linux-virtual-machine)
-    - [Starting from Ubuntu 16.04](#starting-from-ubuntu-1604)
-  - [Usage](#usage)
-  - [Parameters](#parameters)
-  - [More details](#more-details)
-  - [Testing](#testing)
-
+- [Centering Images](#centering-images)
+- [Aligning Composites](#aligning-composites)
+ 
 ## Centering Images
 
 Images where the target fits completely in the frame are centered using [blob detection][17], [Hough circle detection][16], and [ECC Maximization][ecc]. The expected target radius is calculated through [SPICE data][12], from which the spacecraft and target position can be determined - this is used to help limit the Hough circle search, and then to draw a disc with the expected target size to which the image is aligned using ECC Maximization. The Hough circle detection is only accurate to a few pixels, so the ECC Maximization is needed for the final stabilization. 

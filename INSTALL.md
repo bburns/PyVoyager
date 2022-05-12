@@ -1,3 +1,5 @@
+This document explains how to install PyVoyager.
+
 - [Goal](#goal)
 - [Requirements](#requirements)
 - [Installation](#installation)

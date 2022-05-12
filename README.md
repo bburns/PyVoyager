@@ -28,7 +28,7 @@ Here is an example raw image sequence, followed by the centered version -
 <img src="https://i.imgur.com/dxjHufq.gif" style="width:800px" />
 <br/>
 
-And here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
+And here is Voyager 2's flyby of Io, partially colored - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
 <img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 

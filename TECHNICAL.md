@@ -9,8 +9,8 @@ Images where the target fits completely in the frame are centered using [blob de
 
 Here are a couple of images showing the result of the centering/stabilization - the yellow circle is the expected target size:
 
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1532335_centered_Orange.jpg" width="400">
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1524138_centered_Blue.jpg" width="400">
+<img src="images/C1532335_centered_Orange.jpg" width="400">
+<img src="images/C1524138_centered_Blue.jpg" width="400">
 
 Centering is turned off at closest approach by determining when the target size is over a threshold (e.g. when the diameter is over 80% of the image width). 
 
@@ -25,9 +25,9 @@ If this approach fails to find a good translation (due to lack of enough corresp
 
 Here is an image showing what the feature-matching process looks like, and the resulting combined image (with enhanced contrast). 
 
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_matching.jpg" width="800">
-<img src="https://github.com/bburns/PyVoyager/raw/master/images/C1637948_aligned.jpg" width="400">
-
+<img src="images/C1637948_matching.jpg" width="800">
+<br/>
+<img src="images/C1637948_aligned.jpg" width="800">
 
 
 [isis]: https://isis.astrogeology.usgs.gov/

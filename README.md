@@ -32,8 +32,9 @@ And here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover
 
 <img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 
+Here is Voyager 1's Jupiter flyby, mostly false color (3 mins) v0.47 -
+
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
-Voyager 1 Jupiter flyby, mostly false color (3 mins) v0.47
 
 <!-- https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43

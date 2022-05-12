@@ -21,10 +21,12 @@ Unfortunately the cameras were not able to point very accurately at their target
 
 ## Example Movies
 
-Here is an example raw image sequence and the centered version - 
+Here is an example raw image sequence, followed by the centered version - 
 
 <img src="https://i.imgur.com/WDAlWlN.gif" style="width:400px" />
+<br/>
 <img src="https://i.imgur.com/dxjHufq.gif" style="width:400px" />
+<br/>
 
 And here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 

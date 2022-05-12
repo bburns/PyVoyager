@@ -6,6 +6,7 @@ Note: Abandoned 0.49-0.51 - switching to EDR archives was a too much to bite off
 Version 0.6 (2022-05-12+) [wip]
 ----------------------------------------
 - added Dockerfile to build a Docker image containing step03_convert images, kernels, Linux programs
+- repaired bit rot in `vg download`, `vg unzip`, `vg convert`, and `vg adjust` steps
 
 ------------
 

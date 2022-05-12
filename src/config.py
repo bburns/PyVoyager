@@ -49,18 +49,21 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 #   raw, dewarp, flatfield, dereseau, histogram, rotate
 # or
 #   calib, histogram, rotate
+# or
+#   geomed, histogram, rotate (?)
 # imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
 # imageTypes = ['RAW', 'CLEANED', 'CALIB']
 # imageTypes = ['CLEANED', 'CALIB']
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
 # imageTypes = ['CALIB']
-imageTypes = ['RAW','CALIB']
+imageTypes = ['RAW','CALIB','GEOMED']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # imagetype for main processing
-# RAW images can have overly bright backgrounds. 8 bit depth.
-# CLEANED images have the riseau marks removed, but not very well.
+# RAW images can have overly bright backgrounds. 8 bit depth. 
+# they need to have flatfields (black images) subtracted.
+# CLEANED images have the riseau marks removed, though not very well.
 # CALIB images have darker backgrounds, but can dim the planet too much. 16 bit depth.
 # GEOMED images are CALIB images corrected for geometric distortions, 
 # and are upped to 1000x1000.

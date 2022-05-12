@@ -65,9 +65,6 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # if volume!=filterVolume: continue # filter on desired volume
         if volume!=filterVolume and fileId!=filterImageId: continue # filter on desired volume
 
-        # get expected angular size (as fraction of frame) - joins on positions.csv file
-        imageFraction = lib.getImageFraction(csvPositions, fileId)
-
         # get filenames
         infile = lib.getFilepath('convert', volume, fileId, filter)
         outfile = lib.getFilepath('adjust', volume, fileId, filter)
@@ -81,17 +78,20 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         else:
             maxvalue = None
 
-        # only stretch the histogram if target is large enough (small moons get blown out)
-        dontStretchHistogram = (imageFraction <= config.adjustHistogramImageFractionMinimum)
-        if dontStretchHistogram:
+        # only stretch the histogram if target is large enough (small moons get blown out).
+        # first, get expected angular size (as fraction of frame) - joins on positions.csv file.
+        #. too arbitrary - make a smooth transition fn
+        imageFraction = lib.getImageFraction(csvPositions, fileId)
+        dontStretchContrast = (imageFraction <= config.adjustHistogramImageFractionMinimum)
+        if dontStretchContrast:
             maxvalue = 255
-            # maxvalue = 32767
 
         # adjust the image
+        #. just handles calib images now
         if os.path.isfile(infile):
-            # libimg.adjustImageFile(infile, outfile, maxvalue)
-            im = libimg.imread(infile, 'gray16')
-            im = libimg.stretchHistogram16to8bit(im, maxvalue) # bring up brightness levels (CALIB images are dark)
+            im = libimg.imread(infile, 'gray16') # note: calib images are 16 bit, raw are 8 bit
+            im = libimg.convert16to8bit(im)
+            im = libimg.stretchHistogram(im, maxvalue) # bring up brightness levels (CALIB images are dark)
             im = libimg.imrotate(im)
             libimg.imwrite(outfile, im)
         else:

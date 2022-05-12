@@ -22,8 +22,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src src
 
+# this is the main data we need - the 16-bit png images (raw and calib)
+COPY data/step03_convert data/step03_convert
+
 #. need a wildcard download, vg download *, or vg download all
-RUN python src/vg.py download 5101
+# RUN python src/vg.py download 5101
 
 # this is python 2
 # ENTRYPOINT [ "python", "src/vg.py" ]

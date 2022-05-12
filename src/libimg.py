@@ -912,11 +912,14 @@ def img2png(srcdir, filespec, destdir, quiet=True):
             pass
 
 
-def stretchHistogram16to8bit(im, maxvalue=None):
+def stretchHistogram(im, maxvalue=None):
     """
-    stretch the histogram of the given 16bit image and return it as an 8bit image.
-    hot pixels are set at 32767, but hot noise can exist in an image also.
-    can pass maxvalue. if None then will scan for the hottest pixels.
+    stretch histogram of the given (8 bit) image.
+    we use a histogram to filter out pixel values with few instances, 
+    to try to weed out noise.
+    hot pixels are set at 255, but hot noise can exist in an image also.
+    so can pass a hardcoded maxvalue.
+    if maxvalue is None then will scan for the hottest pixel and use that.
     """
 
     # get histogram
@@ -925,11 +928,9 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     images = [im]
     channels = [0]
     mask = None # lets you filter to part of an image
-    histSize = [256] # number of bins #. why not 32768?
-    # ranges = [0, 256] # range of intensity values
-    ranges = [0, 32768] # range of intensity values
+    histSize = [256] # number of bins
+    ranges = [0, 256] # range of intensity values
     hist = cv2.calcHist(images, channels, mask, histSize, ranges)
-    # print [int(x) for x in hist]
 
     # # ignore top n pixels
     # # start at top, get cumulative sum downwards until reach certain amount of pixels
@@ -943,34 +944,32 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     #         break
 
     # if no override value given, scan down histogram from hot pixel value 255,
-    # set max level to be next lowest value
+    # set max level to be next lowest value.
     if maxvalue is None:
         maxvalue = 254
         for i in xrange(254,0,-1):
-            # if hist[i]>0:
             # see config.py for more info
             if hist[i] > config.adjustHistogramHotPixelCountCutoff:
                 maxvalue = i
                 break
 
-    # print maxvalue
-    maxvalue = maxvalue * 128
-
     # set values > maxvalue to maxvalue
     # see http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html
     np.clip(im, 0, maxvalue, im)
 
-    # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
-    # need guard for data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png,
-    # which fails here - why? mebbe was spurious due to ctrl-c previous step
-    # if (not im is None) and im[0][0] and type(im[0][0])==np.uint16:
-    if type(im[0][0])==np.uint16:
-        # stretch image values to brightest amount
-        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
-        # max level in the 16-bit image is 32767, and (/ 32767 128) = 255
-        # im = im / 128 # this can be dividing it by too much - using normalize is safer
-        im = np.array(im, np.uint8)
+    return im
 
+
+def convert16to8bit(im):
+    "convert 16-bit image to 8-bit, stretching the values from 0 to 255 for most contrast."
+    if type(im[0][0])==np.uint16:
+        # stretch image values to brightest amount.
+        # the max level in a 16-bit image is 32767, and (/ 32767 128) = 255,
+        # so could just divide array by 128 here, but could be too much - 
+        # using cv2.normalize is safer.
+        # im = im / 128
+        im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
+        im = np.array(im, np.uint8)
     return im
 
 

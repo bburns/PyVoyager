@@ -11,6 +11,8 @@
 
 # volume is just there for reference
 
+#. in process of switching to 16-bit max values - ie need to multiply these by 128, eh?
+
 imageId,volume,maxvalue
 # C1638611,
 # C1640344,5117,22

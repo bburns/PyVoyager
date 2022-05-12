@@ -1,10 +1,9 @@
-
+#------------------------------------------------------------------------------
 # Voyager config options
-#--------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 
-
-
+# ----------------------------------------
 # Global settings
 # ----------------------------------------
 
@@ -20,7 +19,7 @@ extension = '.jpg' if useJpegs else '.png'
 logfile = 'log.txt'
 
 
-
+# ----------------------------------------
 # Voyager
 # ----------------------------------------
 
@@ -29,6 +28,7 @@ logfile = 'log.txt'
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
+# ----------------------------------------
 # Download
 # ----------------------------------------
 
@@ -37,6 +37,7 @@ cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/VGISS_{}.tar.gz"
 
 
+# ----------------------------------------
 # Convert
 # ----------------------------------------
 
@@ -58,9 +59,9 @@ imageTypes = ['RAW','CALIB']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # imagetype for main processing
-# RAW images can have overly bright backgrounds.
+# RAW images can have overly bright backgrounds. 8 bit depth.
 # CLEANED images have the riseau marks removed, but not very well.
-# CALIB images have darker backgrounds, but can dim the planet too much.
+# CALIB images have darker backgrounds, but can dim the planet too much. 16 bit depth.
 # GEOMED images are CALIB images corrected for geometric distortions, 
 # and are upped to 1000x1000.
 # imageType = 'RAW'
@@ -77,14 +78,17 @@ imageType = 'CALIB'
 img2pngOptions = "-fnamefilter -loglevel0"
 
 
+# ----------------------------------------
 # Adjust
 # ----------------------------------------
 
-# targets below this size (fraction of the image frame)
+# note: RAW images are 8 bit pngs, CALIB are 16 bit pngs
+
+# targets below this size (as fraction of the image frame)
 # won't get histogram stretched (can blow out small targets)
 # see vgAdjust
+#. this is super arbitrary - better to have a smoother transition
 adjustHistogramImageFractionMinimum = 0.25
-
 
 # histogram bins with less than this number of pixels will be treated as noise
 # and ignored during stretch histogram process.
@@ -95,13 +99,15 @@ adjustHistogramImageFractionMinimum = 0.25
 #. this is a fudge factor based on observing some histograms with noise.
 #. will want to decrease it after add vg denoise step
 # adjustHistogramHotPixelCountCutoff = 13 # v0.46
-adjustHistogramHotPixelCountCutoff = 15 # v0.47-some of ganymede were too dark, redid individually
+adjustHistogramHotPixelCountCutoff = 15 # v0.47-some of ganymede were too dark, so redid individually
 
 
+# ----------------------------------------
 # Denoise
 # ----------------------------------------
 
 
+# ----------------------------------------
 # Center
 # ----------------------------------------
 
@@ -252,14 +258,17 @@ drawCrosshairs = False # draw crosshairs on image
 drawTarget = False # draw expected target size/location with yellow circle
 
 
+# ----------------------------------------
 # Composite
 # ----------------------------------------
 
 
+# ----------------------------------------
 # Mosaic
 # ----------------------------------------
 
 
+# ----------------------------------------
 # Annotate
 # ----------------------------------------
 
@@ -267,12 +276,14 @@ annotationsFont = "c:/windows/fonts/!futura-light.ttf"
 annotationsFontsize = 18
 
 
+# ----------------------------------------
 # Target
 # ----------------------------------------
 
 targetsIgnore = dontCenterTargets
 
 
+# ----------------------------------------
 # Titles
 # ----------------------------------------
 
@@ -283,6 +294,7 @@ titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 
 
+# ----------------------------------------
 # Videos (clips, movies)
 # ----------------------------------------
 
@@ -332,6 +344,7 @@ videoFfmpegOutputOptions = "-c:v libx264 -pix_fmt yuv420p" # works
 videoFfmpegOutputOptions += " -preset ultrafast"
 
 
+# ----------------------------------------
 # Clips
 # ----------------------------------------
 
@@ -358,6 +371,7 @@ frameRateNCopiesMax = 25 # v0.46 jupiter
 clipsMinFrames = 20
 
 
+# ----------------------------------------
 # Movies
 # ----------------------------------------
 
@@ -366,8 +380,9 @@ clipsMinFrames = 20
 
 
 
+# ----------------------------------------
 # Files and folders
-# --------------------------------------------------------------------------------
+# ----------------------------------------
 
 # convention: all folders should end with /
 
@@ -541,7 +556,9 @@ colChannelIm = -1
 
 
 
-
+# ----------------------------------------
+# Volumes
+# ----------------------------------------
 
 # Voyager PDS volumes - 87 total
 # first digit is planet, second is spacecraft

@@ -691,7 +691,10 @@ def downloadFile(url, folder, filepath):
         print "File " + filepath + " already exists"
         return False
     else:
-        os.makedirs(folder)
+        try:
+            os.makedirs(folder)
+        except:
+            pass
         cmd = "curl -o " + filepath + " " + url
         print cmd
         os.system(cmd)

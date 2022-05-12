@@ -1,17 +1,16 @@
-# PyVoyager
+<h1>PyVoyager</h1>
 
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
-- [PyVoyager](#pyvoyager)
-  - [About](#about)
-  - [Example Movies](#example-movies)
-  - [Contributing](#contributing)
-  - [Usage](#usage)
-  - [Install](#install)
-  - [Technical](#technical)
-  - [History](#history)
-  - [Sources](#sources)
-  - [License](#license)
+- [About](#about)
+- [Example Movies](#example-movies)
+- [Contributing](#contributing)
+- [Usage](#usage)
+- [Install](#install)
+- [Technical](#technical)
+- [History](#history)
+- [Sources](#sources)
+- [License](#license)
   
 ## About
 
@@ -22,13 +21,14 @@ Unfortunately the cameras were not able to point very accurately at their target
 
 ## Example Movies
 
-<!-- Here is an example raw image sequence -  -->
+Here is an example raw image sequence and the centered version - 
 
-<!-- and here it is, centered -  -->
+<img src="https://i.imgur.com/WDAlWlN.gif" style="width:400px" />
+<img src="https://i.imgur.com/dxjHufq.gif" style="width:400px" />
 
-Here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
+And here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
-<img src="http://imgur.com/LO7Dnww.gif" style="width:800px" />
+<img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
 Voyager 1 Jupiter flyby, mostly false color (3 mins) v0.47

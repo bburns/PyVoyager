@@ -23,9 +23,9 @@ Unfortunately the cameras were not able to point very accurately at their target
 
 Here is an example raw image sequence, followed by the centered version - 
 
-<img src="https://i.imgur.com/WDAlWlN.gif" style="width:400px" />
+<img src="https://i.imgur.com/WDAlWlN.gif" style="width:800px" />
 <br/>
-<img src="https://i.imgur.com/dxjHufq.gif" style="width:400px" />
+<img src="https://i.imgur.com/dxjHufq.gif" style="width:800px" />
 <br/>
 
 And here is Voyager 2's flyby of Io - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -

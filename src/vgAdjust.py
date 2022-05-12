@@ -20,6 +20,7 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
     "Build adjusted images for given volume, if they don't exist yet"
 
+    #. raw option will start from raw, remove flatfield, dewarp, dereseau, stretch, rotate, etc
     if optionRaw:
         print '--raw option is not yet implemented'
         return
@@ -71,7 +72,6 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         infile = lib.getFilepath('convert', volume, fileId, filter)
         outfile = lib.getFilepath('adjust', volume, fileId, filter)
         # print 'Volume %s adjusting %d/%d: %s     \r' % (volume,nfile,nfiles,infile),
-        # print 'Volume %s adjusting %d/%d: %s     ' % (volume,nfile,nfiles,infile)
         print 'Volume %s adjusting %d: %s     ' % (volume,nfile,infile)
 
         # get max brightness value to override noise/hot pixels in some images
@@ -85,10 +85,15 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         dontStretchHistogram = (imageFraction <= config.adjustHistogramImageFractionMinimum)
         if dontStretchHistogram:
             maxvalue = 255
+            # maxvalue = 32767
 
         # adjust the image
         if os.path.isfile(infile):
-            libimg.adjustImageFile(infile, outfile, maxvalue)
+            # libimg.adjustImageFile(infile, outfile, maxvalue)
+            im = libimg.imread(infile, 'gray16')
+            im = libimg.stretchHistogram16to8bit(im, maxvalue) # bring up brightness levels (CALIB images are dark)
+            im = libimg.imrotate(im)
+            libimg.imwrite(outfile, im)
         else:
             print 'Warning: missing image file', infile
         nfile += 1

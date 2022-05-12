@@ -911,11 +911,12 @@ def img2png(srcdir, filespec, destdir, quiet=True):
             print 'Error - does file already exist?'
             pass
 
+
 def stretchHistogram16to8bit(im, maxvalue=None):
     """
     stretch the histogram of the given 16bit image and return it as an 8bit image.
     hot pixels are set at 32767, but hot noise can exist in an image also.
-    can pass maxvalue
+    can pass maxvalue. if None then will scan for the hottest pixels.
     """
 
     # get histogram
@@ -924,7 +925,7 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     images = [im]
     channels = [0]
     mask = None # lets you filter to part of an image
-    histSize = [256] # number of bins
+    histSize = [256] # number of bins #. why not 32768?
     # ranges = [0, 256] # range of intensity values
     ranges = [0, 32768] # range of intensity values
     hist = cv2.calcHist(images, channels, mask, histSize, ranges)
@@ -961,9 +962,9 @@ def stretchHistogram16to8bit(im, maxvalue=None):
 
     # convert 16-bit to 8-bit if needed (otherwise the histogram stretching gets posterized)
     # need guard for data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png,
-    # which fails here - why?
-    # if type(im[0][0])==np.uint16:
-    if (not im is None) and im[0][0] and type(im[0][0])==np.uint16:
+    # which fails here - why? mebbe was spurious due to ctrl-c previous step
+    # if (not im is None) and im[0][0] and type(im[0][0])==np.uint16:
+    if type(im[0][0])==np.uint16:
         # stretch image values to brightest amount
         im = cv2.normalize(im, None, 0, 255, cv2.NORM_MINMAX)
         # max level in the 16-bit image is 32767, and (/ 32767 128) = 255
@@ -973,28 +974,45 @@ def stretchHistogram16to8bit(im, maxvalue=None):
     return im
 
 
-def adjustImageFile(infile, outfile, maxvalue=None):
-    """
-    Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
-    """
+def imread(infile, imtype=None):
+    "read an image file using opencv"
+    # made this so caller doesn't need to import cv2
+    options = None
+    if imtype=='gray16':
+       # original pngs are 16-bit
+        options = cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH
+    im = cv2.imread(infile, options)
+    return im
 
-    # need ANYDEPTH flag as the pngs are 16-bit
-    im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
 
-    # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
-    im = stretchHistogram16to8bit(im, maxvalue)
+# def adjustImageFile(infile, outfile, maxvalue=None):
+#     """
+#     Adjust the given image file and save it to outfile - stretch histogram and rotate 180deg.
+#     """
 
-    # need this in case stretch failed, eg for
-    # data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png
-    if im is None:
-        print "Warning: im is None - no image written"
-        return None
+#     # need ANYDEPTH flag as the pngs are 16-bit
+#     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE | cv2.IMREAD_ANYDEPTH)
 
-    # rotate image by 180
+#     # stretch the histogram to bring up the brightness levels (the CALIB images are dark)
+#     im = stretchHistogram16to8bit(im, maxvalue)
+
+#     # need this in case stretch failed, eg for
+#     # data/step03_convert/VGISS_5101/C1462351_CALIB_GREEN.png
+#     if im is None:
+#         print "Warning: im is None - no image written"
+#         return None
+
+#     # rotate image by 180
+#     im = np.rot90(im, 2)
+
+#     retval = imwrite(outfile, im)
+#     return retval
+
+
+def imrotate(im):
+    "rotate image by 180 degrees"
     im = np.rot90(im, 2)
-
-    retval = imwrite(outfile, im)
-    return retval
+    return im
 
 
 def show(im, title='cv2 image - press esc to continue'):

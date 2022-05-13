@@ -1,4 +1,3 @@
-
 """
 vg inpaint command
 
@@ -24,8 +23,6 @@ import vgCenter
 
 def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCall=True):
 
-    "Build centered and stabilized images for given volume and write x,y,radius to centers.csv"
-
     filterVolume = str(filterVolume) # eg '5101'
     filterImageId = filterImageId.upper() # always capital C
 
@@ -43,7 +40,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
         vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
 
         # create folder
-        lib.mkdir(outputSubfolder)
+        lib.mkdir_p(outputSubfolder)
 
         # get number of files to process
         nfiles = len(os.listdir(inputSubfolder))

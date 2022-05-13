@@ -25,6 +25,8 @@ logfile = 'log.txt'
 
 # camera field of views, in degrees
 # source: http://pds-rings.seti.org/voyager/iss/inst_cat_na1.html
+# so narrow angle is almost the size of the moon in the sky,
+# and wide angle is 7.5x the size of that.
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 
 
@@ -64,9 +66,12 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 # RAW images can have overly bright backgrounds. 8 bit depth. 
 # they need to have flatfields (black images) subtracted.
 # CLEANED images have the riseau marks removed, though not very well.
-# CALIB images have darker backgrounds, but can dim the planet too much. 16 bit depth.
+# CALIB images have flatfield subtracted so darker backgrounds. 16 bit depth, 
+# so might not display properly in an image viewer - may show up dark.
 # GEOMED images are CALIB images corrected for geometric distortions, 
 # and are upped to 1000x1000.
+#. might be good to let user choose the type from cmd line, and maintain
+# separate channels for each. though more complex code. 
 # imageType = 'RAW'
 imageType = 'CALIB'
 
@@ -114,13 +119,14 @@ adjustHistogramHotPixelCountCutoff = 15 # v0.47-some of ganymede were too dark, 
 # Center
 # ----------------------------------------
 
+# IMPORTANT: if you try changing these values, make sure to run 'vg test'
+# to see how they affect the test images. and add more test images as come
+# across interesting/edge cases.
+
 # this can be a filetitle path for the centering algorithms to save intermediate
 # stage images to, eg 'test/images/debug/C1382377' - it will append '_canny.jpg',
 # '_binary.jpg', etc and save the files there.
 debugImageTitle = None
-
-# if you try changing these values, make sure to run 'vg test'
-# to see how they affect the test images
 
 # fraction of image which needs to be taken up by target before centering is turned off
 imageFractionCenteringThreshold = 1.2
@@ -275,6 +281,7 @@ drawTarget = False # draw expected target size/location with yellow circle
 # Annotate
 # ----------------------------------------
 
+#. can we use a local font file?
 annotationsFont = "c:/windows/fonts/!futura-light.ttf"
 annotationsFontsize = 18
 
@@ -293,6 +300,7 @@ targetsIgnore = dontCenterTargets
 # titleSecondsToShow = 4
 titleSecondsToShow = 3.5
 
+#. can we use a local font file?
 titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFontsize = 48
 
@@ -305,6 +313,7 @@ titleFontsize = 48
 videoFilespec = 'img%05d' + extension
 
 # frame rate - frames per second
+#. can override where/how?
 # videoFrameRate = 5 # nowork - gets stuck after a bit - why?
 # videoFrameRate = 8 # nice for ariel flyby
 # videoFrameRate = 10
@@ -401,7 +410,7 @@ folders = {
     'adjust':     onlineFolder  + "step04_adjust/",
     # 'denoise':    onlineFolder  + "step05_denoise/",
     'center':     onlineFolder  + "step05_center/",
-    'inpaint':    onlineFolder  + "step06_inpaint/",
+    'inpaint':    onlineFolder  + "step06_inpaint/", #. optional step - how handle?
     'composite':  onlineFolder  + "step07_composite/",
     'mosaic':     onlineFolder  + "step08_mosaic/",
     'map':        onlineFolder  + "step09_map/",

@@ -65,20 +65,16 @@ Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks) -->
 
 ## Sources
 
-Images were obtained from the __
-
-They provide four types for each image: 
+Images were obtained from the Planetary Data System (PDS) - https://pds-rings.seti.org/voyager/iss/. They provide four types for each image: 
 
 - RAW - the original 800x800px raw images, with reseau marks. 8bit
 - CLEANED - same as above, with reseau marks removed. 8bit
 - CALIB -  above, with flatfield subtracted. 16bit
-- GEOMED - the above, with geometry corrected via reseau marks. 16bi
+- GEOMED - the above, with geometry corrected via reseau marks. 16bit
 
-You can see them each in the following animation:
+You can see each of them in the following animation:
 
 <img src="images/C1464108_variants.gif" style="width:800px" />
-
-You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
 
 
 ## Contributing

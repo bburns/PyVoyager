@@ -58,13 +58,14 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 #   calib, histogram, rotate
 # or
 #   geomed, histogram, rotate (?)
-imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
 # imageTypes = ['RAW', 'CLEANED', 'CALIB']
 # imageTypes = ['CLEANED', 'CALIB']
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
 # imageTypes = ['CALIB']
 # imageTypes = ['RAW','CALIB','GEOMED']
+imageTypes = ['RAW','GEOMED']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # imagetype for main processing
@@ -78,7 +79,8 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 #. might be good to let user choose the type from cmd line, and maintain
 # separate channels for each. though more complex code. 
 # imageType = 'RAW'
-imageType = 'CALIB'
+# imageType = 'CALIB'
+imageType = 'GEOMED'
 
 # img2png options
 # -fnamefilter - append filter name, eg _ORANGE
@@ -95,7 +97,7 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # Adjust
 # ----------------------------------------
 
-# note: RAW images are 8 bit pngs, CALIB are 16 bit pngs
+# note: RAW images are 8 bit pngs, CALIB and GEOMED are 16 bit pngs
 
 # targets below this size (as fraction of the image frame)
 # won't get histogram stretched (can blow out small targets)

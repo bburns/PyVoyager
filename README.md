@@ -3,6 +3,7 @@
 PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventual goal is to produce a single movie with titles and audio as automatically as possible, with each planet and target having a separate segment. 
 
 - [About](#about)
+- [Project Status](#project-status)
 - [Example Movies](#example-movies)
 - [Sources](#sources)
 - [Contributing](#contributing)
@@ -19,6 +20,11 @@ Voyager 1 and 2 sent back over 70,000 images, so there is a lot to explore!
 Unfortunately the cameras were not able to point very accurately at their targets, resulting in jittery image sequences. PyVoyager centers the target planet or moon in the frame, and creates movies from the image sequences.
 
 
+## Project Status
+
+The program is currently at version 0.6 - there are still a lot of things to do!
+
+
 ## Example Movies
 
 Here is an example image sequence, followed by the centered version - 
@@ -28,11 +34,11 @@ Here is an example image sequence, followed by the centered version -
 <img src="https://i.imgur.com/dxjHufq.gif" style="width:800px" />
 <br/>
 
-Here is Voyager 1's flyby of Ganymede, partially colored - 
+Here is Voyager 1's approach to Ganymede, partially colored - 
 
 <img src="https://i.imgur.com/k3h6NEI.gif" style="width:800px" />
 
-And here is Voyager 1's flyby of Io, partially colored - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
+And here is Voyager 1's approach to Io, partially colored - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
 <img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 

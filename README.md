@@ -28,7 +28,11 @@ Here is an example image sequence, followed by the centered version -
 <img src="https://i.imgur.com/dxjHufq.gif" style="width:800px" />
 <br/>
 
-And here is Voyager 2's flyby of Io, partially colored - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
+Here is Voyager 1's flyby of Ganymede, partially colored, reduced to 400x400px - 
+
+<img src="https://i.imgur.com/k3h6NEI.gif" style="width:800px" />
+
+And here is Voyager 1's flyby of Io, partially colored - any mini 'volcanoes' are actually leftover from the removal of reseau marks (a grid of black dots) -
 
 <img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 

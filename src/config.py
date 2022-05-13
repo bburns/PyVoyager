@@ -30,7 +30,7 @@ logfile = 'log.txt'
 # and wide angle is about half that of powerful binoculars - 
 # 7.5x the size of the narrow angle, wider than width of hand at arm's length.
 # so 'wide angle' is actually still pretty narrow.
-# and if spacecraft pointing was accurate to around 0.1 degree, about a fifth of
+# and if spacecraft pointing was accurate to around 0.05 degree, about a tenth of
 # the moon in the sky, that accounts for the jitteriness of the image sequences.
 cameraFOVs = {'Narrow': 0.424, 'Wide': 3.169}
 

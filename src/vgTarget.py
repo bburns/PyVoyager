@@ -56,7 +56,7 @@ def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
         targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
         if volumeOk and imageOk and targetPathOk: # <- note AND
             addImage = True
-        # if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
+        if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
         if addImage:
 
             # create subfolder

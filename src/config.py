@@ -297,7 +297,8 @@ annotationsFontsize = 18
 # Target
 # ----------------------------------------
 
-targetsIgnore = dontCenterTargets
+# targetsIgnore = dontCenterTargets
+targetsIgnore = []
 
 
 # ----------------------------------------

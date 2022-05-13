@@ -4,12 +4,12 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 
 - [About](#about)
 - [Example Movies](#example-movies)
+- [Sources](#sources)
 - [Contributing](#contributing)
 - [Usage](#usage)
 - [Install](#install)
 - [Technical](#technical)
 - [History](#history)
-- [Sources](#sources)
 - [License](#license)
   
 ## About
@@ -32,9 +32,13 @@ And here is Voyager 2's flyby of Io, partially colored - any mini 'volcanoes' ar
 
 <img src="https://i.imgur.com/LO7Dnww.gif" style="width:800px" />
 
-Here is Voyager 1's Jupiter flyby, mostly false color (3 mins) v0.47 -
+Here is a movie of Voyager 1's Jupiter flyby (3 mins), mostly false color, v0.47 -
 
 https://www.youtube.com/watch?v=lYUgU-Bc1_w  
+
+And there is a playlist with several movies here - 
+
+https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
 
 <!-- https://www.youtube.com/watch?v=_YT4XINDxjk  
 Voyager 2 Uranus system flyby in color and black and white v0.43
@@ -53,6 +57,24 @@ Voyager 2 Neptune flyby color v0.2 - automatically colorized version
 
 https://www.youtube.com/watch?v=o4zh8C-ma_A  
 Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks) -->
+
+
+## Sources
+
+Images were obtained from the __
+
+They provide four types for each image: 
+
+- RAW - the original 800x800px raw images, with reseau marks. 8bit
+- CLEANED - same as above, with reseau marks removed. 8bit
+- CALIB -  above, with flatfield subtracted. 16bit
+- GEOMED - the above, with geometry corrected via reseau marks. 16bi
+
+You can see them each in the following animation:
+
+<img src="images/C1464108_variants.gif" style="width:800px" />
+
+You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
 
 
 ## Contributing
@@ -87,11 +109,6 @@ For more technical details on the algorithms used, see [TECHNICAL.md](TECHNICAL.
 ## History
 
 For the program and movie version history see [HISTORY.md](HISTORY.md).
-
-
-## Sources
-
-You can read more about the Planetary Data System (PDS) which hosts the archives [here][pds].
 
 
 ## License

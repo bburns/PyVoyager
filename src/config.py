@@ -58,13 +58,13 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 #   calib, histogram, rotate
 # or
 #   geomed, histogram, rotate (?)
-# imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
+imageTypes = ['RAW', 'CLEANED', 'CALIB', 'GEOMED']
 # imageTypes = ['RAW', 'CLEANED', 'CALIB']
 # imageTypes = ['CLEANED', 'CALIB']
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
 # imageTypes = ['CALIB']
-imageTypes = ['RAW','CALIB','GEOMED']
+# imageTypes = ['RAW','CALIB','GEOMED']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # imagetype for main processing

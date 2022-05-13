@@ -56,7 +56,7 @@ def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
         targetPathOk = lib.targetMatches(targetPathParts, system, craft, target, camera)
         if volumeOk and imageOk and targetPathOk: # <- note AND
             addImage = True
-        if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
+        # if target in config.targetsIgnore: addImage = False # ignore targets like Sky, Dark
         if addImage:
 
             # create subfolder
@@ -74,14 +74,16 @@ def vgTarget(filterVolume='', filterImageId='', filterTargetPath=''):
                 src = lib.getFilepath('mosaic', volume, fileId)
             if not os.path.isfile(src):
                 src = lib.getFilepath('composite', volume, fileId)
-            # if not os.path.isfile(src):
-                # src = lib.getFilepath('center', volume, fileId, filter)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('center', volume, fileId, filter)
             # if not os.path.isfile(src):
                 # src = lib.getFilepath('denoise', volume, fileId, filter)
-            # if not os.path.isfile(src):
-                # src = lib.getFilepath('adjust', volume, fileId, filter)
-            # if not os.path.isfile(src):
-                # src = lib.getFilepath('convert', volume, fileId, filter)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('adjust', volume, fileId, filter)
+            if not os.path.isfile(src):
+                src = lib.getFilepath('convert', volume, fileId, filter)
+
+            print src
 
             if os.path.isfile(src):
                 lib.cp(src, targetFolder)

@@ -139,7 +139,7 @@ debugImageTitle = None
 imageFractionCenteringThreshold = 1.2
 
 # don't want to center these targets
-dontCenterTargets = 'Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
+dontCenterTargets = 'Saturn,Dark,Sky,Plaque,Cal_Lamps,Orion,Vega,Star,Pleiades,Scorpius,\
 Sigma_Sgr,Beta_Cma,Arcturus,Taurus,Theta_Car,J_Rings,S_Rings,U_Rings,N_Rings'.split(',')
 
 # these targets aren't in the PCK datafile so don't know radius,

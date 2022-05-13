@@ -28,7 +28,7 @@ Here is an example image sequence, followed by the centered version -
 <img src="https://i.imgur.com/dxjHufq.gif" style="width:800px" />
 <br/>
 
-Here is Voyager 1's flyby of Ganymede, partially colored, reduced to 400x400px - 
+Here is Voyager 1's flyby of Ganymede, partially colored - 
 
 <img src="https://i.imgur.com/k3h6NEI.gif" style="width:800px" />
 

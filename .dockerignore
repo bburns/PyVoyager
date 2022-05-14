@@ -1,6 +1,9 @@
 .git
 data/
 images/
-# ?
+
+# keep these ?
+
 kernels/
 test/
+vendor/

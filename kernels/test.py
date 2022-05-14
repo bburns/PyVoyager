@@ -1,4 +1,3 @@
-
 # Voyager distance calculations using SPICE and Voyager kernels.
 # Uses Python interface - see https://github.com/AndrewAnnex/SpiceyPy
 
@@ -8,7 +7,6 @@
 #   ftp://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/naif0012.tls
 #   ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_1.a54206u_V0.2_merged.bsp
 #   ftp://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/Voyager_2.m05016u.merged.bsp
-
 
 
 import math

@@ -408,8 +408,8 @@ clipsMinFrames = 20
 # convention: all folders should end with /
 
 # folders for data and images
-# dataFolder  = "data/"
-dataFolder  = "d:/pyvoyager/data/"
+dataFolder  = "data/"
+# dataFolder  = "d:/pyvoyager/data/" #. does not support symbolic links! ughh
 
 folders = {
     'download':   dataFolder + 'step01_download/',

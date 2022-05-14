@@ -408,38 +408,37 @@ clipsMinFrames = 20
 # convention: all folders should end with /
 
 # folders for data and images
-# use offline folder for large datasets (multi gigabyte)
-onlineFolder  = "data/"
-offlineFolder = "data/" # e.g. could be f:/...
+# dataFolder  = "data/"
+dataFolder  = "d:/pyvoyager/data/"
 
 folders = {
-    'download':   offlineFolder + 'step01_download/',
-    'unzip':      offlineFolder + 'step02_unzip/',
-    'convert':    onlineFolder  + "step03_convert/",
-    'adjust':     onlineFolder  + "step04_adjust/",
-    # 'denoise':    onlineFolder  + "step05_denoise/",
-    'center':     onlineFolder  + "step05_center/",
-    'inpaint':    onlineFolder  + "step06_inpaint/", #. optional step - how handle?
-    'composite':  onlineFolder  + "step07_composite/",
-    'mosaic':     onlineFolder  + "step08_mosaic/",
-    'map':        onlineFolder  + "step09_map/",
-    'crop':       onlineFolder  + "step10_crop/",
-    'annotate':   onlineFolder  + "step11_annotate/",
-    'target':     onlineFolder  + "step12_target/",
-    'plot':       onlineFolder  + "step13_plot/",
-    'titles':     onlineFolder  + "step14_titles/",
-    'clips':      onlineFolder  + "step15_clips/",
-    'pages':      onlineFolder  + "step16_pages/",
-    'movies':     onlineFolder  + "step17_movies/",
-    'additions':  onlineFolder  + "images/",
+    'download':   dataFolder + 'step01_download/',
+    'unzip':      dataFolder + 'step02_unzip/',
+    'convert':    dataFolder  + "step03_convert/",
+    'adjust':     dataFolder  + "step04_adjust/",
+    # 'denoise':    dataFolder  + "step05_denoise/",
+    'center':     dataFolder  + "step05_center/",
+    'inpaint':    dataFolder  + "step06_inpaint/",
+    'composite':  dataFolder  + "step07_composite/",
+    'mosaic':     dataFolder  + "step08_mosaic/",
+    'map':        dataFolder  + "step09_map/",
+    'crop':       dataFolder  + "step10_crop/",
+    'annotate':   dataFolder  + "step11_annotate/",
+    'target':     dataFolder  + "step12_target/",
+    'plot':       dataFolder  + "step13_plot/",
+    'titles':     dataFolder  + "step14_titles/",
+    'clips':      dataFolder  + "step15_clips/",
+    'pages':      dataFolder  + "step16_pages/",
+    'movies':     dataFolder  + "step17_movies/",
+    'additions':  dataFolder  + "images/",
 }
 
 clipsStageFolder    = folders['clips'] + 'stage/'
 moviesStageFolder    = folders['movies'] + 'stage/'
 
 # grab folders - see vg grab
-grabFolder = onlineFolder  + "grab/"
-grabbedFolder = onlineFolder  + "grabbed/"
+grabFolder = dataFolder  + "grab/"
+grabbedFolder = dataFolder  + "grabbed/"
 
 # test images go here
 testFolder = 'test/'

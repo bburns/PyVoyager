@@ -408,12 +408,17 @@ clipsMinFrames = 20
 # convention: all folders should end with /
 
 # folders for data and images
+# can keep the giant download and unzip files in 'offline' storage, 
+# eg a thumb drive, to save space for other steps. 
+# note that clips/movies need symbolic links, which external devices might not support!
+# also everything is slower when you use external devices.
+#. move these into some kind of .env file to keep out of repo
 dataFolder  = "data/"
-# dataFolder  = "d:/pyvoyager/data/" #. does not support symbolic links! ughh
+dataFolderOffline  = "d:/pyvoyager/data/"
 
 folders = {
-    'download':   dataFolder + 'step01_download/',
-    'unzip':      dataFolder + 'step02_unzip/',
+    'download':   dataFolderOffline + 'step01_download/',
+    'unzip':      dataFolderOffline + 'step02_unzip/',
     'convert':    dataFolder  + "step03_convert/",
     'adjust':     dataFolder  + "step04_adjust/",
     # 'denoise':    dataFolder  + "step05_denoise/",

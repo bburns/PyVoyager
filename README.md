@@ -50,24 +50,6 @@ And there is a playlist with several movies here -
 
 https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
 
-<!-- https://www.youtube.com/watch?v=_YT4XINDxjk  
-Voyager 2 Uranus system flyby in color and black and white v0.43
-
-https://www.youtube.com/watch?v=rAGWBo3-J2E  
-Voyager 1 Jupiter rotation movie color v0.41
-
-https://www.youtube.com/watch?v=kcJB9rNzCH4  
-Voyager 2 Triton flyby v0.32
-
-https://www.youtube.com/watch?v=VF3UCo2P-4Y  
-Voyager 2 Neptune flyby v0.2 - note Triton orbiting Neptune in a retrograde direction
-
-https://www.youtube.com/watch?v=c8O2BKqM0Qc  
-Voyager 2 Neptune flyby color v0.2 - automatically colorized version
-
-https://www.youtube.com/watch?v=o4zh8C-ma_A  
-Voyager 1 Jupiter approach v0.1 - (RAW images with reseau marks) -->
-
 
 ## Sources
 
@@ -122,5 +104,4 @@ For the program and movie version history see [HISTORY.md](HISTORY.md).
 This software is released under the MIT license - see [LICENSE.md](LICENSE.md).
 
 [pds]: https://pds.nasa.gov/
-[playlist]: https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
 [trello]: https://trello.com/b/kEkGDMYR/voyager

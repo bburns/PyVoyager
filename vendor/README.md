@@ -1,7 +1,12 @@
+This folder is for third-party applications. 
 
+## img2png
 
-download img2png and unzip here
-it's a windows-only program
+Download img2png and unzip here. 
+
+It's a Windows-only program.
 
 http://bjj.mmedia.is/utils/img2png/
+
+
 

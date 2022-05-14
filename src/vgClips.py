@@ -24,6 +24,7 @@ import vgTitle
 def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
     """
     Make links from source files to clip stage folders.
+    This uses mklink which requires admin privileges, so must run in an admin console!
     filterVolumes is a list of volumes as strings, e.g. ['5101','5102'], or None for all.
     filterTargetPath is system/craft/target/camera, e.g. 'Jupiter//Io', or None for all.
     filterImageIds is a string with start and stop imageIds, e.g. 'C1436454-C1528477' or None=all.
@@ -115,6 +116,13 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     imageFilepath = lib.getFilepath('mosaic', volume, fileId)
                 if not os.path.isfile(imageFilepath):
                     imageFilepath = lib.getFilepath('composite', volume, fileId)
+                #. added these 2022-05-13 - i guess will need an option for b&w vs color?
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getFilepath('center', volume, fileId, filter)
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getFilepath('adjust', volume, fileId, filter)
+                if not os.path.isfile(imageFilepath):
+                    imageFilepath = lib.getFilepath('convert', volume, fileId, filter)
 
                 # if image file exists, create subfolder and link image
                 if os.path.isfile(imageFilepath):

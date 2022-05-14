@@ -1,6 +1,5 @@
-
 Volume Indexes
---------------
+----------------------------
 
 Each VGISS volume includes the file rawimages.tab in /index,
 which is the complete index for the flybys of that planet -

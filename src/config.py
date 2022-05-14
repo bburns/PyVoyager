@@ -289,7 +289,8 @@ drawTarget = False # draw expected target size/location with yellow circle
 # ----------------------------------------
 
 #. can we use a local font file?
-annotationsFont = "c:/windows/fonts/!futura-light.ttf"
+# annotationsFont = "c:/windows/fonts/!futura-light.ttf"
+annotationsFont = "fonts/futura-light.ttf"
 annotationsFontsize = 18
 
 
@@ -309,7 +310,8 @@ targetsIgnore = []
 titleSecondsToShow = 3.5
 
 #. can we use a local font file?
-titleFont = "c:/windows/fonts/!futura-light.ttf"
+# titleFont = "c:/windows/fonts/!futura-light.ttf"
+titleFont = "fonts/futura-light.ttf"
 titleFontsize = 48
 
 

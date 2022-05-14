@@ -1,17 +1,20 @@
 # titles
 # Store titlepage image, target descriptions here
-# --------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 # imageId will be displayed, along with target name and description
-#. description could be split at sentences for separate lines
 
 
 target,imageId,description
 
 Jupiter,
-Io,C1636838_composite,"Roughly the size of Earth's moon. Covered with volcanoes, sulfur, lava calderas. Mountains higher than Mt Everest."
+Io,C1636838_composite,"Roughly the size of Earth's moon. Covered with volcanoes, sulfur, lava calderas, and with mountains higher than Mt. Everest."
 Europa,C1636904_crop,
+Callisto
+Ganymede
 
+Saturn
+Titan
 
 Uranus,,"Greek God of the sky (Ouranos), corresponding to Roman Caelus"
 Ariel,,"A sky spirit in Shakespeare's The Tempest"

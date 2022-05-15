@@ -1,4 +1,3 @@
-
 """
 vg center command
 
@@ -119,7 +118,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # do we actually need to center this image?
         doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
-        if doCenter:
+        if doCenter and os.path.isfile(infile):
 
             # find center of target using blob and hough, then alignment to fixedimage.
             x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)

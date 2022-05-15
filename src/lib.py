@@ -593,7 +593,6 @@ def parseTargetPath(targetPath):
     # return [None,None,None,None]
 
 
-
 def readCsv(filename):
     "Read a csv file into a dict of dicts. First column is key. Use on small files only!"
     # comments or blank lines are skipped
@@ -709,7 +708,6 @@ def getDownloadUrl(volnum):
     return url
 
 
-
 def unzipFile(zipfile, destfolder, overwrite=False):
     "Unzip a file to a destination folder."
     # eg unzipFile('test/unzip_test.tar', 'test/unzip_test/')
@@ -732,7 +730,6 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         parentfolder = os.path.normpath(os.path.join(destfolder, os.pardir))
         archive_util.unpack_archive(zipfile, parentfolder)
         return True
-
 
 
 if __name__ == '__main__':

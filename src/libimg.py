@@ -912,6 +912,10 @@ def img2png(srcdir, filespec, destdir, quiet=True):
 
 def convert16to8bit(im):
     "convert 16-bit image to 8-bit, stretching the values from 0 to 255 for most contrast."
+    # need this guard because occasionally there are empty img2png images, for some reason.
+    # eg C3479936_GEOMED_CLEAR
+    if im is None or im[0] is None:
+        return im
     if type(im[0][0])==np.uint16:
         # stretch image values to brightest amount.
         # the max level in a 16-bit image is 32767, and (/ 32767 128) = 255,

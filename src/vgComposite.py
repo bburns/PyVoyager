@@ -154,7 +154,7 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
         vgCenter.vgCenter(filterVolume, '', optionOverwrite=False, directCall=False)
         # vgInpaint.vgInpaint(filterVolume, '', optionOverwrite=False, directCall=False)
         # make folder
-        lib.mkdir(outputSubfolder)
+        lib.mkdir_p(outputSubfolder)
 
     # read small dbs into memory
     compositingInfo = lib.readCsv(config.dbCompositing) # when to turn centering on/off

@@ -422,7 +422,6 @@ def getFilepath(step, volume, fileId, filter=None):
     return filepath
 
 
-# def makeVideosFromStagedFiles(stageFolder, outputFolder, filespec, frameRate, minFrames):
 def makeVideosFromStagedFiles(stageFolder, outputFolder):
     """
     Build mp4 videos using ffmpeg on sequentially numbered image files.
@@ -673,7 +672,7 @@ def imagesToMp4(stageFolder, outputFilename):
     savedir = os.getcwd()
     os.chdir(stageFolder)
     # print 'cwd',os.getcwd()
-    # eg "ffmpeg -y -framerate 25 -i img%05d.jpg output.mp4"
+    # eg "ffmpeg -y -framerate 25 -i img%05d.jpg -c:v libx264 -pix_fmt yuv420p output.mp4"
     cmd = 'ffmpeg %s -framerate %d -i %s %s %s' % \
           (config.videoFfmpegOptions, config.videoFrameRate,
            config.videoFilespec, config.videoFfmpegOutputOptions,

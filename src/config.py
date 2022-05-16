@@ -342,7 +342,7 @@ videoFfmpegOptions += ' -y'
 videoFfmpegOptions += " -loglevel error"
 
 # ffmpeg output options
-# -c:v specifies
+# -c:v specifies ____?
 # videoFfmpegOutputOptions = "-c:v libx264"
 # -crf specifies constant rate factor
 #      see https://trac.ffmpeg.org/wiki/Encode/H.264#crf

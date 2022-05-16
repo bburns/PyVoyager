@@ -1,4 +1,3 @@
-
 """
 vg composite command
 
@@ -133,6 +132,8 @@ def vgComposite(filterVolume=None, filterCompositeId=None, filterTargetPath=None
         C1537728,C1537732,5103,Green,1,10,3
         =>
         step05_composites/VGISS_5103/C1537728_composite.jpg
+
+    Note: need to run vg init composites first.
 
     Note: weight,x,y are optional - default to 1,0,0
     """

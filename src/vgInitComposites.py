@@ -1,4 +1,3 @@
-
 """
 vg init composites command
 

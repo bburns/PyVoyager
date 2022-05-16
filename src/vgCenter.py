@@ -44,7 +44,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         return
 
     if filterVolume!='':
-        # filtering entire volume
+        # filter entire volume(s)
 
         inputSubfolder = lib.getSubfolder('adjust', filterVolume)
         outputSubfolder = lib.getSubfolder('center', filterVolume)
@@ -71,13 +71,13 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
 
-    # open centers.csv file to check for existing offsets
-    csvCenters, fCenters = lib.openCsvReader(config.dbCenters)
+    # # open centers.csv file to check for existing offsets #. wip not used yet
+    # csvCenters, fCenters = lib.openCsvReader(config.dbCenters)
 
     # open positions.csv file for target angular size info
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
 
-    # open centers_new.csv file to write any new records to
+    # open centersNew.csv file to write any new records to
     csvNewCenters, fNewCenters = lib.openCsvWriter(config.dbCentersNew)
 
     # dictionary to keep track of last image file in target sequence (eg for Ariel flyby)
@@ -115,36 +115,34 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         imageFraction = lib.getImageFraction(csvPositions, fileId)
         targetRadius = int(config.imsize/2*imageFraction)
 
-        # check if we already have offsets for this image
-        csvCenters
+        # # check if we already have offsets for this image #.wip
+        # csvCenters
 
         # do we actually need to center this image?
         doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
         if doCenter and os.path.isfile(infile):
 
-            # find center of target using blob and hough, then alignment to fixedimage.
-            x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
+            # find center of target using blob and hough, then alignment to fixedimage
+            # x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
+            xFraction,yFraction,foundRadiusFraction = libimg.centerImageFile(infile, outfile, targetRadius)
             dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
             if stabilizationOk:
-                x += int(round(dx))
-                y += int(round(dy))
+                # x += int(round(dx))
+                # y += int(round(dy))
+                xFraction += dx / float(config.imsize)
+                yFraction += dy / float(config.imsize)
 
             # write x,y,radius to newcenters file
-            rowNew = [fileId, volume, x, y, foundRadius]
+            # rowNew = [fileId, volume, x, y, foundRadius]
+            rowNew = [fileId, volume, xFraction, yFraction, foundRadiusFraction]
             csvNewCenters.writerow(rowNew)
-            
-        # don't really need to do this as further stages could just fall back on adjusted images
-        # else: # don't need to center image, so just copy as is
-            #. should outfile keep the _denoised or _adjusted tag?
-            # lib.cp(infile, outfile)
-            
 
     fPositions.close()
     fNewCenters.close()
-    fCenters.close()
+    # fCenters.close()
     fFiles.close()
 
-    # now append newcenters records to centers file
+    # now append newcenters records to centers file, and remove it
     if os.path.isfile(config.dbCentersNew):
         lib.concatFiles(config.dbCenters, config.dbCentersNew)
         lib.rm(config.dbCentersNew)

@@ -790,7 +790,7 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     targetRadius is the expected radius, in pixels
     """
 
-    # get fixed image of filled target disc
+    # get fixed image of a white filled target disc
     imFixed = np.zeros((config.imsize,config.imsize), np.uint8)
     cv2.circle(imFixed, (config.imsize/2-1,config.imsize/2-1), targetRadius, 255, -1) # -1=filled
 
@@ -845,7 +845,7 @@ def centerImageFileAt(infile, outfile, x, y):
 def centerImageFile(infile, outfile, targetRadius=None):
     """
     Center the given image file on a target and save it to outfile.
-    Returns x,y,foundRadius
+    Returns xFraction,yFraction,foundRadiusFraction
     """
 
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
@@ -862,8 +862,12 @@ def centerImageFile(infile, outfile, targetRadius=None):
     x = int((boundingBox[0] + boundingBox[2])/2)
     y = int((boundingBox[1] + boundingBox[3])/2)
     # this is pretty approximate when it's just a blob
-    foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
-    return x, y, foundRadius
+    # foundRadius = int((boundingBox[2]-x + boundingBox[3]-y)/2)
+    # return x, y, foundRadius
+    foundRadiusFraction = (int((boundingBox[2]-x + boundingBox[3]-y)/2)) / float(config.imsize)
+    xFraction = x / float(config.imsize)
+    yFraction = y / float(config.imsize)
+    return xFraction, yFraction, foundRadiusFraction
 
 
 def drawCrosshairs(im):

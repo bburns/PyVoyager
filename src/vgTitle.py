@@ -1,4 +1,3 @@
-
 """
 vg title command
 
@@ -177,7 +176,7 @@ def vgTitle(targetPath=None):
 
     # # make epilogue
     # title = "Voyager"
-    # subtitle1 = "Dedicated to those who made it possible"
+    # subtitle1 = ""
     # subtitle2 = 'This is an open source movie - you can help!'
     # subtitle3 = 'See grandtourmovie.org'
     # # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)

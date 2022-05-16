@@ -1,4 +1,3 @@
-
 """
 vg test denoise command
 

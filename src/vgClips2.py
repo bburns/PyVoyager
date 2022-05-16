@@ -5,6 +5,11 @@ Build clips associated with target subfolders, eg
 > vg clips2 Jupiter/Voyager1/Io/Narrow
 """
 
+#. this will use image lists with ffmpeg to build mp4's,
+# instead of vgClips method of making link files
+
+
+
 import csv
 import os
 import os.path

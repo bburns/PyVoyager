@@ -1,4 +1,3 @@
- 
 """
 vg test composite command
 

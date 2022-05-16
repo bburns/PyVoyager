@@ -14,8 +14,7 @@
 # a segmentId is a targetKey with optional partname after a @, e.g. Jupiter-Voyager1-Jupiter@Clouds
 # allows a target sequence to be split up into smaller parts
 
-
-#. need to handle multiple movies - eg 30sec, 1min, 5min, 1h, 2h
+#. use yaml to define a set of movies?
 
 
 # targetKey, subtargetKey, contents
@@ -41,7 +40,7 @@ segmentId, subsegmentId, contents
 
 # # europa
 # Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa,Title
-Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
+# Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
 
 # # ganymede
 # Jupiter-Voyager1-Ganymede, Jupiter-Voyager1-Ganymede-Narrow, C1460413-C1640725
@@ -72,7 +71,7 @@ Jupiter-Voyager1-Europa,Jupiter-Voyager1-Europa-Narrow
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter,Title
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter@Approach
 # Jupiter-Voyager1,Jupiter-Voyager1-Callisto
-Jupiter-Voyager1,Jupiter-Voyager1-Europa
+# Jupiter-Voyager1,Jupiter-Voyager1-Europa
 # Jupiter-Voyager1,Jupiter-Voyager1-Ganymede
 # Jupiter-Voyager1,Jupiter-Voyager1-Io
 # Jupiter-Voyager1,Jupiter-Voyager1-Jupiter@Clouds
@@ -82,7 +81,9 @@ Jupiter-Voyager1,Jupiter-Voyager1-Europa
 
 # Saturn
 # ----------------------------------------
-
+Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide
 
 
 # Voyager 2
@@ -120,18 +121,19 @@ Jupiter-Voyager1,Jupiter-Voyager1-Europa
 # Sol-Voyager2,Sol-Voyager2,PaleBlueDot
 
 
-# All together
-# --------------------------------------------------------------------------------
-# note: any special pages must be added to vgMovies.py
-All,Intro
-All,Prologue
-All,Jupiter-Voyager1
+# # All together
+# # --------------------------------------------------------------------------------
+# # note: any special pages must be added to vgMovies.py
+# All,Intro
+# All,Prologue
+# # All,Jupiter-Voyager1
 # All,Saturn-Voyager1
-# All,Jupiter-Voyager2
-# All,Saturn-Voyager2
-# All,Uranus-Voyager2
-# All,Neptune-Voyager2
-# All,Sol-Voyager2
-# All,Epilogue
-# All,Dedication
-All,Credits
+# # All,Jupiter-Voyager2
+# # All,Saturn-Voyager2
+# # All,Uranus-Voyager2
+# # All,Neptune-Voyager2
+# # All,Sol-Voyager2
+# # All,Epilogue
+# # All,Dedication
+# All,Credits
+

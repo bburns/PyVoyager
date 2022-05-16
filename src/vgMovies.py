@@ -1,4 +1,3 @@
-
 """
 vg movies command
 
@@ -106,7 +105,7 @@ def buildSegment(segmentId, subsegments):
     lib.concatenateMovies(segmentFilepath, filepaths)
     
     # now remove intermediaries below a certain level, eg don't really want
-    # Jupiter-Voyager1-Europa-Narrow hanging around
+    # Jupiter-Voyager1-Europa-Narrow hanging around.
     # but if they're gone they'll have to be rebuilt each time...
     # print 'cleanup'
     # if len(segmentId.split('-'))>=4:

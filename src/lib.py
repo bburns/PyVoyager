@@ -75,7 +75,9 @@ def makeContentsFile(movieContentsFilepath, filepaths):
     "Make a text file containing a list of mp4 files that will be merged by ffmpeg"
     f = open(movieContentsFilepath, 'w')
     for filepath in filepaths:
-        line = "file '../../" + filepath + "'"
+        # line = "file '../../" + filepath + "'"
+        line = "file '" + filepath + "'"
+        line = line.replace('\\', '/')
         print >> f, line
     f.close()
 
@@ -89,7 +91,7 @@ def concatenateMovies(outputFilepath, inputFilepaths):
         # now make the movie
         # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
         # cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
-        cmd = "ffmpeg -y -loglevel error -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
+        cmd = "ffmpeg -y -loglevel error -f concat -safe 0 -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
         # print cmd
         os.system(cmd)
     os.remove(movieContentsFilepath)

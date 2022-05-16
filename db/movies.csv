@@ -15,6 +15,9 @@
 # allows a target sequence to be split up into smaller parts
 
 
+#. need to handle multiple movies - eg 30sec, 1min, 5min, 1h, 2h
+
+
 # targetKey, subtargetKey, contents
 # target, subtarget, contents
 segmentId, subsegmentId, contents

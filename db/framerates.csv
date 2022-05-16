@@ -624,12 +624,64 @@ C1639322,0,blur
 # C1639221,40
 #. zoom in on cool mountain on limb C1639222-237
 # C1639242,40
-# bright volcano at end - zoom in on this
+#. bright volcano at end - zoom in on this
 C1648109,40
 # wide
 C1639228,40
 C1639301,40
-C1639309,40,volcano
+C1639309,40,volcano #.
+
+
+
+# Saturn voyager1
+# ----------------------------------------
+
+# saturn wide angle
+
+C3441215+,0
+
+#. add more here
+C3495707,50
+C3495719,50
+C3495731,50
+C3496228,50
+C3499558,50
+C3500458,50
+C3501443,50
+C3504617,50
+
+#. C3504611 - starts long movie of the rings in motion - would be great to stabilize someday...
+# then does long movie of clouds in motion
+
+C3513940,50
+
+C3514221,50
+
+
+
+# dione
+C3337007+,0
+C3353248,5
+C3382151+,0
+C3463907+,5
+C3470145,0
+C3475017,5
+C3479942,0
+C3482428+,5
+C3491407,0
+C3491411,40
+C3491415,0
+C3492526+,5
+C3493338,25
+C3493927+,0
+C3494458+,40
+C3494816+,0
+C3494820,20
+C3494832,40
+C3497542,20
+
+
+
 
 
 

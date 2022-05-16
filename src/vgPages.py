@@ -21,7 +21,8 @@ def vgPages():
     # so use config.extension.
 
     folderPages = config.folders['pages']
-    italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
+    # italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
+    italicfont = config.italicFont
     
     
     # intro

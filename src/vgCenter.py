@@ -44,9 +44,8 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
     #         return
 
     if filterVolume!='':
+        # filtering entire volume
 
-        #. just do adjust for now
-        # inputSubfolder = lib.getSubfolder('denoise', filterVolume)
         inputSubfolder = lib.getSubfolder('adjust', filterVolume)
         outputSubfolder = lib.getSubfolder('center', filterVolume)
 
@@ -58,7 +57,6 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # build the previous images for the volume, if not already there
         #. handle indiv images also - could lookup volume by fileid, call vgadjust here
         vgAdjust.vgAdjust(filterVolume, '', optionOverwrite=False, directCall=False)
-        # vgDenoise.vgDenoise(filterVolume, optionOverwrite=False, directCall=False)
         
         # create folder
         lib.mkdir_p(outputSubfolder)
@@ -66,11 +64,15 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         # get number of files to process
         nfiles = len(os.listdir(inputSubfolder))
     else:
+        # otherwise just centering a single image
         nfiles = 1
 
     # read small dbs into memory
     centeringInfo = lib.readCsv(config.dbCentering) # when to turn centering on/off
     retargetingInfo = lib.readCsv(config.dbRetargeting) # remapping listed targets
+
+    # open centers.csv file to check for existing offsets
+    csvCenters, fCenters = lib.openCsvReader(config.dbCenters)
 
     # open positions.csv file for target angular size info
     csvPositions, fPositions = lib.openCsvReader(config.dbPositions)
@@ -103,9 +105,6 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
         target = lib.retarget(retargetingInfo, fileId, target)
 
         # get filenames
-        # infile = lib.getFilepath('denoise', volume, fileId, filter)
-        # if not os.path.isfile(infile): # denoise step is optional - use adjusted file if not there
-        #     infile = lib.getFilepath('adjust', volume, fileId, filter)
         infile = lib.getFilepath('adjust', volume, fileId, filter)
         outfile = lib.getFilepath('center', volume, fileId, filter)
 
@@ -114,7 +113,10 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # get expected angular size (as fraction of frame) and radius
         imageFraction = lib.getImageFraction(csvPositions, fileId)
-        targetRadius = int(400*imageFraction) #.param
+        targetRadius = int(800/2*imageFraction) #.param!
+
+        # check if we already have offsets for this image
+        csvCenters
 
         # do we actually need to center this image?
         doCenter = lib.centerThisImageQ(imageFraction, centeringInfo, fileId, note, target)
@@ -139,6 +141,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
     fPositions.close()
     fNewCenters.close()
+    fCenters.close()
     fFiles.close()
 
     # now append newcenters records to centers file

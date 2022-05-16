@@ -2,6 +2,8 @@
 # not independent from PyVoyager, but things that might get reused,
 # or want kept out of sight.
 
+#. split this up into modules, eg libcsv.py?
+
 
 import os
 import os.path
@@ -9,7 +11,7 @@ import shutil
 from setuptools import archive_util # for unpack_archive
 import errno
 import re
-import csv
+import csv # https://python.readthedocs.io/en/v2.7.2/library/csv.html
 import shutil
 import more_itertools
 from datetime import datetime
@@ -379,11 +381,12 @@ def openCsvReader(filename):
     Open a csv reader on the given filename.
     Then use like 'for row in reader:'
     Wraps the reader iterator in peekable - see http://stackoverflow.com/a/27698681/243392
-    Then can say reader.peek() to just look at the current record.
+    Then can say reader.peek() to just look at the current record, ie don't consume it.
+    Returns the reader and the file handle - close when done with f.close().
     """
     f = open(filename, 'rt')
     f = dataLines(f) # ignore comments, blank lines and header row
-    reader = more_itertools.peekable(csv.reader(f))
+    reader = more_itertools.peekable(csv.reader(f)) # allows you to peek at the current row
     return reader, f
 
 

@@ -82,6 +82,9 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 # imageType = 'CALIB'
 imageType = 'GEOMED'
 
+# image size in pixels - must be used in all algorithms
+imsize = 1000 if imageType=='GEOMED' else 800
+
 # img2png options
 # -fnamefilter - append filter name, eg _ORANGE
 # -loglevel<level> - debug info
@@ -313,6 +316,9 @@ titleSecondsToShow = 3.5
 # titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFont = "fonts/futura-light.ttf"
 titleFontsize = 48
+
+# italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
+italicFont = 'fonts/garamond-italic.ttf'
 
 
 # ----------------------------------------

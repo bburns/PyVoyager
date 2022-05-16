@@ -55,10 +55,10 @@ class Page:
         page.println(title, color=200, center=True)
         page.save(filepath)
     """
-    def __init__(self, size=800):
+    def __init__(self):
         "create a page to write on"
-        self.size = size
-        self.imgsize = [size,size] #.param - will be 1000x1000
+        self.size = config.imsize # 800 or 1000
+        self.imgsize = [size,size]
         self.bgcolor = (0,0,0)
         self.img = Image.new("RGBA", self.imgsize, self.bgcolor)
         self.draw = ImageDraw.Draw(self.img)
@@ -185,7 +185,7 @@ def getImageAlignmentDiff(im0, im1):
             dysum+=dy
 
     dx = dxsum/nsteps/nsteps; dy = dysum/nsteps/nsteps
-    dx *= 800/sz; dy *= 800/sz
+    dx *= config.imsize/sz; dy *= config.imsize/sz
     # dx,dy=dy,dx
     dx=-dx;dy=-dy
     # print dx,dy
@@ -203,7 +203,8 @@ def getImageAlignmentORB(im0, im1):
 
     npoints = 500 # default
     # npoints = 100
-    sz = 800
+    sz = config.imsize
+    # sz = 800
     # sz = 400
     # sz = 200
     # sz = 100
@@ -242,7 +243,7 @@ def getImageAlignmentORB(im0, im1):
     # transform = 'homography'
 
     # shrink image
-    if sz!=800:
+    if sz!=config.imsize:
         im0 = resizeImage(im0,sz,sz)
         im1 = resizeImage(im1,sz,sz)
 
@@ -437,7 +438,7 @@ def getImageAlignmentORB(im0, im1):
         dy = H[1][2]
 
     # return results
-    if sz!=800: dx*=800/sz;dy*=800/sz #.params
+    if sz!=config.imsize: dx*=config.imsize/sz;dy*=config.imsize/sz
     alignmentOk = True
     return dx,dy,alignmentOk
 
@@ -485,7 +486,7 @@ def inpaintImage(infile, priorfile, outfile, targetRadius):
 
     # get mask for target radius
     maskTarget = np.zeros(im.shape[:2], np.uint8)
-    maskTarget = cv2.circle(maskTarget, (399,399), targetRadius, 255, -1) # -1=filled #.params
+    maskTarget = cv2.circle(maskTarget, (config.imsize/2-1,config.imsize/2-1), targetRadius, 255, -1) # -1=filled
     if debug: show(maskTarget)
 
     # get mask where image is black
@@ -676,15 +677,15 @@ def denoiseImageFile(infile, outfile):
     # # first identify horizontal segments - then get avg of above and below pixels
     # linesToFill = []
     # im2 = im
-    # for j in xrange(0,800):
+    # for j in xrange(0,config.imsize):
     #     rowMiddle = im[j,:]
-    #     # rowAbove = im[j-1,:] if j>0 else np.zeros(800,np.uint8)
-    #     # rowBelow = im[j+1,:] if j<799 else np.zeros(800,np.uint8)
-    #     rowAbove = im2[j-1,:] if j>0 else np.zeros(800,np.uint8)
-    #     rowBelow = im2[j+1,:] if j<799 else np.zeros(800,np.uint8)
+    #     # rowAbove = im[j-1,:] if j>0 else np.zeros(config.imsize,np.uint8)
+    #     # rowBelow = im[j+1,:] if j<config.imsize-1 else np.zeros(config.imsize,np.uint8)
+    #     rowAbove = im2[j-1,:] if j>0 else np.zeros(config.imsize,np.uint8)
+    #     rowBelow = im2[j+1,:] if j<config.imsize-1 else np.zeros(config.imsize,np.uint8)
     #     maxlen = 0
     #     seglen = 0
-    #     for i in xrange(0,800):
+    #     for i in xrange(0,config.imsize):
     #         above = rowAbove[i]
     #         middle = rowMiddle[i]
     #         below = rowBelow[i]
@@ -704,8 +705,8 @@ def denoiseImageFile(infile, outfile):
     #     if maxlen > 30: #.param
     #         linesToFill.append(j)
     # for line in linesToFill:
-    #     rowAbove = im[line-1,:] if line>0 else np.zeros(800,np.uint8)
-    #     rowBelow = im[line+1,:] if line<799 else np.zeros(800,np.uint8)
+    #     rowAbove = im[line-1,:] if line>0 else np.zeros(config.imsize,np.uint8)
+    #     rowBelow = im[line+1,:] if line<config.imsize-1 else np.zeros(config.imsize,np.uint8)
     #     # im[line,:] = 0
     #     im[line,:] = (rowAbove+rowBelow)/2
 
@@ -790,8 +791,8 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     """
 
     # get fixed image of filled target disc
-    imFixed = np.zeros((800,800), np.uint8) #.params
-    cv2.circle(imFixed, (399,399), targetRadius, 255, -1) # -1=filled #.params
+    imFixed = np.zeros((config.imsize,config.imsize), np.uint8)
+    cv2.circle(imFixed, (config.imsize/2-1,config.imsize/2-1), targetRadius, 255, -1) # -1=filled
 
     # get input file
     im = cv2.imread(infile, cv2.IMREAD_GRAYSCALE)
@@ -809,7 +810,7 @@ def stabilizeImageFile(infile, outfile, targetRadius):
     #     drawCrosshairs(im)
     # if config.drawTarget:
     #     im = gray2rgb(im)
-    #     circle = (399,399,targetRadius) #.params
+    #     circle = (config.imsize/2-1,config.imsize/2-1,targetRadius)
     #     drawCircle(im, circle, color = (0,255,255)) # yellow circle
     imwrite(outfile, im)
     return dx,dy,alignmentOk
@@ -1041,17 +1042,17 @@ def alignChannels(channels):
 #. refactor
 def getCanvasSizeForChannels(channels):
     "given an array of channels, return size of canvas that would contain them all"
-    xmin = 0; xmax = 799; ymin = 0; ymax = 799 #.params
+    xmin = 0; xmax = config.imsize-1; ymin = 0; ymax = config.imsize-1
     for row in channels:
         if row:
             x = row[config.colChannelX] if len(row)>config.colChannelX else 0
             y = row[config.colChannelY] if len(row)>config.colChannelY else 0
             if x < xmin: xmin = x
-            if x+799 > xmax: xmax = x+799 #.param
+            if x+config.imsize-1 > xmax: xmax = x+config.imsize-1
             if y < ymin: ymin = y
-            if y+799 > ymax: ymax = y+799 #.param
+            if y+config.imsize-1 > ymax: ymax = y+config.imsize-1
     w = xmax-xmin+1; h = ymax-ymin+1
-    enlarged = (w!=800) or (h!=800) #.param
+    enlarged = (w!=config.imsize) or (h!=config.imsize)
     return w,h,xmin,ymin,enlarged
 
 
@@ -1104,7 +1105,7 @@ def combineChannels(channels, optionAlign=False):
     #         y = row[config.colChannelY] if len(row)>config.colChannelY else 0
     #         # print xmin,x,ymin,y
     #         # copy image into canvas at right point
-    #         canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+    #         canvas[y-ymin:y-ymin+config.imsize, x-xmin:x-xmin+config.imsize] = im
     #         im = canvas
     #         # show(im)
     #     row.append(im)
@@ -1129,9 +1130,9 @@ def combineChannels(channels, optionAlign=False):
     # print imBlue.shape
     # print imGreen.shape
     # print imRed.shape
-    # # if imBlue.shape[0]!=800: imBlue = resizeImage(imBlue,800,800)
-    # # if imGreen.shape[0]!=800: imGreen = resizeImage(imGreen,800,800)
-    # # if imRed.shape[0]!=800: imRed = resizeImage(imRed,800,800)
+    # # if imBlue.shape[0]!=config.imsize: imBlue = resizeImage(imBlue,config.imsize,config.imsize)
+    # # if imGreen.shape[0]!=config.imsize: imGreen = resizeImage(imGreen,config.imsize,config.imsize)
+    # # if imRed.shape[0]!=config.imsize: imRed = resizeImage(imRed,config.imsize,config.imsize)
     # im = cv2.merge((imBlue, imGreen, imRed))
     # # show(im)
 
@@ -1170,7 +1171,7 @@ def combineChannels(channels, optionAlign=False):
     if channelGreen is None: channelGreen = d.get('Clear') or blankrow
 
     # get images
-    blank = np.zeros((800,800), np.uint8) #.params
+    blank = np.zeros((config.imsize,config.imsize), np.uint8) #.params
     for row in [channelBlue, channelRed, channelGreen]:
         if row:
             # print row
@@ -1188,7 +1189,7 @@ def combineChannels(channels, optionAlign=False):
             #     y = row[config.colChannelY] if len(row)>config.colChannelY else 0
             #     # print xmin,x,ymin,y
             #     # copy image into canvas at right point
-            #     canvas[y-ymin:y-ymin+800, x-xmin:x-xmin+800] = im
+            #     canvas[y-ymin:y-ymin+config.imsize, x-xmin:x-xmin+config.imsize] = im
             #     im = canvas
             #     # show(im)
             # stick the image on the end of the row (colIm)
@@ -1235,9 +1236,9 @@ def combineChannels(channels, optionAlign=False):
     im = cv2.merge((imBlue, imGreen, imRed)) # BGR for cv2
     # show(im)
 
-    # scale image to 800x800
+    # scale image
     if enlarged:
-        im = resizeImage(im, 800, 800) #.params
+        im = resizeImage(im, config.imsize, config.imsize)
         # show(im)
 
     return im, channels
@@ -1374,7 +1375,6 @@ def centerImage(im, boundingBox):
     canvas = np.zeros(newsize, np.uint8) # defaults to float
 
     # put image on canvas centered on bounding box
-    # eg canvas[800-cx:1600-cx, 800-cy:1600-cy] = np.array(im)
     canvas[imheight-cy : imheight-cy+imheight, imwidth-cx : imwidth-cx+imwidth] = im
 
     # crop canvas to original image size

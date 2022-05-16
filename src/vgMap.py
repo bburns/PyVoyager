@@ -125,8 +125,10 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
     # size of 2d map
     # mxmax = 1600
     # mymax = 800
-    mxmax = 800
-    mymax = 400
+    # mxmax = 800
+    # mymax = 400
+    mxmax = config.imsize
+    mymax = config.imsize/2
     mxcenter = mxmax/2
     mycenter = mymax/2
     
@@ -306,14 +308,14 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print 'npAngle',npAngle
         
         # get image coordinate
-        p = -s * 800/2.0
-        p[0] = p[0]+400
-        p[1] = p[1]+400
-        pNP = -sNP * 800/2.0
-        pNP[0] = pNP[0]+400
-        pNP[1] = pNP[1]+400
-        print 'p=pixel space (0 to 800)',p
-        print 'pNP=pixel space north pole (0 to 800)',pNP
+        p = -s * config.imsize/2
+        p[0] = p[0]+config.imsize/2
+        p[1] = p[1]+config.imsize/2
+        pNP = -sNP * config.imsize/2
+        pNP[0] = pNP[0]+config.imsize/2
+        pNP[1] = pNP[1]+config.imsize/2
+        print 'p=pixel space (0 to imsize)',p
+        print 'pNP=pixel space north pole (0 to imsize)',pNP
         
         
         angularSize = 2*math.asin(float(targetRadius)/distance) * 180/math.pi
@@ -328,7 +330,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         print 'fov',cameraFOV
         print 'imagesize',imageSize
         
-        imagePixels = imageSize * 800
+        imagePixels = imageSize * config.imsize
         print 'imagepixels',imagePixels
 
     
@@ -339,7 +341,7 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
         
         # get expected angular size (as fraction of frame) and radius
         imageFraction = lib.getImageFraction(csvPositions, fileId)
-        targetRadius = int(400*imageFraction) #.param
+        targetRadius = int(config.imsize/2*imageFraction) #.param
 
         # read image
         im = cv2.imread(infile)
@@ -387,8 +389,8 @@ def vgMap(filterVolumes=None, optionOverwrite=False, directCall=True):
                 sx,sy = s
                 
                 # p: image (0 to 800, 0 to 800)
-                px = sx * r + 400 # 0 to 800
-                py = -sy * r + 400 # 0 to 800
+                px = sx * r + config.imsize/2 # 0 to 800
+                py = -sy * r + config.imsize/2 # 0 to 800
                 
                 # hx[my][mx] = px
                 # hy[my][mx] = py

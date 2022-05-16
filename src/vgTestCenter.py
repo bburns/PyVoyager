@@ -65,7 +65,7 @@ def vgTestCenter():
                 if rowPositions:
                     # fraction of frame
                     imageFraction = float(rowPositions[config.colPositionsImageFraction]) 
-                    radius = int(400*imageFraction) #.param
+                    radius = int(config.imsize/2*imageFraction)
                 else:
                     radius = None
                 
@@ -74,7 +74,7 @@ def vgTestCenter():
                 if rowPositions:
                     # draw a yellow circle on centeredFile to mark expected target size
                     im = cv2.imread(centeredFile)
-                    circle = (399,399,radius) #.params
+                    circle = (config.imsize/2-1,config.imsize/2-1,radius)
                     libimg.drawCircle(im, circle, color = (0,255,255))
                     cv2.imwrite(centeredFile, im)
                 

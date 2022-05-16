@@ -26,7 +26,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
 
     font = ImageFont.truetype(config.titleFont, config.titleFontsize)
 
-    imgsize = [800,800]
+    imgsize = [config.imsize,config.imsize]
     bgcolor = (0,0,0)
     fgcolor = (200,200,200)
 
@@ -36,7 +36,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     pos = [200,300]
     s = title
     w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
+    if center: pos[0] = config.imsize/2 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
     fgcolor = (120,120,120)
@@ -44,19 +44,19 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     pos = [pos[0],pos[1]+h*1.6]
     s = subtitle1
     w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
+    if center: pos[0] = config.imsize/2 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
     pos = [pos[0],pos[1]+h*1.1]
     s = subtitle2
     w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
+    if center: pos[0] = config.imsize/2 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
     pos = [pos[0],pos[1]+h*1.1]
     s = subtitle3
     w,h = font.getsize(s)
-    if center: pos[0] = 400 - w/2
+    if center: pos[0] = config.imsize/2 - w/2
     draw.text(pos, s, fgcolor, font=font)
 
     return img

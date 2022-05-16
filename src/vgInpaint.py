@@ -83,7 +83,7 @@ def vgInpaint(filterVolume='', filterImageId='', optionOverwrite=False, directCa
 
         # get expected angular size (as fraction of frame) and radius
         imageFraction = lib.getImageFraction(csvPositions, fileId)
-        targetRadius = int(400*imageFraction) #.param
+        targetRadius = int(config.imsize/2*imageFraction)
         # print imageFraction
 
         # get filenames

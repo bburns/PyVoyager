@@ -71,11 +71,11 @@ def vgTestComposite():
         # show composite
         if ok:
             im1 = libimg.shiftImage(im1, dx, dy)
-            blank = np.zeros((800,800),np.uint8)
+            blank = np.zeros((config.imsize,config.imsize),np.uint8)
             im = cv2.merge((im0,blank,im1))
             libimg.show(im,fileId)
         else:
-            dx=dy=400 # just so avg px error isn't artificially low
+            dx=dy=config.imsize/2 # just so avg px error isn't artificially low
 
         dx=-dx;dy=-dy
 

@@ -196,7 +196,8 @@ blobRadiusMax = 10 # v0.42
 houghAccumulatorSize = 1 # always
 # houghAccumulatorSize = 2 # no help
 
-houghMinDistanceBetweenCircles = 400
+# houghMinDistanceBetweenCircles = 400
+houghMinDistanceBetweenCircles = imsize/2
 
 # canny edge detection threshold
 # used by hough circle detection - lower threshold is half of this

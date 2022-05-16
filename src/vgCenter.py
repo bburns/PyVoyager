@@ -113,7 +113,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
         # get expected angular size (as fraction of frame) and radius
         imageFraction = lib.getImageFraction(csvPositions, fileId)
-        targetRadius = int(800/2*imageFraction) #.param!
+        targetRadius = int(config.imsize/2*imageFraction)
 
         # check if we already have offsets for this image
         csvCenters

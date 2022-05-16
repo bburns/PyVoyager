@@ -23,6 +23,7 @@ with commands
   vg crop                - crop/zoom in on images
   vg target              - copy images into target subfolders
   vg clips [--keeplinks] - create bw or color clips
+  vg clips2              - create bw or color clips
   vg movies              - create movies from clips
   vg list                - show status of local datasets
   vg clear <step> <vols> - remove volume folders
@@ -84,6 +85,7 @@ import vgAnnotate
 import vgTarget
 import vgTitle
 import vgClips
+import vgClips2
 import vgPlot
 import vgPages
 import vgMovies
@@ -257,6 +259,10 @@ elif cmd=="title":
 
 elif cmd=="clips":
     vgClips.vgClips(filterVolumes, filterTargetPath, optionKeepLinks)
+    lib.beep()
+
+elif cmd=="clips2":
+    vgClips2.vgClips2(filterVolumes, filterTargetPath)
     lib.beep()
 
 elif cmd=="plot":

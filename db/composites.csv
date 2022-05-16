@@ -1,6 +1,13 @@
+# this file was initially generated with vg init composites
+# but be careful running that, 
+# as you'd lose all the interesting comments and stuff in here
+# need to fix all that code
+
+
 compositeId,imageId,volume,filter
 
-# Uranus
+# Neptune
+
 C0896631,C0896631,8201,Clear
 C0896631,C0896637,8201,Violet
 C0896631,C0896644,8201,Orange

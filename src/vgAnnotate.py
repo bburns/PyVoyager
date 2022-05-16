@@ -1,4 +1,3 @@
-
 """
 vg annotate command
 

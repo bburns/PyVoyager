@@ -1,4 +1,3 @@
-
 """
 vg align composites command
 

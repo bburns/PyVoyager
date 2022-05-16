@@ -1,4 +1,3 @@
-
 """
 vg clear command
 

@@ -91,6 +91,7 @@ def concatenateMovies(outputFilepath, inputFilepaths):
         # now make the movie
         # eg "ffmpeg -y -f concat -i Neptune-Voyager2.txt -c copy Neptune-Voyager2.mp4"
         # cmd = "ffmpeg -y -f concat -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
+        # -safe 0 - see https://stackoverflow.com/questions/38996925/ffmpeg-concat-unsafe-file-name
         cmd = "ffmpeg -y -loglevel error -f concat -safe 0 -i %s -c copy %s" % (movieContentsFilepath, outputFilepath)
         # print cmd
         os.system(cmd)

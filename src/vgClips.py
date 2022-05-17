@@ -90,7 +90,6 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
         # how many copies of this image do we want?
         # note: we need to do this even if we don't add this image,
         # because need to keep track of sticky overrides from framerates.csv.
-        # ncopies = getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory,
         ncopies = lib.getNCopies(framerateConstantInfo, target, imageFraction,
                                  ncopiesMemory, targetKey, framerateInfo, fileId)
 

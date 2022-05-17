@@ -126,7 +126,6 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
     """
 
     # ncopies is basically proportional to imageFraction
-    # framerateConstantInfoRecord = framerateConstantInfo.get(target)
     framerateConstantInfoRecord = framerateConstantInfo.get(targetKey)
     if framerateConstantInfoRecord:
         frameRateConstant = int(float(framerateConstantInfoRecord['frameRateConstant']))
@@ -159,7 +158,8 @@ def getNCopies(framerateConstantInfo, target, imageFraction, ncopiesMemory, targ
     # check for single image override from framerates.csv - temporary setting
     framerateInfoRecord = framerateInfo.get(fileId) # eg C1234567
     if not framerateInfoRecord is None:
-        ncopies = int(framerateInfoRecord['nframes'])
+        # ncopies = int(framerateInfoRecord['nframes'])
+        ncopies = int(framerateInfoRecord.get('nframes') or ncopies)
         # print 'got single framerate',fileId,ncopies,ncopiesMemory
 
     return ncopies

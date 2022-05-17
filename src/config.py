@@ -423,7 +423,7 @@ clipsMinFrames = 20
 # also everything is slower when you use external devices.
 #. move these into some kind of .env file to keep out of repo
 dataFolder  = "data/"
-dataFolderOffline  = "d:/pyvoyager/data/"
+dataFolderOffline  = "e:/pyvoyager/data/"
 
 folders = {
     'download':   dataFolderOffline + 'step01_download/',

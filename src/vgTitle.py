@@ -33,7 +33,8 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     img = Image.new("RGBA", imgsize, bgcolor)
     draw = ImageDraw.Draw(img)
 
-    pos = [200,300]
+    top = config.imsize / 2 - 100
+    pos = [200,top]
     s = title
     w,h = font.getsize(s)
     if center: pos[0] = config.imsize/2 - w/2

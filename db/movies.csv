@@ -8,23 +8,23 @@
 # must define movies bottom up
 
 # note: contents can be a range of imageIds, inclusive - e.g. c1234567-c1234569
+
 # segments are usually further refined by framerates.csv
+
 #. contents could be a filename also?
 
-# a segmentId is a targetKey with optional partname after a @, e.g. Jupiter-Voyager1-Jupiter@Clouds
+# a segmentId is a targetKey with optional partname after a @, 
+# e.g. Jupiter-Voyager1-Jupiter@Clouds.
 # allows a target sequence to be split up into smaller parts
 
-#. use yaml to define a set of movies?
+#. maybe use yaml to define a set of movies?
+# currently having to turn things on/off with comments
+# do later, after build full movie 0.60
 
 
-# targetKey, subtargetKey, contents
-# target, subtarget, contents
 segmentId, subsegmentId, contents
 
-# Voyager 1
-# --------------------------------------------------------------------------------
-
-# Jupiter
+# Jupiter1
 # ----------------------------------------
 
 # # approach phase
@@ -79,23 +79,31 @@ segmentId, subsegmentId, contents
 # # Jupiter-Voyager1,Jupiter-Voyager1-Saturn-Narrow
 
 
-# Saturn
+# Saturn1
 # ----------------------------------------
+# plot-Saturn-Voyager1
+
+# Saturn-Voyager1,Saturn-Voyager1-plot
+Saturn-Voyager1,Intro
+Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
 Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide
+Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
 
 
-# Voyager 2
-# --------------------------------------------------------------------------------
+# # movie of jupiter by itself
+# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Approach
+# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Clouds
+# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Departure
 
-# Jupiter
+
+# Jupiter2
 # ----------------------------------------
 
-# Saturn
+# Saturn2
 # ----------------------------------------
 
-# Uranus
+# Uranus2
 # ----------------------------------------
 # Uranus-Voyager2,Uranus-Voyager2-Title
 # Uranus-Voyager2,Uranus-Voyager2-Uranus-Narrow
@@ -107,7 +115,7 @@ Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide
 # Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
 # Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
 
-# Neptune
+# Neptune2
 # ----------------------------------------
 # Neptune-Voyager2,Neptune-Voyager2-Title
 # Neptune-Voyager2,Neptune-Voyager2-Neptune-Narrow

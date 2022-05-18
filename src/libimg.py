@@ -58,7 +58,7 @@ class Page:
     def __init__(self):
         "create a page to write on"
         self.size = config.imsize # 800 or 1000
-        self.imgsize = [size,size]
+        self.imgsize = [self.size,self.size]
         self.bgcolor = (0,0,0)
         self.img = Image.new("RGBA", self.imgsize, self.bgcolor)
         self.draw = ImageDraw.Draw(self.img)
@@ -79,7 +79,7 @@ class Page:
         "change font/size"
         fontpath = fontpath or self.fontpath
         fontsize = fontsize or self.fontsize
-        self.font = ImageFont.truetype(fontpath, fontsize)
+        self.font = ImageFont.truetype(fontpath, int(fontsize))
         self.charWidth, self.charHeight = self.font.getsize("M")
         self.charHeight *= 1.3 # fudge factor
 

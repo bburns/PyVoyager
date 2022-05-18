@@ -124,13 +124,16 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
 
             # find center of target using blob and hough, then alignment to fixedimage
             # x,y,foundRadius = libimg.centerImageFile(infile, outfile, targetRadius)
-            xFraction,yFraction,foundRadiusFraction = libimg.centerImageFile(infile, outfile, targetRadius)
-            dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius)
+            xFraction,yFraction,foundRadiusFraction = libimg.centerImageFile(infile, outfile, targetRadius) # writes file
+            dx,dy,stabilizationOk = libimg.stabilizeImageFile(outfile, outfile, targetRadius) # writes file
             if stabilizationOk:
                 # x += int(round(dx))
                 # y += int(round(dy))
                 xFraction += dx / float(config.imsize)
                 yFraction += dy / float(config.imsize)
+
+            # enhance contrast again, in case noise on edges or something
+            
 
             # write x,y,radius to newcenters file
             # rowNew = [fileId, volume, x, y, foundRadius]

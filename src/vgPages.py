@@ -22,15 +22,16 @@ def vgPages():
 
     folderPages = config.folders['pages']
     italicfont = config.italicFont
-    
-    
+
+    em = 36/800.0*config.imsize
+ 
     # intro
 # def makeIntro():
     pagename = "Intro"
     title = "Voyager: The Grand Tour"
     page = libimg.Page()
     page.vtab(5)
-    page.setfont(fontsize=60)
+    page.setfont(fontsize=2*em)
     page.println(title, color=200, center=True)
     filepath = folderPages + pagename + config.extension
     page.save(filepath)
@@ -42,7 +43,7 @@ def vgPages():
 we sense the stirring of a breeze."
    ~ Carl Sagan'''
     page = libimg.Page()
-    page.setfont(italicfont,36)
+    page.setfont(italicfont,1*em)
     page.vtab(8)
     page.println(quote, color=160, center=True)
     filepath = folderPages + pagename + config.extension
@@ -55,7 +56,7 @@ we sense the stirring of a breeze."
     page.vtab(2)
     page.htab(0)
     page.println("Credits",color=255)
-    page.setfont(fontsize=32)
+    page.setfont(fontsize=0.8*em)
     credits = """Images: NASA/JPL
 Image processing: Brian Burns
 Music: J.S.Bach
@@ -79,7 +80,7 @@ Project home page: https://bburns.github.io/PyVoyager
     #. add this below palebluedot image
     pagename = "Epilogue"
     page = libimg.Page()
-    page.setfont(italicfont,36)
+    page.setfont(italicfont,1*em)
     page.vtab(8)
     page.htab(1)
     quote = '''"Our remote descendants, safely arrayed on many 
@@ -94,16 +95,16 @@ How many rivers we had to cross before we found our way."
     page.save(filepath)
 
     
-    # dedication
-    pagename = "Dedication"
-    page = libimg.Page()
-    page.vtab(5)
-    page.htab(1)
-    quote = """Dedicated to the Voyager team,
-and to all future explorers..."""
-    page.println(quote,color=160,center=True)
-    filepath = folderPages + pagename + config.extension
-    page.save(filepath)
+#     # dedication
+#     pagename = "Dedication"
+#     page = libimg.Page()
+#     page.vtab(5)
+#     page.htab(1)
+#     quote = """Dedicated to the Voyager team,
+# and to all future explorers..."""
+#     page.println(quote,color=160,center=True)
+#     filepath = folderPages + pagename + config.extension
+#     page.save(filepath)
 
 
 if __name__ == '__main__':

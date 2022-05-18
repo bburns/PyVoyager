@@ -22,13 +22,13 @@ def buildSegment(segmentId, subsegments):
     build an mp4 movie segment from its subsegments, building them if necessary.
     eg if segmentId='Jupiter-Voyager1-Ganymede', and
     subsegments=
-    [['Jupiter-Voyager1-Ganymede', 'Jupiter-Voyager1-Ganymede-Narrow', 'C1460413-C1640725'],
-     ['Jupiter-Voyager1-Ganymede', 'Jupiter-Voyager1-Ganymede-Wide', 'C1640141-C1640752']]
+        [['Jupiter-Voyager1-Ganymede', 'Jupiter-Voyager1-Ganymede-Narrow', 'C1460413-C1640725'],
+        ['Jupiter-Voyager1-Ganymede', 'Jupiter-Voyager1-Ganymede-Wide', 'C1640141-C1640752']]
     then this would build
-    Jupiter-Voyager1-Ganymede.mp4 
+        Jupiter-Voyager1-Ganymede.mp4 
     from
-    Jupiter-Voyager1-Ganymede-Narrow-C1460413-C1640725.mp4
-    Jupiter-Voyager1-Ganymede-Wide-C1640141-C1640752.mp4
+        Jupiter-Voyager1-Ganymede-Narrow-C1460413-C1640725.mp4
+        Jupiter-Voyager1-Ganymede-Wide-C1640141-C1640752.mp4
     building the latter if they don't already exist.
     """
     print 'buildsegment',segmentId
@@ -46,7 +46,7 @@ def buildSegment(segmentId, subsegments):
         # if len(a)>1:
             # partname = a[1]
             # print 'got partname',partname
-            
+
         # get name of subsegment movie file
         subsegmentFiletitle = subsegmentId # eg 'Jupiter-Voyager1-Jupiter@Clouds'
         qualifier = '-' + contents if contents else '' # eg '-C1550829-C1618136'
@@ -69,7 +69,7 @@ def buildSegment(segmentId, subsegments):
             #. handle special subsegmentIds - Intro, Credits, Epilogue
             if subsegmentId in ['Intro', 'Prologue', 'Credits', 'Epilogue']:
                 
-                #. make a movie of credit jpg and add to filepaths
+                #. make a movie of credit png/jpg and add to filepaths
                 pageFilepath = pagesFolder + subsegmentId + config.extension
                 # pageFilepath = os.path.abspath(pageFilepath)
                 # add links to file
@@ -79,7 +79,7 @@ def buildSegment(segmentId, subsegments):
                 # lib.addImages(pageFilepath, targetFolder, ncopies)
                 # sourcePath = '../../../' + pageFilepath
                 sourcePath = '../../../../' + pageFilepath
-                ncopies = 50 #. param
+                ncopies = 50 #. param - 50 frames = 2 secs etc
                 lib.makeSymbolicLinks(sourcePath, subsegmentStageFolder, ncopies)
                 
                 # build mp4 files from all staged images
@@ -101,7 +101,7 @@ def buildSegment(segmentId, subsegments):
     # compile subsegment movies into single movie
     segmentFilepath = movieFolder + segmentId + '.mp4'
     print 'all subsegment movies created. now compile into single movie',segmentFilepath
-    print filepaths
+    print '\n'.join(filepaths)
     lib.concatenateMovies(segmentFilepath, filepaths)
     
     # now remove intermediaries below a certain level, eg don't really want

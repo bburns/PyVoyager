@@ -636,11 +636,56 @@ C1639309,40,volcano #.
 # Saturn voyager1
 # ----------------------------------------
 
-# saturn wide angle
+# saturn nac
 
+# filtered down to just green shots, 
+# then took one every 100 or so, because there are 9400 of them!
+# will make a great color movie someday.
+C3250013+,0
+C3250017,25
+C3301611,25
+C3315248,25
+C3367549,25
+C3418401,25
+C3441802,25
+C3453840,25
+C3456654,50,storm
+C3460250,50,moon shadow
+C3460926,50
+C3462017,50,storm
+C3471258,50
+C3471316,50
+C3474346,50
+C3474346,50,moon shadow
+C3496342,50,limb
+C3513621,50,cool shot
+C3515000,50,cool shot
+C3517331,25
+C3529836,25
+C3562031,25
+C3592231,25
+
+
+# saturn wide angle - 5400 images
 C3441215+,0
-
-#. add more here
+C3441243,25
+C3447941,25
+C3455407,25
+C3462833,25
+C3466941,25
+C3470752,25
+C3475113,25
+C3479016,25
+C3482324,25
+C3485353,25
+C3487229,25
+C3490709,50
+C3492944,50
+C3494026,50
+C3494401,50
+C3494542,50
+C3494650,50
+C3494808,50,coool
 C3495707,50
 C3495719,50
 C3495731,50
@@ -649,17 +694,13 @@ C3499558,50
 C3500458,50
 C3501443,50
 C3504617,50
-
 #. C3504611 - starts long movie of the rings in motion - would be great to stabilize someday...
-# then does long movie of clouds in motion
-
+# then does a long movie of clouds in motion (attempts to anyway), at lower exposure
 C3513940,50
-
-C3514221,50
-
+# C3514221,50
 
 
-# dione
+# dione - giant squid attacking it
 C3337007+,0
 C3353248,5
 C3382151+,0
@@ -668,17 +709,24 @@ C3470145,0
 C3475017,5
 C3479942,0
 C3482428+,5
+C3486155,20
 C3491407,0
-C3491411,40
+C3491411,25,gray bg
 C3491415,0
-C3492526+,5
+C3491419,0
+C3492526,25
+C3493003,0,composite eh
+C3493019,25,uv - most contrast
 C3493338,25
 C3493927+,0
-C3494458+,40
+# brightened these MANUALLY! PITA to track down images - must use files.csv
+#. need better way
+C3494458+,40,needs brightening - must have had noise before centering
+C3494502,40,brighten also
 C3494816+,0
-C3494820,20
+C3494830,25,brighten
 C3494832,40
-C3497542,20
+C3497542,25,stars?
 
 
 # iapetus
@@ -743,7 +791,8 @@ C3495303,0
 C3496312,0
 C3496320,25
 
-# rhea wide - turn off - #. better way?
+# rhea wide - turn off
+#. better way?
 C3492613,0
 C3495240,0
 C3493957,0
@@ -799,6 +848,34 @@ C3479912+,0
 C3504506,50
 C3504512,50
 C3504518,50
+
+
+# tethys
+C3396534+,0
+C3481956,4
+C3484037,4
+C3487953,4
+C3487957,4
+C3488608,4
+C3488614,4
+C3488620,4
+C3488626,4
+C3488632,4
+C3490018,4
+C3490022,4
+C3490026,4
+C3490030,4
+C3490034,25
+C3490038,4
+C3490256,4
+C3490300,4
+C3490304,4
+C3490308,25
+C3490730,4
+C3492618,12
+C3493706,4
+C3493714,4
+C3493718,25
 
 
 # titan - nac
@@ -993,6 +1070,7 @@ C3491736,25
 C3496519,15
 C3503236,15
 
+# wac
 
 
 

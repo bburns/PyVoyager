@@ -83,8 +83,7 @@ segmentId, subsegmentId, contents
 # ----------------------------------------
 # plot-Saturn-Voyager1
 
-# Saturn-Voyager1,Saturn-Voyager1-plot
-Saturn-Voyager1,Intro
+Saturn-Voyager1,$plots/plot-Saturn-Voyager1
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
 Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
@@ -132,10 +131,10 @@ Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
 # # All together
 # # --------------------------------------------------------------------------------
 # # note: any special pages must be added to vgMovies.py
-# All,Intro
-# All,Prologue
+All,$pages/Intro
+All,$pages/Prologue
 # # All,Jupiter-Voyager1
-# All,Saturn-Voyager1
+All,Saturn-Voyager1
 # # All,Jupiter-Voyager2
 # # All,Saturn-Voyager2
 # # All,Uranus-Voyager2
@@ -143,5 +142,5 @@ Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
 # # All,Sol-Voyager2
 # # All,Epilogue
 # # All,Dedication
-# All,Credits
+All,$pages/Credits
 

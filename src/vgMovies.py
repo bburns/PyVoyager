@@ -59,6 +59,7 @@ def buildSegment(segmentId, subsegments):
             subsegmentPath = subsegmentId
             subsegmentPath = subsegmentPath.replace('-','/')
             subsegmentPath = subsegmentPath.replace('@','/') # eg jupiter/voyager1/jupiter/clouds
+            subsegmentPath = subsegmentPath.replace('$','')
             subsegmentStageFolder = stageFolder + subsegmentPath + '/'
 
             # make stage folder
@@ -66,18 +67,25 @@ def buildSegment(segmentId, subsegments):
             lib.rmdir(subsegmentStageFolder)
             lib.mkdir_p(subsegmentStageFolder)
 
-            #. handle special subsegmentIds - Intro, Credits, Epilogue
-            if subsegmentId in ['Intro', 'Prologue', 'Credits', 'Epilogue']:
-                
-                #. make a movie of credit png/jpg and add to filepaths
-                pageFilepath = pagesFolder + subsegmentId + config.extension
-                # pageFilepath = os.path.abspath(pageFilepath)
+            # #. handle special subsegmentIds - Intro, Credits, Epilogue
+            # # if subsegmentId in ['Intro', 'Prologue', 'Credits', 'Epilogue']:                
+            #     #. make a movie of credit png/jpg and add to filepaths
+            #     pageFilepath = pagesFolder + subsegmentId + config.extension
+            #     # pageFilepath = os.path.abspath(pageFilepath)
+            #     # add links to file
+            #     # targetFolder = stageFolder + subsegmentId + '/'
+            #     # lib.rmdir(subsegmentStageFolder)
+            #     # lib.mkdir_p(subsegmentStageFolder)
+            #     # lib.addImages(pageFilepath, targetFolder, ncopies)
+            #     # sourcePath = '../../../' + pageFilepath
+            #     sourcePath = '../../../../' + pageFilepath
+            #     ncopies = 50 #. param - 50 frames = 2 secs etc
+            #     lib.makeSymbolicLinks(sourcePath, subsegmentStageFolder, ncopies)
+
+            if subsegmentId[0] == '$':
+                #. make a movie of png/jpgs and add to filepaths
+                pageFilepath = config.dataFolder + subsegmentId[1:] + config.extension
                 # add links to file
-                # targetFolder = stageFolder + subsegmentId + '/'
-                # lib.rmdir(subsegmentStageFolder)
-                # lib.mkdir_p(subsegmentStageFolder)
-                # lib.addImages(pageFilepath, targetFolder, ncopies)
-                # sourcePath = '../../../' + pageFilepath
                 sourcePath = '../../../../' + pageFilepath
                 ncopies = 50 #. param - 50 frames = 2 secs etc
                 lib.makeSymbolicLinks(sourcePath, subsegmentStageFolder, ncopies)
@@ -85,7 +93,7 @@ def buildSegment(segmentId, subsegments):
                 # build mp4 files from all staged images
                 print 'makevideo with imagesToMp4 ->',filepath
                 lib.imagesToMp4(subsegmentStageFolder, filepath)
-            else:        
+            else:
                 # stage images for ffmpeg
                 print 'stagefiles', subsegmentPath, contents, stageFolder
                 vgClips.stageFiles(None, subsegmentPath, contents, stageFolder)

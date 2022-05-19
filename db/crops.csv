@@ -14,8 +14,11 @@
 
 fileId,tx,ty,scale,notes
 
-# Jupiter Voyager 1
+
+# Jupiter1
 # ----------------------------------------
+
+#. these are for 800x800px
 
 # Jupiter
 C1639639,271,90,1.68,lightning
@@ -43,5 +46,10 @@ C1648109,336,326,5.3
 
 # add a couple of wideangles into narrowangle clip
 # _,C1639222_composite, zoom in on mtn on top once composite aligned better?
+
+
+
+
+# Saturn1
 
 

@@ -82,26 +82,14 @@ segmentId, subsegmentId, contents
 # Saturn1
 # ----------------------------------------
 
-# alpha
-# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
-# Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Rhea-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Sky-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-System-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
-
-# trajectory-ish
+# trajectory-ish order
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Titan-Wide
 Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
-# Saturn-Voyager1,Saturn-Voyager1-System-Narrow,, 3 nice pics but move them into s_rings
+#. System has 3 nice pics but move them into s_rings - how?
+Saturn-Voyager1,Saturn-Voyager1-System-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow

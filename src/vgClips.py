@@ -21,7 +21,7 @@ import vgTitle
 
 
 
-def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
+def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isMovie=False):
     """
     Make links from source files to clip stage folders.
     This uses mklink which requires admin privileges, so must run in an admin console!
@@ -99,11 +99,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
         imageOk = (fileId >= imageIdStart and fileId <= imageIdStop) if filterImageIds else True
         ignoreTarget = (target in config.clipsIgnoreTargets)
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
-        # if targetOk:
-        # if fileId=='C1474515':
-            # print targetPathParts, system, craft, target, camera
-            # print fileId, imageIdStart, imageIdStop
-            # print volumeOk, targetOk, imageOk, ignoreTarget, addImage, ncopies
+
         if addImage:
 
             if ncopies > 0:
@@ -111,6 +107,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                 # use annotated image if available, else mosaic or composite.
                 # (don't use centered files or will get bw images mixed in with color).
                 imageFilepath = lib.getFilepath('annotate', volume, fileId)
+                #. add crop also?
                 if not os.path.isfile(imageFilepath):
                     imageFilepath = lib.getFilepath('mosaic', volume, fileId)
                 if not os.path.isfile(imageFilepath):
@@ -135,14 +132,13 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder):
                     # get current file number in that folder, or start at 0
                     nfile = ntargetDirFiles.get(targetKey) or 0
 
-                    # # if we haven't seen this subfolder before add titlepage a few times.
-                    # # titlepages are created in the previous step, vgTitle.
+                    # if we haven't seen this subfolder before add titlepage a few times.
+                    # titlepages are created in the previous step, vgTitle.
                     # if config.includeTitles and nfile==0:
-                    #     titleFilepath = config.folders['titles'] + subfolder + 'title' + \
-                    #                          config.extension
-                    #     ntitleCopies = config.videoFrameRate * config.titleSecondsToShow
-                    #     lib.addImages(titleFilepath, targetFolder, ntitleCopies,
-                    #                   ntargetDirFiles, targetKey)
+                    if isMovie and nfile==0:
+                        titleFilepath = config.folders['titles'] + subfolder + 'title' + config.extension
+                        ntitleCopies = int(config.videoFrameRate * config.titleSecondsToShow)
+                        lib.addImages(titleFilepath, targetFolder, ntitleCopies, ntargetDirFiles, targetKey)
 
                     print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 

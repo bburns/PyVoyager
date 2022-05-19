@@ -96,7 +96,7 @@ def buildSegment(segmentId, subsegments):
             else:
                 # stage images for ffmpeg
                 print 'stagefiles', subsegmentPath, contents, stageFolder
-                vgClips.stageFiles(None, subsegmentPath, contents, stageFolder)
+                vgClips.stageFiles(None, subsegmentPath, contents, stageFolder, True) # vgClips used here!
 
                 # build mp4 files from all staged images
                 print 'makevideo with imagesToMp4 ->',filepath

@@ -34,7 +34,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     draw = ImageDraw.Draw(img)
 
     top = config.imsize / 2 - 100
-    
+
     pos = [200,top]
     s = title
     w,h = font.getsize(s)
@@ -113,7 +113,6 @@ def vgTitle(targetPath=None):
                 subtitle1 = camera + "-Angle Camera" # eg Narrow-Angle Camera
                 subtitle2 = system + " System" # eg Neptune System
                 subtitle3 = "Voyager " + craft[-1:] # eg Voyager 2
-                # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3)
                 img = makeTitlePage(title, subtitle1, subtitle2, subtitle3)
 
                 # save it
@@ -144,7 +143,6 @@ def vgTitle(targetPath=None):
                 subtitle1 = "Voyager " + craft[-1:] # eg Voyager 2
                 subtitle2 = ''
                 subtitle3 = ''
-                # img = libimg.makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
                 img = makeTitlePage(title, subtitle1, subtitle2, subtitle3, center=True)
 
                 # save it

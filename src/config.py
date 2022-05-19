@@ -7,10 +7,6 @@
 # Global settings
 # ----------------------------------------
 
-# include titles in clips?
-# includeTitles = True
-includeTitles = False
-
 # can use jpegs for faster development time, less space
 # useJpegs = True
 useJpegs = False
@@ -378,8 +374,7 @@ videoFfmpegOutputOptions += " -preset ultrafast"
 # ----------------------------------------
 
 # don't want to make clips for these targets
-# clipsIgnoreTargets = dontCenterTargets
-clipsIgnoreTargets = []
+clipsIgnoreTargets = ['Dark']
 
 # these targets aren't in the PCK datafile so don't know radius,
 # but want to try to center on them - just assume they're tiny

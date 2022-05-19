@@ -21,7 +21,8 @@ import vgTitle
 
 
 
-def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isMovie=False):
+def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, 
+    isMovie=False, timestamp=0, highlightInfo=None):
     """
     Make links from source files to clip stage folders.
     This uses mklink which requires admin privileges, so must run in an admin console!
@@ -100,6 +101,12 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
         ignoreTarget = (target in config.clipsIgnoreTargets)
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
 
+        highlight = highlightInfo.get(fileId)
+        if highlight and not highlight['timestamp']:
+            # description = highlight['description']
+            # print timestamp, description
+            highlight['timestamp'] = timestamp
+
         if addImage:
 
             if ncopies > 0:
@@ -141,14 +148,15 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
                         titleFilepath = config.folders['titles'] + subfolder + 'title' + config.extension
                         ntitleCopies = int(config.videoFrameRate * config.titleSecondsToShow)
                         lib.addImages(titleFilepath, targetFolder, ntitleCopies, ntargetDirFiles, targetKey)
+                        timestamp += ntitleCopies * config.videoFrameRate
 
                     print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 
                     # add links to file
                     # note: mklink requires admin privileges, so must run in an admin console
                     # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
-                    lib.addImages(imageFilepath, targetFolder, ncopies,
-                                  ntargetDirFiles, targetKey)
+                    lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                    timestamp += ncopies * config.videoFrameRate
 
             # check for additional images in additions.csv
             rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -187,8 +195,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
                     imageFilepath = folder + filetitle
                     print imageFilepath
                     # add nframes into stage
-                    lib.addImages(imageFilepath, targetFolder, ncopies,
-                                  ntargetDirFiles, targetKey)
+                    lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                    timestamp += ncopies * config.videoFrameRate
                 else:
                     # handle composite, mosaic, crop, annotate
                     for stage in ['composite','mosaic','crop','annotate']:
@@ -200,8 +208,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
                     print imageFilepath
                     if os.path.isfile(imageFilepath):
                         # add nframes into stage
-                        lib.addImages(imageFilepath, targetFolder, ncopies,
-                                      ntargetDirFiles, targetKey)
+                        lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
+                        timestamp += ncopies * config.videoFrameRate
                     else:
                         print "warning: can't find image file",imageFilepath
                 rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -210,6 +218,9 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
     fPositions.close()
     fFiles.close()
     print
+
+    # this is called both from vgClips AND vgMovies - the latter needs this
+    return timestamp
 
 
 def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
@@ -221,6 +232,7 @@ def vgClips(filterVolumes=None, filterTargetPath='', keepLinks=False):
     if keepLinks==False:
 
         # make sure we have some titles
+        #. if ____:
         # vgTitle.vgTitle(filterTargetPath)
 
         # stage images for ffmpeg

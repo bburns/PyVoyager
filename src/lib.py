@@ -599,19 +599,23 @@ def parseTargetPath(targetPath):
 
 
 def readCsv(filename):
-    "Read a csv file into a dict of dicts. First column is key. Use on small files only!"
-    # comments or blank lines are skipped
-    # not all values need to be filled in
+    """
+    Read a csv file into a dict of dicts. First row is columns, first column is key. 
+    Comments or blank lines are skipped. Not all values need to be filled in.
+    Use on small files only!
+    """
     f = open(filename, 'rt')
     i = 0
     items = {}
     reader = csv.reader(f)
     for row in reader:
         if row==[] or row[0][0]=='#': continue # skip blank lines and comments
-        if i==0: fields = row
+        if i==0: fields = row # first non-blank/comment row is columns / fields
         else:
             col = 0
             item = {}
+            for field in fields:
+                item[field] = None # initialize field values
             for value in row:
                 if col==0:
                     pass

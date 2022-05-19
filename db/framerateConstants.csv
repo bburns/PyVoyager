@@ -18,6 +18,10 @@
 # all other settings. 
 
 
+#. do we still use this? simpler to just use framerates.csv, eh?
+
+
+
 targetKey,frameRateConstant
 # ----------------------------------------
 

@@ -12,6 +12,7 @@ See also vgClips, which this calls.
 import csv
 import os
 import os.path
+import time
 
 import config
 import lib
@@ -19,7 +20,7 @@ import lib
 import vgClips
 
 
-def buildSegment(segmentId, subsegments):
+def buildSegment(segmentId, subsegments, timestamp, highlightInfo):
     """
     build an mp4 movie segment from its subsegments, building them if necessary.
     eg if segmentId='Jupiter-Voyager1-Ganymede', and
@@ -91,6 +92,7 @@ def buildSegment(segmentId, subsegments):
                 sourcePath = '../../../../' + pageFilepath
                 ncopies = 50 #. param - 50 frames = 2 secs etc
                 lib.makeSymbolicLinks(sourcePath, subsegmentStageFolder, ncopies)
+                #. add to timestamp
                 
                 # build mp4 files from all staged images
                 print 'makevideo with imagesToMp4 ->',filepath
@@ -98,7 +100,9 @@ def buildSegment(segmentId, subsegments):
             else:
                 # stage images for ffmpeg
                 print 'stagefiles', subsegmentPath, contents, stageFolder
-                vgClips.stageFiles(None, subsegmentPath, contents, stageFolder, True) # vgClips used here!
+                # this calls vgClips.stageFiles!
+                timestamp = vgClips.stageFiles(None, subsegmentPath, contents, 
+                  stageFolder, True, timestamp, highlightInfo)
 
                 # build mp4 files from all staged images
                 print 'makevideo with imagesToMp4 ->',filepath
@@ -122,6 +126,8 @@ def buildSegment(segmentId, subsegments):
         # for filepath in filepaths:
             # lib.rm(filepath)
     print
+    
+    return timestamp
 
 
 def vgMovies(filterVolumes=None, filterTargetPath=None, keepLinks=False):
@@ -133,12 +139,18 @@ def vgMovies(filterVolumes=None, filterTargetPath=None, keepLinks=False):
     # get array of segments to add
     segments = lib.readCsvGroups(config.dbMovies)
     
+    timestamp = 0 # seconds
+    highlightInfo = lib.readCsv(config.dbHighlights) # images to highlight for timestamp generation
+
     # build each segment
     for segment in segments:
         segmentId = segment[0] # eg 'Jupiter-Voyager1-Ganymede'
         subsegments = segment[1] # array of associated rows from movies.csv
-        buildSegment(segmentId, subsegments)
-    
+        timestamp = buildSegment(segmentId, subsegments, timestamp, highlightInfo)
+
+    #. use print time.strftime('%H:%M:%S', time.gmtime(timestamp))
+    print highlightInfo
+
 
 if __name__ == '__main__':
     os.chdir('..')

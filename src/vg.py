@@ -22,6 +22,7 @@ with commands
   vg colorize            - colorize images using 2d color maps
   vg crop                - crop/zoom in on images
   vg target              - copy images into target subfolders
+  vg title               - make title pages for segments
   vg clips [--keeplinks] - create bw or color clips
   vg clips2              - create bw or color clips
   vg movies              - create movies from clips

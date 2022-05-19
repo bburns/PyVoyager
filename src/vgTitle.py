@@ -34,6 +34,7 @@ def makeTitlePage(title, subtitle1='', subtitle2='', subtitle3='', center=False)
     draw = ImageDraw.Draw(img)
 
     top = config.imsize / 2 - 100
+    
     pos = [200,top]
     s = title
     w,h = font.getsize(s)

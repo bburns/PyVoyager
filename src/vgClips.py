@@ -132,6 +132,8 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder, isM
                     # get current file number in that folder, or start at 0
                     nfile = ntargetDirFiles.get(targetKey) or 0
 
+                    #. add trajectory page here somehow?
+
                     # if we haven't seen this subfolder before add titlepage a few times.
                     # titlepages are created in the previous step, vgTitle.
                     # if config.includeTitles and nfile==0:

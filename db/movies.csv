@@ -81,19 +81,34 @@ segmentId, subsegmentId, contents
 
 # Saturn1
 # ----------------------------------------
-# plot-Saturn-Voyager1
 
-Saturn-Voyager1,$plots/plot-Saturn-Voyager1
+# alpha
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Rhea-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Sky-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-System-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
+
+# trajectory-ish
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
+Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
+Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-System-Narrow,, 3 nice pics but move them into s_rings
+Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
+Saturn-Voyager1,Saturn-Voyager1-Rhea-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
-
-
-# # movie of jupiter by itself
-# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Approach
-# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Clouds
-# Jupiter-Voyager1-Jupiter,Jupiter-Voyager1-Jupiter@Departure
+# Saturn-Voyager1,Saturn-Voyager1-Sky-Narrow,, cool stars but not really part of it
 
 
 # Jupiter2
@@ -131,10 +146,10 @@ Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
 # # All together
 # # --------------------------------------------------------------------------------
 # # note: any special pages must be added to vgMovies.py
-All,$pages/Intro
-All,$pages/Prologue
+# All,$pages/Intro
+# All,$pages/Prologue
 # # All,Jupiter-Voyager1
-All,Saturn-Voyager1
+# All,Saturn-Voyager1
 # # All,Jupiter-Voyager2
 # # All,Saturn-Voyager2
 # # All,Uranus-Voyager2
@@ -142,5 +157,5 @@ All,Saturn-Voyager1
 # # All,Sol-Voyager2
 # # All,Epilogue
 # # All,Dedication
-All,$pages/Credits
+# All,$pages/Credits
 

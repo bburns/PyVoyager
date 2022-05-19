@@ -636,34 +636,35 @@ C1639309,40,volcano #.
 # Saturn voyager1
 # ----------------------------------------
 
-# saturn nac
+# saturn narrow
 
 # filtered down to just green shots, 
 # then took one every 100 or so, because there are 9400 of them!
 # will make a great color movie someday.
+# most of these are covered just as well by the wide angle camera, which got more ring shots.
 C3250013+,0
-C3250017,25
-C3301611,25
-C3315248,25
-C3367549,25
-C3418401,25
-C3441802,25
-C3453840,25
+# C3250017,25
+# C3301611,25
+# C3315248,25
+# C3367549,25
+# C3418401,25
+# C3441802,25
+C3453840,50,storm visible
 C3456654,50,storm
 C3460250,50,moon shadow
-C3460926,50
+# C3460926,50
 C3462017,50,storm
-C3471258,50
-C3471316,50
+# C3471258,50
+# C3471316,50,storm but dropout
 C3474346,50
-C3474346,50,moon shadow
-C3496342,50,limb
+# C3474346,50,moon shadow
+# C3496342,50,limb
 C3513621,50,cool shot
-C3515000,50,cool shot
-C3517331,25
-C3529836,25
-C3562031,25
-C3592231,25
+# C3515000,50
+# C3517331,25
+# C3529836,25
+# C3562031,25
+# C3592231,25
 
 
 # saturn wide angle - 5400 images

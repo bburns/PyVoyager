@@ -5,6 +5,8 @@ Combine segments into complete movies, eg
 > vg movies Jupiter/Voyager1
 
 This must be run in an admin console because mklink requires elevated privileges.
+
+See also vgClips, which this calls.
 """
 
 import csv

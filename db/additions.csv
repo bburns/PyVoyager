@@ -11,7 +11,7 @@
 
 fileId,additionId,nframes,notes
 
-# Jupiter Voyager 1
+# Jupiter1
 # ----------------------------------------
 # keep sorted!
 #. need a fn to read these in so can keep in diff order
@@ -37,14 +37,20 @@ C1648109,C1648109_crop,60,io nightside volcano; huge one on limb
 # C1648109,images/jupiter-voyager1-io-mosaic-usgs-800x800.jpg,60
 # C1648109,images/jupiter-voyager1-io-pele-mosaic-sourceQ-800x800.jpg,60
 
-# Uranus
+# Saturn1
+# ----------------------------------------
+C3491736,C3492126_composite,50,titan atmosphere(?)
+
+# move 3 good shots from System to S_Rings
+C3501156,C3504506_composite,50
+C3501156,C3504512_composite,50
+C3501156,C3504518_composite,50
+
+
+# Uranus2
 # ----------------------------------------
 # keep sorted!
 # ariel mosaic
 #. source? wikipedia, but... annotate the image
 # C2684539,images/uranus-voyager2-ariel-mosaic-sourceQ-800x800.jpg,60
-
-
-
-
 

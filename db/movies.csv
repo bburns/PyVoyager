@@ -86,10 +86,8 @@ segmentId, subsegmentId, contents
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
 Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Titan-Wide
+#. rename to Rings - how?
 Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
-#. System has 3 nice pics but move them into s_rings - how?
-Saturn-Voyager1,Saturn-Voyager1-System-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
 Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow

@@ -651,7 +651,7 @@ C3250013+,0
 # C3367549,25
 # C3418401,25
 # C3441802,25
-C3453840,50,storm visible
+C3453840,50,storm visible?
 C3456654,50,storm
 C3460250,50,moon shadow
 # C3460926,50
@@ -670,6 +670,7 @@ C3513621,50,cool shot
 
 
 # saturn wide angle - 5400 images
+# approach
 C3441215+,0
 C3441243,25
 C3447941,25
@@ -683,6 +684,7 @@ C3482324,25
 C3485353,25
 C3487229,25
 C3490709,50
+# retreat
 C3492944,50
 C3494026,50
 C3494401,50
@@ -726,15 +728,15 @@ C3493338,25
 C3493927+,0
 # brightened these MANUALLY! PITA to track down images - must use files.csv
 #. need better way
-C3494458+,40,needs brightening - must have had noise before centering
-C3494502,40,brighten also
+C3494458+,40,brightened - must have had noise before centering
+C3494502,40,brightened
 C3494816+,0
-C3494830,25,brighten
+C3494830,25,brightened
 C3494832,40
-C3497542,25,stars?
+C3497542,25,stars
 
 
-# iapetus
+# iapetus - black and white moon
 C3476326+,5
 C3495156,20
 C3497640,0
@@ -748,7 +750,7 @@ C3504058,0
 C3506620+,0
 
 
-# mimas
+# mimas - death star moon
 C3444400+,0
 C3468613,5
 C3468617,5
@@ -763,7 +765,7 @@ C3494425,0
 C3494433,25
 
 
-# rhea
+# rhea - cracked surface
 C3260507+,5
 C3392022+,0
 C3414554+,5

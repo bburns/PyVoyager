@@ -1,6 +1,19 @@
 
+# note: we don't fill out the timestamp field here,
+# but the code uses it as a placeholder to record the timestamps
+# as it processes the movies.
+
 fileId,description,timestamp
 
-C3250013,Saturn - narrow angle camera
-C3441215,Saturn - wide angle camera
+C3441243,Saturn / Approach
+C3456654,Storm in south
+C3438042,Rings I
+C3353248,Dione (moon with spider-like cracks)
+C3476326,Iapetus (black and white moon)
+C3468613,Mimas (death star moon)
+C3260507,Rhea (another moon with cracks)
+C3438042,Rings II
+C3481956,Tethys
+C3255113,Titan (large moon with thick atmosphere)
+C3492944,Retreat
 

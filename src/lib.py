@@ -14,6 +14,7 @@ import re
 import csv # https://python.readthedocs.io/en/v2.7.2/library/csv.html
 import shutil
 import more_itertools
+import time
 from datetime import datetime
 from dateutil import parser as dtparser
 
@@ -739,6 +740,10 @@ def unzipFile(zipfile, destfolder, overwrite=False):
         parentfolder = os.path.normpath(os.path.join(destfolder, os.pardir))
         archive_util.unpack_archive(zipfile, parentfolder)
         return True
+
+
+def formatTime(secs):
+    return time.strftime('%H:%M:%S', time.gmtime(secs))
 
 
 if __name__ == '__main__':

@@ -148,9 +148,20 @@ def vgMovies(filterVolumes=None, filterTargetPath=None, keepLinks=False):
         subsegments = segment[1] # array of associated rows from movies.csv
         timestamp = buildSegment(segmentId, subsegments, timestamp, highlightInfo)
 
-    #. use print time.strftime('%H:%M:%S', time.gmtime(timestamp))
+    # print highlight times, for youtube description
     print highlightInfo
-
+    rows = []
+    for fileId in highlightInfo:
+        highlight = highlightInfo[fileId]
+        if not highlight['timestamp'] is None:
+            timestamp = lib.formatTime(highlight['timestamp'])
+            description = highlight['description']
+            row = [timestamp, description, fileId]
+            rows.append(row)
+    # sort highlights by timestamp
+    print 'Time', 'Description'
+    for row in sorted(rows):
+        print row[0], row[1]
 
 if __name__ == '__main__':
     os.chdir('..')

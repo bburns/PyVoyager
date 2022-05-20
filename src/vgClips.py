@@ -101,18 +101,19 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
         ignoreTarget = (target in config.clipsIgnoreTargets)
         addImage = volumeOk and targetOk and imageOk and (not ignoreTarget) # <- note ANDs here
 
-        highlight = highlightInfo.get(fileId)
-        if highlight and not highlight['timestamp']:
-            # description = highlight['description']
-            # print timestamp, description
-            highlight['timestamp'] = timestamp
-
         if addImage:
+
+            # update timestamp for this image's highlight record, if not already there
+            highlight = highlightInfo.get(fileId)
+            if highlight and not highlight['timestamp']:
+                print 'updating highlight timestamp', fileId, highlight['description'], timestamp
+                highlight['timestamp'] = timestamp
 
             if ncopies > 0:
 
                 # use annotated image if available, else mosaic or composite.
                 # (don't use centered files or will get bw images mixed in with color).
+                #. make a lib routine for this
                 imageFilepath = lib.getFilepath('annotate', volume, fileId)
                 #. add crop also?
                 if not os.path.isfile(imageFilepath):
@@ -148,7 +149,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
                         titleFilepath = config.folders['titles'] + subfolder + 'title' + config.extension
                         ntitleCopies = int(config.videoFrameRate * config.titleSecondsToShow)
                         lib.addImages(titleFilepath, targetFolder, ntitleCopies, ntargetDirFiles, targetKey)
-                        timestamp += ntitleCopies * config.videoFrameRate
+                        timestamp += ntitleCopies / float(config.videoFrameRate)
 
                     print "Volume %s frame: %s x %d           \r" % (volume, fileId, ncopies),
 
@@ -156,7 +157,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
                     # note: mklink requires admin privileges, so must run in an admin console
                     # eg imageFilepath=data/step04_centers/VGISS_5101/C1327321_centered.jpg
                     lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-                    timestamp += ncopies * config.videoFrameRate
+                    timestamp += ncopies / float(config.videoFrameRate)
 
             # check for additional images in additions.csv
             rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)
@@ -196,7 +197,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
                     print imageFilepath
                     # add nframes into stage
                     lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-                    timestamp += ncopies * config.videoFrameRate
+                    timestamp += ncopies / float(config.videoFrameRate)
                 else:
                     # handle composite, mosaic, crop, annotate
                     for stage in ['composite','mosaic','crop','annotate']:
@@ -209,7 +210,7 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
                     if os.path.isfile(imageFilepath):
                         # add nframes into stage
                         lib.addImages(imageFilepath, targetFolder, ncopies, ntargetDirFiles, targetKey)
-                        timestamp += ncopies * config.videoFrameRate
+                        timestamp += ncopies / float(config.videoFrameRate)
                     else:
                         print "warning: can't find image file",imageFilepath
                 rowAdditions = lib.getJoinRow(csvAdditions, config.colAdditionsFileId, fileId)

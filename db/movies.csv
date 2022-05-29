@@ -82,23 +82,33 @@ segmentId, subsegmentId, contents
 # Saturn1
 # ----------------------------------------
 
-# trajectory-ish order
-Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
-Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
-#. rename to Rings - how?
-Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Rhea-Narrow
-Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
-# Saturn-Voyager1,Saturn-Voyager1-Sky-Narrow,, cool stars but not really part of it
+# # trajectory-ish order
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3441215-C3491005
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Titan-Narrow
+# #. rename to Rings - how?
+# Saturn-Voyager1,Saturn-Voyager1-S_Rings-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Tethys-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Mimas-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Dione-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Iapetus-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Rhea-Narrow
+# Saturn-Voyager1,Saturn-Voyager1-Saturn-Wide,C3491005-C3593229
+# # Saturn-Voyager1,Saturn-Voyager1-Sky-Narrow,, cool stars but not really part of it
 
 
 # Jupiter2
 # ----------------------------------------
+# trajectory-ish order - callisto, ganymede, io, europa
+# Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Wide
+# Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Narrow
+# Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Narrow
+# Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Wide
+# Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Narrow
+# Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Wide
+Jupiter-Voyager2,Jupiter-Voyager2-Io-Narrow
+# Jupiter-Voyager2,Jupiter-Voyager2-Europa-Narrow
+
 
 # Saturn2
 # ----------------------------------------

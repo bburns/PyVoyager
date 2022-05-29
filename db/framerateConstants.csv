@@ -38,6 +38,17 @@ Jupiter-Voyager1-Io-Wide,15
 
 Saturn-Voyager1-Saturn-Narrow,1
 
+Jupiter-Voyager2-Jupiter-Narrow,0.5
+Jupiter-Voyager2-Jupiter-Wide,0.5
+Jupiter-Voyager2-Callisto-Narrow,30
+Jupiter-Voyager2-Callisto-Wide,1
+Jupiter-Voyager2-Europa-Narrow,20
+Jupiter-Voyager2-Europa-Wide,25
+Jupiter-Voyager2-Ganymede-Narrow,15
+Jupiter-Voyager2-Ganymede-Wide,2
+Jupiter-Voyager2-Io-Narrow,10
+Jupiter-Voyager2-Io-Wide,15
+
 Uranus-Voyager2-Uranus-Narrow,1
 Uranus-Voyager2-Uranus-Wide,1
 

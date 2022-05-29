@@ -999,6 +999,7 @@ C3492126,50,atmosphere!
 # ----------------------------------------
 
 # io narrow
+#. slow down the first several images some more
 C1887308,0
 C1905417,0
 C1956041,0
@@ -1045,6 +1046,7 @@ C2066633,0
 C2066657,0
 C2066706,25
 C2066721,0
+#. somewhere in here is a good image with a volcano IN the night side - pause on that also
 C2066745,0
 C2066809,0
 C2066833,0
@@ -1052,6 +1054,10 @@ C2066857,0
 C2066912,25,biggest volcano
 C2067133,25
 C2067151,40,last frame - has volcanoes
+
+# europa
+
+
 
 
 

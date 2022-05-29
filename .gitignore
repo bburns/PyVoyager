@@ -1,7 +1,17 @@
-data/
-*.pyc
-vendor/img2png
-db/centersNew.csv
 log.txt
+
+*.pyc
 \!*
+
+data/clips
+data/movies
+data/pages
+data/step*
+data/targets
+data/titles
+# !./data/trajectories/
+
+db/centersNew.csv
 db/composites_temp.csv
+
+vendor/img2png

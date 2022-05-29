@@ -5,6 +5,7 @@ PyVoyager automatically creates and stabilizes Voyager flyby movies - the eventu
 - [About](#about)
 - [Project Status](#project-status)
 - [Example Movies](#example-movies)
+- [Trajectories](#trajectories)
 - [Sources](#sources)
 - [Contributing](#contributing)
 - [Usage](#usage)
@@ -49,6 +50,15 @@ https://www.youtube.com/watch?v=lYUgU-Bc1_w
 And there is a playlist with several movies here - 
 
 https://www.youtube.com/playlist?list=PLxP4UgQGtMiLvyKjT7BQ-ht905VvNSaFP
+
+
+## Trajectories
+
+Trajectory plots are calculated using the spacecraft and target positions, as provided by 'kernel' files - 
+
+![trajectory](data/trajectories/800x800/Jupiter-Voyager1.jpg)
+
+See [data/trajectories](data/trajectories) for all of them. 
 
 
 ## Sources

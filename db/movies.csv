@@ -102,12 +102,12 @@ segmentId, subsegmentId, contents
 # trajectory-ish order - callisto, ganymede, io, europa
 # Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Wide
 # Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Narrow
-# Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Narrow
-# Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Wide
-# Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Narrow
-# Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Wide
+#Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Narrow
+#Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Wide
+Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Narrow
+#Jupiter-Voyager2,Jupiter-Voyager2-Ganymede-Wide
 # Jupiter-Voyager2,Jupiter-Voyager2-Io-Narrow
-Jupiter-Voyager2,Jupiter-Voyager2-Europa-Narrow
+#Jupiter-Voyager2,Jupiter-Voyager2-Europa-Narrow
 
 
 # Saturn2

@@ -100,6 +100,7 @@ segmentId, subsegmentId, contents
 # Jupiter2
 # ----------------------------------------
 # trajectory-ish order - callisto, ganymede, io, europa
+# did the moons with v0.60, but not jupiter itself - do later
 # Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Wide
 # Jupiter-Voyager2,Jupiter-Voyager2-Jupiter-Narrow
 # Jupiter-Voyager2,Jupiter-Voyager2-Callisto-Narrow
@@ -113,7 +114,7 @@ segmentId, subsegmentId, contents
 # Saturn2
 # ----------------------------------------
 # trajectory-ish order - 
-Saturn-Voyager2,Saturn-Voyager2-Saturn-Wide
+# Saturn-Voyager2,Saturn-Voyager2-Saturn-Wide
 # Saturn-Voyager2,Saturn-Voyager2-Saturn-Narrow
 # Saturn-Voyager2,Saturn-Voyager2-Enceladus-Narrow
 
@@ -129,6 +130,7 @@ Saturn-Voyager2,Saturn-Voyager2-Saturn-Wide
 # Uranus-Voyager2,Uranus-Voyager2-Titania-Narrow
 # Uranus-Voyager2,Uranus-Voyager2-Umbriel-Narrow
 # Uranus-Voyager2,Uranus-Voyager2-Uranus-Wide
+
 
 # Neptune2
 # ----------------------------------------

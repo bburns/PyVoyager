@@ -588,6 +588,15 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     img.save(outfile)
 
 
+def maskImage(im, maskPixels):
+    """
+    black out pixels from edge of image
+    """
+    im[-maskPixels['bottom']:,:] = 0
+    im[:,-maskPixels['right']:] = 0
+    return im
+
+
 def denoiseImageFile(infile, outfile):
     """
     attempt to remove noise from the given image file and save to outfile
@@ -940,7 +949,6 @@ def stretchHistogram(im, maxvalue=None):
     so can pass a hardcoded maxvalue.
     if maxvalue is None then will scan for the hottest pixel and use that.
     """
-
     # get histogram
     # see http://docs.opencv.org/3.1.0/d1/db7/tutorial_py_histogram_begins.html
     # eg hist = cv2.calcHist([im],[0],mask,[256],[0,256])
@@ -1501,5 +1509,3 @@ if __name__ == "__main__":
     im = combineChannels(channels)
     show(im)
     cv2.imwrite('foo.jpg',im)
-
-

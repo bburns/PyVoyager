@@ -104,10 +104,11 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
         if addImage:
 
             # update timestamp for this image's highlight record, if not already there
-            highlight = highlightInfo.get(fileId)
-            if highlight and not highlight['timestamp']:
-                print 'updating highlight timestamp', fileId, highlight['description'], timestamp
-                highlight['timestamp'] = timestamp
+            if highlightInfo:
+                highlight = highlightInfo.get(fileId)
+                if highlight and not highlight['timestamp']:
+                    print 'updating highlight timestamp', fileId, highlight['description'], timestamp
+                    highlight['timestamp'] = timestamp
 
             if ncopies > 0:
 

@@ -60,8 +60,12 @@ downloadUrl = "https://pds-rings.seti.org/holdings/archives-volumes/VGISS_{}xxx/
 # imageTypes = ['CLEANED']
 # imageTypes = ['RAW']
 # imageTypes = ['CALIB']
-# imageTypes = ['RAW','CALIB','GEOMED']
-imageTypes = ['RAW','GEOMED']
+# imageTypes = ['RAW','GEOMED']
+# some images have hot pixels on the bottom - geomed distorts those, so
+# would need to trim 40px from each side to ditch them, resulting in loss of 8% of images,
+# side to side. so... go back to calib images for the movies for now. 
+# someday do our own processing of the raw images. 
+imageTypes = ['RAW','CALIB']
 imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 
 # imagetype for main processing
@@ -75,8 +79,8 @@ imageFilespecs = ["*" + imageType + ".IMG" for imageType in imageTypes]
 #. might be good to let user choose the type from cmd line, and maintain
 # separate channels for each. though more complex code. 
 # imageType = 'RAW'
-# imageType = 'CALIB'
-imageType = 'GEOMED'
+# imageType = 'GEOMED'
+imageType = 'CALIB'
 
 # image size in pixels - must be used in all algorithms
 imsize = 1000 if imageType=='GEOMED' else 800
@@ -96,13 +100,20 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # Adjust
 # ----------------------------------------
 
+# blacken out this many pixels along the edges,
+# to prevent hot pixels from messing up histogram stretching and centering.
+# note: this is done AFTER rotating the original raw, calib etc images by 180 deg.
+#. just handles bottom and right for now - see maskImage fn
+maskPixels = { bottom: 3, right: 3 }
+
 # note: RAW images are 8 bit pngs, CALIB and GEOMED are 16 bit pngs
 
 # targets below this size (as fraction of the image frame)
 # won't get histogram stretched (can blow out small targets)
 # see vgAdjust
-#. this is super arbitrary - better to have a smoother transition
-adjustHistogramImageFractionMinimum = 0.25
+#. this is super arbitrary - better to have a smoother transition?
+# adjustHistogramImageFractionMinimum = 0.25
+adjustHistogramImageFractionMinimum = 0
 
 # histogram bins with less than this number of pixels will be treated as noise
 # and ignored during stretch histogram process.
@@ -288,8 +299,6 @@ drawTarget = False # draw expected target size/location with yellow circle
 # Annotate
 # ----------------------------------------
 
-#. can we use a local font file?
-# annotationsFont = "c:/windows/fonts/!futura-light.ttf"
 annotationsFont = "fonts/futura-light.ttf"
 annotationsFontsize = 18
 
@@ -306,15 +315,11 @@ targetsIgnore = []
 # Titles
 # ----------------------------------------
 
-# titleSecondsToShow = 4
 titleSecondsToShow = 3.5
 
-#. can we use a local font file?
-# titleFont = "c:/windows/fonts/!futura-light.ttf"
 titleFont = "fonts/futura-light.ttf"
 titleFontsize = 48
 
-# italicfont = 'c:\\windows\\fonts\\GARAIT.TTF' # garamond italic
 italicFont = 'fonts/garamond-italic.ttf'
 
 

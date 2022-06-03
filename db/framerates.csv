@@ -1498,6 +1498,17 @@ C4420723+,1,spinning to end
 
 # Uranus
 
+# narrow
+C2447746+,1
+
+
+# wide
+C2447705+,1
+
+
+
+
+
 #. wide vs narrow?
 
 # first frame - hide the start sequence - too long
@@ -1524,6 +1535,9 @@ C2684450+,10
 C2684726,1
 C2685214+,10
 C2686212,1
+
+
+
 
 
 # ariel

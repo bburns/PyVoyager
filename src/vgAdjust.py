@@ -1,7 +1,7 @@
 """
 vg adjust command
 
-Build adjusted images from plain png images (rotate 180, stretch histogram).
+Build adjusted images from plain png images (rotate 180, crop, stretch histogram).
 """
 
 import csv
@@ -86,12 +86,13 @@ def vgAdjust(filterVolume='', filterImageId='', optionOverwrite=False, directCal
             maxvalue = 255
 
         # adjust the image
-        #. just handles calib images now
+        #. just handles calib and geomed images for now
         if os.path.isfile(infile):
-            im = libimg.imread(infile, 'gray16') # note: calib images are 16 bit, raw are 8 bit
+            im = libimg.imread(infile, 'gray16') # note: calib/geomed images are 16 bit, raw are 8 bit
             im = libimg.convert16to8bit(im)
-            im = libimg.stretchHistogram(im, maxvalue) # bring up brightness levels (CALIB images are dark)
-            im = libimg.imrotate(im)
+            im = libimg.imrotate(im) # rotate 180 degrees
+            im = libimg.mask(im, config.maskPixels) # black out edges to remove hot pixels
+            im = libimg.stretchHistogram(im, maxvalue) # bring up brightness levels
             libimg.imwrite(outfile, im)
         else:
             print 'Warning: missing image file', infile

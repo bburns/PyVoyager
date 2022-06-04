@@ -121,11 +121,11 @@ def stageFiles(filterVolumes, filterTargetPath, filterImageIds, stageFolder,
                     imageFilepath = lib.getFilepath('mosaic', volume, fileId)
                 if not os.path.isfile(imageFilepath):
                     imageFilepath = lib.getFilepath('composite', volume, fileId)
-                # #. added these 2022-05-13 - i guess will need an option for b&w vs color?
-                if not os.path.isfile(imageFilepath):
-                    imageFilepath = lib.getFilepath('center', volume, fileId, filter)
-                if not os.path.isfile(imageFilepath):
-                    imageFilepath = lib.getFilepath('adjust', volume, fileId, filter)
+                # # #. added these 2022-05-13 - i guess will need an option for b&w vs color?
+                # if not os.path.isfile(imageFilepath):
+                #     imageFilepath = lib.getFilepath('center', volume, fileId, filter)
+                # if not os.path.isfile(imageFilepath):
+                #     imageFilepath = lib.getFilepath('adjust', volume, fileId, filter)
                 # if not os.path.isfile(imageFilepath):
                 #     imageFilepath = lib.getFilepath('convert', volume, fileId, filter)
 

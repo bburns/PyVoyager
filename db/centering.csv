@@ -13,81 +13,95 @@
 #. definitely need sticky fileIds here as well
 
 
-fileId,centerImage
+fileId,centerImage,notes
 
 
 # Uranus
 
-#. want to center SOME of the ring search, ie override the default in places
+#. want to center SOME of the ring search - ie override the default in places
 # eg the frames showing the ring around the planet quadrants
 
-C2672831,y
-C2672837,y
-C2672843,y
-C2672849,y
-C2672855,y
+# cool ring images - don't center these
+# IMAGING RING STRUCTURE AND SHEPHERD SATELLITES
+C2682426,n
+C2682432,n
+C2682438,n
+C2682444,n
+C2682450,n
+C2682456,n
 
-C2679143,y
-C2679149,y
-C2679155,y
-C2679201,y
-C2679207,y
-C2679213,y
-C2679219,y
-C2679225,y
-C2679231,y
-C2679237,y
-C2679243,y
-C2679255,y
-C2679301,y
-C2679307,y
-C2679313,y
-C2679319,y
-C2679325,y
-C2679331,y
-C2679337,y
-C2679343,y
-C2679349,y
-C2679355,y
-C2679401,y
-C2679407,y
-C2679413,y
-C2679419,y
-C2679428,y
-C2679434,y
+C2684644,n,ring
+C2684726,n,limb
+C2686212,n,crescent
+C2687017,n,crescent
 
-C2682426,y
-C2682432,y
-C2682438,y
-C2682444,y
-C2682450,y
-C2682456,y
-C2682506,y
-C2682512,y
-C2682518,y
-C2682524,y
-C2682529,y
-C2682534,y
-C2682539,y
-C2682545,y
-C2682551,y
-C2682557,y
-C2682603,y
 
-C2684501,y
-C2684505,y
-C2684644,y
-C2684646,y
-C2684648,y
-C2684650,y
-C2684718,y
-C2684722,y
-C2684726,y
+# C2672831,y
+# C2672837,y
+# C2672843,y
+# C2672849,y
+# C2672855,y
 
-C2685215,y
-C2685219,y
-C2685224,y
+# C2679143,y
+# C2679149,y
+# C2679155,y
+# C2679201,y
+# C2679207,y
+# C2679213,y
+# C2679219,y
+# C2679225,y
+# C2679231,y
+# C2679237,y
+# C2679243,y
+# C2679255,y
+# C2679301,y
+# C2679307,y
+# C2679313,y
+# C2679319,y
+# C2679325,y
+# C2679331,y
+# C2679337,y
+# C2679343,y
+# C2679349,y
+# C2679355,y
+# C2679401,y
+# C2679407,y
+# C2679413,y
+# C2679419,y
+# C2679428,y
+# C2679434,y
 
+# C2682426,y
+# C2682432,y
+# C2682438,y
+# C2682444,y
+# C2682450,y
+# C2682456,y
+# C2682506,y
+# C2682512,y
+# C2682518,y
+# C2682524,y
+# C2682529,y
+# C2682534,y
+# C2682539,y
+# C2682545,y
+# C2682551,y
+# C2682557,y
+# C2682603,y
+
+# C2684501,y
+# C2684505,y
+# C2684644,y
+# C2684646,y
+# C2684648,y
+# C2684650,y
+# C2684718,y
+# C2684722,y
+# C2684726,y
+
+# C2685215,y
+# C2685219,y
+# C2685224,y
 
 
 # these had been turned off here, but then i turned off centering for all files with 'search' in NOTE

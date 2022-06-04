@@ -132,8 +132,7 @@ def vgCenter(filterVolume='', filterImageId='', optionOverwrite=False, directCal
                 xFraction += dx / float(config.imsize)
                 yFraction += dy / float(config.imsize)
 
-            # enhance contrast again, in case noise on edges or something
-            
+            #. enhance contrast again, in case noise on edges or something
 
             # write x,y,radius to newcenters file
             # rowNew = [fileId, volume, x, y, foundRadius]

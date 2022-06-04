@@ -103,8 +103,8 @@ img2pngOptions = "-fnamefilter -loglevel0"
 # blacken out this many pixels along the edges,
 # to prevent hot pixels from messing up histogram stretching and centering.
 # note: this is done AFTER rotating the original raw, calib etc images by 180 deg.
-#. just handles bottom and right for now - see maskImage fn
-maskPixels = { bottom: 3, right: 3 }
+#. just handles bottom and right for now - see mask fn
+maskPixels = { 'bottom': 3, 'right': 3 }
 
 # note: RAW images are 8 bit pngs, CALIB and GEOMED are 16 bit pngs
 

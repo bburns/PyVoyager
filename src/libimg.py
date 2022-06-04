@@ -588,7 +588,7 @@ def annotateImageFile(infile, outfile, imageId, time, distance, note):
     img.save(outfile)
 
 
-def maskImage(im, maskPixels):
+def mask(im, maskPixels):
     """
     black out pixels from edge of image
     """
